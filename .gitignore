@@ -1,9 +1,6 @@
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Runtime data
 pids
@@ -17,14 +14,8 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
-# nyc test coverage
-.nyc_output
-
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components
 
 # node-waf configuration
 .lock-wscript
@@ -32,12 +23,22 @@ bower_components
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directories
-node_modules/
-jspm_packages/
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
+node_modules
 
-# Typescript v1 declaration files
-typings/
+# Debug log from npm
+npm-debug.log
+
+# Temp/backup files
+*~
+*.bak
+
+# nyc test coverage
+.nyc_output
+
+# Bower dependency directory (https://bower.io/)
+bower_components
 
 # Optional npm cache directory
 .npm
@@ -51,9 +52,21 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
-
 # dotenv environment variables file
 .env
 
+# Local config that should never be committed
+config.js
+/nbproject/private/
+TODO
+nbproject
+old
+package-lock.json
+/client/css/
+/client/js/bootstrap-3.3.7-dist/
+/client/js/jquery-3.2.1.min.js
+/client/json/
+/client/sec542/
+/client/sec642/
+/client/wahh2/
+/client/websvc/

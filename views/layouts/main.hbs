@@ -1,0 +1,78 @@
+<!-- views/layouts/main.handlebars -->
+<!DOCTYPE html>
+<html lang="en">
+
+  {{> headtitle}}
+      <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/typeahead.jquery.js"></script>
+    <script src="/js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    
+    <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="/js/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/stylesheets/main.css">
+  <!--
+  <link rel="stylesheet" href="/stylesheets/typeahead.css">
+  -->
+
+<body>
+    <div class="container">
+
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                {{#if user}}
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                          <li>
+                              <p class="navbar-text">
+                                  <a href="/">WAPT Runner</a> 
+                              </p>
+                          </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                              <li>
+                              <p class="navbar-text">
+                                  Logged in as <em>{{user.username}}</em> | <a href="/logout">Log Out</a>
+                              </p>
+                              </li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                {{else}}
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="/signin">Sign In</a>
+                            </li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                {{/if}}
+
+           </div><!-- /.container-fluid -->
+        </nav>
+
+      
+        {{#if error}}
+          <p class="alert alert-warning">{{error}}</p>
+        {{/if}}
+
+        {{#if success}}
+          <p class="alert alert-success">{{success}}</p>
+        {{/if}}
+
+        {{#if notice}}
+          <p class="alert alert-info">{{notice}}</p>
+        {{/if}}
+
+        <!--where our other templates will insert-->
+        {{{body}}}
+
+
+        {{> footer}}
+
+    </div> <!-- /container -->
+</body>
+</html>
