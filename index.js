@@ -189,8 +189,10 @@ app.get('/', ensureAuthenticated, function(req, res) {
     // Fetch from project collection
     var coll = db.get("project");
     var sortName = { name: -1 };
+    var prjRegex = {$regex : config.PrjSubset}; 
+    var prjSubset = {"name" : prjRegex};
     
-    coll.find({}, {sort: sortName}, function(e, projects) {
+    coll.find(prjSubset, {sort: sortName}, function(e, projects) {
         res.render('home', {
             user: req.user,
             projects : projects});
@@ -206,8 +208,10 @@ app.get('/project/:prjName', ensureAuthenticated, function (req, res) {
 
     // Fetch from project collection
     var prjColl = db.get("project");
+    var prjRegex = {$regex : config.PrjSubset}; 
+    var prjSubset = {"name" : prjRegex};
     console.log("Checking if entry exists for project " + prjName);
-    prjColl.findOne({name: prjName}, function(e, prj) {
+    prjColl.findOne({$and: [ {name: prjName}, prjSubset]}, function(e, prj) {
         res.render('project', {
             user: req.user,
             CveRptBase: config.CveRptBase,
@@ -221,11 +225,13 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
     
     // TODO Check name
     var prjName = req.params.prjName;
+    var prjRegex = {$regex : config.PrjSubset}; 
+    var prjSubset = {"name" : prjRegex};
 
     // Fetch from project collection
     var prjColl = db.get("project");
     console.log("Checking if entry exists for project " + prjName);
-    prjColl.findOne({name: prjName}, function(e, prj) {
+    prjColl.findOne({$and: [ {name: prjName}, prjSubset]}, function(e, prj) {
 
         // Fetch from testkb collection
         console.log("Searching TestDB with scope", prj.scopeQry);
@@ -243,7 +249,9 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
                     prj : prj,
                     tests: tests,
                     issues: issues,
-                    cwes: cwes
+                    cwes: cwes,
+                    CweUriBase: config.CweUriBase,
+                    TestRefBase: config.TestRefBase
                 });
         });});});
     });
@@ -260,6 +268,7 @@ app.get( '/api/project',                ensureAuthenticated, prjRes.findAll);
 app.get( '/api/project/:name',          ensureAuthenticated, prjRes.findByName);
 app.post('/api/project',                ensureAuthenticated, prjRes.create);
 app.put( '/api/project/:name',          ensureAuthenticated, prjRes.update);
+app.delete('/api/project/:name',        ensureAuthenticated, prjRes.removeByName);
 app.get( '/api/testkb',                 ensureAuthenticated, testkbRes.findAll);
 app.get( '/api/testkb/:tid',            ensureAuthenticated, testkbRes.findByTID);
 app.post('/api/testkb',                 ensureAuthenticated, testkbRes.create);
@@ -269,6 +278,7 @@ app.get( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.findIssue)
 app.get( '/api/issue/:prjName',         ensureAuthenticated, issueRes.findProjectIssues);
 app.put( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.upsert);
 app.delete('/api/issue/:prjName/:tid',  ensureAuthenticated, issueRes.removeByName);
+app.delete('/api/issue/:prjName',       ensureAuthenticated, issueRes.removeAllForPrj);
 app.get( '/api/cwe',                    ensureAuthenticated, cweRes.findAll);
 app.get( '/api/cwe/:id',                ensureAuthenticated, cweRes.findById);
 app.get( '/issues.csv',                 ensureAuthenticated, reporting.exportIssuesCSV);

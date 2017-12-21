@@ -74,6 +74,10 @@ button .kbBtn{
     width: 90px;
 }
 
+#newProjectInput{
+    width: 250px; 
+}
+
 .prjIn{
     width: 100%;
     margin: 2px 0;

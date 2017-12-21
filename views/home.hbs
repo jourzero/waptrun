@@ -14,6 +14,9 @@
     <table class="projectList">
         {{#projects}}
             <tr>
+                <!--
+                <td class="issueDeleteTD" width="20px">
+                    <button class="delete" title="Delete this project" action="delete" prjName='{{name}}'>&times;</button></td> -->
                 <td><a href="/project/{{name}}">{{name}}</a></td>
                 <td><a href="/testing/{{name}}">Start Testing</td>
             </tr>
@@ -21,7 +24,17 @@
     </table>
 
     <div>
+        <button id="btnNewPrj"      class="button black"       title="Create a new project." onclick="showCreateNewProjectBtn();">Create Project</button>
+        <button id="btnDelPrj"      class="button black"       title="Remove a project."     onclick="showRemoveProjectBtn();">Remove Project</button>
         <button id="btnCsvExport"   class="button black"       title="Export all issue data from all projects as CSV and download." onclick="window.open('/issues.csv', 'DownloadWin')">Export all</button>
+    </div>
+    <div id="newProjectDiv" hidden="true">
+        <br>
+        Enter new project name: <input type="text" id="newProjectInput" placeholder="YYYYMM-PRJNAME-ENV" />
+    </div>
+    <div id="delProjectDiv" hidden="true">
+        <br>
+        Enter project name to delete: <input type="text" id="delProjectInput"" />
     </div>
  
     <div class="panel-body">
@@ -46,3 +59,5 @@
   
 {{/if}}
    
+<script src="/js/rest.js"></script>
+<script src="/js/home.js"></script>   

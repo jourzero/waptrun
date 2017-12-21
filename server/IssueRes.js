@@ -126,4 +126,19 @@ exports.removeByName = function(req, res) {
     //}
 };
         
-                
+
+// Remove all issues for a project (route: /api/issue/:prjName)
+exports.removeAllForPrj = function(req, res) {
+    //if (!req.body._id) {
+    //    res.send(404, "id required");
+    //} else {
+        var ok = function(doc) {
+            res.send(200);
+        };
+        var err = function(err) {
+            res.send(409, "Failed to remove object");
+        };
+        issue.removeAllForPrj(req.params.prjName, ok, err);
+    //}
+};
+        

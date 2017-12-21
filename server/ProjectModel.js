@@ -53,6 +53,11 @@ Projects.prototype.removeById = function(id, success, error) {
     this.projects.remove({_id : id}, response(success, error));
 };
  
+// Remove a project by name from the mongodb
+Projects.prototype.removeByName = function(name, success, error) {
+    this.projects.remove({name : name}, response(success, error));
+};
+ 
 // Callback to the supplied success and error functions
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,

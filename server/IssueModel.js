@@ -84,6 +84,14 @@ Issue.prototype.removeByName = function(prjName, tid, success, error) {
     this.issue.remove(crit, response(success, error));
 };
 
+
+// Remove a document by name from the mongodb
+Issue.prototype.removeAllForPrj = function(prjName, success, error) {
+    var kvp = {};
+    kvp.PrjName = prjName;
+    
+    this.issue.remove(kvp, response(success, error));
+};
 // Callback to the supplied success and error functions
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,

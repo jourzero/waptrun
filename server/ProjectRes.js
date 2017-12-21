@@ -71,4 +71,18 @@ exports.removeById = function(req, res) {
     }
 };
         
+exports.removeByName = function(req, res) {
+    //if (!req.body._id) {
+    //    res.send(404, "id required");
+    //} else {
+        var ok = function(doc) {
+            res.send(200);
+        };
+        var err = function(err) {
+            res.send(409, "Failed to remove object");
+        };
+        projects.removeByName(req.params.name, ok, err);
+    //}
+};
+        
                 

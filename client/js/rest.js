@@ -66,6 +66,7 @@ function restGetTest(testId, callback){
     $.get(url, callback);
 };
 
+
 // Update/insert issue data from UI to the issue collection
 function restUpdateIssue(issue) {
 
@@ -123,6 +124,81 @@ function restUpdateLastTID(testId, prjName){
 };
 
 
+/**
+ * restCreatePrj
+ * @param {string} prjName
+ */
+function restCreatePrj(prjName) {
+
+    kvp = {}; 
+    kvp.name    = prjName;
+    kvp.scope   = "TG4";
+    kvp.scopeQry = "OWASP-TG4";
+
+    // Send post request
+    let url  = "/api/project";
+    console.log("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
+    let request = $.ajax({
+      url: url,
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(kvp),
+      dataType: "json"
+    });
+}
+
+
+/**
+ * restDeletePrj
+ * @param {string} prjName
+ */
+function restDeletePrj(prjName) {
+
+    if ((prjName === undefined) || (prjName === "")){
+        let msg = "WARNING: Cannot delete project data: Missing Project Name";
+        console.log(msg);
+        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        return;
+    }    
+
+    // Send REST call for project data
+    console.log("Removing project " + prjName);
+    let url = "/api/project/" + prjName; 
+    console.log("Sending DELETE request to " + url);
+    return $.ajax({
+       url: url,
+       type: 'DELETE',
+     });
+}
+
+
+
+/**
+ * restDeletePrjIssues
+ * @param {string} prjName
+ */
+function restDeletePrjIssues(prjName) {
+
+    if ((prjName === undefined) || (prjName === "")){
+        let msg = "WARNING: Cannot delete project data: Missing Project Name";
+        console.log(msg);
+        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        return;
+    }    
+
+
+    // Send REST call for issue data
+    console.log("Removing all issues for project " + prjName);
+    url = "/api/issue/" + prjName; 
+    console.log("Sending DELETE request to " + url);
+    return $.ajax({
+       url: url,
+       type: 'DELETE',
+     });
+}
+
+
+
 // Save all values to Project Collection
 function restUpdateProject(prj){
     
@@ -171,7 +247,6 @@ function restCreateTest() {
     kvp.TSource   = "Extras";
     kvp.TTestName = ""; 
     kvp.TPhase    = "Extras";
-    alert("Inserted a new blank test " + kvp.TID + ".");
 
     // Send post request
     let url  = "/api/testkb"
@@ -183,4 +258,6 @@ function restCreateTest() {
       data: JSON.stringify(kvp),
       dataType: "json"
     });
+
+    alert("Inserted a new blank test " + kvp.TID + ".");
 }

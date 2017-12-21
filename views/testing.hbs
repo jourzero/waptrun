@@ -173,7 +173,10 @@
 <script src="/js/rest.js"></script>
 <script src="/js/testing.js"></script>
 <script>    
-    var prjName = "{{prj.name}}";
+    var prjName      = "{{prj.name}}";
+    var gTestRefBase = "{{TestRefBase}}";
+    var gCweUriBase  = "{{CweUriBase}}";
+    
     
     $( document ).ready(function() {
         let testCount = $("#testList").prop("options").length;

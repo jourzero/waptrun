@@ -1,10 +1,6 @@
 //==============================================================================
 //                               UI EVENTS 
 //==============================================================================
-var gTestRefBase = "/";
-var gCweUriBase  = "https://cwe.mitre.org/data/definitions/";
-
-
 // Clear test input upon double-clicking it
 $("#testIn").on('dblclick', function() {
     $("#testIn").val("");
