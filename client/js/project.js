@@ -9,7 +9,7 @@ $("#PrjName").on('change', function()     {
     }
 });
 
-$("#PrjNotes, #ScopeSel").on('change', function()    { 
+$("#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest").on('change', function()    { 
     let prj = uiGetProject();
     if (prj !== undefined)
         restUpdateProject(prj); 
@@ -56,6 +56,11 @@ function uiClearProjectFields() {
     $("#PrjNotes").val("");
     $("#PrjNotes").attr('title', "");
     $("#ScopeSel").prop("selectedIndex", 0);
+    $("#TPCI").prop('checked', false);
+    $("#TTop10").prop('checked', false);
+    $("#TTop25").prop('checked', false);
+    $("#TStdTest").prop('checked', false);
+    
 };
 
 // Get Project data from UI
@@ -67,6 +72,10 @@ function uiGetProject(){
     prj.scope = $("#ScopeSel option:selected" ).attr('title').trim();
     prj.scopeQry = $("#ScopeSel").val().trim();
     prj.lastTID = $("#LastTID").html().trim();
+    prj.PciTests = $("#TPCI").prop('checked');
+    prj.Top10Tests = $("#TTop10").prop('checked');
+    prj.Top25Tests = $("#TTop25").prop('checked');
+    prj.StdTests = $("#TStdTest").prop('checked');
     return prj;
 }
 

@@ -24,6 +24,7 @@ $('#kbBtnNew').on('click', evtNewTest);
 // When the test fields values change, update the Test KB
 $('#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground').on('change', evtTestKBDataChanged);
 $('#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2').on('change', evtTestKBDataChanged);
+$('#TPCI, #TTop10, #TTop25, #TStdTest').on('change', evtTestKBDataChanged);
 
 // When the Specific Issue Data changes, save it to the Issue collection
 $('#IURIs, #IEvidence, #IScreenshots, #IPriority').on('change', evtIssueDataChanged);
@@ -38,7 +39,6 @@ $('#IScreenshots').on('paste', evtPasteScreenshot);
 $(".delete").on('click', evtDeleteIssue);
 
 // Show the issue details when clicking in the list
-//$(".InfoPriority, .LowPriority, .MediumPriority, .HighPriority, .FixedPriority, .ExcludePriority").on('click', evtShowIssue);
 $(".issueTD").on('click', evtShowIssue);
 
 // When the notes field changes, try to parse it as an issue that comes from Burp Clipboarder. 
@@ -356,12 +356,10 @@ function uiClearTestingFields() {
     $("#TRef1A").attr('href', "");
     $("#TRef2").val("");
     $("#TRef2A").attr('href', "");
-    /*
     $("#TPCI").prop('checked', false);
     $("#TTop10").prop('checked', false);
     $("#TTop25").prop('checked', false);
     $("#TStdTest").prop('checked', false);
-    */
 };
 
 
@@ -636,12 +634,10 @@ function uiUpdateFromTestKB(testId) {
             $("#TSeverity").val(rec.TSeverity);
             $("#TIssueType").val(rec.TIssueType);
 
-            /*
             $("#TPCI").prop('checked', rec.TPCI);
             $("#TTop10").prop('checked', rec.TTop10);
             $("#TTop25").prop('checked', rec.TTop25);
             $("#TStdTest").prop('checked', rec.TStdTest);
-            */
             
             $("#TRef1").val(rec.TRef1);
             $("#TRef1A").attr('href', rec.TRef1);
@@ -680,10 +676,10 @@ function uiGetTestKB(){
     test.TSeverity              = $("#TSeverity").val();
     test.TIssueType             = $("#TIssueType").val();
     test.TType                  = $("#TType").val();
-    //test.TPCI                   = $("#TPCI").prop('checked');
-    //test.TTop10                 = $("#TTop10").prop('checked');
-    //test.TTop25                 = $("#TTop25").prop('checked');
-    //test.TStdTest               = $("#TStdTest").prop('checked');
+    test.TPCI                   = $("#TPCI").prop('checked');
+    test.TTop10                 = $("#TTop10").prop('checked');
+    test.TTop25                 = $("#TTop25").prop('checked');
+    test.TStdTest               = $("#TStdTest").prop('checked');
     //test.TDescr                 = $("#TDescr").val();
     //test.TTRef2                 = $("#TTRef2").val();
     test.TRef1                  = $("#TRef1").val();
@@ -734,3 +730,17 @@ function uiUpdateStatus(msg){
 
 
 
+
+// Update the CVE links in the UI
+function getSoftwareLinks(software){
+    var swList = software.split(",");
+    var swLinksHtml="";
+    for (i=0; i<swList.length; i++){
+        swLinksHtml += "<a class='smallLink' href='" 
+                    + cveRptBase
+                    + swList[i].trim() 
+                    + cveRptSuffix
+                    + "'target='cveRptUI'>" + swList[i].trim() + "</a>&nbsp;&nbsp;";
+    }
+    $("#PrjSoftware").html(swLinksHtml);
+};

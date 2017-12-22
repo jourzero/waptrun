@@ -27,6 +27,15 @@
                 -->
             </select></td>
     </tr>
+    <tr>
+        <th class="issueTH">Subset</th>
+        <td class="issueVals"> 
+            <input type="checkbox" id="TPCI"     class="testKbCB" value="PCI"     title="PCI-DSS Compliance">PCI
+            <input type="checkbox" id="TTop10"   class="testKbCB" value="Top10"   title="OWASP Top 10">T10
+            <input type="checkbox" id="TTop25"   class="testKbCB" value="Top25"   title="SANS Top 25 Most Dangerous Software Errors">T25
+            <input type="checkbox" id="TStdTest" class="testKbCB" value="StdTest" title="My own list of Standard">Std        
+        </td>
+    </tr>
     
     <!--
     <tr class="iTR" >
@@ -83,6 +92,11 @@
     $(document).ready(function(){
         $("#ScopeSel").val("{{{prj.scopeQry}}}");
         uiUpdateCveLinks();
+        $("#TPCI").prop('checked',     {{prj.PciTests}});
+        $("#TTop10").prop('checked',   {{prj.Top10Tests}});
+        $("#TTop25").prop('checked',   {{prj.Top25Tests}});
+        $("#TStdTest").prop('checked', {{prj.StdTests}});
+        
     });
     
 </script>

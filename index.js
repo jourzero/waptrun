@@ -238,21 +238,43 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
         var testKB     = db.get("testkb");
         var issuesColl = db.get("issues");
         var cweColl    = db.get("cwe");
+        let PciTests   = prj.PciTests;
+        let Top10Tests = prj.Top10Tests;
+        let Top25Tests = prj.Top25Tests;
+        let StdTests   = prj.StdTests;
+        
+        // Build scope query
+        let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
+        if (PciTests || Top10Tests || Top25Tests || StdTests){
+            let filter = {};
+            filter = {TPCI: PciTests};
+            filter = {"$or": [filter, {TTop10  : Top10Tests}]};
+            filter = {"$or": [filter, {TTop25  : Top25Tests}]};
+            filter = {"$or": [filter, {TStdTest: StdTests}]};
+            //{"$and":[{"$and":[{"$and":[{"$and":[{"$or":[{"TSource":"OWASP-TG4"},{"TSource":"Extras"}]},{"TPCI":true}]},{"TTop10":true}]},{"TTop25":true}]},{"TStdTest":true}]}            
+            //scopeQuery = PciTests   ? { $and: [scopeQuery, {TPCI: true} ]}     : scopeQuery;
+            //scopeQuery = Top10Tests ? { $and: [scopeQuery, {TTop10: true} ]}   : scopeQuery;
+            //scopeQuery = Top25Tests ? { $and: [scopeQuery, {TTop25: true} ]}   : scopeQuery;
+            //scopeQuery = StdTests   ? { $and: [scopeQuery, {TStdTest: true} ]} : scopeQuery;        
+            scopeQuery = {$and: [scopeQuery, filter]};        
+        }
 
-        //var scopeQuery = eval("Object({" + prj.scopeQry + "})");
-        var scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
+        // Search the issue collection
         testKB.find(scopeQuery, {sort:{TID:1}}, function(e, tests) {         
         issuesColl.find({PrjName: prjName}, {sort:{IPriority:-1}}, function(e, issues) {
         cweColl.find({}, {sort:{ID:1}}, function(e, cwes) {          
-                res.render('testing', {
-                    user: req.user,
-                    prj : prj,
-                    tests: tests,
-                    issues: issues,
-                    cwes: cwes,
-                    CweUriBase: config.CweUriBase,
-                    TestRefBase: config.TestRefBase
-                });
+            res.render('testing', {
+                user: req.user,
+                prj : prj,
+                tests: tests,
+                issues: issues,
+                cwes: cwes,
+                CweUriBase: config.CweUriBase,
+                CveRptBase: config.CveRptBase,
+                CveRptSuffix: config.CveRptSuffix,            
+                TestRefBase: config.TestRefBase,
+                ScopeQuery : JSON.stringify(scopeQuery)
+            });
         });});});
     });
 });

@@ -91,20 +91,29 @@
                 <option class="selOpt" value="3">High</option>
             </select></td>
         <th class="issueTH">Issue Type</th>  
-        <td class="issueVals"><input id="TIssueType" class="testKbIn" type="text" placeholder="Issue Type" /></td>                
+        <td class="issueVals"><input id="TIssueType" class="testKbIn" type="text" placeholder="Issue Type" /></td>
+    </tr>
+</table>
 
-<!--
-        <th class="issueTH">Standards</th>
-        <td class="issueVals"> 
+<table class="issueTab">
+    <tr class="iTR">                        
+        <th class="issueTH">Standards</th>   
+        <td class="issueVals">
             <input type="checkbox" id="TPCI"     class="testKbCB" value="PCI" 
-                   title="PCI-DSS Compliance Test">PCI
+                   title="PCI-DSS Compliance Test">PCI 
             <input type="checkbox" id="TTop10"   class="testKbCB" value="Top10" 
-                   title="OWASP Top 10 Test">T10
+                   title="OWASP Top 10 Test">T10 
             <input type="checkbox" id="TTop25"   class="testKbCB" value="Top25" 
-                   title="SANS Top 25 Most Dangerous Software Errors Tests">T25
+                   title="SANS Top 25 Most Dangerous Software Errors Tests">T25 
             <input type="checkbox" id="TStdTest" class="testKbCB" value="StdTest" 
-                   title="My own list of Standard Tests">Std</td></tr>
--->
+                   title="My own list of Standard Tests">Std 
+        </td>                
+        <th class="issueTH"></th>  
+        <td class="issueVals"></td>
+    </tr>
+</table>
+
+<table class="issueTab">    
     <tr class="iTR">
         <th class="issueTH">Issue Ref1</th> 
         <td class="issueVals"><a href="#" id="TRef1A" target="TRWin">&gt;</a> 
@@ -160,12 +169,13 @@
 {{> findings}}
 
 <hr/>
-<div class="prjMeta">Metadata</div>
+<div class="prjMeta">Project Information:</div>
 <ul>
     <li class="prjMeta">Status:      <span class="prjMeta" id="StatusMsg"></span></li>
     <li class="prjMeta">Last TID:    <span class="prjMeta" id="LastTID"></span></li>
     <li class="prjMeta">PrjName:     <span class="prjMeta" id="PrjName">{{prj.name}}</span></li>
     <li class="prjMeta">Scope:       <span class="prjMeta" id="PrjNotes">{{prj.notes}}</span></li>
+    <li class="prjMeta">ScopeQuery:  <span class="prjMeta" id="PrjNotes">{{ScopeQuery}}</span></li>
     <li class="prjMeta">Software:    <span class="prjMeta" id="PrjSoftware">{{prj.software}}</span></li>
 </ul>
 
@@ -176,7 +186,9 @@
     var prjName      = "{{prj.name}}";
     var gTestRefBase = "{{TestRefBase}}";
     var gCweUriBase  = "{{CweUriBase}}";
-    
+    var cveRptBase      = "{{{CveRptBase}}}";
+    var cveRptSuffix    = "{{{CveRptSuffix}}}";    
+    var softwareLinks = getSoftwareLinks("{{prj.software}}");    
     
     $( document ).ready(function() {
         let testCount = $("#testList").prop("options").length;
