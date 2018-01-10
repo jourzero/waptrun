@@ -58,7 +58,7 @@ passport.use('local-signin', new LocalStrategy(
 ));
 
 // Use the LocalStrategy within Passport to Register/"signup" users.
-// EP: Remove below for now.
+// TODO: Renable below later (maybe)
 //passport.use('local-signup', new LocalStrategy(
 //  {passReqToCallback : true}, //allows us to pass back the request to the callback
 //  function(req, username, password, done) {
@@ -165,11 +165,13 @@ app.get('/signin', function(req, res){
 });
 
 //sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
+/* TODO: Reenable later (maybe)
 app.post('/local-reg', passport.authenticate('local-signup', {
   successRedirect: '/',
   failureRedirect: '/signin'
   })
 );
+*/
 
 //sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
 app.post('/login', passport.authenticate('local-signin', { 
