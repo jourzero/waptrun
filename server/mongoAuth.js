@@ -3,7 +3,7 @@ var Q = require('q');
 var config = require('../config.js'); //config file contains all tokens and other private info
 
 // MongoDB connection information
-var mongodbUrl = config.mongodbUrl; //mongodb://' + config.mongodbHost + ':27017/users';
+var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 var MongoClient = require('mongodb').MongoClient;
 
 //used in local-signup strategy
