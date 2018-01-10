@@ -18,6 +18,9 @@ var multer = require('multer');
 var config = require('./config.js'); 
 var mongoAuth = require('./server/mongoAuth.js');
 
+// ========================================== GET CONFIG ==========================================
+var port       = process.env.PORT        || config.port;
+var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
@@ -90,11 +93,13 @@ function ensureAuthenticated(req, res, next) {
 var app = express();
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(bodyParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser());
+//app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 app.use(methodOverride());
-app.use(session({ secret: 'supernova' }));
+//app.use(session({ secret: 'supernova' }));
 app.use(session({ resave: true,
                   saveUninitialized: true,
                   secret: 'eugaefoiu' }));
@@ -142,7 +147,7 @@ app.set('view engine', '.hbs');
 // Test 3
 var mongo = require('mongodb');
 var monk = require('monk');
-var mongodbUrl = config.mongodbUrl;
+var mongodbUrl = mongodbUrl;
 var db = monk(mongodbUrl);
 app.use(function(req,res,next){
     req.db = db;
@@ -208,7 +213,7 @@ app.get('/project/:prjName', ensureAuthenticated, function (req, res) {
 
     // Fetch from project collection
     var prjColl = db.get("project");
-    var prjRegex = {$regex : config.PrjSubset}; 
+    var prjRegex = {$regex : prjSubset}; 
     var prjSubset = {"name" : prjRegex};
     console.log("Checking if entry exists for project " + prjName);
     prjColl.findOne({$and: [ {name: prjName}, prjSubset]}, function(e, prj) {
@@ -223,7 +228,7 @@ app.get('/project/:prjName', ensureAuthenticated, function (req, res) {
 
 app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
     
-    // TODO Check name
+    // TODO Check prjName
     var prjName = req.params.prjName;
     var prjRegex = {$regex : config.PrjSubset}; 
     var prjSubset = {"name" : prjRegex};
@@ -244,18 +249,14 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
         let StdTests   = prj.StdTests;
         
         // Build scope query
+        //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
         let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
         if (PciTests || Top10Tests || Top25Tests || StdTests){
             let filter = {};
-            filter = {TPCI: PciTests};
-            filter = {"$or": [filter, {TTop10  : Top10Tests}]};
-            filter = {"$or": [filter, {TTop25  : Top25Tests}]};
-            filter = {"$or": [filter, {TStdTest: StdTests}]};
-            //{"$and":[{"$and":[{"$and":[{"$and":[{"$or":[{"TSource":"OWASP-TG4"},{"TSource":"Extras"}]},{"TPCI":true}]},{"TTop10":true}]},{"TTop25":true}]},{"TStdTest":true}]}            
-            //scopeQuery = PciTests   ? { $and: [scopeQuery, {TPCI: true} ]}     : scopeQuery;
-            //scopeQuery = Top10Tests ? { $and: [scopeQuery, {TTop10: true} ]}   : scopeQuery;
-            //scopeQuery = Top25Tests ? { $and: [scopeQuery, {TTop25: true} ]}   : scopeQuery;
-            //scopeQuery = StdTests   ? { $and: [scopeQuery, {TStdTest: true} ]} : scopeQuery;        
+            if (PciTests)   filter = (JSON.stringify(filter).length<=2) ? {TPCI    : PciTests}   : {"$or": [filter, {TPCI    : PciTests}]};
+            if (Top10Tests) filter = (JSON.stringify(filter).length<=2) ? {TTop10  : Top10Tests} : {"$or": [filter, {TTop10  : Top10Tests}]};
+            if (Top25Tests) filter = (JSON.stringify(filter).length<=2) ? {TTop25  : Top25Tests} : {"$or": [filter, {TTop25  : Top25Tests}]};
+            if (StdTests)   filter = (JSON.stringify(filter).length<=2) ? {TStdTest: StdTests}   : {"$or": [filter, {TStdTest: StdTests}]};
             scopeQuery = {$and: [scopeQuery, filter]};        
         }
 
@@ -286,6 +287,8 @@ var testkbRes = require('./server/TestKBRes');
 var issueRes  = require('./server/IssueRes');
 var cweRes    = require('./server/CweRes');
 var reporting = require('./server/reporting');
+
+// TODO: check all these HTTP inputs
 app.get( '/api/project',                ensureAuthenticated, prjRes.findAll);
 app.get( '/api/project/:name',          ensureAuthenticated, prjRes.findByName);
 app.post('/api/project',                ensureAuthenticated, prjRes.create);
@@ -309,7 +312,6 @@ app.get( '/report/html/:prjName',       ensureAuthenticated, reporting.genPrjIss
 
 
 // ========================================== START LISTENER ==========================================
-var port = process.env.PORT || config.port;
 app.listen(port);
 console.log("Listening on port", port);
 

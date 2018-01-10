@@ -5,7 +5,7 @@ exports.findAll = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        res.send(404);
+        res.sendStatus(404);
     };
     projects.findAll(ok, err);
 };
@@ -15,8 +15,7 @@ exports.findById = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     projects.findById(req.params.id, ok, err);
 };
@@ -26,8 +25,7 @@ exports.findByName = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     projects.findByName(req.params.name, ok, err);
 };
@@ -35,10 +33,10 @@ exports.findByName = function(req, res) {
 exports.create = function(req, res) {
     var ok = function(doc) {
         res.location('/projects/doc._id');
-        res.send(201);
+        res.sendStatus(201);
     };
     var err = function(err) {
-        res.send(409, "Failed to create object");
+        res.sendStatus(409);
     };
     projects.create(req.body, ok, err);
 };
@@ -48,10 +46,10 @@ exports.update = function(req, res) {
     //        res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
-            res.send(409, "update failed");
+            res.sendStatus(409);
         };
         projects.update(req.params.name, req.body, ok, err);
     //}
@@ -62,7 +60,7 @@ exports.removeById = function(req, res) {
         res.send(404, "id required");
     } else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "Failed to remove object");
@@ -76,7 +74,7 @@ exports.removeByName = function(req, res) {
     //    res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "Failed to remove object");

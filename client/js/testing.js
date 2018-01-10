@@ -133,7 +133,8 @@ function evtDeleteIssue(event) {
         console.log("-- Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
-    console.log("Reloading the page");
+    console.log("About to reload the page");
+    alert("Deleted issue. Page will be reloaded to refresh the issue list.");
     location.reload();
 };
 
@@ -199,6 +200,7 @@ function evtIssueDataChanged(event) {
     }
     uiUpdateScreenshots();
     console.log("Reloading the page");
+    alert("Issue data changed. Page will be reloaded to refresh the issue list.");    
     location.reload();    
 };
 
@@ -235,7 +237,7 @@ function evtPasteScreenshot(event){
       let reader = new FileReader();
       reader.onload = function(event){
             let dataUrl = event.target.result;
-            let imgTag = "<p>CAPTION:<br/><img src='" + dataUrl + "' /></p>";
+            let imgTag = "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n\n";
             // Append the data URL to the Evidence field
             let iScreenshots = $("#IScreenshots").val();
             if ((iScreenshots === undefined)||(iScreenshots.length === 0)){
@@ -701,7 +703,7 @@ function uiUpdateFromIssueColl(testID) {
     }
     
     restGetIssue(testID, prjName, function(i){
-        if (i != null){
+        if (i !== null){
             //uiUpdateStatus("Received REST response for issue with Test ID " + testID);
             // Update UI values
             $("#IURIs").val(i.IURIs);
@@ -733,7 +735,7 @@ function uiUpdateStatus(msg){
 
 // Update the CVE links in the UI
 function getSoftwareLinks(software){
-    var swList = software.split(",");
+    var swList = software.trim().split(",");
     var swLinksHtml="";
     for (i=0; i<swList.length; i++){
         swLinksHtml += "<a class='smallLink' href='" 

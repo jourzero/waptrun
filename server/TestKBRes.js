@@ -5,7 +5,7 @@ exports.findAll = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        res.send(404);
+        res.sendStatus(404);
     };
     testkb.findAll(ok, err);
 };
@@ -15,8 +15,7 @@ exports.findById = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     testkb.findById(req.params.id, ok, err);
 };
@@ -26,8 +25,7 @@ exports.findByName = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     testkb.findByName(req.params.name, ok, err);
 };
@@ -37,8 +35,7 @@ exports.findByTID = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     testkb.findByTID(req.params.tid, ok, err);
 };
@@ -47,7 +44,7 @@ exports.findByTID = function(req, res) {
 exports.create = function(req, res) {
     var ok = function(doc) {
         res.location('/api/testkb/doc.TID');
-        res.send(201);
+        res.sendStatus(201);
     };
     var err = function(err) {
         res.send(409, "Failed to create object");
@@ -60,7 +57,7 @@ exports.update = function(req, res) {
     //        res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "update failed");
@@ -74,7 +71,7 @@ exports.removeById = function(req, res) {
         res.send(404, "id required");
     } else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "Failed to remove object");

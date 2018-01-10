@@ -46,7 +46,7 @@ exports.findIssue = function(req, res) {
     };
     var err = function(err) {
         //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     issue.findIssue(req.params.prjName, req.params.tid, ok, err);
 };
@@ -57,8 +57,7 @@ exports.findProjectIssues = function(req, res) {
         res.json(doc);
     };
     var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
+        res.sendStatus(404);
     };
     issue.findIssue(req.params.prjName, ok, err);
 };
@@ -83,7 +82,7 @@ exports.upsert = function(req, res) {
     //        res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "update failed");
@@ -117,7 +116,7 @@ exports.removeByName = function(req, res) {
     //    res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "Failed to remove object");
@@ -133,7 +132,7 @@ exports.removeAllForPrj = function(req, res) {
     //    res.send(404, "id required");
     //} else {
         var ok = function(doc) {
-            res.send(200);
+            res.sendStatus(200);
         };
         var err = function(err) {
             res.send(409, "Failed to remove object");
