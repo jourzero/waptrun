@@ -63,8 +63,8 @@ nbproject
 old
 package-lock.json
 /client/css/
-/client/js/bootstrap-3.3.7-dist/
-/client/js/jquery-3.2.1.min.js
+#/client/js/bootstrap-3.3.7-dist/
+#/client/js/jquery-3.2.1.min.js
 /client/json/
 /client/sec542/
 /client/sec642/
