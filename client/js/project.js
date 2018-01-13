@@ -44,7 +44,7 @@ $("textarea").click(function() {
     $(this).height(200);
 });
 $("textarea").blur(function() {
-    $(this).height(100);
+    $(this).height(15);
 });
 
 
