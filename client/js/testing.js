@@ -133,8 +133,7 @@ function evtDeleteIssue(event) {
         console.log("-- Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
-    console.log("About to reload the page");
-    alert("Deleted issue. Page will be reloaded to refresh the issue list.");
+    console.log("Page reloaded to refresh the issue list");
     location.reload();
 };
 
@@ -199,8 +198,7 @@ function evtIssueDataChanged(event) {
         $("#INotes").attr("title", issue.INotes);
     }
     uiUpdateScreenshots();
-    console.log("Reloading the page");
-    alert("Issue data changed. Page will be reloaded to refresh the issue list.");    
+    console.log("Page reloaded to refresh the issue list");
     location.reload();    
 };
 
