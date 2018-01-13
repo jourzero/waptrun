@@ -203,6 +203,7 @@ app.get('/', ensureAuthenticated, function(req, res) {
     coll.find(prjSubset, {sort: sortName}, function(e, projects) {
         res.render('home', {
             user: req.user,
+            TestRefBase: config.TestRefBase,            
             projects : projects});
     });
 });

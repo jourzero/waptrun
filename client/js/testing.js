@@ -612,14 +612,14 @@ function uiUpdateFromTestKB(testId) {
             $("#TTRef").val(rec.TTRef);
             let testRef = rec.TTRef;
             if ((testRef !== undefined)&&(!testRef.startsWith("http")))
-                testRef = gTestRefBase + testRef;
+                testRef = gTestRefBase + "/" + testRef;
+            $("#TTRefA").attr('href', testRef);
             
             /*
             $("#TTRef2").val(rec.TTRef2);
             let testRef2 = rec.TTRef2;
             if ((testRef2 !== undefined)&&(!testRef2.startsWith("http")))
                 testRef2 = gTestRefBase + testRef2;
-            $("#TTRefA").attr('href', testRef);
             $("#TTRef2A").attr('href', testRef2);
             */
 
