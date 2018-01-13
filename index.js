@@ -22,6 +22,8 @@ var mongoAuth = require('./server/mongoAuth.js');
 var port       = process.env.PORT        || config.port;
 var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 
+//console.log("Connecting to MongoDB at", mongodbUrl);
+
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
 passport.serializeUser(function(user, done) {
