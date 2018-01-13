@@ -23,8 +23,6 @@
     </tr>
 </table>    
     
-
-<!-- TEST KB DATA -->
 <table class="issueTab">
     <tr class="iTR"><th class="issueTH">Test Name</th>   <td class="issueVals">
             <input id="TTestName" class="testKbInShort" type="text" placeholder="Short name for test" />                    
@@ -55,7 +53,6 @@
     </tr>
 </table>
 
-<!-- Issue Name -->
 <table class="issueTab">
     <tr class="iTR">
         <th class="issueTH">Issue Name</th>  
@@ -63,7 +60,6 @@
                                      placeholder="Short issue name" /></td></tr>
 </table>
 
-<!-- Issue Background -->
 <table class="issueTab">
     <tr class="iTR">
         <th class="issueTH" title="Issue Background">Background</th>  
@@ -71,7 +67,6 @@
                                         placeholder="Provide some background for the issue."></textarea></td></tr>
 </table>
 
-<!-- Remediation Background -->
 <table class="issueTab">
     <tr class="iTR">
         <th class="issueTH" title="Remediation Background">Remediation</th>  
@@ -82,7 +77,7 @@
 <table class="issueTab">
     <tr class="iTR">                        
         <th class="issueTH">Severity</th>   
-        <td class="issueVals">
+        <td class="issueVals" width="80px">
             <select id="TSeverity" title="Priority" class="sevSelector" >
                 <option disabled selected  value="">Severity</option>
                 <option class="selOpt" value="0">Info</option>
@@ -90,6 +85,7 @@
                 <option class="selOpt" value="2">Medium</option>
                 <option class="selOpt" value="3">High</option>
             </select></td>
+            <!--
         <th class="issueTH">Issue Type</th>  
         <td class="issueVals"><input id="TIssueType" class="testKbIn" type="text" placeholder="Issue Type" /></td>
     </tr>
@@ -97,8 +93,9 @@
 
 <table class="issueTab">
     <tr class="iTR">                        
+            -->
         <th class="issueTH">Standards</th>   
-        <td class="issueVals">
+        <td class="issueVals" width="160px">
             <input type="checkbox" id="TPCI"     class="testKbCB" value="PCI" 
                    title="PCI-DSS Compliance Test">PCI 
             <input type="checkbox" id="TTop10"   class="testKbCB" value="Top10" 
@@ -108,8 +105,6 @@
             <input type="checkbox" id="TStdTest" class="testKbCB" value="StdTest" 
                    title="My own list of Standard Tests">Std 
         </td>                
-        <th class="issueTH"></th>  
-        <td class="issueVals"></td>
     </tr>
 </table>
 
