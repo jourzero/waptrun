@@ -64,7 +64,7 @@ $( "textarea" ).click(function() {
 });
 
 $( "textarea" ).blur(function() {
-    $( this ).height(100);
+    $( this ).height(15);
 });
 
 // When some fields are clicked, increase the text box size
