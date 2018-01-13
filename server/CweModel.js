@@ -1,6 +1,7 @@
 // export this module, so that it is accessible to our application modules
 module.exports = CWE;
 var config = require('../config.js'); 
+var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 
  
 // CWE constructor
@@ -12,7 +13,7 @@ function CWE() {
         // require mongodb
         var mongo = require('mongodb');
         // Connect to our mongodb running on localhost and named 'test'
-        var db = require('monk')(config.mongodbUrl);
+        var db = require('monk')(mongodbUrl);
         // obtain a reference to our cwe collection within mongodb
         this.cwe = db.get('cwe');
 };

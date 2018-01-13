@@ -215,10 +215,9 @@ function evtNewTest(){
 
 
 // Show issue data when clicking in the Findings table
-function evtShowIssue(event) {
+function evtShowIssue() {
     let testId = $(this).attr("TID");
     console.log('-- Show issue event for TID ' + testId);
-    console.log(event.target.id + "=" + event.target.value);    
     uiUpdateFromTestKB(testId);
     uiUpdateFromIssueColl(testId);
 };

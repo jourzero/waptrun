@@ -216,7 +216,7 @@ app.get('/project/:prjName', ensureAuthenticated, function (req, res) {
 
     // Fetch from project collection
     var prjColl = db.get("project");
-    var prjRegex = {$regex : prjSubset}; 
+    var prjRegex = {$regex : config.PrjSubset}; 
     var prjSubset = {"name" : prjRegex};
     console.log("Checking if entry exists for project " + prjName);
     prjColl.findOne({$and: [ {name: prjName}, prjSubset]}, function(e, prj) {
