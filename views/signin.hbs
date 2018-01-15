@@ -11,13 +11,15 @@
 </p>
  
   <div id="local" class="collapse">
--->
   <div id="local" class="collapse-EP-RENAMED">
     <a data-toggle="collapse" href="#local-sign-in" class="btn btn-default btn-md" role="button">I already have an account</a>
     <a data-toggle="collapse" href="#local-reg" class="btn btn-default btn-md" role="button">I need to create an account</a>
   </div>
+-->
 
-  <form id="local-sign-in" class="collapse" action="/login" method="post" >
+ 
+  <!-- <form id="local-sign-in" class="collapse" action="/login" method="post" > -->
+  <form id="local-sign-in" action="/login" method="post" >
     <div>
         <p></p>
         <label>Username:</label>
@@ -32,8 +34,9 @@
     </div>
   </form>
 
+<!-- TODO: Renable below div later (maybe) -->
+<!--
   <form id="local-reg" class="collapse" action="/local-reg" method="post">
-    <!-- TODO: Renable below div later (maybe) -->
     <div>DISABLED FOR NOW</div>
     
     <div>
@@ -49,6 +52,7 @@
         <input type="submit" class="btn btn-primary btn-sm" value="Register"/>
     </div>
   </form>
+-->
 </div>
 <script>
 $form['attributes']['autocomplete'] = 'on';
