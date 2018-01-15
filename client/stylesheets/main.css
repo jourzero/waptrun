@@ -135,12 +135,17 @@ button .kbBtn{
 .testKbIn{
     width: 98%;
 }
+
 .testKbInShort{
-    width: 89%;
+    width: 45%;
 } 
 
+.testKbInMedium{
+    width: 85%;
+}
+
 .testSection{
-    background-color: #ccc;
+    background-color: #aaf;
     font-weight: bold;
 }
 
