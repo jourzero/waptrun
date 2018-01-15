@@ -40,41 +40,31 @@
 
     
 <div class="testSection">Generic Issue Data (KB)</div> 
-<!-- CWE ID & SEARCH -->
 <table class="issueTab">
     <tr class="iTR">
         <th class="issueTH">CWE</th>
         <td class="issueVals" id='cweTD'>
             <input id="cweIn" type="text" list="cweDL" placeholder="Search by CWE Name">
-            <a class="issueA" target="cweTab" id="cweref" href="https://cwe.mitre.org/" title="Ref URI"></a></td>
-        <td class="issueVals">
+            <a class="issueA" target="cweTab" id="cweref" href="https://cwe.mitre.org/" title="Ref URI"></a>
             <button id="updateIssueBtn" class="kbBtn" title="Click this button when KB data is changed and the issue data needs to be updated.">Update Issue</button>
         </td>
     </tr>
-</table>
 
-<table class="issueTab">
     <tr class="iTR">
         <th class="issueTH">Issue Name</th>  
         <td class="issueVals"><input id="TIssueName" class="testKbIn" type="text" 
                                      placeholder="Short issue name" /></td></tr>
-</table>
 
-<table class="issueTab">
     <tr class="iTR">
         <th class="issueTH" title="Issue Background">Background</th>  
         <td class="issueVals"><textarea id="TIssueBackground" class="issueTA" rows="1" 
                                         placeholder="Provide some background for the issue."></textarea></td></tr>
-</table>
 
-<table class="issueTab">
     <tr class="iTR">
         <th class="issueTH" title="Remediation Background">Remediation</th>  
         <td class="issueVals"><textarea id="TRemediationBackground" class="issueTA" rows="1" 
                                         placeholder="Explain how this issue can generally be remediated."></textarea></td></tr>
-</table>
 
-<table class="issueTab">
     <tr class="iTR">                        
         <th class="issueTH">Severity</th>   
         <td class="issueVals">
@@ -84,18 +74,8 @@
                 <option class="selOpt" value="1">Low</option>
                 <option class="selOpt" value="2">Medium</option>
                 <option class="selOpt" value="3">High</option>
-            </select></td>
-            <!--
-        <th class="issueTH">Issue Type</th>  
-        <td class="issueVals"><input id="TIssueType" class="testKbIn" type="text" placeholder="Issue Type" /></td>
-    </tr>
-</table>
+            </select>
 
-<table class="issueTab">
-    <tr class="iTR">                        
-            -->
-        <th class="issueTH">Standards</th>   
-        <td class="issueVals">
             <input type="checkbox" id="TPCI"     class="testKbCB" value="PCI" 
                    title="PCI-DSS Compliance Test">PCI 
             <input type="checkbox" id="TTop10"   class="testKbCB" value="Top10" 
@@ -106,17 +86,14 @@
                    title="My own list of Standard Tests">Std 
         </td>                
     </tr>
-</table>
 
-<table class="issueTab">    
     <tr class="iTR">
-        <th class="issueTH">Issue Ref1</th> 
+        <th class="issueTH">Issue Ref</th> 
         <td class="issueVals"><a href="#" id="TRef1A" target="TRWin">&gt;</a> 
-            <input id="TRef1" class="testKbInShort" type="text" placeholder="Ref 1" /></td> 
-
-        <th class="issueTH">Issue Ref2</th>
-        <td class="issueVals"><a href="#" id="TRef2A" target="TRWin">&gt;</a> 
-            <input id="TRef2" class="testKbInShort" type="text" placeholder="Ref 2" /></td></tr>
+            <input id="TRef1" class="testKbInShort" type="text" placeholder="Ref 1" />
+            <a href="#" id="TRef2A" target="TRWin">&gt;</a> 
+            <input id="TRef2" class="testKbInShort" type="text" placeholder="Ref 2" /></td>
+    </tr>
 </table>
 
     
