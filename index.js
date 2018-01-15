@@ -10,7 +10,6 @@ var logger = require('morgan');
 var methodOverride = require('method-override');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var multer = require('multer');
 //var errorHandler = require('errorhandler');
 //var TwitterStrategy = require('passport-twitter');
 //var GoogleStrategy = require('passport-google');
