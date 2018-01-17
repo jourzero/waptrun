@@ -8,7 +8,7 @@ exports.genPrjIssueReportCSV = function(req, res){
     
     var ok = function(records) {
         console.log("Got " + records.length + " issue records for project " + prjName);
-        fileData += toCsv(records, prjName);
+        fileData += toCsv(records);
         res.set('Content-type',         'text/csv');
         res.set('Content-Disposition',  "attachment; filename=" + filename);
         res.set('Content-Length',       fileData.length);
