@@ -161,6 +161,7 @@ function toHtml(objArray, prjName) {
         //output += "body {font-family: 'Times New Roman', Georgia, Serif;}h1,h2,h3,h4,h5,h6 {font-family: 'Playfair Display';letter-spacing: 5px;}";
         output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}"
         output += "th,td{padding:5px;}"
+        output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}"
         output += "</style>"
 
         // Traverse the array of issue objects
@@ -219,8 +220,12 @@ function toHtml(objArray, prjName) {
             if ((obj.IURIs !== undefined)&&(obj.IURIs !== "")){
                 output += "<tr><th class='thID'>URI(s): </th><td class='tdID'><ol>";
                 var uri = obj.IURIs.split("\n");
-                for (var j=0; j<uri.length; j++)
-                    output += "<li>" + htmlEncode(uri[j], true, 4, false) + "</li>\n";
+                for (var j=0; j<uri.length; j++){
+                    if (uri[j].length > 14){
+                        // TODO: sanitize link
+                        output += "<li><a href='" + uri[j] + "'>" + htmlEncode(uri[j], true, 4, false) + "</a></li>\n";
+                    }
+                }
                 output += "</ol></td></tr>\n";
             }
             if ((obj.TSeverityText !== undefined)&&(obj.TSeverityText !== ""))
