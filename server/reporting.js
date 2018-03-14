@@ -159,11 +159,11 @@ function toHtml(objArray, prjName) {
         output += "body{width:1200px;}a{text-decoration:none;}\na:hover{color:purple;}.tdID{width:1100px;max-width:1100px;vertical-align:top;word-wrap:break-word;}.thID{text-align:right;vertical-align:top;width:80px;}th{vertical-align:top;}img{padding:1px;border:1px solid #021a40;}ol{padding-left:25px;}tr:nth-child(even){background:#EAEAEA;}tr:nth-child(odd){background:#F0F0F0;}";     
         output += ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}.Skip{background-color:#FFFFFF;}tr:nth-child(even){background:#e5e5e5;}tr:nth-child(odd){background:#F5F5F5;}";    
         //output += "body {font-family: 'Times New Roman', Georgia, Serif;}h1,h2,h3,h4,h5,h6 {font-family: 'Playfair Display';letter-spacing: 5px;}";
-        output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}"
-        output += "th,td{padding:5px;}"
-        output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}"
-        output += "pre{white-space: pre-wrap;}"
-        output += "</style>"
+        output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}";
+        output += "th,td{padding:5px;}";
+        output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}";
+        output += "pre{white-space: pre-wrap;}";
+        output += "</style>";
 
         // Traverse the array of issue objects
         output += "</head>\n<body>\n";
