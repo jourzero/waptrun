@@ -162,6 +162,7 @@ function toHtml(objArray, prjName) {
         output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}"
         output += "th,td{padding:5px;}"
         output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}"
+        output += "pre{white-space: pre-wrap;}"
         output += "</style>"
 
         // Traverse the array of issue objects
