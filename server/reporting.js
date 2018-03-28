@@ -71,7 +71,7 @@ function toCsvValue(theValue, sDelimiter) {
     if (theValue === null)
         theValue = "";
     theValue = String(theValue);
-    theValue.replace(/"/g, '""');
+    theValue = theValue.replace(/"/g, '""');
 
     if (typeof (sDelimiter) === "undefined" || sDelimiter === null) {
             sDelimiter = '"';
