@@ -115,7 +115,7 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
                 // Loop through the names
                 for (name in obj) {
                     if (obj.hasOwnProperty(name)) {
-                        if ((name !== 'IEvidence') && (name !== 'IScreenshots') && (name !== 'INotes')){
+                        if ((name !== 'IEvidence') && (name !== 'IScreenshots')){// && (name !== 'INotes')){
                             names.push(name);
                             row += [sDelimiter, name, sDelimiter, cDelimiter].join("");
                         }
@@ -129,7 +129,7 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
             row = "";
             for (n = 0, nl = names.length; n < nl; n += 1) {
                 name = names[n];
-                if ((name !== 'IEvidence') && (name !== 'IScreenshots') && (name !== 'INotes')){
+                if ((name !== 'IEvidence') && (name !== 'IScreenshots')){ // && (name !== 'INotes')){
                     value = obj[name];
                     if (n > 0) {
                         row += cDelimiter;
