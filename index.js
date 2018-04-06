@@ -255,7 +255,21 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
         
         // Build scope query
         //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
-        let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
+        let scopeQuery = "";
+        // Whitelist scope value
+        switch (prj.scopeQry) {
+            case "Default":
+                scopeQuery = '{ $or: [ {TSource: "OWASP-TG4"}, {TSource: "WAHH2"}, {TSource: "TBHM2015"}, {TSource: "Extras"} ] }';
+                break;
+            case "Extras":
+            case "TBHM2015":
+            case "OWASP-TG4":
+            case "SEC542":
+            case "SEC642":
+            case "WAHH2":
+            case "WebSvc":
+                scopeQuery = prj.scopeQry;}
+        
         if (PciTests || Top10Tests || Top25Tests || StdTests){
             let filter = {};
             if (PciTests)   filter = (JSON.stringify(filter).length<=2) ? {TPCI    : PciTests}   : {"$or": [filter, {TPCI    : PciTests}]};
