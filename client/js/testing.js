@@ -308,6 +308,7 @@ function uiChangeTest(testId){
 
 // Clear Issue Information
 function uiClearCweFields() {
+    console.log("Clearing CWE values");
     //$('#cwename').typeahead('val', "");
     $('#cweIn').val("");
     $('#cweref').attr('href', "");
@@ -584,7 +585,6 @@ function uiUpdateCwe(cweId) {
         });
     }
     else {
-        console.log("Clearing CWE values");
         uiClearCweFields();
     }
 };
