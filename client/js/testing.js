@@ -576,7 +576,7 @@ function uiUpdateCwe(cweId) {
                 }
                 
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
-                let issueRemediation = $("#TIssueRemediation").val();
+                let issueRemediation = $("#TRemediationBackground").val();
                 if (issueRemediation.length <= 0){
                     $("#TRemediationBackground").val(cwe.Potential_Mitigations);
                     data['TRemediationBackground'] = cwe.Potential_Mitigations;
