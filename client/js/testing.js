@@ -553,7 +553,7 @@ function uiUpdateCwe(cweId) {
                 uiUpdateStatus("Received REST response for CWE ID " + cweId);
 
                 // Update the description in the title (visible via hovering)
-                let descr = cwe.Name + ": " + cwe.Description_Summary;
+                let descr = cwe.Name + ": " + cwe.Description;
                 $('#cweref').attr('title', descr);
 
                 // If the issue name is empty, use the CWE name.
@@ -566,8 +566,8 @@ function uiUpdateCwe(cweId) {
                 // If the issue background is empty, use the CWE description.
                 let issueBG = $("#TIssueBackground").val();
                 if (issueBG.length <= 0){
-                    $("#TIssueBackground").val(cwe.Description_Summary);
-                    data['TIssueBackground'] = cwe.Description_Summary;
+                    $("#TIssueBackground").val(cwe.Description);
+                    data['TIssueBackground'] = cwe.Description;
                 }
                 // Update test data from UI changes related to changing the CWE
                 let testId = $('#testIn').val();
