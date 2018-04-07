@@ -314,7 +314,6 @@ function uiClearCweFields() {
     $('#cweref').attr('href', "");
     $('#cweref').html("");
     $('#cweref').attr('title', "");
-    
 };
 
 
@@ -575,6 +574,14 @@ function uiUpdateCwe(cweId) {
                     $("#TIssueBackground").val(cwe.Description);
                     data['TIssueBackground'] = cwe.Description;
                 }
+                
+                // If the issue remediation is empty, use the CWE Potential Mitigations.
+                let issueRemediation = $("#TIssueRemediation").val();
+                if (issueRemediation.length <= 0){
+                    $("#TRemediationBackground").val(cwe.Potential_Mitigations);
+                    data['TRemediationBackground'] = cwe.Potential_Mitigations;
+                }
+                
                 // Update test data from UI changes related to changing the CWE
                 let testId = $('#testIn').val();
                 data['TCweID'] = cweId;
