@@ -623,7 +623,10 @@ function uiUpdateFromTestKB(testId) {
             $("#TTRef2A").attr('href', testRef2);
             */
 
-            $("#cweIn").val(rec.TCweID);
+            $('#cweIn').val(rec.TCweID);
+            $('#cweref').attr('href', gCweUriBase + rec.TCweID + ".html");
+            $('#cweref').html("CWE-"+rec.TCweID);
+            
             $("#TIssueName").val(rec.TIssueName);
             $("#TIssueName").attr('title', rec.TIssueName);
             $("#TIssueBackground").val(rec.TIssueBackground);
