@@ -578,8 +578,15 @@ function uiUpdateCwe(cweId) {
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
                 let issueRemediation = $("#TRemediationBackground").val();
                 if (issueRemediation.length <= 0){
-                    $("#TRemediationBackground").val(cwe.Potential_Mitigations);
-                    data['TRemediationBackground'] = cwe.Potential_Mitigations;
+                    let cweMitig = cwe.Potential_Mitigations;
+                    if (cweMitig !== undefined){
+                        cweMitig = cweMitig.replace(/^::PHASE/, "PHASE");
+                        cweMitig = cweMitig.replace(/::PHASE/, "\n\nPHASE");
+                        cweMitig = cweMitig.replace(/:EFFECTIVENESS/, "\nEFFECTIVENESS");
+                        cweMitig = cweMitig.replace(/:DESCRIPTION/, "\nDESCRIPTION");
+                        $("#TRemediationBackground").val(cweMitig);
+                        data['TRemediationBackground'] = cweMitig;
+                    }
                 }
                 
                 // Update test data from UI changes related to changing the CWE
