@@ -309,8 +309,11 @@ function uiChangeTest(testId){
 // Clear Issue Information
 function uiClearCweFields() {
     //$('#cwename').typeahead('val', "");
+    $('#cweIn').val("");
     $('#cweref').attr('href', "");
     $('#cweref').html("");
+    $('#cweref').attr('title', "");
+    
 };
 
 
@@ -582,10 +585,7 @@ function uiUpdateCwe(cweId) {
     }
     else {
         console.log("Clearing CWE values");
-        $('#cweIn').val("");
-        $('#cweref').attr('href', "");
-        $('#cweref').html("");
-        $('#cweref').attr('title', "");
+        uiClearCweFields();
     }
 };
 
@@ -623,9 +623,14 @@ function uiUpdateFromTestKB(testId) {
             $("#TTRef2A").attr('href', testRef2);
             */
 
-            $('#cweIn').val(rec.TCweID);
-            $('#cweref').attr('href', gCweUriBase + rec.TCweID + ".html");
-            $('#cweref').html("CWE-"+rec.TCweID);
+            if (rec.TCWEID !== undefined){
+                $('#cweIn').val(rec.TCweID);
+                $('#cweref').attr('href', gCweUriBase + rec.TCweID + ".html");
+                $('#cweref').html("CWE-"+rec.TCweID);
+            }
+            else{
+                uiClearCweFields();
+            }
             
             $("#TIssueName").val(rec.TIssueName);
             $("#TIssueName").attr('title', rec.TIssueName);
