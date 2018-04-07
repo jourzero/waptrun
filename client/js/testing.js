@@ -580,11 +580,11 @@ function uiUpdateCwe(cweId) {
                 if (issueRemediation.length <= 0){
                     let cweMitig = cwe.Potential_Mitigations;
                     if (cweMitig !== undefined){
-                        cweMitig = cweMitig.replace(/^::PHASE/, "PHASE");
-                        cweMitig = cweMitig.replace(/::PHASE/, "\n\nPHASE");
-                        cweMitig = cweMitig.replace(/:STRATEGY/, "\nSTRATEGY");
-                        cweMitig = cweMitig.replace(/:EFFECTIVENESS/, "\nEFFECTIVENESS");
-                        cweMitig = cweMitig.replace(/:DESCRIPTION/, "\nDESCRIPTION");
+                        cweMitig = cweMitig.replace(/^::PHASE/g, "PHASE");
+                        cweMitig = cweMitig.replace(/::PHASE/g, "\n\nPHASE");
+                        cweMitig = cweMitig.replace(/:STRATEGY/g, "\nSTRATEGY");
+                        cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
+                        cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
                         $("#TRemediationBackground").val(cweMitig);
                         data['TRemediationBackground'] = cweMitig;
                     }
