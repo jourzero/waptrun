@@ -320,6 +320,7 @@ function uiClearCweFields() {
 
 // Clear Issue Information
 function uiClearIssueFields() {
+    console.log("Clearing Issue fields");
     var empty= "";
     $("#IURIs").val(empty);
     $("#IURIs").attr("title", empty);
@@ -337,6 +338,7 @@ function uiClearIssueFields() {
 
 // Clear Testing Information
 function uiClearTestingFields() {
+    console.log("Clearing Testing fields");    
     $("#testIn").val("");
     $("#TPhase").html("");
     $("#TSection").html("");
@@ -623,7 +625,7 @@ function uiUpdateFromTestKB(testId) {
             $("#TTRef2A").attr('href', testRef2);
             */
 
-            if (rec.TCWEID !== undefined){
+            if (rec.TCweID !== undefined){
                 $('#cweIn').val(rec.TCweID);
                 $('#cweref').attr('href', gCweUriBase + rec.TCweID + ".html");
                 $('#cweref').html("CWE-"+rec.TCweID);
