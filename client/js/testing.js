@@ -582,6 +582,7 @@ function uiUpdateCwe(cweId) {
                     if (cweMitig !== undefined){
                         cweMitig = cweMitig.replace(/^::PHASE/, "PHASE");
                         cweMitig = cweMitig.replace(/::PHASE/, "\n\nPHASE");
+                        cweMitig = cweMitig.replace(/:STRATEGY/, "\nSTRATEGY");
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS/, "\nEFFECTIVENESS");
                         cweMitig = cweMitig.replace(/:DESCRIPTION/, "\nDESCRIPTION");
                         $("#TRemediationBackground").val(cweMitig);
