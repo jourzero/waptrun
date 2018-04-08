@@ -298,7 +298,7 @@ function uiChangeTest(testId){
     
     // Update UI
     uiUpdateFromTestKB(testId);
-    uiUpdateFromIssueColl(testId);
+    uiUpdateFromIssueColl(testId); // TODO: comment out 
     
     // Update LastTID
     $("#LastTID").html(testId);

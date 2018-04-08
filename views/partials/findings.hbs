@@ -12,7 +12,7 @@
                     <th class="isTH">Severity</th>
                 </tr>
                 {{#issues}}
-                    <tr class="{{IPriorityText}}Priority" tid='{{TID}}' id='{{TID}}'>
+                    <tr class="{{IPriorityText}}Priority" tid='{{TID}}' id='{{TID}}' _id='{{_id}}'>
                         <td class="issueDeleteTD" width="20px">
                             <button class="delete" title="Delete this issue" action="delete" tid='{{TID}}'>&times;</button></td>
                         <td class="issueTD" tid='{{TID}}'>{{IPriorityText}}</td>
