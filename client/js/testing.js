@@ -54,7 +54,6 @@ $('#INotes').on('blur', function (event) {
 $("#updateIssueBtn").on('click', evtIssueDataChanged);
 
 
-
 //==============================================================================
 //                               UI TWEAK EVENTS 
 //==============================================================================
@@ -78,6 +77,7 @@ $('#IURIs, #IEvidence, #IScreenshots, #PrjNotes, #TTesterSupport, #TIssueBackgro
         function (event) {
     $("#" + event.target.id).height(15);
 });
+
 
 //==============================================================================
 //                                FUNCTIONS 
@@ -136,6 +136,7 @@ function evtDeleteIssue(event) {
     console.log("Page reloaded to refresh the issue list");
     location.reload();
 };
+
 
 // Go to next test in the list
 function evtToNextTest() {
@@ -203,7 +204,7 @@ function evtIssueDataChanged(event) {
 };
 
 
-//TODO: Create a new test
+// Create a new test
 function evtNewTest(){
     console.log('-- New test event, creating a new empty test');
     restCreateTest();
@@ -214,9 +215,8 @@ function evtNewTest(){
 
 // Show issue data when clicking in the Findings table
 function evtShowIssue() {
-    let testId = $(this).attr("TID");
-    let mongoId = $(this).attr("_id");
-    console.log('-- Show issue event for TID=' + testId + ', _id=' + mongoId);
+    let testId = $(this).attr("tid");
+    console.log('-- Show issue event for TID ' + testId);
     uiUpdateFromTestKB(testId);
     uiUpdateFromIssueColl(testId);
 };
@@ -272,8 +272,6 @@ function evtTestInputChanged() {
 };
 
 
-
-
 // Update TestDB from UI data
 function evtTestKBDataChanged(event){
     let field = event.target.id;
@@ -299,7 +297,7 @@ function uiChangeTest(testId){
     
     // Update UI
     uiUpdateFromTestKB(testId);
-    uiUpdateFromIssueColl(testId); // TODO: comment out 
+    uiUpdateFromIssueColl(testId);
     
     // Update LastTID
     $("#LastTID").html(testId);
@@ -608,8 +606,6 @@ function uiUpdateCwe(cweId) {
 };
 
 
-
-
 // Update all UI fields from the Test KB
 function uiUpdateFromTestKB(testId) {
     console.log("Updating UI with test KB data");
@@ -752,8 +748,6 @@ function uiUpdateFromIssueColl(testID) {
 function uiUpdateStatus(msg){
     $("#StatusMsg").html(msg);
 }
-
-
 
 
 // Update the CVE links in the UI
