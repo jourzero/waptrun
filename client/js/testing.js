@@ -15,8 +15,9 @@ $('#btnBack').on('click', evtToPreviousTest);
 // When a test player button is changed, update the Testing and Generic Issue sections
 $('#btnNext').on('click', evtToNextTest);
 
-// Update UI when the user changes the CWE input
+// Update UI when the user changes the CWE input or double-clicks on the value
 $("#cweIn").on('blur', evtCweInputChanged);        
+$("#cweIn").on('dblclick', evtCweInputChanged);
 
 // When the New Test button is pressed, clear the UI and create another test
 $('#kbBtnNew').on('click', evtNewTest);
@@ -581,6 +582,8 @@ function uiUpdateCwe(cweId) {
                     if (cweMitig !== undefined){
                         cweMitig = cweMitig.replace(/^::PHASE/g, "PHASE");
                         cweMitig = cweMitig.replace(/::PHASE/g, "\n\nPHASE");
+                        cweMitig = cweMitig.replace(/:STRATEGY::/g, ":");
+                        cweMitig = cweMitig.replace(/:EFFECTIVENESS::/g, ":");
                         cweMitig = cweMitig.replace(/:STRATEGY/g, "\nSTRATEGY");
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
                         cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
