@@ -51,7 +51,10 @@ $('#INotes').on('blur', function (event) {
 });
 
 // Save Issue when KB data has changed
-$("#updateIssueBtn").on('click', evtIssueDataChanged);
+$("#updateIssueListBtn").on('click', evtIssueDataChanged);
+
+// Override Generic Issue data from CWE data
+$("#useCweIssueDataBtn").on('click', evtUseCweIssueData);
 
 
 //==============================================================================
@@ -121,7 +124,7 @@ function evtAddIssueTemplateText(event){
 function evtCweInputChanged(event) {
     let cweId = event.target.value;
     console.log('-- CWE input changed. CWE selected: ' + cweId);
-    uiUpdateCwe(cweId);    
+    uiUpdateCwe(cweId, false);    
 };
 
 
@@ -216,6 +219,15 @@ function evtShowIssue() {
     console.log('-- Show issue event for TID ' + testId);
     uiUpdateFromTestKB(testId);
     uiUpdateFromIssueColl(testId);
+};
+
+
+
+// Save issue data in UI to issue collection
+function evtUseCweIssueData() {
+    console.log("-- Overriding generic issue data from CWE data");
+    let cweId = $('#cweIn').val();
+    uiUpdateCwe(cweId, true);
 };
 
 
@@ -538,7 +550,7 @@ function uiUpdateScreenshots(){
 
 
 // Update UI with CWE data
-function uiUpdateCwe(cweId) {
+function uiUpdateCwe(cweId, forceUpdate) {
     console.log("Updating UI with CWE data");
     
     let rec={};
@@ -559,21 +571,21 @@ function uiUpdateCwe(cweId) {
 
                 // If the issue name is empty, use the CWE name.
                 let issueName = $("#TIssueName").val();
-                if (issueName.length <= 0){
+                if ((issueName.length <= 0 ) || forceUpdate){
                     $("#TIssueName").val(cwe.Name);
                     data['TIssueName'] = cwe.Name;
                 }
 
                 // If the issue background is empty, use the CWE description.
                 let issueBG = $("#TIssueBackground").val();
-                if (issueBG.length <= 0){
+                if ((issueBG.length <= 0) || forceUpdate){
                     $("#TIssueBackground").val(cwe.Description);
                     data['TIssueBackground'] = cwe.Description;
                 }
                 
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
                 let issueRemediation = $("#TRemediationBackground").val();
-                if (issueRemediation.length <= 0){
+                if ((issueRemediation.length <= 0) || forceUpdate){
                     let cweMitig = cwe.Potential_Mitigations;
                     if (cweMitig !== undefined){
                         cweMitig = cweMitig.replace(/^::PHASE/g, "PHASE");
