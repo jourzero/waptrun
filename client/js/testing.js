@@ -782,7 +782,11 @@ function reloadPage(msg){
     let testId = $("#testIn").val();
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
-    if (msg!==undefined)
-        alert(msg);
-    location.reload();    
+    if (msg!==undefined){
+        //alert(msg);
+        console.log(msg);
+    }
+    
+    setTimeout(function(){ location.reload(); }, 1000);
+    //location.reload();    
 }
