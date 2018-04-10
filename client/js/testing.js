@@ -133,8 +133,7 @@ function evtDeleteIssue(event) {
         console.log("-- Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
-    console.log("Reloading page to refresh the issue list");
-    reloadPage()
+    reloadPage("Reloading page to refresh the issue list")
 };
 
 
@@ -185,7 +184,7 @@ function evtToPreviousTest() {
 
 
 // Save issue data in UI to issue collection
-function evtIssueDataChanged(event) {
+function evtIssueDataChanged() {
     console.log("-- Issue data changed event");
     //let attrib = event.target.id;
     //let value  = event.target.value;
@@ -199,8 +198,7 @@ function evtIssueDataChanged(event) {
         $("#INotes").attr("title", issue.INotes);
     }
     uiUpdateScreenshots();
-    console.log("Reloading page to refresh the issue list");
-    reloadPage();    
+    reloadPage("Reloading page to refresh the issue list");    
 };
 
 
@@ -208,8 +206,7 @@ function evtIssueDataChanged(event) {
 function evtNewTest(){
     console.log('-- New test event, creating a new empty test');
     restCreateTest();
-    console.log("Reloading page to refresh the test list");
-    reloadPage()
+    reloadPage();
 };
 
 
@@ -768,11 +765,12 @@ function getSoftwareLinks(software){
 
 
 // Reload page
-function reloadPage(){
+function reloadPage(msg){
     // Update LastTID
     let testId = $("#testIn").val();
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
-    alert("Reloading page")
+    if (msg!==undefined)
+        alert(msg);
     location.reload();    
 }
