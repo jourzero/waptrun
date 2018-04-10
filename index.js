@@ -255,7 +255,7 @@ app.get('/testing/:prjName', ensureAuthenticated, function (req, res) {
         
         // Build scope query
         //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
-        let scopeQuery = "";
+        let scopeQuery = {};
         // Whitelist scope value
         switch (prj.scopeQry) {
             case "Default":
