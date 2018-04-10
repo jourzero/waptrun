@@ -319,11 +319,14 @@ app.get( '/api/testkb/:tid',            ensureAuthenticated, testkbRes.findByTID
 app.post('/api/testkb',                 ensureAuthenticated, testkbRes.create);
 app.put( '/api/testkb/:tid',            ensureAuthenticated, testkbRes.update);
 app.get( '/api/issue',                  ensureAuthenticated, issueRes.findAll);
-app.get( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.findIssue);
 app.get( '/api/issue/:prjName',         ensureAuthenticated, issueRes.findProjectIssues);
+app.delete('/api/issue/:prjName',       ensureAuthenticated, issueRes.removeAllForPrj);
+app.get( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.findIssue);
 app.put( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.upsert);
 app.delete('/api/issue/:prjName/:tid',  ensureAuthenticated, issueRes.removeByName);
-app.delete('/api/issue/:prjName',       ensureAuthenticated, issueRes.removeAllForPrj);
+app.get( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.findIssue);
+app.put( '/api/issue/:prjName/:tid',    ensureAuthenticated, issueRes.upsert);
+app.delete('/api/issue/:prjName/:tid',  ensureAuthenticated, issueRes.removeByName);
 app.get( '/api/cwe',                    ensureAuthenticated, cweRes.findAll);
 app.get( '/api/cwe/:id',                ensureAuthenticated, cweRes.findById);
 app.get( '/issues.csv',                 ensureAuthenticated, reporting.exportIssuesCSV);
