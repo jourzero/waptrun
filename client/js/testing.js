@@ -17,7 +17,6 @@ $('#btnNext').on('click', evtToNextTest);
 
 // Update UI when the user changes the CWE input or double-clicks on the value
 $("#cweIn").on('blur', evtCweInputChanged);        
-$("#cweIn").on('dblclick', evtCweInputChanged);
 
 // When the New Test button is pressed, clear the UI and create another test
 $('#kbBtnNew').on('click', evtNewTest);
@@ -52,7 +51,7 @@ $('#INotes').on('blur', function (event) {
 });
 
 // Save Issue when KB data has changed
-$("#updateIssueBtn").on('click', evtIssueDataChanged);
+$("#updateIssueBtn").on('click', evtUpdateIssueBtn);
 
 
 //==============================================================================
@@ -186,7 +185,7 @@ function evtToPreviousTest() {
 
 
 // Save issue data in UI to issue collection
-function evtIssueDataChanged(event) {
+function evtUpdateIssueBtn(event) {
     console.log("-- Issue data changed event");
     let attrib = event.target.id;
     let value  = event.target.value;
@@ -774,5 +773,6 @@ function reloadPage(){
     let testId = $("#testIn").val();
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
+    alert("Reloading page")
     location.reload();    
 }
