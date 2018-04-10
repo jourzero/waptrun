@@ -595,6 +595,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
                         cweMitig = cweMitig.replace(/:STRATEGY/g, "\nSTRATEGY");
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
                         cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
+                        cweMitig = cweMitig.replace(/::/g, "");
                         $("#TRemediationBackground").val(cweMitig);
                         data['TRemediationBackground'] = cweMitig;
                     }
