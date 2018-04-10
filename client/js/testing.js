@@ -51,7 +51,7 @@ $('#INotes').on('blur', function (event) {
 });
 
 // Save Issue when KB data has changed
-$("#updateIssueBtn").on('click', evtUpdateIssueBtn);
+$("#updateIssueBtn").on('click', evtIssueDataChanged);
 
 
 //==============================================================================
@@ -185,10 +185,10 @@ function evtToPreviousTest() {
 
 
 // Save issue data in UI to issue collection
-function evtUpdateIssueBtn(event) {
+function evtIssueDataChanged(event) {
     console.log("-- Issue data changed event");
-    let attrib = event.target.id;
-    let value  = event.target.value;
+    //let attrib = event.target.id;
+    //let value  = event.target.value;
     issue = uiGetIssue();
     if (issue !== undefined){
         restUpdateIssue(issue);
