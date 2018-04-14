@@ -7,13 +7,13 @@ function FindProxyForURL(url, host) {
       (shExpMatch(host, "burp")) ||
       (shExpMatch(host, "k1")) ||
       (shExpMatch(host, "nodegoat")) ||
-      (shExpMatch(url, "*/mutillidae/*")) ||
+      (shExpMatch(url, "*mutillidae*")) ||
       (shExpMatch(url, "https://127.0.0.1:8443*")))
     pacValue = "PROXY 127.0.0.1:8080";
 
     // If this is a swiss target, use SSH tunnel
   else if ((shExpMatch(host, "*.ch")) || 
-           (shExpMatch(host, "waptr.jourzero.com"))   ||              
+           (shExpMatch(host, "waptr*"))   ||              
            //(shExpMatch(host, "k1"))   ||              
            (shExpMatch(host, "ssh-proxied.local")))
     pacValue = "SOCKS 127.0.0.1:9999";
