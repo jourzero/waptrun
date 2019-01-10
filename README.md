@@ -1,8 +1,42 @@
 # Web App Pen Test Runner
 
-This is a tool that helps me run through web app pen tests by stepping through various tests and log issues easily without taking too much screen space. 
+## Overview
 
-It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB.
+This is a tool that has helped me run through web app pen tests by stepping through various tests and log issues easily without taking too much screen space -- i.e. allowing tiling of the web app on left side of the screen (~75% width) and this web app on the right (~25% width). 
+
+It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB to persist the results and to evolve a Security Testing KB over time, from your own testing. It can easily run in a lightweight Docker container and it allows for multiple testers to contribute on the same or different projects from the same Node server or the same MongoDB (issues are logged as quickly and atomically as possible). It's not impossible to experience some synchronization issues while working collaboratively but it is assumed that concurrent testing is done while using a collaboration tool like Slack/Teams/Skype.
+
+## Basic Idea
+This project was initiated when I started spending more time doing app security testing. I felt challenged trying to streamline my testing while trying to maximize coverage, trying to avoid missing special stuff and trying to capture useful findings easily. In other words, I needed something to help keep my mind free, focused and engaged.
+
+Methodologies are supposed to be good for test streamlining but they are traditionally not that good at reducing the time it takes to test and they prevent us from adjusting our strategy based on signs of weaknesses and choosing the right rabbit hole. However, I have to say that The Bug Hunter Methodology is the closest thing I can think of that can qualify as a nearly-repetitive and methodical hacker approach. But it doesn't help to capture the results and stay focused by completing a testing mandate. The missing link is a targeted tool to avoid losing context while testing by capturing findings easily and iteratively.
+
+## Requirements and Design 
+The above Basic Idea was a statement of a bug hunter's frustrations that needed to be translated into a Design. Requirements and Design are blurred voluntarily to avoid losing track of _the thing_ I wanted to build. 
+
+The tool's approach should consider these general testing phases:
+
+* Phase 1: Define the test project scope and perform some high-level footprinting and architectural analysis. Fill the first project level (project page). Help put yourself in a test strategy mode.
+
+* Phase2: Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests (from OWASP, Portswigger, TBHM) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT. Use autocomplete features for the test name to search fo exiting tests and associated known-issue data (CWE).
+
+* Phase 3: Once you have enough payloads, perform some targeted scanning from interesting requests. Save important scanner issues into the tool as Issues (copy-paste text into the Evidence field). These automated test results will help build attack scenarios or think of manual tests to conduct.
+
+* Phase 4: Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. Capture screenshots and paste them into the Paste Area field.
+
+* Phase 5: Look at all accumulated results and try to build a successful attack that'll compromise the system or provide sufficient worry about the security of the system. Capture payloads and screenshots and explain the risk. Search for the closest CWE that provides background for the issue and add our expert opinions. 
+
+* Phase 6: Generate an HTML report and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
+
+## Additional Criteria
+
+* Keep the app's window small and useful. Use field auto-expansion to avoid scrolling and to provide a compact snapshot of results.
+* Avoid too many clicks by keeping all inputs in a single window and use UI automations and artifacts (mouse hovering, links).
+* Simplify remediation efforts:
+	* Export to a single-page HTML for easy pasting into emails or documents or to attach to ticketing systems. 
+	* Export to CSV to help PMs with remediation tracking.
+* Keep history of remediated issues (use Priority = Remediated)
+* Separate field for Severity and Priority. The latter is representative of risk and other factors that should adjust how quickly we should implement a fix.
 
 ## Current Features
 * Multi-project
@@ -26,7 +60,9 @@ It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB.
     * Screenshots are included in reports.
 * User Authentication with Passport, and MongoDB. 
 * Serve static content with Express.js
+* App was dockerized
 
 ## TODOs
-* RBAC
-* Push sanitized subset of my MongoDB 
+* Provide import data and scripts for TestKB into MongoDB 
+* OAuth to Google and Github to avoid storing hashes
+* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization).
