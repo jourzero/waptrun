@@ -131,5 +131,5 @@ $ docker run -p 127.0.0.1:5000:5000 -d "$IMG_NAME"
 ## TODOs
 * Remove links to my local possibly-copyrighted and methodology files/text (SANS, WAHH)
 * Add import data and scripts for TestKB into MongoDB 
-* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization, fix static scanner findings, support OAuth to avoid keeping hashes)
+* Improve server-side security (use Helmet, tighter input validations/sanitization, fix static scanner findings, support OAuth to avoid keeping hashes)
 
