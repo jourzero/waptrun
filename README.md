@@ -71,7 +71,7 @@ Add notes by filling the template to explain the issue in details, the risk, the
 
 ### Phase 6
 
-Generate an HTML and CSVreport and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
+Generate an HTML or CSV report and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
 * HTML Export: ![HTML Report](screenshots/p6a.png)
 * CSV Export: ![CSV Report](screenshots/p6b.png)
 
@@ -85,6 +85,10 @@ Generate an HTML and CSVreport and review it. Tweak your findings and regenerate
 	* Export to CSV to help PMs with remediation tracking.
 * Keep history of remediated issues (use Priority = Remediated)
 * Separate field for Severity and Priority. The latter is representative of risk and other factors that should adjust how quickly we should implement a fix.
+
+Resulting Page:
+![Compact Test Runner](screenshots/c1.png)
+
 
 ## Current Features
 * Multi-project
