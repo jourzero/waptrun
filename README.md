@@ -11,10 +11,10 @@ This project was initiated when I started spending more time doing app security 
 
 Methodologies are supposed to be good for test streamlining but they are traditionally not that good at reducing the time it takes to test and they prevent us from adjusting our strategy based on signs of weaknesses and choosing the right rabbit hole. However, I have to say that The Bug Hunter Methodology is the closest thing I can think of that can qualify as a nearly-repetitive and methodical hacker approach. But it doesn't help to capture the results and stay focused by completing a testing mandate. The missing link is a targeted tool to avoid losing context while testing by capturing findings easily and iteratively.
 
-## Requirements and Design 
-The above Basic Idea was a statement of a bug hunter's frustrations that needed to be translated into a Design. Requirements and Design are blurred voluntarily to avoid losing track of _the thing_ I wanted to build. 
+## Design focus
+The above Basic Idea was a statement of a bug hunter's frustrations that needed to be translated into a Design. Requirements and Design are blurred voluntarily to avoid losing track of _the thing_ to build. 
 
-The tool's approach should consider the following testing phases.
+The tool's design approach considered the Web App Pen Testing Workflow and Security Tester User Experience requirements.
 
 
 ### Phase 1 
