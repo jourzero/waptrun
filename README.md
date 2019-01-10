@@ -133,3 +133,6 @@ $ docker run -p 127.0.0.1:5000:5000 -d "$IMG_NAME"
 * Add import data and scripts for TestKB into MongoDB 
 * Improve server-side security (use Helmet, tighter input validations/sanitization, fix static scanner findings, support OAuth to avoid keeping hashes)
 
+## Snyk Results
+* Results from [Snyk Analysis](https://snyk.io/test/github/jourzero/waptrun):
+[![Known Vulnerabilities](https://snyk.io/test/github/jourzero/waptrun/badge.svg)](https://snyk.io/test/github/jourzero/waptrun)
