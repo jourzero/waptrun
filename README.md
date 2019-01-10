@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a tool that has helped me run through web app pen tests by stepping through various tests and log issues easily without taking too much screen space -- i.e. allowing tiling of the web app on left side of the screen (~75% width) and this web app on the right (~25% width). 
+This is a tool that has helped me run through web app pen tests by stepping through various tests and log issues easily without taking too much screen space -- i.e. allowing tiling of the AUT on the left side of the screen (~75% width) and this test runner app on the right (~25% width). 
 
 It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB to persist the results and to evolve a Security Testing Knowledge Base over time, from our own testing. It can easily run in a lightweight Docker container and it allows for multiple testers to contribute on the same or different projects from the same Node server or the same MongoDB (issues are logged as quickly and atomically as possible). It's not impossible to experience some data update issues while working collaboratively but it is assumed that concurrent testers communicate via Slack/Teams/Skype while dividing and conquering.
 
