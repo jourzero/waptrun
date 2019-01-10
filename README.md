@@ -49,9 +49,13 @@ Once you have enough payloads, perform some targeted scanning from interesting r
 
 ### Phase 4
 
-Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. Capture screenshots and paste them into the Paste Area field.
+Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. 
+
+Capture screenshots and paste them into the Paste Area field.
 
 ![Paste Screenshots](screenshots/p4.png)
+
+
 
 
 ### Phase 5
@@ -59,6 +63,10 @@ Execute some targeted manual tests. Look at the scanner findings, use your judgm
 Look at all accumulated results and try to build a successful attack that'll compromise the system or provide sufficient worry about the security of the system. Capture payloads and screenshots and explain the risk. Search for the closest CWE that provides background for the issue and add our expert opinions. 
 
 ![CWE Search](screenshots/p5.png)
+
+Add notes by filling the template to explain the risk, the reproducibility, etc.
+
+![Add Notes](screenshots/p5b.png)
 
 
 ### Phase 6
