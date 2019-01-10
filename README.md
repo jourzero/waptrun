@@ -16,17 +16,50 @@ The above Basic Idea was a statement of a bug hunter's frustrations that needed 
 
 The tool's approach should consider these general testing phases:
 
-* Phase 1: Define the test project scope and perform some high-level footprinting and architectural analysis. Fill the first project level (project page). Help put yourself in a test strategy mode.
 
-* Phase2: Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests (from OWASP, Portswigger, TBHM) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT. Use autocomplete features for the test name to search fo exiting tests and associated known-issue data (CWE).
+### Phase 1 
 
-* Phase 3: Once you have enough payloads, perform some targeted scanning from interesting requests. Save important scanner issues into the tool as Issues (copy-paste text into the Evidence field). These automated test results will help build attack scenarios or think of manual tests to conduct.
+Define the test project scope and perform some high-level footprinting and architectural analysis. Fill the first project level (project page). Help put yourself in a test strategy mode. 
 
-* Phase 4: Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. Capture screenshots and paste them into the Paste Area field.
+![Project Details](screenshots/p1.png)
 
-* Phase 5: Look at all accumulated results and try to build a successful attack that'll compromise the system or provide sufficient worry about the security of the system. Capture payloads and screenshots and explain the risk. Search for the closest CWE that provides background for the issue and add our expert opinions. 
 
-* Phase 6: Generate an HTML report and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
+### Phase2
+
+Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests (from OWASP Testing Guide, Portswigger, Bug Hunter's Methodology) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT. 
+
+![Browse for Tests](screenshots/p2a.png). 
+![Search for Tests](screenshots/p2b.png). 
+
+
+### Phase 3
+
+Once you have enough payloads, perform some targeted scanning from interesting requests. Save important scanner issues into the tool as Issues (use Burp Clipboarder extension to populate various fields with issue data). These automated test results will help build attack scenarios or think of manual tests to conduct.
+
+![Testing Screen](screenshots/p3.png). 
+
+
+
+### Phase 4
+
+Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. Capture screenshots and paste them into the Paste Area field.
+
+![Paste Screenshots](screenshots/p4.png)
+
+
+### Phase 5
+
+Look at all accumulated results and try to build a successful attack that'll compromise the system or provide sufficient worry about the security of the system. Capture payloads and screenshots and explain the risk. Search for the closest CWE that provides background for the issue and add our expert opinions. 
+
+![CWE Search](screenshots/p5.png)
+
+
+### Phase 6
+
+Generate an HTML and CSVreport and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
+* HTML Export: ![HTML Report](screenshots/p6a.png)
+* CSV Export: ![CSV Report](screenshots/p6b.png)
+
 
 ## Additional Criteria
 
