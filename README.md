@@ -71,22 +71,26 @@ Add notes by filling the template to explain the issue in details, the risk, the
 
 ### Phase 6
 
-Generate an HTML or CSV report and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
-* HTML Export: ![HTML Report](screenshots/p6a.png)
-* CSV Export: ![CSV Report](screenshots/p6b.png)
+Generate a report and review it. Tweak your findings and regenerate the report. Submit your report and call a review meeting after the team has had a chance to review or even comment on the report.
+
+Export to a single-file HTML for easy pasting or attachment into emails or ticketing systems:
+
+![HTML Report](screenshots/p6a.png)
+
+Export to CSV to help PMs with remediation tracking:
+
+![CSV Report](screenshots/p6b.png)
 
 
 ## Additional Criteria
 
 * Keep the app's window small and useful. Use field auto-expansion to avoid scrolling and to provide a compact snapshot of results.
 * Avoid too many clicks by keeping all inputs in a single window and use UI automations and artifacts (mouse hovering, links).
-* Simplify remediation efforts:
-	* Export to a single-page HTML for easy pasting into emails or documents or to attach to ticketing systems. 
-	* Export to CSV to help PMs with remediation tracking.
-* Keep history of remediated issues (use Priority = Remediated)
 * Separate field for Severity and Priority. The latter is representative of risk and other factors that should adjust how quickly we should implement a fix.
+* Keep history of remediated issues (use Priority = Remediated)
 
-Resulting Page:
+Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue List:
+
 ![Compact Test Runner](screenshots/c1.png)
 
 
