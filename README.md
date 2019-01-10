@@ -64,7 +64,7 @@ Look at all accumulated results and try to build a successful attack that'll com
 
 ![CWE Search](screenshots/p5.png)
 
-Add notes by filling the template to explain the risk, the reproducibility, etc.
+Add notes by filling the template to explain the issue in details, the risk, the impact, etc.
 
 ![Add Notes](screenshots/p5b.png)
 
