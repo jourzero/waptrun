@@ -27,12 +27,15 @@ Define the test project scope and perform some high-level footprinting and archi
 ### Phase2
 
 Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests (from OWASP Testing Guide, Portswigger, Bug Hunter's Methodology) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT:
+
 ![Browse for Tests](screenshots/p2a.png). 
 
 If browsing for a test is too cumbersome, search for it:
+
 ![Search for Tests](screenshots/p2b.png). 
 
 If you consider that a test is missing, add it:
+
 ![Adding new Tests](screenshots/p2c.png). 
 
 
