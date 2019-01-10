@@ -118,10 +118,13 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
 ``` bash
 $ git clone git@github.com:jourzero/waptrun.git
 $ cd waptrun
-$ echo "MONGODB_URL='mongodb://USERNAME:PASSWORD!@HOSTNAME:PORT/DBNAME'" > .env
+$ echo "MONGODB_URL='mongodb://USERNAME:PASSWORD!@HOSTNAME:PORT/DBNAME'" > .env # replace with real values. 
 $ docker build -t "$IMG_NAME" .
 $ docker run -p 127.0.0.1:5000:5000 -d "$IMG_NAME"
 ```
+
+## IMPORTANT NOTE
+* Without a starting MongoDB dataset, this app is useless for anyone else but me. See my pending TODO below...
 
 
 ## TODOs
