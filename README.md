@@ -17,14 +17,14 @@ The above Basic Idea was a statement of a bug hunter's frustrations that needed 
 The tool's design approach considered the Web App Pen Testing Workflow and Security Tester User Experience requirements.
 
 
-### Phase 1 
+### Phase 1
 
 Define the test project scope and perform some high-level footprinting and architectural analysis. Fill the first project level (project page). Help put yourself in a test strategy mode. 
 
 ![Project Details](screenshots/p1.png)
 
 
-### Phase2
+### Phase 2
 
 Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests (from OWASP Testing Guide, Portswigger, Bug Hunter's Methodology) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT:
 
@@ -46,7 +46,6 @@ Once you have enough payloads, perform some targeted scanning from interesting r
 ![Testing Screen](screenshots/p3.png). 
 
 
-
 ### Phase 4
 
 Execute some targeted manual tests. Look at the scanner findings, use your judgment from the technology, your gut feel and experience. Capture the interesting findings and dig deeper later. Copy/paste payloads into the Evidence field. 
@@ -54,8 +53,6 @@ Execute some targeted manual tests. Look at the scanner findings, use your judgm
 Capture screenshots and paste them into the Paste Area field.
 
 ![Paste Screenshots](screenshots/p4.png)
-
-
 
 
 ### Phase 5
@@ -118,7 +115,9 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
 * Serve static content with Express.js
 * App was dockerized
 
+
 ## TODOs
-* Provide import data and scripts for TestKB into MongoDB 
-* OAuth to Google and Github to avoid storing hashes
-* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization).
+* Add import data and scripts for TestKB into MongoDB 
+* Add support for OAuth to Google and/or Github to avoid keeping hashes
+* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization, fix static scanner findings).
+
