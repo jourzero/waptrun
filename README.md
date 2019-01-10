@@ -113,7 +113,15 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
     * Screenshots are included in reports.
 * User Authentication with Passport, and MongoDB. 
 * Serve static content with Express.js
-* App was dockerized
+* App was dockerized. Tested with:
+
+``` bash
+$ git clone git@github.com:jourzero/waptrun.git
+$ cd waptrun
+$ echo "MONGODB_URL='mongodb://USERNAME:PASSWORD!@HOSTNAME:PORT/DBNAME'" > .env
+$ docker build -t "$IMG_NAME" .
+$ docker run -p 127.0.0.1:5000:5000 -d "$IMG_NAME"
+```
 
 
 ## TODOs
