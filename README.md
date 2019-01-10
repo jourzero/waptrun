@@ -123,12 +123,13 @@ $ docker build -t "$IMG_NAME" .
 $ docker run -p 127.0.0.1:5000:5000 -d "$IMG_NAME"
 ```
 
+
 ## IMPORTANT NOTE
 * Without a starting MongoDB dataset, this app is useless for anyone else but me. See my pending TODO below...
 
 
 ## TODOs
+* Remove links to my local possibly-copyrighted and methodology files/text (SANS, WAHH)
 * Add import data and scripts for TestKB into MongoDB 
-* Add support for OAuth to Google and/or Github to avoid keeping hashes
-* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization, fix static scanner findings).
+* Improve server-side security (RBAC?, JWT instead of cookies?, use Helmet, tighter input validations/sanitization, fix static scanner findings, support OAuth to avoid keeping hashes)
 
