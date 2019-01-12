@@ -17,7 +17,7 @@ module.exports = {
 
         // Path to add to URI to show test reference details
         //'TestRefBase': "/WAPT",
-        'TestRefBase': "https://www.dropbox.com/home/static",
+        'TestRefBase': "https://k1/static",
 
         // Query for use to show a subset of available projects
         //PrjSubset    : "2016.*"
