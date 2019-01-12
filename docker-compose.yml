@@ -1,0 +1,17 @@
+version: "2"
+services:
+  app:
+    container_name: waptr
+    restart: always
+    build: .
+    ports:
+      - "5000:5000"
+    links:
+      - waptrdb
+  waptrdb:
+    container_name: waptrdb
+    volumes:
+      - "/tmp/backup:/backup"
+    image: mongo
+    ports:
+      - "27017:27017"
