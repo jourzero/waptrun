@@ -8,6 +8,7 @@
         -   [Get the code](#get-the-code)
         -   [Run](#run)
         -   [Stop](#stop)
+        -   [Browse to it](#browse-to-it)
     -   [Basic Idea](#basic-idea)
     -   [Design focus](#design-focus)
         -   [Phase 1](#phase-1)
@@ -57,6 +58,10 @@ $ docker exec -it waptrdb /bin/sh
 ```bash
 $ docker-compose stop
 ```
+
+### Browse to it
+
+Browse to http://localhost:5000
 
 ## Basic Idea
 
