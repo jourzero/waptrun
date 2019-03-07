@@ -384,9 +384,14 @@ app.get(
   reporting.genPrjIssueReportCSV
 );
 app.get(
-  "/report/html/:prjName",
+  "/report/html/findings/:prjName",
   ensureAuthenticated,
-  reporting.genPrjIssueReportHtml
+  reporting.genPrjIssueFindingsReportHtml
+);
+app.get(
+  "/report/html/full/:prjName",
+  ensureAuthenticated,
+  reporting.genPrjIssueFullReportHtml
 );
 
 // ========================================== START LISTENER ==========================================

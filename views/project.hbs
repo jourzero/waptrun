@@ -3,23 +3,23 @@
     <tr class="iTR">
         <th class="issueTH">Project</th>
         <td class="prjLeft">
-        <input type="text" id="PrjName" class="prjIn" placeholder="YYYYMM-APP-ENV" value="{{prj.name}}" />
-    </tr>        
+            <input type="text" id="PrjName" class="prjIn" placeholder="YYYYMM-APP-ENV" value="{{prj.name}}" />
+    </tr>
 
     <tr class="iTR">
         <th class="issueTH">Methodology</th>
         <td class="prjRight">
             <select id="ScopeSel" title="Scope" class="scopeSelector">
                 <option disabled selected>Test Subset</option>
-                <option class="scopeOpt" title="DEF" value="Default"     >Default</option>
-                <option class="scopeOpt" title="ALL" value=""            >All Tests</option>
-                <option class="scopeOpt" title="EXT" value="Extras"      >Extras</option>
-                <option class="scopeOpt" title="BHM" value="TBHM2015"    >Bug Hunter</option>
-                <option class="scopeOpt" title="TG4" value="OWASP-TG4"   >OWASP TG4</option>
-                <option class="scopeOpt" title="542" value="SEC542"      >SEC542</option>
-                <option class="scopeOpt" title="642" value="SEC642"      >SEC642</option>
-                <option class="scopeOpt" title="WAH" value="WAHH2"       >WAHH v2</option>
-                <option class="scopeOpt" title="WSV" value="WebSvc"      >Web Services</option>
+                <option class="scopeOpt" title="DEF" value="Default">Default</option>
+                <option class="scopeOpt" title="ALL" value="">All Tests</option>
+                <option class="scopeOpt" title="EXT" value="Extras">Extras</option>
+                <option class="scopeOpt" title="BHM" value="TBHM2015">Bug Hunter</option>
+                <option class="scopeOpt" title="TG4" value="OWASP-TG4">OWASP TG4</option>
+                <option class="scopeOpt" title="542" value="SEC542">SEC542</option>
+                <option class="scopeOpt" title="642" value="SEC642">SEC642</option>
+                <option class="scopeOpt" title="WAH" value="WAHH2">WAHH v2</option>
+                <option class="scopeOpt" title="WSV" value="WebSvc">Web Services</option>
                 <!--
                 <option class="scopeOpt" title="EXT" value="TPhase: 'Extras'"       >Extras</option>
                 <option class="scopeOpt" title="PCI" value="TPCI: true"             >PCI</option>
@@ -30,30 +30,33 @@
     </tr>
     <tr>
         <th class="issueTH">Subset</th>
-        <td class="issueVals"> 
-            <input type="checkbox" id="TPCI"     class="testKbCB" value="PCI"     title="PCI-DSS Compliance">PCI
-            <input type="checkbox" id="TTop10"   class="testKbCB" value="Top10"   title="OWASP Top 10">T10
-            <input type="checkbox" id="TTop25"   class="testKbCB" value="Top25"   title="SANS Top 25 Most Dangerous Software Errors">T25
-            <input type="checkbox" id="TStdTest" class="testKbCB" value="StdTest" title="My own list of Standard">Std        
+        <td class="issueVals">
+            <input type="checkbox" id="TPCI" class="testKbCB" value="PCI" title="PCI-DSS Compliance">PCI
+            <input type="checkbox" id="TTop10" class="testKbCB" value="Top10" title="OWASP Top 10">T10
+            <input type="checkbox" id="TTop25" class="testKbCB" value="Top25"
+                title="SANS Top 25 Most Dangerous Software Errors">T25
+            <input type="checkbox" id="TStdTest" class="testKbCB" value="StdTest" title="My own list of Standard">Std
         </td>
     </tr>
-    
+
     <!--
     <tr class="iTR" >
         <th class="issueTH">Resume at TID</th>
         <td class="prjLeft"><a id="lastTIDTxt"   class="tinyTD" title="Last Test ID" href="#{{prj.lastTID}}">{{prj.lastTID}}</a></td>
     </tr>
     -->
-    
+
     <tr class="iTR">
         <th class="issueTH">Scope</th>
-        <td class="prjLeft"><textarea id="PrjNotes" rows="2" placeholder="Take project notes here.">{{prj.notes}}</textarea></td>
-    </tr>  
-    
+        <td class="prjLeft"><textarea id="PrjNotes" rows="2"
+                placeholder="Take project notes here.">{{prj.notes}}</textarea></td>
+    </tr>
+
     <tr class="iTR">
         <th class="issueTH">Software</th>
         <td class="prjLeft">
-            <textarea id="PrjSoftware" class="testKbIn" placeholder="List of software components used by app (comma-separated)">{{prj.software}}
+            <textarea id="PrjSoftware" class="testKbIn"
+                placeholder="List of software components used by app (comma-separated)">{{prj.software}}
             </textarea> </td>
     </tr>
 
@@ -67,13 +70,18 @@
         <td class="prjLeft" id="LastTID">{{prj.lastTID}}</td>
     </tr>
 
-    
-    
+
+
 </table>
-    
-<button id="StartTesting"   class="button black" title="Start the test runner.">Start Testing</button>
-<button id="btnHtmlReport"  class="button black" title="Generate an issue report for this project in HTML and download it.">HTML Report</button>
-<button id="btnCsvReport"   class="button black" title="Generate an issue report for this project in CSV and download it.">CSV Report</button>
+
+<button id="StartTesting" class="button black" title="Start the test runner.">Start Testing</button>
+<button id="btnFindingsHtmlReport" class="button black"
+    title="Generate an findings report for this project in HTML and download it.">Findings Report</button>
+<button id="btnFullHtmlReport" class="button black"
+    title="Generate an full report (all issues except exclusions) for this project in HTML and download it.">Full
+    Report</button>
+<button id="btnCsvReport" class="button black"
+    title="Generate an issue report for this project in CSV and download it.">CSV Report</button>
 <!--
 <button id="btnCsvExport"   class="button black"       title="Export all issue data from all projects as CSV and download." onclick="window.open('/issues.csv', 'DownloadWin')">Export all</button>
 <button id="btnChecklist"   class="button black" title="Show methodology checklist.">Checklist</button>
@@ -85,19 +93,19 @@
 <script src="/js/rest.js"></script>
 <script src="/js/project.js"></script>
 <script>
-    var prjName         = "{{prj.name}}";
-    var cveRptBase      = "{{{CveRptBase}}}";
-    var cveRptSuffix    = "{{{CveRptSuffix}}}";
-    var scopeQry        = "{{{prj.scopeQry}}}";
+    var prjName = "{{prj.name}}";
+    var cveRptBase = "{{{CveRptBase}}}";
+    var cveRptSuffix = "{{{CveRptSuffix}}}";
+    var scopeQry = "{{{prj.scopeQry}}}";
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         $("#ScopeSel").val("{{{prj.scopeQry}}}");
         uiUpdateCveLinks();
-        $("#TPCI").prop('checked',     {{prj.PciTests}});
-        $("#TTop10").prop('checked',   {{prj.Top10Tests}});
-        $("#TTop25").prop('checked',   {{prj.Top25Tests}});
-        $("#TStdTest").prop('checked', {{prj.StdTests}});
+        $("#TPCI").prop('checked', {{ prj.PciTests }});
+    $("#TTop10").prop('checked', {{ prj.Top10Tests }});
+    $("#TTop25").prop('checked', {{ prj.Top25Tests }});
+    $("#TStdTest").prop('checked', {{ prj.StdTests }});
         
     });
-    
+
 </script>
