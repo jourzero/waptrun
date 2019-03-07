@@ -68,11 +68,11 @@ $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
 //==============================================================================
 // Dynamically adjust height of textareas when clicking in and out of them
 $("textarea").click(function() {
-  $(this).height(200);
+  $(this).height(350);
 });
 
 $("textarea").blur(function() {
-  $(this).height(15);
+  $(this).height(20);
 });
 
 // When some fields are clicked, increase the text box size
