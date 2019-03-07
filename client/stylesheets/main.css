@@ -242,3 +242,7 @@ tr .TODOPriority {
 tr .ExcludePriority {
   background-color: lightgray;
 }
+
+img {
+  max-width: 100%;
+}
