@@ -79,7 +79,7 @@ $("textarea").blur(function() {
 $(
   "#IURIs, #IEvidence, #IScreenshots, #INotes, c#PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
 ).on("click", function(event) {
-  $("#" + event.target.id).height(200);
+  $("#" + event.target.id).height(350);
 });
 
 // When some fields are unselected, decrease the text box size to a default height
