@@ -316,6 +316,7 @@ app.get("/testing/:prjName", ensureAuthenticated, function(req, res) {
       issuesColl.find(
         { PrjName: prjName },
         { sort: { IPriority: -1 } },
+        { collation: { locale: "en_US", numericOrdering: true } },
         function(e, issues) {
           cweColl.find({}, { sort: { ID: 1 } }, function(e, cwes) {
             res.render("testing", {
