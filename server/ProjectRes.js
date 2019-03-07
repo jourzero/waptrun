@@ -45,13 +45,13 @@ exports.update = function(req, res) {
     //if (!req.body._id) {
     //        res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.sendStatus(409);
-        };
-        projects.update(req.params.name, req.body, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.sendStatus(409);
+    };
+    projects.update(req.params.name, req.body, ok, err);
     //}
 };
  
@@ -73,13 +73,13 @@ exports.removeByName = function(req, res) {
     //if (!req.body._id) {
     //    res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.send(409, "Failed to remove object");
-        };
-        projects.removeByName(req.params.name, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.send(409, "Failed to remove object");
+    };
+    projects.removeByName(req.params.name, ok, err);
     //}
 };
         

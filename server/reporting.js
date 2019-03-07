@@ -58,7 +58,7 @@ exports.exportIssuesCSV = function(req, res){
         res.status(404).send('Sorry, there was an error when exporting: ' + err.message);
     };
     issue.findAll(ok, err);    
-}
+};
 
 
 /**
@@ -74,15 +74,15 @@ function toCsvValue(theValue, sDelimiter) {
     theValue = theValue.replace(/"/g, '""');
 
     if (typeof (sDelimiter) === "undefined" || sDelimiter === null) {
-            sDelimiter = '"';
+        sDelimiter = '"';
     }
 
     if (t === "undefined" || t === null) {
-            output = "";
+        output = "";
     } else if (t === "string") {
-            output = sDelimiter + theValue + sDelimiter;
+        output = sDelimiter + theValue + sDelimiter;
     } else {
-            output = String(theValue);
+        output = String(theValue);
     }
 
     return output;
@@ -97,50 +97,50 @@ function toCsvValue(theValue, sDelimiter) {
 * @return {string} The CSV equivalent of objArray.
 */
 function toCsv(objArray, sDelimiter, cDelimiter) {
-	var i, l, names = [], name, value, obj, row, output = "", n, nl;
+    var i, l, names = [], name, value, obj, row, output = "", n, nl;
 
-	// Initialize default parameters.
-	if (typeof (sDelimiter) === "undefined" || sDelimiter === null) {
-		sDelimiter = '"';
-	}
-	if (typeof (cDelimiter) === "undefined" || cDelimiter === null) {
-		cDelimiter = ",";
-	}
+    // Initialize default parameters.
+    if (typeof (sDelimiter) === "undefined" || sDelimiter === null) {
+        sDelimiter = '"';
+    }
+    if (typeof (cDelimiter) === "undefined" || cDelimiter === null) {
+        cDelimiter = ",";
+    }
 
-	for (i = 0, l = objArray.length; i < l; i += 1) {
-            // Get the names of the properties.
-            obj = objArray[i];
-            row = "";
-            if (i === 0) {
-                // Loop through the names
-                for (name in obj) {
-                    if (obj.hasOwnProperty(name)) {
-                        if ((name !== 'IEvidence') && (name !== 'IScreenshots')){// && (name !== 'INotes')){
-                            names.push(name);
-                            row += [sDelimiter, name, sDelimiter, cDelimiter].join("");
-                        }
+    for (i = 0, l = objArray.length; i < l; i += 1) {
+        // Get the names of the properties.
+        obj = objArray[i];
+        row = "";
+        if (i === 0) {
+            // Loop through the names
+            for (name in obj) {
+                if (obj.hasOwnProperty(name)) {
+                    if ((name !== 'IEvidence') && (name !== 'IScreenshots')){// && (name !== 'INotes')){
+                        names.push(name);
+                        row += [sDelimiter, name, sDelimiter, cDelimiter].join("");
                     }
                 }
-                row = row.substring(0, row.length - 1);
-                output += row;
             }
-
-            output += "\n";
-            row = "";
-            for (n = 0, nl = names.length; n < nl; n += 1) {
-                name = names[n];
-                if ((name !== 'IEvidence') && (name !== 'IScreenshots')){ // && (name !== 'INotes')){
-                    value = obj[name];
-                    if (n > 0) {
-                        row += cDelimiter;
-                    }
-                    row += toCsvValue(value, '"');
-                }
-            }
+            row = row.substring(0, row.length - 1);
             output += row;
-	}
+        }
 
-	return output;
+        output += "\n";
+        row = "";
+        for (n = 0, nl = names.length; n < nl; n += 1) {
+            name = names[n];
+            if ((name !== 'IEvidence') && (name !== 'IScreenshots')){ // && (name !== 'INotes')){
+                value = obj[name];
+                if (n > 0) {
+                    row += cDelimiter;
+                }
+                row += toCsvValue(value, '"');
+            }
+        }
+        output += row;
+    }
+
+    return output;
 }        
 
 
@@ -151,107 +151,107 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
 * @return {string} The CSV equivalent of objArray.
 */
 function toHtml(objArray, prjName) {
-	var obj = {};
-        var output = "<html><head>\n";
-        var priority = "N/A", prevPrio = "", prio = -1;
-        var cweUriBase   = "https://cwe.mitre.org/data/definitions/";
-        output += "<style>";
-        output += "body{width:1200px;}a{text-decoration:none;}\na:hover{color:purple;}.tdID{width:1100px;max-width:1100px;vertical-align:top;word-wrap:break-word;}.thID{text-align:right;vertical-align:top;width:80px;}th{vertical-align:top;}img{padding:1px;border:1px solid #021a40;}ol{padding-left:25px;}tr:nth-child(even){background:#EAEAEA;}tr:nth-child(odd){background:#F0F0F0;}";     
-        output += ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}.Skip{background-color:#FFFFFF;}tr:nth-child(even){background:#e5e5e5;}tr:nth-child(odd){background:#F5F5F5;}";    
-        //output += "body {font-family: 'Times New Roman', Georgia, Serif;}h1,h2,h3,h4,h5,h6 {font-family: 'Playfair Display';letter-spacing: 5px;}";
-        output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}";
-        output += "th,td{padding:5px;}";
-        output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}";
-        output += "pre{white-space: pre-wrap;}";
-        output += "</style>";
+    var obj = {};
+    var output = "<html><head>\n";
+    var priority = "N/A", prevPrio = "", prio = -1;
+    var cweUriBase   = "https://cwe.mitre.org/data/definitions/";
+    output += "<style>";
+    output += "body{width:1200px;}a{text-decoration:none;}\na:hover{color:purple;}.tdID{width:1100px;max-width:1100px;vertical-align:top;word-wrap:break-word;}.thID{text-align:right;vertical-align:top;width:80px;}th{vertical-align:top;}img{padding:1px;border:1px solid #021a40;}ol{padding-left:25px;}tr:nth-child(even){background:#EAEAEA;}tr:nth-child(odd){background:#F0F0F0;}";     
+    output += ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}.Skip{background-color:#FFFFFF;}tr:nth-child(even){background:#e5e5e5;}tr:nth-child(odd){background:#F5F5F5;}";    
+    //output += "body {font-family: 'Times New Roman', Georgia, Serif;}h1,h2,h3,h4,h5,h6 {font-family: 'Playfair Display';letter-spacing: 5px;}";
+    output += "a,a:hover{text-decoration:none}a{color:#00f}a:hover{font-weight:bold}";
+    output += "th,td{padding:5px;}";
+    output += "img{max-height:1000px;max-width:1000px;height:auto;width:auto;}";
+    output += "pre{white-space: pre-wrap;}";
+    output += "</style>";
 
-        // Traverse the array of issue objects
-        output += "</head>\n<body>\n";
+    // Traverse the array of issue objects
+    output += "</head>\n<body>\n";
         
         
-        // Generate issue summary
-        output += "<h2>Issue Summary</h2>";
-        output += "<p>Project: " + prjName + "</p>\n";
-        output += "<p>The below table contains a summary of the findings that were captured during manual security testing. ";
-        output += "   Those findings should be combined with the results from automated scanning.";
-        output += "<p>You may click the links in the Issue column to jump to the specific issue details.</p>";
-        output += "<table>\n";
-        output += "<tr><th>Priority</th><th>Issue</th></tr>"; //<th>Count</th></tr>";
-	for (var i = 0; i < objArray.length; i++) {
-            obj = objArray[i];
-            prevPrio = priority;
-            priority = obj.IPriorityText;
-            prio = parseInt(obj.IPriority);
+    // Generate issue summary
+    output += "<h2>Issue Summary</h2>";
+    output += "<p>Project: " + prjName + "</p>\n";
+    output += "<p>The below table contains a summary of the findings that were captured during manual security testing. ";
+    output += "   Those findings should be combined with the results from automated scanning.";
+    output += "<p>You may click the links in the Issue column to jump to the specific issue details.</p>";
+    output += "<table>\n";
+    output += "<tr><th>Priority</th><th>Issue</th></tr>"; //<th>Count</th></tr>";
+    for (var i = 0; i < objArray.length; i++) {
+        obj = objArray[i];
+        prevPrio = priority;
+        priority = obj.IPriorityText;
+        prio = parseInt(obj.IPriority);
             
-            // Don't print the informational findings (for the tester)
-            if ((prio !== undefined) && (prio < 0)) continue;
+        // Don't print the informational findings (for the tester)
+        if ((prio !== undefined) && (prio < 0)) continue;
             
-            // Count the number of URIs
-            var count=0;
-            if (obj.IURIs !== undefined)
-                count = obj.IURIs.split("\n").length;
+        // Count the number of URIs
+        var count=0;
+        if (obj.IURIs !== undefined)
+            count = obj.IURIs.split("\n").length;
             
-            // Print each issue with the issue as the header and the details as part of a table.
-            if ((priority !== undefined)&&(priority !== "")&&(priority !== prevPrio))
-                output += "<tr><th class='" + priority + "P'>" + priority + "</th>";
-            else
-                output += "<tr><th class='" + priority + "P'></th>";
-            output += "<td class='" + priority + "P'><a href='#" + htmlEncode(obj.TID, true, 4, false) + "'>" + obj.TIssueName + "</a></td>";
-            //output += "<td class='" + priority + "P'>" + count + "</td>";
-            output += "</tr>\n";
-	}
-        output += "</table>\n";        
+        // Print each issue with the issue as the header and the details as part of a table.
+        if ((priority !== undefined)&&(priority !== "")&&(priority !== prevPrio))
+            output += "<tr><th class='" + priority + "P'>" + priority + "</th>";
+        else
+            output += "<tr><th class='" + priority + "P'></th>";
+        output += "<td class='" + priority + "P'><a href='#" + htmlEncode(obj.TID, true, 4, false) + "'>" + obj.TIssueName + "</a></td>";
+        //output += "<td class='" + priority + "P'>" + count + "</td>";
+        output += "</tr>\n";
+    }
+    output += "</table>\n";        
         
-        // Generate detailed issue report
-        output += "<h2>Issue Details</h2>";
-        output += "<table>\n";
-	for (var i = 0; i < objArray.length; i++) {
-            obj = objArray[i];
-            prevPrio = priority;
-            priority = obj.IPriorityText;
-            prio = parseInt(obj.IPriority);
+    // Generate detailed issue report
+    output += "<h2>Issue Details</h2>";
+    output += "<table>\n";
+    for (var i = 0; i < objArray.length; i++) {
+        obj = objArray[i];
+        prevPrio = priority;
+        priority = obj.IPriorityText;
+        prio = parseInt(obj.IPriority);
             
-            // Don't print the informational findings (for the tester)
-            if ((prio !== undefined) && (prio < 0)) continue;
+        // Don't print the informational findings (for the tester)
+        if ((prio !== undefined) && (prio < 0)) continue;
             
-            // Print each issue with the issue as the header and the details as part of a table.
-            output += "<tr><th class='" + priority + "P'></th><th class='" + priority + "P' id='" + htmlEncode(obj.TID, true, 4, false) + "'>" + obj.TIssueName + "</th></tr>\n";
-            if ((obj.CweId !== undefined)&&(obj.CweId !== ""))
-                output += "<tr><th class='thID'>CWE ID: </th><td class='tdID'><a href='" + cweUriBase + obj.CweId + ".html' target='refWin'>" + obj.CweId + "</a></td></tr>\n";
-            if ((obj.IURIs !== undefined)&&(obj.IURIs !== "")){
-                output += "<tr><th class='thID'>URI(s): </th><td class='tdID'><ol>";
-                var uri = obj.IURIs.split("\n");
-                for (var j=0; j<uri.length; j++){
-                    if (uri[j].length > 14){
-                        // TODO: sanitize link
-                        output += "<li><a href='" + uri[j] + "'>" + htmlEncode(uri[j], true, 4, false) + "</a></li>\n";
-                    }
+        // Print each issue with the issue as the header and the details as part of a table.
+        output += "<tr><th class='" + priority + "P'></th><th class='" + priority + "P' id='" + htmlEncode(obj.TID, true, 4, false) + "'>" + obj.TIssueName + "</th></tr>\n";
+        if ((obj.CweId !== undefined)&&(obj.CweId !== ""))
+            output += "<tr><th class='thID'>CWE ID: </th><td class='tdID'><a href='" + cweUriBase + obj.CweId + ".html' target='refWin'>" + obj.CweId + "</a></td></tr>\n";
+        if ((obj.IURIs !== undefined)&&(obj.IURIs !== "")){
+            output += "<tr><th class='thID'>URI(s): </th><td class='tdID'><ol>";
+            var uri = obj.IURIs.split("\n");
+            for (var j=0; j<uri.length; j++){
+                if (uri[j].length > 14){
+                    // TODO: sanitize link
+                    output += "<li><a href='" + uri[j] + "'>" + htmlEncode(uri[j], true, 4, false) + "</a></li>\n";
                 }
-                output += "</ol></td></tr>\n";
             }
-            if ((obj.TSeverityText !== undefined)&&(obj.TSeverityText !== ""))
-                output += "<tr><th class='thID'>Severity: </th><td class='tdID'>" + obj.TSeverityText + "</td></tr>\n";
-            if ((obj.IPriorityText !== undefined)&&(obj.IPriorityText !== ""))
-                output += "<tr><th class='thID'>Priority: </th><td class='tdID'>" + obj.IPriorityText + "</td></tr>\n";
-            if ((obj.TIssueBackground !== undefined)&&(obj.TIssueBackground !== ""))
-                output += "<tr><th class='thID'>Background: </th><td class='tdID'>" + htmlEncode(obj.TIssueBackground, true, 4, false) + "</td></tr>\n";
-            if ((obj.TRemediationBackground !== undefined)&&(obj.TRemediationBackground !== ""))
-                output += "<tr><th class='thID'>Mitigation: </th><td class='tdID'>" + htmlEncode(obj.TRemediationBackground, true, 4, false) + "</td></tr>\n";
-            if ((obj.TRef1 !== undefined)&&(obj.TRef1 !== ""))
-                output += "<tr><th class='thID'>Ref. 1: </th><td class='tdID'><a href='" + obj.TRef1 + "' target='refWin'>" + obj.TRef1 + "</a></td></tr>\n";
-            if ((obj.TRef2 !== undefined)&&(obj.TRef2 !== ""))
-                output += "<tr><th class='thID'>Ref. 2: </th><td class='tdID'><a href='" + obj.TRef2 + "' target='refWin'>" + obj.TRef2 + "</a></td></tr>\n";
-            if ((obj.INotes !== undefined)&&(obj.INotes !== ""))
-                output += "<tr><th class='thID'>Notes: </th><td class='tdID'>" + htmlEncode(obj.INotes, true, 4, true) + "</td></tr>\n";
-            if ((obj.IEvidence !== undefined)&&(obj.IEvidence !== ""))
-                output += "<tr><th class='thID'>Evidence: </th><td class='tdID'><pre>" + htmlEncode(obj.IEvidence, true, 4, false) + "</pre></td></tr>\n";
-            if ((obj.IScreenshots !== undefined)&&(obj.IScreenshots !== ""))
-                output += "<tr><th class='thID'>Screenshot(s): </th><td class='tdID'>" + obj.IScreenshots + "</td></tr>\n";
-            output += "<tr><td class='Skip'>&nbsp;</td><td class='Skip'>&nbsp;</td></tr>\n";
-	}
-        output += "</table>\n";
-        output += "</body>\n</html>\n";
-	return output;
+            output += "</ol></td></tr>\n";
+        }
+        if ((obj.TSeverityText !== undefined)&&(obj.TSeverityText !== ""))
+            output += "<tr><th class='thID'>Severity: </th><td class='tdID'>" + obj.TSeverityText + "</td></tr>\n";
+        if ((obj.IPriorityText !== undefined)&&(obj.IPriorityText !== ""))
+            output += "<tr><th class='thID'>Priority: </th><td class='tdID'>" + obj.IPriorityText + "</td></tr>\n";
+        if ((obj.TIssueBackground !== undefined)&&(obj.TIssueBackground !== ""))
+            output += "<tr><th class='thID'>Background: </th><td class='tdID'>" + htmlEncode(obj.TIssueBackground, true, 4, false) + "</td></tr>\n";
+        if ((obj.TRemediationBackground !== undefined)&&(obj.TRemediationBackground !== ""))
+            output += "<tr><th class='thID'>Mitigation: </th><td class='tdID'>" + htmlEncode(obj.TRemediationBackground, true, 4, false) + "</td></tr>\n";
+        if ((obj.TRef1 !== undefined)&&(obj.TRef1 !== ""))
+            output += "<tr><th class='thID'>Ref. 1: </th><td class='tdID'><a href='" + obj.TRef1 + "' target='refWin'>" + obj.TRef1 + "</a></td></tr>\n";
+        if ((obj.TRef2 !== undefined)&&(obj.TRef2 !== ""))
+            output += "<tr><th class='thID'>Ref. 2: </th><td class='tdID'><a href='" + obj.TRef2 + "' target='refWin'>" + obj.TRef2 + "</a></td></tr>\n";
+        if ((obj.INotes !== undefined)&&(obj.INotes !== ""))
+            output += "<tr><th class='thID'>Notes: </th><td class='tdID'>" + htmlEncode(obj.INotes, true, 4, true) + "</td></tr>\n";
+        if ((obj.IEvidence !== undefined)&&(obj.IEvidence !== ""))
+            output += "<tr><th class='thID'>Evidence: </th><td class='tdID'><pre>" + htmlEncode(obj.IEvidence, true, 4, false) + "</pre></td></tr>\n";
+        if ((obj.IScreenshots !== undefined)&&(obj.IScreenshots !== ""))
+            output += "<tr><th class='thID'>Screenshot(s): </th><td class='tdID'>" + obj.IScreenshots + "</td></tr>\n";
+        output += "<tr><td class='Skip'>&nbsp;</td><td class='Skip'>&nbsp;</td></tr>\n";
+    }
+    output += "</table>\n";
+    output += "</body>\n</html>\n";
+    return output;
 }        
 
 
@@ -274,120 +274,120 @@ jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, pluspl
  * @returns {Array|htmlEncode.result|String}
  */
 var htmlEncode = function (source, display, tabs, linkify) {
-	var i, s, ch, peek, line, result,
-		next, endline, push,
-		spaces;
+    var i, s, ch, peek, line, result,
+        next, endline, push,
+        spaces;
 
-        if (source === undefined)
-            return "";
+    if (source === undefined)
+        return "";
 	
-	// Stash the next character and advance the pointer
-	next = function () {
-		peek = source.charAt(i);
-		i += 1;
-	};
+    // Stash the next character and advance the pointer
+    next = function () {
+        peek = source.charAt(i);
+        i += 1;
+    };
 	
-	// Start a new "line" of output, to be joined later by <br />
-	endline = function () {
-		line = line.join('');
-		if (display) {
-			// If a line starts or ends with a space, it evaporates in html
-			// unless it's an nbsp.
-			line = line.replace(/(^ )|( $)/g, '&nbsp;');
-		}
-		result.push(line);
-		line = [];
-	};
+    // Start a new "line" of output, to be joined later by <br />
+    endline = function () {
+        line = line.join('');
+        if (display) {
+            // If a line starts or ends with a space, it evaporates in html
+            // unless it's an nbsp.
+            line = line.replace(/(^ )|( $)/g, '&nbsp;');
+        }
+        result.push(line);
+        line = [];
+    };
 	
-	// Push a character or its entity onto the current line
-	push = function () {
-		if (ch < ' ' || ch > '~') {
-			line.push('&#' + ch.charCodeAt(0) + ';');
-		} else {
-			line.push(ch);
-		}
-	};
+    // Push a character or its entity onto the current line
+    push = function () {
+        if (ch < ' ' || ch > '~') {
+            line.push('&#' + ch.charCodeAt(0) + ';');
+        } else {
+            line.push(ch);
+        }
+    };
         
-        toLink = function() {
-            var replacePattern = replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-            source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
-        };
+    toLink = function() {
+        var replacePattern = replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
+    };
         
-        // If linkify is true, change URLs to links
-        if (linkify) toLink();	
+    // If linkify is true, change URLs to links
+    if (linkify) toLink();	
         
-	// Use only integer part of tabs, and default to 4
-	tabs = (tabs >= 0) ? Math.floor(tabs) : 4;
+    // Use only integer part of tabs, and default to 4
+    tabs = (tabs >= 0) ? Math.floor(tabs) : 4;
 	
-	result = [];
-	line = [];
+    result = [];
+    line = [];
 
-	i = 0;
-	next();
-	while (i <= source.length) { // less than or equal, because i is always one ahead
-		ch = peek;
-		next();
+    i = 0;
+    next();
+    while (i <= source.length) { // less than or equal, because i is always one ahead
+        ch = peek;
+        next();
 		
-		// HTML special chars.
-		switch (ch) {
-		case '<':
-			(linkify) ? push(ch) : line.push('&lt;');
-			break;
-		case '>':
-			(linkify) ? push(ch) : line.push('&gt;');
-			break;
-		case '&':
-                        (linkify) ? push(ch) : line.push('&amp;');
-			break;
-		case '"':
-			(linkify) ? push(ch) : line.push('&quot;');
-			break;
-		case "'":
-			(linkify) ? push(ch) : line.push('&#39;');
-			break;
-		default:
-			// If the output is intended for display,
-			// then end lines on newlines, and replace tabs with spaces.
-			if (display) {
-				switch (ch) {
-				case '\r':
-					// If this \r is the beginning of a \r\n, skip over the \n part.
-					if (peek === '\n') {
-						next();
-					}
-					endline();
-					break;
-				case '\n':
-					endline();
-					break;
-				case '\t':
-					// expand tabs
-					spaces = tabs - (line.length % tabs);
-					for (s = 0; s < spaces; s += 1) {
-						line.push(' ');
-					}
-					break;
-				default:
-					// All other characters can be dealt with generically.
-					push();
-				}
-			} else {
-				// If the output is not for display,
-				// then none of the characters need special treatment.
-				push();
-			}
-		}
-	}
-	endline();
+        // HTML special chars.
+        switch (ch) {
+        case '<':
+            (linkify) ? push(ch) : line.push('&lt;');
+            break;
+        case '>':
+            (linkify) ? push(ch) : line.push('&gt;');
+            break;
+        case '&':
+            (linkify) ? push(ch) : line.push('&amp;');
+            break;
+        case '"':
+            (linkify) ? push(ch) : line.push('&quot;');
+            break;
+        case "'":
+            (linkify) ? push(ch) : line.push('&#39;');
+            break;
+        default:
+            // If the output is intended for display,
+            // then end lines on newlines, and replace tabs with spaces.
+            if (display) {
+                switch (ch) {
+                case '\r':
+                    // If this \r is the beginning of a \r\n, skip over the \n part.
+                    if (peek === '\n') {
+                        next();
+                    }
+                    endline();
+                    break;
+                case '\n':
+                    endline();
+                    break;
+                case '\t':
+                    // expand tabs
+                    spaces = tabs - (line.length % tabs);
+                    for (s = 0; s < spaces; s += 1) {
+                        line.push(' ');
+                    }
+                    break;
+                default:
+                    // All other characters can be dealt with generically.
+                    push();
+                }
+            } else {
+                // If the output is not for display,
+                // then none of the characters need special treatment.
+                push();
+            }
+        }
+    }
+    endline();
         	
-	// Add line breaks 
-	result = result.join('<br />');
+    // Add line breaks 
+    result = result.join('<br />');
 
-	if (display) {
-		// Break up contiguous blocks of spaces with non-breaking spaces
-		result = result.replace(/ {2}/g, ' &nbsp;');
-	}
+    if (display) {
+        // Break up contiguous blocks of spaces with non-breaking spaces
+        result = result.replace(/ {2}/g, ' &nbsp;');
+    }
 	
-	// tada!
-	return result;
+    // tada!
+    return result;
 };

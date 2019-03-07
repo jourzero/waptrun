@@ -6,17 +6,17 @@ var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
  
 // Projects constructor
 function Projects() {
-        if (!(this instanceof Projects)) {
-                return new Projects();
-        }
+    if (!(this instanceof Projects)) {
+        return new Projects();
+    }
  
-        // require mongodb
-        var mongo = require('mongodb');
-        // Connect to our mongodb running on localhost and named 'test'
-        var db = require('monk')(mongodbUrl);
-        // obtain a reference to our projects collection within mongodb
-        this.projects = db.get('project');
-};
+    // require mongodb
+    var mongo = require('mongodb');
+    // Connect to our mongodb running on localhost and named 'test'
+    var db = require('monk')(mongodbUrl);
+    // obtain a reference to our projects collection within mongodb
+    this.projects = db.get('project');
+}
  
 // Retrieve a list of all persisted
 Projects.prototype.findAll = function(success, error) {

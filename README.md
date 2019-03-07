@@ -6,9 +6,9 @@
     -   [Overview](#overview)
     -   [Running this code within Docker](#running-this-code-within-docker)
         -   [Get the code](#get-the-code)
-        -   [Run](#run)
-        -   [Stop](#stop)
-        -   [Browse to it](#browse-to-it)
+        -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
+        -   [Browse to the app](#browse-to-the-app)
+        -   [Stop App and DB containers](#stop-app-and-db-containers)
     -   [Basic Idea](#basic-idea)
     -   [Design focus](#design-focus)
         -   [Phase 1](#phase-1)
@@ -42,7 +42,7 @@ $ git clone git@github.com:jourzero/waptrun.git
 $ cd waptrun
 ```
 
-### Run
+### Start App and DB servers in separate containers
 
 ```bash
 # Build and run
@@ -53,15 +53,15 @@ $ docker exec -it waptr /bin/sh
 $ docker exec -it waptrdb /bin/sh
 ```
 
-### Stop
+### Browse to the app
+
+Browse to http://localhost:5000
+
+### Stop App and DB containers
 
 ```bash
 $ docker-compose stop
 ```
-
-### Browse to it
-
-Browse to http://localhost:5000
 
 ## Basic Idea
 

@@ -1,22 +1,18 @@
-// export this module, so that it is accessible to our application modules
-module.exports = CWE;
-var config = require('../config.js'); 
-var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+const config = require('../config.js');
+const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 
- 
 // CWE constructor
 function CWE() {
-        if (!(this instanceof CWE)) {
-                return new CWE();
-        }
+    if (!(this instanceof CWE)) {
+        return new CWE();
+    }
  
-        // require mongodb
-        var mongo = require('mongodb');
-        // Connect to our mongodb running on localhost and named 'test'
-        var db = require('monk')(mongodbUrl);
-        // obtain a reference to our cwe collection within mongodb
-        this.cwe = db.get('cwe');
-};
+    // Connect to our mongodb running on localhost and named 'test'
+    var db = require('monk')(mongodbUrl);
+    // obtain a reference to our cwe collection within mongodb
+    this.cwe = db.get('cwe');
+}
+
  
 // Retrieve a list of all persisted
 CWE.prototype.findAll = function(success, error) {
@@ -69,3 +65,6 @@ var response = function(success, error) {
         }
     };
 };
+
+// Exports
+module.exports = CWE;
