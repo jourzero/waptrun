@@ -315,10 +315,7 @@ app.get("/testing/:prjName", ensureAuthenticated, function(req, res) {
     testKB.find(scopeQuery, { sort: { TID: 1 } }, function(e, tests) {
       issuesColl.find(
         { PrjName: prjName },
-        {
-          sort: { IPriority: -1 },
-          collation: { locale: "en_US", numericOrdering: true }
-        },
+        { sort: { IPriority: -1 } },
         function(e, issues) {
           cweColl.find({}, { sort: { ID: 1 } }, function(e, cwes) {
             res.render("testing", {
