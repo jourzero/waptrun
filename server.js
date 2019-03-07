@@ -113,10 +113,10 @@ app.use(methodOverride());
 let sessionDuration = 24 * 60 * 60 * 1000; // 1 day
 app.use(
   session({
-    resave: false,
-    saveUninitialized: true,
     secret: "eugaefoiu",
-    cookie: { secure: true, httpOnly: true, expires: sessionDuration }
+    resave: false,
+    //cookie: { secure: true, httpOnly: true, expires: sessionDuration },
+    saveUninitialized: true
   })
 );
 app.use(passport.initialize());
