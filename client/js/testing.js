@@ -68,7 +68,7 @@ $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
 //==============================================================================
 // Dynamically adjust height of textareas when clicking in and out of them
 $("textarea").click(function() {
-  $(this).height(350);
+  $(this).height(500);
 });
 
 $("textarea").blur(function() {
@@ -79,7 +79,7 @@ $("textarea").blur(function() {
 $(
   "#IURIs, #IEvidence, #IScreenshots, #INotes, c#PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
 ).on("click", function(event) {
-  $("#" + event.target.id).height(350);
+  $("#" + event.target.id).height(500);
 });
 
 // When some fields are unselected, decrease the text box size to a default height
