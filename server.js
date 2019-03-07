@@ -115,8 +115,8 @@ app.use(
   session({
     secret: "eugaefoiu",
     resave: false,
-    //cookie: { secure: true, expires: sessionDuration },
-    cookie: { secure: true },
+    //cookie: { secure: true },
+    cookie: { expires: sessionDuration },
     saveUninitialized: true
   })
 );
