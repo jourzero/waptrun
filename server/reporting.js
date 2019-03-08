@@ -314,6 +314,10 @@ function toHtml(objArray, prjName, showAllIssues) {
                 "<tr><th class='thID'>Priority: </th><td class='tdID'>" +
                 obj.IPriorityText +
                 "</td></tr>\n";
+
+        // For now, don't generate outputs for issue background & remediation (let ther reader use the CWE link if needed)
+
+        /*
         if (obj.TIssueBackground !== undefined && obj.TIssueBackground !== "" && prio >= 0)
             output +=
                 "<tr><th class='thID'>Background: </th><td class='tdID'>" +
@@ -328,6 +332,7 @@ function toHtml(objArray, prjName, showAllIssues) {
                 "<tr><th class='thID'>Mitigation: </th><td class='tdID'>" +
                 htmlEncode(obj.TRemediationBackground, true, 4, false) +
                 "</td></tr>\n";
+         */
         if (obj.TRef1 !== undefined && obj.TRef1 !== "")
             output +=
                 "<tr><th class='thID'>Ref. 1: </th><td class='tdID'><a href='" +
