@@ -791,6 +791,7 @@ function reloadPage(msg) {
     }, 5000);
 }
 
+/* Unneeded code to remove later
 // Warn user that the session may expire if nothing is done soon (no reload to let editing complete)
 // This should normally never happen because of the next code block (XHR sent every minute).
 let expiryWarningInterval = 2 * 60 * 1000; // 10 minutes
@@ -801,8 +802,10 @@ function warnExpiry() {
     setTimeout(warnExpiry, expiryWarningIterval);
 }
 setTimeout(warnExpiry, expiryWarningInterval);
+*/
 
-// If session does get expired, redirect to login page to avoid wasting time (possibly losing more work)
+// If session gets expired, redirect to login page to avoid wasting time (possibly losing more work)
+// This code should actually prevent the session expiry due to the request sent.
 var xhr = new XMLHttpRequest();
 var url = document.location.href;
 let sessionCheckInterval = 1 * 60 * 1000; // 1 minute
@@ -814,7 +817,10 @@ function checkSession() {
                 console.log("INFO: Session is active.");
                 setTimeout(checkSession, sessionCheckInterval);
             } else {
-                alert("Session is not active.", xhr.responseURL);
+                alert(
+                    "Session is not active, you will be redirected to the login page.",
+                    xhr.responseURL
+                );
                 window.location = "/";
             }
         }
