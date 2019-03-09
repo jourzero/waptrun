@@ -791,29 +791,33 @@ function reloadPage(msg) {
     }, 5000);
 }
 
+// Warn user that the session may expire if nothing is done soon (no reload to let editing complete)
+let expiryWarningInterval = 1 * 60 * 1000; // 10 minutes
+function warnExpiry() {
+    alert(
+        "Session may expire if you don't do anything. Simply saving your work should be good enough."
+    );
+    setTimeout(warnExpiry, expiryWarningIterval);
+}
+setTimeout(warnExpiry, expiryWarningInterval);
+
+// If session does get expired, redirect to login page to avoid wasting time (possibly losing more work)
 var xhr = new XMLHttpRequest();
 var url = document.location.href;
+let sessionCheckInterval = 1 * 60 * 1000; // 1 minute
 function checkSession() {
     xhr.open("GET", url, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
                 console.log("INFO: Session is active.");
-                setTimeout(checkSession, 30000);
+                setTimeout(checkSession, sessionCheckInterval);
             } else {
-                alert("WARN: Session is not active.", xhr.responseURL);
+                alert("Session is not active.", xhr.responseURL);
                 window.location = "/";
             }
         }
     };
     xhr.send();
 }
-
-// Warn user that the session may expire if nothing is done soon (no reload to let editing complete)
-function warnExpiry() {
-    alert(
-        "Session will expire if you don't do anything. Simply saving your work should be good enough."
-    );
-}
-//setTimeout(warnExpiry, 10*60*1000)
-setTimeout(warnExpiry, 1 * 60 * 1000);
+//setTimeout(checkSession, sessionCheckInterval);
