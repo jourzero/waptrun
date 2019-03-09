@@ -792,7 +792,8 @@ function reloadPage(msg) {
 }
 
 // Warn user that the session may expire if nothing is done soon (no reload to let editing complete)
-let expiryWarningInterval = 1 * 60 * 1000; // 10 minutes
+// This should normally never happen because of the next code block (XHR sent every minute).
+let expiryWarningInterval = 2 * 60 * 1000; // 10 minutes
 function warnExpiry() {
     alert(
         "Session may expire if you don't do anything. Simply saving your work should be good enough."
@@ -820,4 +821,4 @@ function checkSession() {
     };
     xhr.send();
 }
-//setTimeout(checkSession, sessionCheckInterval);
+setTimeout(checkSession, sessionCheckInterval);
