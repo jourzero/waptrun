@@ -809,12 +809,13 @@ setTimeout(warnExpiry, expiryWarningInterval);
 var xhr = new XMLHttpRequest();
 var url = document.location.href;
 let sessionCheckInterval = 1 * 60 * 1000; // 1 minute
+var refreshCounter = 1;
 function checkSession() {
     xhr.open("GET", url, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
-                console.log("INFO: Session is active.");
+                console.log("INFO: Session is active. Refresh count:", refreshCounter);
                 setTimeout(checkSession, sessionCheckInterval);
             } else {
                 alert(
