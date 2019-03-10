@@ -815,7 +815,11 @@ function checkSession() {
     xhr.onload = function() {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
-                console.log("INFO: Last page refreshed", refreshCounter++, "minutes ago.");
+                console.log(
+                    "INFO: checkSession(): Last page refresh",
+                    refreshCounter++,
+                    "min. ago."
+                );
                 setTimeout(checkSession, sessionCheckInterval);
             } else {
                 alert(
