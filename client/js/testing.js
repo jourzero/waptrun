@@ -253,7 +253,7 @@ function evtPasteScreenshot(event) {
                 let dataUrl = event.target.result;
                 let imgTag =
                     "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
-                // Append the data URL to the Evidence field
+                // Append the data URL to the Evidence field.
                 let iScreenshots = $("#IScreenshots").val();
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
                     iScreenshots = imgTag;
