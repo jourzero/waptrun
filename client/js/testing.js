@@ -258,7 +258,7 @@ function evtPasteScreenshot(event) {
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
                     iScreenshots = imgTag;
                 } else {
-                    iScreenshots += "<br/><br/>\n\n" + imgTag;
+                    iScreenshots = imgTag + "<br/><br/>\n\n" + iScreenshots;
                 }
                 $("#IScreenshots").val(iScreenshots);
                 issue = uiGetIssue();
