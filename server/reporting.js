@@ -333,6 +333,13 @@ function toHtml(objArray, prjName, showAllIssues) {
                 htmlEncode(obj.TRemediationBackground, true, 4, false) +
                 "</td></tr>\n";
          */
+        if (obj.TTRef !== undefined && obj.TTRef !== "")
+            output +=
+                "<tr><th class='thID'>Testing Ref.: </th><td class='tdID'><a href='" +
+                obj.TTRef +
+                "' target='refWin'>" +
+                obj.TTRef +
+                "</a></td></tr>\n";
         if (obj.TRef1 !== undefined && obj.TRef1 !== "")
             output +=
                 "<tr><th class='thID'>Ref. 1: </th><td class='tdID'><a href='" +
