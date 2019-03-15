@@ -93,14 +93,14 @@ $(
 //
 // Create template text into finding sections
 function evtAddIssueTemplateText(event) {
-    console.log("-- UI add issue template template text event");
+    console.info("-- UI add issue template template text event");
 
     // Fill Evidence field with template text if empty
     //var iEvidence = $("#IEvidence").val();
     if (event.target.id === "IEvidence") {
         let iEvidence = event.target.value;
         if (iEvidence === undefined || iEvidence.length === 0) {
-            console.log("Adding template text to Evidence field");
+            console.info("Adding template text to Evidence field");
             iEvidence = "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER";
             $("#IEvidence").val(iEvidence);
             $("#IEvidence").attr("title", iEvidence);
@@ -112,7 +112,7 @@ function evtAddIssueTemplateText(event) {
     if (event.target.id === "INotes") {
         let iNotes = event.target.value;
         if (iNotes === undefined || iNotes.length === 0) {
-            console.log("Adding template text to Notes field");
+            console.info("Adding template text to Notes field");
             iNotes = "ISSUE_DETAILS. CIA_IMPACT. HOW_TO_EXPLOIT.\n\n";
             iNotes += "Perceived Risk: Likelihood=High (Easy to Reproduce, Easy to Discover), ";
             iNotes += "Impact=Medium (Partial Damage, Easy to Exploit, Some Users Affected)\n\n";
@@ -127,7 +127,7 @@ function evtAddIssueTemplateText(event) {
 // Show issue data when clicking in the Findings table
 function evtCweInputChanged(event) {
     let cweId = event.target.value;
-    console.log("-- CWE input changed. CWE selected: " + cweId);
+    console.info("-- CWE input changed. CWE selected: " + cweId);
     uiUpdateCwe(cweId, false);
 }
 
@@ -136,7 +136,7 @@ function evtDeleteIssue(event) {
     let testId = $(this).attr("tid");
     let action = $(this).attr("action");
     if (action === "delete") {
-        console.log("-- Deleting issue for " + testId);
+        console.info("-- Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
     reloadPage("Reloading page to refresh the issue list");
@@ -144,7 +144,7 @@ function evtDeleteIssue(event) {
 
 // Go to next test in the list
 function evtToNextTest() {
-    console.log("-- To next test event");
+    console.info("-- To next test event");
 
     // Get current input value and the index in the datalist
     let testId = $("#testIn").val();
@@ -171,7 +171,7 @@ function evtToNextTest() {
 
 // Go to the previous test in the list
 function evtToPreviousTest() {
-    console.log("-- To previous test event");
+    console.info("-- To previous test event");
 
     // Get current input value and the index in the datalist
     let testId = $("#testIn").val();
@@ -200,7 +200,7 @@ function evtToPreviousTest() {
 
 // Save issue data in UI to issue collection
 function evtIssueDataChanged() {
-    console.log("-- Issue data changed event");
+    console.info("-- Issue data changed event");
     //let attrib = event.target.id;
     //let value  = event.target.value;
     issue = uiGetIssue();
@@ -218,7 +218,7 @@ function evtIssueDataChanged() {
 
 // Create a new test
 function evtNewTest() {
-    console.log("-- New test event, creating a new empty test");
+    console.info("-- New test event, creating a new empty test");
     restCreateTest();
     reloadPage();
 }
@@ -226,21 +226,21 @@ function evtNewTest() {
 // Show issue data when clicking in the Findings table
 function evtShowIssue() {
     let testId = $(this).attr("tid");
-    console.log("-- Show issue event for TID " + testId);
+    console.info("-- Show issue event for TID " + testId);
     uiUpdateFromTestKB(testId);
     uiUpdateFromIssueColl(testId);
 }
 
 // Save issue data in UI to issue collection
 function evtUseCweIssueData() {
-    console.log("-- Overriding generic issue data from CWE data");
+    console.info("-- Overriding generic issue data from CWE data");
     let cweId = $("#cweIn").val();
     uiUpdateCwe(cweId, true);
 }
 
 // When pasting images in Evidence, add a Base64 representation
 function evtPasteScreenshot(event) {
-    console.log("-- UI paste screenshot event");
+    console.info("-- UI paste screenshot event");
 
     // Get clipboard entries and search for images
     let items = (event.clipboardData || event.originalEvent.clipboardData).items;
@@ -272,7 +272,7 @@ function evtPasteScreenshot(event) {
 
 // When the test selector is changed, update the Testing and Generic Issue sections
 function evtTestInputChanged() {
-    console.log("-- Test input change event");
+    console.info("-- Test input change event");
 
     // Get the testId and the index in the datalist
     let testId = $("#testIn").val();
@@ -296,7 +296,7 @@ function evtTestKBDataChanged(event) {
     if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest")
         value = $("#" + field).prop("checked");
 
-    console.log("-- Updating Test " + testId + " with " + field + "=" + value);
+    console.info("-- Updating Test " + testId + " with " + field + "=" + value);
 
     // Update the DB
     let data = {};
@@ -306,7 +306,7 @@ function evtTestKBDataChanged(event) {
 
 // Change UI when test is changed
 function uiChangeTest(testId) {
-    console.log("Test selected: " + testId);
+    console.info("Test selected: " + testId);
 
     // Update UI
     uiUpdateFromTestKB(testId);
@@ -319,7 +319,7 @@ function uiChangeTest(testId) {
 
 // Clear Issue Information
 function uiClearCweFields() {
-    console.log("Clearing CWE values");
+    console.info("Clearing CWE values");
     //$('#cwename').typeahead('val', "");
     $("#cweIn").val("");
     $("#cweref").attr("href", "");
@@ -329,7 +329,7 @@ function uiClearCweFields() {
 
 // Clear Issue Information
 function uiClearIssueFields() {
-    console.log("Clearing Issue fields");
+    console.info("Clearing Issue fields");
     var empty = "";
     $("#IURIs").val(empty);
     $("#IURIs").attr("title", empty);
@@ -345,7 +345,7 @@ function uiClearIssueFields() {
 
 // Clear Testing Information
 function uiClearTestingFields() {
-    console.log("Clearing Testing fields");
+    console.info("Clearing Testing fields");
     $("#testIn").val("");
     $("#TPhase").html("");
     $("#TSection").html("");
@@ -422,7 +422,7 @@ function uiGetIssue() {
 // When the Specific Issue Data changes, parse it if it's formatted as a Burp issue)
 // and save the results to the DB.
 function uiParseBurpIssue() {
-    console.log("Parsing Burp Issue data");
+    console.info("Parsing Burp Issue data");
 
     // If the note is Burp-formatted, parse it
     let notes = $("#INotes").val();
@@ -547,18 +547,18 @@ function uiParseBurpIssue() {
 
 // Update screenshots from the Images field
 function uiUpdateScreenshots() {
-    console.log("Updating screenshots area");
+    console.info("Updating screenshots area");
     let imgTags = $("#IScreenshots").val();
     $("#IScreenshotsArea").html(imgTags);
 }
 
 // Update UI with CWE data
 function uiUpdateCwe(cweId, forceUpdate) {
-    console.log("Updating UI with CWE data");
+    console.info("Updating UI with CWE data");
 
     let rec = {};
     if (cweId !== undefined && cweId !== "") {
-        console.log("Updating UI for CWE-" + cweId);
+        console.info("Updating UI for CWE-" + cweId);
         $("#cweIn").val(cweId);
         $("#cweref").attr("href", gCweUriBase + cweId + ".html");
         $("#cweref").html("CWE-" + cweId);
@@ -620,7 +620,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
 
 // Update all UI fields from the Test KB
 function uiUpdateFromTestKB(testId) {
-    console.log("Updating UI with test KB data");
+    console.info("Updating UI with test KB data");
 
     // Clear testDB fields before updating them because some UI updates fail due to missing value in DB.
     uiClearTestingFields();
@@ -685,7 +685,7 @@ function uiUpdateFromTestKB(testId) {
                 "WARNING: Cannot update UI from TestKB. Record not found for testId '" +
                 testId +
                 "'.";
-            console.log(msg);
+            console.warn(msg);
             uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         }
     });
@@ -722,13 +722,13 @@ function uiGetTestKB() {
 
 // Update all UI fields from the Issue Collection
 function uiUpdateFromIssueColl(testID) {
-    console.log("Updating UI with issue data");
+    console.info("Updating UI with issue data");
 
     // Clear issue fields priTOor to populating them
     uiClearIssueFields();
 
     if (testID === undefined || testID === "") {
-        console.log("Empty Test ID");
+        console.info("Empty Test ID");
         return;
     }
 
@@ -747,7 +747,7 @@ function uiUpdateFromIssueColl(testID) {
             uiUpdateScreenshots();
         } else {
             let msg = "NOTE: Could not find an issue for Test ID " + testID;
-            console.log(msg);
+            console.info(msg);
             uiUpdateStatus(msg);
         }
     });
@@ -782,8 +782,7 @@ function reloadPage(msg) {
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
     if (msg !== undefined) {
-        //alert(msg);
-        console.log(msg);
+        console.info(msg);
     }
 
     setTimeout(function() {
@@ -815,8 +814,8 @@ function checkSession() {
     xhr.onload = function() {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
-                console.log("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
-                setTimeout(checkSession, sessionCheckInterval);
+                console.info("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
+                //setTimeout(checkSession, sessionCheckInterval);
             } else {
                 alert(
                     "Session is not active, you will be redirected to the login page.",
@@ -828,4 +827,5 @@ function checkSession() {
     };
     xhr.send();
 }
-setTimeout(checkSession, sessionCheckInterval);
+//setTimeout(checkSession, sessionCheckInterval);
+setInterval(checkSession, sessionCheckInterval);

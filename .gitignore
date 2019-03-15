@@ -72,3 +72,5 @@ package-lock.json
 /client/websvc/
 /client/WAPT/
 screenshots/.DS_Store
+.DS_Store
+data/

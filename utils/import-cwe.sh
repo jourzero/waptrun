@@ -5,11 +5,8 @@
 # Prerequisites: run env.sh that contains an environment value for MONGO_URL
 #===========================================================================================
 
-# DB parameters
-uri="$MONGO_URL"
-
-
 # Import parameters
+DATA_DIR="../data"
 IMPORTED_CSVFILE="CWE3.2-Import-Data.csv"
 OLD_HEADER="ID,Name,Weakness_Abstraction,Status,Description_Summary,Likelihood_of_Exploit,Causal_Nature"
 STD_HEADER="CWE-ID,Name,Weakness Abstraction,Status,Description,Extended Description,Related Weaknesses,Weakness Ordinalities,Applicable Platforms,Background Details,Alternate Terms,Modes Of Introduction,Exploitation Factors,Likelihood of Exploit,Common Consequences,Detection Methods,Potential Mitigations,Observed Examples,Functional Areas,Affected Resources,Taxonomy Mappings,Related Attack Patterns,Notes"
@@ -26,6 +23,10 @@ CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
 
+# cd to $DATA_DIR to simplify things
+mkdir "$DATA_DIR" 2>/dev/null
+cd "$DATA_DIR"
+
 
 # Check if we didn't run this script by mistake
 read -p "Ready to import CWEs? [n] " answer
@@ -36,15 +37,14 @@ fi
 
 
 # Check if we have the MongoDB URL
-if [ "$uri" == "" ];then
+if [ "$MONGO_URL" == "" ];then
   echo "Missing MongoDB URL in MONGO_URL env. var! Exiting."  
   exit 2
 fi
 
 
 # Save the previous files just in case
-mkdir old 2>/dev/null
-mv "$IMPORTED_CSVFILE" old/"$IMPORTED_CSVFILE.old.$$" 2>/dev/null
+mv "$IMPORTED_CSVFILE" "$IMPORTED_CSVFILE.old.$$" 2>/dev/null
 
 
 # Convert CSV file from Mitre into the format we currently support 
@@ -73,7 +73,7 @@ for view in $(seq 0 $LAST_VIEW); do
 
   # Append the data 
   echo "Append the data from $file"
-  sed -n '2,$p' "$file" >> "$IMPORTED_CSVFILE"
+  sed -n '2,$p' "${file}" >> "$IMPORTED_CSVFILE"
 done
 
 
@@ -82,5 +82,9 @@ done
 # Run mongodump
 read -p "Run mongoimport for CWE list? [n] " answer
 if [ "$answer" = y ];then
-  mongoimport --drop --uri="$uri" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
+  mongoimport --drop --uri="$MONGO_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
 fi
+
+
+# cd back to where we were
+cd -

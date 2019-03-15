@@ -1,38 +1,37 @@
 // Create New Project
-$("#newProjectInput").on('change', evtCreateNewPrj);
+$("#newProjectInput").on("change", evtCreateNewPrj);
 
 // Remove Project
-$("#delProjectInput").on('change', evtDeletePrj);
+$("#delProjectInput").on("change", evtDeletePrj);
 
 // Delete Project
 //$(".delete").on('click', evtDeletePrj);
 
-function showCreateNewProjectBtn(){
+function showCreateNewProjectBtn() {
     $("#newProjectDiv").prop("hidden", "");
-}    
+}
 
-function showRemoveProjectBtn(){
+function showRemoveProjectBtn() {
     $("#delProjectDiv").prop("hidden", "");
-}    
+}
 
-function evtCreateNewPrj(){
+function evtCreateNewPrj() {
     let prjName = $("#newProjectInput").val();
     //$("#newProjectDiv").prop("hidden", "true");
     restCreatePrj(prjName);
-    alert("Inserted a new project " + prjName + ".");        
-    console.log("Reloading the page");
+    alert("Inserted a new project " + prjName + ".");
+    console.info("Reloading the page");
     location.reload();
-} 
+}
 
 // Delete Project
 function evtDeletePrj() {
     let prjName = $("#delProjectInput").val();
-    console.log("-- Deleting project " + prjName);
+    console.info("-- Deleting project " + prjName);
     restDeletePrj(prjName);
     alert("Deleted the project " + prjName);
     restDeletePrjIssues(prjName);
     alert("Deleted the issues for project " + prjName);
-    console.log("Reloading the page");
+    console.info("Reloading the page");
     location.reload();
-};
-
+}
