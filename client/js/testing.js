@@ -77,20 +77,32 @@ $("textarea").blur(function() {
     $(this).height(20);
 });
 */
+$(".issueTH").click(function() {
+    console.log("Clicked one of the issueTH fields, collapsing all text fields.");
+    $("#TTesterSupport").height(20);
+    $("#TIssueBackground").height(20);
+    $("#TRemediationBackground").height(20);
+    $("#IURIs").height(20);
+    $("#IEvidence").height(20);
+    $("#IScreenshots").height(20);
+    $("#INotes").height(20);
+});
 
 // When some fields are clicked, increase the text box size
 $(
-    "#IURIs, #IEvidence, #IScreenshots, #INotes, c#PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
+    "#IURIs, #IEvidence, #IScreenshots, #INotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
 ).on("click", function(event) {
     $("#" + event.target.id).height(500);
 });
 
+/*
 // When some fields are unselected, decrease the text box size to a default height
 $(
-    "#IURIs, #IEvidence, #IScreenshots, #PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
+    "#IURIs, #IEvidence, #IScreenshots, #Inotes, #PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
 ).on("blur", function(event) {
     $("#" + event.target.id).height(20);
 });
+*/
 
 //==============================================================================
 //                                FUNCTIONS
