@@ -61,6 +61,9 @@ $("#updateIssueListBtn").on("click", evtIssueDataChanged);
 // Override Generic Issue data from CWE data
 $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
 
+// Refresh Page button
+$("refreshBtn").on("click", evtRefreshPage);
+
 //==============================================================================
 //                               UI TWEAK EVENTS
 //==============================================================================
@@ -139,7 +142,8 @@ function evtDeleteIssue(event) {
         console.info("-- Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
-    reloadPage("Reloading page to refresh the issue list");
+    //reloadPage("Reloading page to refresh the issue list");
+    alertOnUpdate();
 }
 
 // Go to next test in the list
@@ -213,14 +217,16 @@ function evtIssueDataChanged() {
         $("#INotes").attr("title", issue.INotes);
     }
     uiUpdateScreenshots();
-    reloadPage("Reloading page to refresh the issue list");
+    //reloadPage("Reloading page to refresh the issue list");
+    alertOnUpdate();
 }
 
 // Create a new test
 function evtNewTest() {
     console.info("-- New test event, creating a new empty test");
     restCreateTest();
-    reloadPage();
+    //reloadPage();
+    alertOnUpdate();
 }
 
 // Show issue data when clicking in the Findings table
@@ -236,6 +242,12 @@ function evtUseCweIssueData() {
     console.info("-- Overriding generic issue data from CWE data");
     let cweId = $("#cweIn").val();
     uiUpdateCwe(cweId, true);
+}
+
+// Refresh Page event
+function evtRefreshPage() {
+    console.info("-- Refreshing page content");
+    reloadPage();
 }
 
 // When pasting images in Evidence, add a Base64 representation
@@ -775,19 +787,18 @@ function getSoftwareLinks(software) {
     $("#PrjSoftware").html(swLinksHtml);
 }
 
-// Reload page
-function reloadPage(msg) {
+// Reload page (refreshes the displayed test KB entries and issue list)
+function reloadPage() {
+    location.reload();
+}
+
+// Inform user about the need to refresh the page after updates
+function alertOnUpdate() {
     // Update LastTID
     let testId = $("#testIn").val();
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
-    if (msg !== undefined) {
-        console.info(msg);
-    }
-
-    setTimeout(function() {
-        location.reload();
-    }, 5000);
+    alert("Press Refresh Page button as needed");
 }
 
 /* Unneeded code to remove later
