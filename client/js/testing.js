@@ -812,7 +812,7 @@ function alertOnUpdate() {
     let testId = $("#testIn").val();
     $("#LastTID").html(testId);
     restUpdateLastTID(testId, prjName);
-    alert("Press Refresh Page button as needed");
+    //alert("Press Refresh Page button as needed");
 }
 
 /* Unneeded code to remove later
