@@ -67,6 +67,7 @@ $("#refreshBtn").on("click", evtRefreshPage);
 //==============================================================================
 //                               UI TWEAK EVENTS
 //==============================================================================
+/*
 // Dynamically adjust height of textareas when clicking in and out of them
 $("textarea").click(function() {
     $(this).height(500);
@@ -75,6 +76,7 @@ $("textarea").click(function() {
 $("textarea").blur(function() {
     $(this).height(20);
 });
+*/
 
 // When some fields are clicked, increase the text box size
 $(
