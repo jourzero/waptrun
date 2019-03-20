@@ -62,7 +62,7 @@ $("#updateIssueListBtn").on("click", evtIssueDataChanged);
 $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
 
 // Refresh Page button
-$("refreshBtn").on("click", evtRefreshPage);
+$("#refreshBtn").on("click", evtRefreshPage);
 
 //==============================================================================
 //                               UI TWEAK EVENTS
