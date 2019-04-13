@@ -1,3 +1,5 @@
+/* eslint-env node, mongo, es6 */
+
 var cwe = require('./CweModel')();
  
 exports.findAll = function(req, res) {
@@ -47,13 +49,13 @@ exports.update = function(req, res) {
     //if (!req.body._id) {
     //        res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.send(200);
-        };
-        var err = function(err) {
-            res.send(409, "update failed");
-        };
-        cwe.update(req.params.name, req.body, ok, err);
+    var ok = function(doc) {
+        res.send(200);
+    };
+    var err = function(err) {
+        res.send(409, "update failed");
+    };
+    cwe.update(req.params.name, req.body, ok, err);
     //}
 };
  

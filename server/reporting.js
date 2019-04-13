@@ -100,7 +100,7 @@ function toCsvValue(theValue, sDelimiter) {
         sDelimiter = '"';
     }
 
-    if (t === "undefined" || t === null) {
+    if (t === "undefined") {
         output = "";
     } else if (t === "string") {
         output = sDelimiter + theValue + sDelimiter;
@@ -214,7 +214,7 @@ function toHtml(objArray, prjName, showAllIssues) {
         "<p>You may click the links in the Issue column to jump to the specific issue details.</p>";
     output += "<table>\n";
     output += "<tr><th>Priority</th><th>Issue</th></tr>"; //<th>Count</th></tr>";
-    for (var i = 0; i < objArray.length; i++) {
+    for (let i = 0; i < objArray.length; i++) {
         obj = objArray[i];
         prevPrio = priority;
         priority = obj.IPriorityText;
@@ -228,8 +228,8 @@ function toHtml(objArray, prjName, showAllIssues) {
         if (!showAllIssues && prio !== undefined && prio < 0) continue;
 
         // Count the number of URIs
-        var count = 0;
-        if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
+        //var count = 0;
+        //if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
 
         // Print each issue with the issue as the header and the details as part of a table.
         if (priority !== undefined && priority !== "" && priority !== prevPrio)
@@ -251,7 +251,7 @@ function toHtml(objArray, prjName, showAllIssues) {
     // Generate detailed issue report
     output += "<h2>Issue Details</h2>";
     output += "<table>\n";
-    for (var i = 0; i < objArray.length; i++) {
+    for (let i = 0; i < objArray.length; i++) {
         obj = objArray[i];
         prevPrio = priority;
         priority = obj.IPriorityText;
@@ -426,8 +426,8 @@ var htmlEncode = function(source, display, tabs, linkify) {
         }
     };
 
-    toLink = function() {
-        var replacePattern = (replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim);
+    let toLink = function() {
+        var replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
     };
 

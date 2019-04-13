@@ -69,9 +69,17 @@ button .kbBtn {
   border: 0px;
 }
 
+<<<<<<< HEAD
 .iTR:nth-child(even) {
   background: #f0f0f0;
 }
+=======
+/* Added for /account */
+table{ border: 1px;         }
+th   { vertical-align: top; }
+
+.iTR:nth-child(even) { background: #F0F0F0; }   
+>>>>>>> oauth
 
 .iTR:nth-child(odd) {
   background: #fafafa;

@@ -81,13 +81,13 @@ exports.upsert = function(req, res) {
     //if (!req.body._id) {
     //        res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.send(409, "update failed");
-        };
-        issue.upsert(req.params.prjName, req.params.tid, req.body, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.send(409, "update failed");
+    };
+    issue.upsert(req.params.prjName, req.params.tid, req.body, ok, err);
     //}
 };
  
@@ -115,13 +115,13 @@ exports.removeByName = function(req, res) {
     //if (!req.body._id) {
     //    res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.send(409, "Failed to remove object");
-        };
-        issue.removeByName(req.params.prjName, req.params.tid, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.send(409, "Failed to remove object");
+    };
+    issue.removeByName(req.params.prjName, req.params.tid, ok, err);
     //}
 };
         
@@ -131,13 +131,13 @@ exports.removeAllForPrj = function(req, res) {
     //if (!req.body._id) {
     //    res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.send(409, "Failed to remove object");
-        };
-        issue.removeAllForPrj(req.params.prjName, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.send(409, "Failed to remove object");
+    };
+    issue.removeAllForPrj(req.params.prjName, ok, err);
     //}
 };
         
