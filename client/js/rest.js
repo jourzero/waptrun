@@ -2,261 +2,236 @@
  * REST client functions
  */
 
-
 /**
  * restDeleteIssue
  * @param {string} prjName
- * @param {string} testId 
+ * @param {string} testId
  */
 function restDeleteIssue(prjName, testId) {
-
     // Check that the UI has the mandatory data we need
-    if ((testId === undefined) || (testId === "")){        
+    if (testId === undefined || testId === "") {
         let msg = "WARNING: Cannot delete issue data: Missing Test ID";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
     }
-    if ((prjName === undefined) || (prjName === "")){
+    if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete issue data: Missing Project Name";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
-    }    
+    }
 
     // Send REST call for issue data
-    let url = "/api/issue/" + prjName + "/" + testId; 
-    console.log("Sending DELETE request to " + url);
+    let url = "/api/issue/" + prjName + "/" + testId;
+    console.info("Sending DELETE request to " + url);
     return $.ajax({
-       url: url,
-       type: 'DELETE',
-     });
+        url: url,
+        type: "DELETE"
+    });
 }
 
-
 // Get CWE data for a CWE ID
-function restGetCwe(cweId, callback){
-    
+function restGetCwe(cweId, callback) {
     // Send REST call for issue data
-    let url = "/api/cwe/" + cweId; 
+    let url = "/api/cwe/" + cweId;
     let cwe = {};
 
-    console.log("Sending GET request to " + url);
+    console.info("Sending GET request to " + url);
     $.get(url, callback);
-};
-
+}
 
 // Get Issue data for a specific test/project
 
-
-function restGetIssue(testId, prjName, callback){
-    
+function restGetIssue(testId, prjName, callback) {
     // Send REST call for issue data
-    let url = "/api/issue/" + prjName + "/" + testId; 
-    console.log("Sending GET request to " + url);
+    let url = "/api/issue/" + prjName + "/" + testId;
+    console.info("Sending GET request to " + url);
     $.get(url, callback);
-};
-
+}
 
 // Get test data from test KB
-function restGetTest(testId, callback){
-    
-    let url = "/api/testkb/" + testId; 
-    console.log("Sending GET request to " + url);
+function restGetTest(testId, callback) {
+    let url = "/api/testkb/" + testId;
+    console.info("Sending GET request to " + url);
     $.get(url, callback);
-};
-
+}
 
 // Update/insert issue data from UI to the issue collection
 function restUpdateIssue(issue) {
-
     // Check that the UI has the mandatory data we need
-    if ((issue.TID === undefined) || (issue.TID === "")){        
+    if (issue.TID === undefined || issue.TID === "") {
         let msg = "WARNING: Cannot save issue data: Missing Test ID";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
     }
-    if ((issue.PrjName === undefined) || (issue.PrjName === "")){
+    if (issue.PrjName === undefined || issue.PrjName === "") {
         let msg = "WARNING: Cannot save issue data: Missing Project Name";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
-    }    
+    }
 
     // Check if issue already exists
-    let op={}; 
+    let op = {};
     op["$set"] = issue;
- 
-    let url  = "/api/issue/" + issue.PrjName + "/" + issue.TID;
-    console.log("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
-    
+
+    let url = "/api/issue/" + issue.PrjName + "/" + issue.TID;
+    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
+
     let request = $.ajax({
-      url: url,
-      type: "PUT",
-      contentType: "application/json",
-      data: JSON.stringify(op),
-      dataType: "json"
+        url: url,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(op),
+        dataType: "json"
     });
 }
 
-
 // TODO: Save LastTID to Project collection
-function restUpdateLastTID(testId, prjName){    
-    
-    console.log("Updating LastTID for project " + prjName);
+function restUpdateLastTID(testId, prjName) {
+    console.info("Updating LastTID for project " + prjName);
 
     // Check if issue already exists
-    let op={}; 
-    op["$set"] = {lastTID: testId}; 
+    let op = {};
+    op["$set"] = {lastTID: testId};
 
-    var data =  JSON.stringify(op);
+    var data = JSON.stringify(op);
 
     let url = "/api/project/" + prjName;
-    console.log("Sending PUT request to url " + url + " with data " + data);
+    console.info("Sending PUT request to url " + url + " with data " + data);
     var request = $.ajax({
-      url: url,
-      type: "PUT",
-      contentType: "application/json",
-      data: data,
-      dataType: "json"
+        url: url,
+        type: "PUT",
+        contentType: "application/json",
+        data: data,
+        dataType: "json"
     });
-};
-
+}
 
 /**
  * restCreatePrj
  * @param {string} prjName
  */
 function restCreatePrj(prjName) {
-
-    kvp = {}; 
-    kvp.name    = prjName;
-    kvp.scope   = "TG4";
+    kvp = {};
+    kvp.name = prjName;
+    kvp.scope = "TG4";
     kvp.scopeQry = "OWASP-TG4";
 
     // Send post request
-    let url  = "/api/project";
-    console.log("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
+    let url = "/api/project";
+    console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
     let request = $.ajax({
-      url: url,
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(kvp),
-      dataType: "json"
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(kvp),
+        dataType: "json"
     });
 }
-
 
 /**
  * restDeletePrj
  * @param {string} prjName
  */
 function restDeletePrj(prjName) {
-
-    if ((prjName === undefined) || (prjName === "")){
+    if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete project data: Missing Project Name";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
-    }    
+    }
 
     // Send REST call for project data
-    console.log("Removing project " + prjName);
-    let url = "/api/project/" + prjName; 
-    console.log("Sending DELETE request to " + url);
+    console.info("Removing project " + prjName);
+    let url = "/api/project/" + prjName;
+    console.info("Sending DELETE request to " + url);
     return $.ajax({
-       url: url,
-       type: 'DELETE',
-     });
+        url: url,
+        type: "DELETE"
+    });
 }
-
-
 
 /**
  * restDeletePrjIssues
  * @param {string} prjName
  */
 function restDeletePrjIssues(prjName) {
-
-    if ((prjName === undefined) || (prjName === "")){
+    if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete project data: Missing Project Name";
-        console.log(msg);
+        console.warn(msg);
         uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         return;
-    }    
-
+    }
 
     // Send REST call for issue data
-    console.log("Removing all issues for project " + prjName);
-    url = "/api/issue/" + prjName; 
-    console.log("Sending DELETE request to " + url);
+    console.info("Removing all issues for project " + prjName);
+    url = "/api/issue/" + prjName;
+    console.info("Sending DELETE request to " + url);
     return $.ajax({
-       url: url,
-       type: 'DELETE',
-     });
+        url: url,
+        type: "DELETE"
+    });
 }
 
-
-
 // Save all values to Project Collection
-function restUpdateProject(prj){
-    
-    console.log("Updating project " + prjName);
+function restUpdateProject(prj) {
+    console.info("Updating project " + prjName);
 
-    let data =  JSON.stringify(prj);
-    let url  = "/api/project/" + prjName;
+    let data = JSON.stringify(prj);
+    let url = "/api/project/" + prjName;
 
-    console.log("Sending PUT request to url " + url + " with data " + data);
+    console.info("Sending PUT request to url " + url + " with data " + data);
     var request = $.ajax({
-      url: url,
-      type: "PUT",
-      contentType: "application/json",
-      data: data,
-      dataType: "json"
+        url: url,
+        type: "PUT",
+        contentType: "application/json",
+        data: data,
+        dataType: "json"
     });
-};
-
+}
 
 // Update/insert test data to the TestKB collection
 function restUpdateTest(testId, data) {
-
     let op = {};
     op["$set"] = data;
 
     // Send put request
-    let url  = "/api/testkb/" + testId;
-    console.log("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
+    let url = "/api/testkb/" + testId;
+    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
     let request = $.ajax({
-      url: url,
-      type: "PUT",
-      contentType: "application/json",
-      data: JSON.stringify(op),
-      dataType: "json"
+        url: url,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(op),
+        dataType: "json"
     });
-    
-};
-
+}
 
 // Add new entry to TestKB
 function restCreateTest() {
-
-    kvp = {}; mod = {};
-    tid = new Date().toISOString().split(".")[0].replace(/[-:]/g, '');
-    kvp.TID       = "EXT-" + tid;
-    kvp.TSource   = "Extras";
-    kvp.TTestName = ""; 
-    kvp.TPhase    = "Extras";
+    kvp = {};
+    mod = {};
+    tid = new Date()
+        .toISOString()
+        .split(".")[0]
+        .replace(/[-:]/g, "");
+    kvp.TID = "EXT-" + tid;
+    kvp.TSource = "Extras";
+    kvp.TTestName = "";
+    kvp.TPhase = "Extras";
 
     // Send post request
-    let url  = "/api/testkb"
-    console.log("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
+    let url = "/api/testkb";
+    console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
     let request = $.ajax({
-      url: url,
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(kvp),
-      dataType: "json"
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(kvp),
+        dataType: "json"
     });
 
     alert("Inserted a new blank test " + kvp.TID + ".");

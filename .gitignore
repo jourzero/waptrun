@@ -72,3 +72,9 @@ package-lock.json
 /client/websvc/
 /client/WAPT/
 screenshots/.DS_Store
+.DS_Store
+go.sh
+client/js/mypac.js
+client/js/mypac.js
+data/
+utils/import-cwe.sh
