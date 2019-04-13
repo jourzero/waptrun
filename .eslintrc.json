@@ -1,0 +1,15 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "jquery": true
+    },
+    "plugins": [ "security" ],
+    "extends": [ "eslint:recommended", "plugin:security/recommended" ],
+    "parserOptions": { "ecmaVersion": 6 },
+    "rules": {
+        "indent": [ 1, 4 ],
+        "linebreak-style": [ 1, "unix" ],
+        "semi": [ 1, "always" ]
+    }
+}

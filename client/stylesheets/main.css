@@ -66,6 +66,10 @@ button .kbBtn{
     border: 0px;
 }
 
+/* Added for /account */
+table{ border: 1px;         }
+th   { vertical-align: top; }
+
 .iTR:nth-child(even) { background: #F0F0F0; }   
 
 .iTR:nth-child(odd) { background: #FAFAFA; }  
