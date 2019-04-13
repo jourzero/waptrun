@@ -1,0 +1,12 @@
+<table border="1">
+    <tr><th>ID            </th> <td> {{user.id}}</td></tr>
+    <tr><th>Name          </th> <td> {{user.displayName}}</td></tr>
+    <tr><th>Provider      </th> <td> {{user.provider}}</td></tr>
+    {{#if user.email}}
+    <tr><th>Email         </th> <td> {{user.email}}</td></tr>
+    {{/if}}
+    {{#each user.photos}}
+    <tr><th>Profile Photo </th> <td> <img src='{{{this.value}}}'/></td></tr>
+    {{/each}}
+
+</table>

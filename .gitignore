@@ -75,3 +75,8 @@ screenshots/.DS_Store
 .DS_Store
 go.sh
 data/
+.eslintrc.json
+.oauth.js
+.vscode/
+start.sh
+users.js
