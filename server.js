@@ -17,27 +17,47 @@ var cookieParser = require("cookie-parser");
 var GoogleStrategy = require("passport-google-oauth2").Strategy;
 var GitHubStrategy = require("passport-github").Strategy;
 var config = require("./config.js");
-var oauthConfig = require("./.oauth.js");
-var users = require("./users.js");
+//var users = require("./users.js");
 //var mongoAuth = require('./server/mongoAuth.js');
 
 // ========================================== GET CONFIG ==========================================
 var port = process.env.PORT || config.port;
 var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+var oauthConfig = {};
+oauthConfig.github = {};
+oauthConfig.google = {};
+oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
+oauthConfig.github.client_secret = process.env.GITHUB_CLIENT_SECRET;
+oauthConfig.github.redirect_uri = process.env.GITHUB_REDIRECT_URI;
+oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
+oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
+oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+let usersConfig = process.env.USERLIST;
+let userConfig = usersConfig.split(":");
+let users = [];
+for (let i in userConfig) {
+    let ava = userConfig[i].split(",");
+    let user = {};
+    for (let j in ava) {
+        [at, val] = ava[j].split("=");
+        user[at] = val;
+    }
+    //user.projects = [".*"];
+    users.push(user);
+}
 
-//console.log("Connecting to MongoDB at", mongodbUrl);
-console.log("KEY:", oauthConfig.google.client_id);
-console.log("KEY:", oauthConfig.github.client_id);
+//console.debug("OAuth config:", JSON.stringify(oauthConfig));
+//console.debug("Users:", JSON.stringify(users));
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
 passport.serializeUser(function(user, done) {
-    console.log("serializing " + user.username);
+    console.debug("serializing " + user.username);
     done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-    console.log("deserializing " + obj);
+    console.debug("deserializing " + obj);
     done(null, obj);
 });
 
@@ -71,7 +91,7 @@ passport.use(
         {
             clientID: oauthConfig.google.client_id,
             clientSecret: oauthConfig.google.client_secret,
-            callbackURL: oauthConfig.google.redirect_uris[0],
+            callbackURL: oauthConfig.google.redirect_uri,
             passReqToCallback: true
         },
         function(request, accessToken, refreshToken, profile, cb) {
@@ -90,7 +110,7 @@ passport.use(
         {
             clientID: oauthConfig.github.client_id,
             clientSecret: oauthConfig.github.client_secret,
-            callbackURL: oauthConfig.github.redirect_uris[0]
+            callbackURL: oauthConfig.github.redirect_uri
         },
         function(accessToken, refreshToken, profile, cb) {
             return cb(null, profile);
@@ -143,15 +163,27 @@ function ensureAuthenticated(req, res, next) {
 function ensureAuthorized(req, res, next) {
     let id = req.user.id;
     let provider = req.user.provider;
-    console.log("Ensuring that user", id, "from provider", provider, "is authorized");
+    console.debug(
+        "Ensuring that user",
+        id,
+        "from provider",
+        provider,
+        "is authorized. User data = ",
+        JSON.stringify(req.user)
+    );
     let user = users.find(usr => {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
-        console.log("User", id, "is NOT authorized.");
+        console.warn("User", id, "is NOT authorized.");
         req.session.error = "User ID " + id + " is not Authorized!";
         res.redirect("/login");
     } else {
+        console.info("User", id, "is authorized");
+        return next();
+    }
+    /*
+    else {
         let appAllowed = false;
         let appName = req.path.split("/")[2];
         if (appName !== undefined) {
@@ -171,6 +203,7 @@ function ensureAuthorized(req, res, next) {
             return next();
         }
     }
+    */
 }
 
 // ========================================== EXPRESS ==========================================
@@ -330,7 +363,7 @@ app.get("/account", ensureAuthenticated, ensureAuthorized, function(req, res) {
 });
 
 app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
-    console.log("Logged in. User data = ", JSON.stringify(req.user));
+    console.debug("Logged in. User data = ", JSON.stringify(req.user));
 
     // Fetch from project collection
     var coll = db.get("project");
@@ -356,7 +389,7 @@ app.get("/project/:prjName", ensureAuthenticated, ensureAuthorized, function(req
     var prjColl = db.get("project");
     var prjRegex = {$regex: config.PrjSubset};
     var prjSubset = {name: prjRegex};
-    console.log("Checking if entry exists for project " + prjName);
+    console.info("Checking if entry exists for project " + prjName);
     prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
         res.render("project", {
             user: req.user,
@@ -375,10 +408,10 @@ app.get("/testing/:prjName", ensureAuthenticated, ensureAuthorized, function(req
 
     // Fetch from project collection
     var prjColl = db.get("project");
-    console.log("Checking if entry exists for project " + prjName);
+    console.debug("Checking if entry exists for project " + prjName);
     prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
         // Fetch from testkb collection
-        console.log("Searching TestDB with scope", prj.scopeQry);
+        console.info("Searching TestDB with scope", prj.scopeQry);
         var testKB = db.get("testkb");
         var issuesColl = db.get("issues");
         var cweColl = db.get("cwe");
@@ -520,5 +553,5 @@ app.get(
 // ========================================== START LISTENER ==========================================
 app.listen(port);
 /* eslint-disable */
-console.log("Listening on port", port);
+console.info("Listening on port", port);
 /* eslint-enable */
