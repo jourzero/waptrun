@@ -56,7 +56,6 @@ bower_components
 .env
 
 # Local config that should never be committed
-config.js
 /nbproject/private/
 TODO
 nbproject
