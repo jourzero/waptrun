@@ -21,6 +21,7 @@
         "express": "^4.11.1",
         "express-handlebars": "^3.0.0",
         "express-session": "^1.10.1",
+        "marked": "*",
         "method-override": "^2.1.2",
         "mongodb": "^2.2.11",
         "monk": "^6.0.5",

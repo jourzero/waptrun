@@ -1,4 +1,19 @@
 var issue = require("./IssueModel")();
+var marked = require("marked");
+
+// Set markdown options
+marked.setOptions({
+    //renderer: new myMarked.Renderer(),
+    //highlight: function(code) { return require('highlight.js').highlightAuto(code).value; },
+    pedantic: false,
+    gfm: true,
+    tables: true,
+    breaks: false,
+    sanitize: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: false
+});
 
 // Generate issue report for a specific project in CSV format
 exports.genPrjIssueReportCSV = function(req, res) {
@@ -192,6 +207,7 @@ function toHtml(objArray, prjName, showAllIssues) {
     output += "<style>";
     output +=
         "body{width:1200px;}a{text-decoration:none;}\na:hover{color:purple;}.tdID{width:1100px;max-width:1100px;vertical-align:top;word-wrap:break-word;}.thID{text-align:right;vertical-align:top;width:80px;}th{vertical-align:top;}img{padding:1px;border:1px solid #021a40;}ol{padding-left:25px;}tr:nth-child(even){background:#EAEAEA;}tr:nth-child(odd){background:#F0F0F0;}";
+    output += "h3{font-size:16px;}";
     output +=
         ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}.TestedP{background-color:lightgreen;}.FixedP{background-color:lightgreen;}.TODOP{background-color:lightcyan;}.ExcludeP{background-color:lightgray;}.Skip{background-color:#FFFFFF;}tr:nth-child(even){background:#e5e5e5;}tr:nth-child(odd){background:#F5F5F5;}";
     //output += "body {font-family: 'Times New Roman', Georgia, Serif;}h1,h2,h3,h4,h5,h6 {font-family: 'Playfair Display';letter-spacing: 5px;}";
@@ -354,16 +370,43 @@ function toHtml(objArray, prjName, showAllIssues) {
                 "' target='refWin'>" +
                 obj.TRef2 +
                 "</a></td></tr>\n";
+        /*
         if (obj.INotes !== undefined && obj.INotes !== "")
             output +=
                 "<tr><th class='thID'>Notes: </th><td class='tdID'>" +
                 htmlEncode(obj.INotes, true, 4, true) +
                 "</td></tr>\n";
-        if (obj.IEvidence !== undefined && obj.IEvidence !== "")
+        */
+        if (obj.INotes !== undefined && obj.INotes !== "")
             output +=
-                "<tr><th class='thID'>Evidence: </th><td class='tdID'><pre>" +
-                htmlEncode(obj.IEvidence, true, 4, false) +
-                "</pre></td></tr>\n";
+                "<tr><th class='thID'>Notes: </th><td class='tdID'>" +
+                marked(obj.INotes) +
+                //htmlEncode(obj.INotes, true, 4, true) +
+                "</td></tr>\n";
+        if (obj.IEvidence !== undefined && obj.IEvidence !== "") {
+            let evidence = htmlEncode(obj.IEvidence, true, 4, false);
+
+            // If keywords tag line "[KEYWORDS:KW1,KW2]" found, highlight all occurrences
+            let keywordMatches = obj.IEvidence.match(/^\[KEYWORDS\:(.*)\]$/m);
+            let keywords = [];
+            if (
+                keywordMatches !== undefined &&
+                keywordMatches !== null &&
+                keywordMatches.length > 1
+            ) {
+                keywords = keywordMatches[1].split(",");
+            }
+            for (let i in keywords) {
+                let re = new RegExp(keywords[i], "g");
+                evidence = evidence.replace(re, `<mark>${keywords[i]}</mark>`);
+                console.log("Marked all occurrences of keyword", keywords[i], "in", evidence);
+            }
+
+            output +=
+                "<tr><th class='thID'>Evidence: </th><td class='tdID'>" + evidence + "</td></tr>\n";
+            //"<tr><th class='thID'>Evidence: </th><td class='tdID'><pre>" +
+            //"</pre></td></tr>\n";
+        }
         if (obj.IScreenshots !== undefined && obj.IScreenshots !== "")
             output +=
                 "<tr><th class='thID'>Screenshot(s): </th><td class='tdID'>" +

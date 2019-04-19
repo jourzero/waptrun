@@ -118,7 +118,8 @@ function evtAddIssueTemplateText(event) {
         let iEvidence = event.target.value;
         if (iEvidence === undefined || iEvidence.length === 0) {
             console.info("Adding template text to Evidence field");
-            iEvidence = "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER";
+            iEvidence =
+                "[KEYWORDS:XssTest,alert]\n\n=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER";
             $("#IEvidence").val(iEvidence);
             $("#IEvidence").attr("title", iEvidence);
         }
@@ -130,11 +131,32 @@ function evtAddIssueTemplateText(event) {
         let iNotes = event.target.value;
         if (iNotes === undefined || iNotes.length === 0) {
             console.info("Adding template text to Notes field");
-            iNotes = "ISSUE_DETAILS. CIA_IMPACT. HOW_TO_EXPLOIT.\n\n";
-            iNotes += "Perceived Risk: Likelihood=High (Easy to Reproduce, Easy to Discover), ";
-            iNotes += "Impact=Medium (Partial Damage, Easy to Exploit, Some Users Affected)\n\n";
-            iNotes += "To Replicate:\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
-            iNotes += "To Mitigate: See CWE link for more details.";
+            iNotes = `### Issue Details\n
+The NAME feature is vulnerable to ISSUETYPE due to REASON. 
+
+ADD THREAT DETAILS AS NEEDED:
+- Spoofing - attacker can impersonate another user
+- Tampering - affecting the integrity of the data
+- Repudiation - the system doesn't properly track and log user actions, the data stored in log files can be considered invalid or misleading.
+- Information disclosure - the confidentiality can be abused
+- Denial of Service - cause a system failure causing unavailability
+- Elevation of Privilege - having unauthorized access 
+\n`;
+            iNotes += `### Risk\n
+The perceived risk for this issue is RATING, considering its likelihood (reproducibility, exploitability, discoverability)
+and its impact (damage, number of users affected).
+
+ADD RISK DETAILS AS NEEDED:
+- Damage – how bad would an attack be?
+- Reproducibility – how easy is it to reproduce the attack?
+- Exploitability – how much work is it to launch the attack?
+- Affected users – how many people will be impacted?
+- Discoverability – how easy is it to discover the threat?
+\n`;
+            iNotes += "### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
+            iNotes +=
+                "### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
+            iNotes += "### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
             $("#INotes").val(iNotes);
             $("#INotes").attr("title", iNotes);
         }
