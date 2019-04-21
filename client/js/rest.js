@@ -35,8 +35,6 @@ function restDeleteIssue(prjName, testId) {
 function restGetCwe(cweId, callback) {
     // Send REST call for issue data
     let url = "/api/cwe/" + cweId;
-    let cwe = {};
-
     console.info("Sending GET request to " + url);
     $.get(url, callback);
 }
@@ -80,7 +78,7 @@ function restUpdateIssue(issue) {
     let url = "/api/issue/" + issue.PrjName + "/" + issue.TID;
     console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
 
-    let request = $.ajax({
+    $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
@@ -101,7 +99,7 @@ function restUpdateLastTID(testId, prjName) {
 
     let url = "/api/project/" + prjName;
     console.info("Sending PUT request to url " + url + " with data " + data);
-    var request = $.ajax({
+    $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
@@ -115,7 +113,7 @@ function restUpdateLastTID(testId, prjName) {
  * @param {string} prjName
  */
 function restCreatePrj(prjName) {
-    kvp = {};
+    let kvp = {};
     kvp.name = prjName;
     kvp.scope = "TG4";
     kvp.scopeQry = "OWASP-TG4";
@@ -123,7 +121,7 @@ function restCreatePrj(prjName) {
     // Send post request
     let url = "/api/project";
     console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
-    let request = $.ajax({
+    $.ajax({
         url: url,
         type: "POST",
         contentType: "application/json",
@@ -168,7 +166,7 @@ function restDeletePrjIssues(prjName) {
 
     // Send REST call for issue data
     console.info("Removing all issues for project " + prjName);
-    url = "/api/issue/" + prjName;
+    let url = "/api/issue/" + prjName;
     console.info("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
@@ -184,7 +182,7 @@ function restUpdateProject(prj) {
     let url = "/api/project/" + prjName;
 
     console.info("Sending PUT request to url " + url + " with data " + data);
-    var request = $.ajax({
+    $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
@@ -201,7 +199,7 @@ function restUpdateTest(testId, data) {
     // Send put request
     let url = "/api/testkb/" + testId;
     console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
-    let request = $.ajax({
+    $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
@@ -211,13 +209,8 @@ function restUpdateTest(testId, data) {
 }
 
 // Add new entry to TestKB
-function restCreateTest() {
-    kvp = {};
-    mod = {};
-    tid = new Date()
-        .toISOString()
-        .split(".")[0]
-        .replace(/[-:]/g, "");
+function restCreateTest(tid) {
+    let kvp = {};
     kvp.TID = "EXT-" + tid;
     kvp.TSource = "Extras";
     kvp.TTestName = "";
@@ -226,7 +219,7 @@ function restCreateTest() {
     // Send post request
     let url = "/api/testkb";
     console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
-    let request = $.ajax({
+    $.ajax({
         url: url,
         type: "POST",
         contentType: "application/json",

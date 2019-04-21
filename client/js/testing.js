@@ -240,10 +240,17 @@ function evtIssueDataChanged() {
 
 // Create a new test
 function evtNewTest() {
-    console.info("-- New test event, creating a new empty test");
-    restCreateTest();
-    //reloadPage();
+    let tid = new Date()
+        .toISOString()
+        .split(".")[0]
+        .replace(/[-:]/g, "");
+    console.info("-- New test event, creating a new empty test", tid);
+    restCreateTest(tid);
+
+    // Move test runner to new test by setting the lastTid to the new TID and reload the page
+    $("#testIn").val(tid);
     alertOnUpdate();
+    setTimeout(reloadPage, 1000);
 }
 
 // Show issue data when clicking in the Findings table
@@ -830,7 +837,6 @@ function checkSession() {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
                 console.info("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
-                //setTimeout(checkSession, sessionCheckInterval);
             } else {
                 alert(
                     "Session is not active, you will be redirected to the login page.",
