@@ -67,16 +67,6 @@ $("#refreshBtn").on("click", evtRefreshPage);
 //==============================================================================
 //                               UI TWEAK EVENTS
 //==============================================================================
-/*
-// Dynamically adjust height of textareas when clicking in and out of them
-$("textarea").click(function() {
-    $(this).height(500);
-});
-
-$("textarea").blur(function() {
-    $(this).height(20);
-});
-*/
 $(".issueTH").click(function() {
     console.log("Clicked one of the issueTH fields, collapsing all text fields.");
     $("#TTesterSupport").height(20);
@@ -95,15 +85,6 @@ $(
     $("#" + event.target.id).height(500);
 });
 
-/*
-// When some fields are unselected, decrease the text box size to a default height
-$(
-    "#IURIs, #IEvidence, #IScreenshots, #Inotes, #PrjNotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
-).on("blur", function(event) {
-    $("#" + event.target.id).height(20);
-});
-*/
-
 //==============================================================================
 //                                FUNCTIONS
 //==============================================================================
@@ -119,7 +100,7 @@ function evtAddIssueTemplateText(event) {
         if (iEvidence === undefined || iEvidence.length === 0) {
             console.info("Adding template text to Evidence field");
             iEvidence =
-                "[KEYWORDS:XssTest,alert]\n\n=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER";
+                "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
             $("#IEvidence").val(iEvidence);
             $("#IEvidence").attr("title", iEvidence);
         }
@@ -772,7 +753,7 @@ function uiGetTestKB() {
 function uiUpdateFromIssueColl(testID) {
     console.info("Updating UI with issue data");
 
-    // Clear issue fields priTOor to populating them
+    // Clear issue fields prior to populating them
     uiClearIssueFields();
 
     if (testID === undefined || testID === "") {
@@ -837,19 +818,6 @@ function alertOnUpdate() {
     //alert("Press Refresh Page button as needed");
 }
 
-/* Unneeded code to remove later
-// Warn user that the session may expire if nothing is done soon (no reload to let editing complete)
-// This should normally never happen because of the next code block (XHR sent every minute).
-let expiryWarningInterval = 2 * 60 * 1000; // 10 minutes
-function warnExpiry() {
-    alert(
-        "Session may expire if you don't do anything. Simply saving your work should be good enough."
-    );
-    setTimeout(warnExpiry, expiryWarningIterval);
-}
-setTimeout(warnExpiry, expiryWarningInterval);
-*/
-
 // If session gets expired, redirect to login page to avoid wasting time (possibly losing more work)
 // This code should actually prevent the session expiry due to the request sent.
 var xhr = new XMLHttpRequest();
@@ -874,5 +842,4 @@ function checkSession() {
     };
     xhr.send();
 }
-//setTimeout(checkSession, sessionCheckInterval);
 setInterval(checkSession, sessionCheckInterval);
