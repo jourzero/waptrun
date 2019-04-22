@@ -1,7 +1,13 @@
-var issue = require('./IssueModel')();
- 
+var issue = require("./IssueModel")();
+const {validationResult} = require("express-validator/check");
+
 // Find all issues in all projects (routes: /api/issue, /issues.csv)
 exports.findAll = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -10,10 +16,15 @@ exports.findAll = function(req, res) {
     };
     issue.findAll(ok, err);
 };
- 
+
 /* 
 // Find an issue by is ID (unused) 
 exports.findById = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -28,6 +39,11 @@ exports.findById = function(req, res) {
 /*
 // Find an issue by it' name (unused)
 exports.findByName = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -41,6 +57,11 @@ exports.findByName = function(req, res) {
 
 // Find an issue by project name and test ID (route: /api/issue/:prjName/:tid)
 exports.findIssue = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -53,6 +74,11 @@ exports.findIssue = function(req, res) {
 
 // Find all issues for a project (routes: /api/issue/:prjName, /report/csv/:prjName, /report/html/:prjName)
 exports.findProjectIssues = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -65,6 +91,11 @@ exports.findProjectIssues = function(req, res) {
 /*
 // Create a new issue. Unused.
 exports.create = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.location('/issue/doc._id');
         res.send(201);
@@ -75,9 +106,14 @@ exports.create = function(req, res) {
     issue.create(req.body, ok, err);
 };
 */
- 
-// Upsert an issue (route: /api/issue/:prjName/:tid) 
+
+// Upsert an issue (route: /api/issue/:prjName/:tid)
 exports.upsert = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     //if (!req.body._id) {
     //        res.send(404, "id required");
     //} else {
@@ -90,11 +126,15 @@ exports.upsert = function(req, res) {
     issue.upsert(req.params.prjName, req.params.tid, req.body, ok, err);
     //}
 };
- 
 
 /*
 // Remove an issue by ID (unused)
 exports.removeById = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     if (!req.body._id) {
         res.send(404, "id required");
     } else {
@@ -109,9 +149,13 @@ exports.removeById = function(req, res) {
 };
 */
 
-
 // Remove an issue by name (route: /api/issue/:prjName/:tid)
 exports.removeByName = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     //if (!req.body._id) {
     //    res.send(404, "id required");
     //} else {
@@ -124,10 +168,14 @@ exports.removeByName = function(req, res) {
     issue.removeByName(req.params.prjName, req.params.tid, ok, err);
     //}
 };
-        
 
 // Remove all issues for a project (route: /api/issue/:prjName)
 exports.removeAllForPrj = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     //if (!req.body._id) {
     //    res.send(404, "id required");
     //} else {
@@ -140,4 +188,3 @@ exports.removeAllForPrj = function(req, res) {
     issue.removeAllForPrj(req.params.prjName, ok, err);
     //}
 };
-        

@@ -1,6 +1,12 @@
-var testkb = require('./TestKBModel')();
- 
+var testkb = require("./TestKBModel")();
+const {validationResult} = require("express-validator/check");
+
 exports.findAll = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -9,8 +15,13 @@ exports.findAll = function(req, res) {
     };
     testkb.findAll(ok, err);
 };
- 
+
 exports.findById = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -21,6 +32,11 @@ exports.findById = function(req, res) {
 };
 
 exports.findByName = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -31,6 +47,11 @@ exports.findByName = function(req, res) {
 };
 
 exports.findByTID = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
         res.json(doc);
     };
@@ -40,10 +61,14 @@ exports.findByTID = function(req, res) {
     testkb.findByTID(req.params.tid, ok, err);
 };
 
-
 exports.create = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     var ok = function(doc) {
-        res.location('/api/testkb/doc.TID');
+        res.location("/api/testkb/doc.TID");
         res.sendStatus(201);
     };
     var err = function(err) {
@@ -51,22 +76,32 @@ exports.create = function(req, res) {
     };
     testkb.create(req.body, ok, err);
 };
- 
+
 exports.update = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     //if (!req.body._id) {
     //        res.send(404, "id required");
     //} else {
-        var ok = function(doc) {
-            res.sendStatus(200);
-        };
-        var err = function(err) {
-            res.send(409, "update failed");
-        };
-        testkb.update(req.params.tid, req.body, ok, err);
+    var ok = function(doc) {
+        res.sendStatus(200);
+    };
+    var err = function(err) {
+        res.send(409, "update failed");
+    };
+    testkb.update(req.params.tid, req.body, ok, err);
     //}
 };
- 
+
 exports.removeById = function(req, res) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
     if (!req.body._id) {
         res.send(404, "id required");
     } else {
@@ -79,5 +114,3 @@ exports.removeById = function(req, res) {
         testkb.removeById(req.params.id, ok, err);
     }
 };
-        
-                

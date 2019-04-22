@@ -1,24 +1,25 @@
 // Load .env file
 require("dotenv").config();
 
-var express = require("express");
-var session = require("express-session");
-var exphbs = require("express-handlebars");
-var passport = require("passport");
+const express = require("express");
+const session = require("express-session");
+const exphbs = require("express-handlebars");
+const passport = require("passport");
 //var LocalStrategy = require('passport-local');
 //var http = require('http');
-var path = require("path");
-var favicon = require("serve-favicon");
-var logger = require("morgan");
-var methodOverride = require("method-override");
-var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser");
+const path = require("path");
+const favicon = require("serve-favicon");
+const logger = require("morgan");
+const methodOverride = require("method-override");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 //var errorHandler = require('errorhandler');
-var GoogleStrategy = require("passport-google-oauth2").Strategy;
-var GitHubStrategy = require("passport-github").Strategy;
-var config = require("./config.js");
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
+const GitHubStrategy = require("passport-github").Strategy;
+const config = require("./config.js");
 //var users = require("./users.js");
 //var mongoAuth = require('./server/mongoAuth.js');
+const {check, validationResult} = require("express-validator/check");
 
 // ========================================== GET CONFIG ==========================================
 var port = process.env.PORT || config.port;
@@ -381,116 +382,140 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
 });
 //var projects = funct.getProjects("project");
 
-app.get("/project/:prjName", ensureAuthenticated, ensureAuthorized, function(req, res) {
-    // TODO Check name
-    var prjName = req.params.prjName;
+app.get(
+    "/project/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    function(req, res) {
+        var prjName = req.params.prjName;
 
-    // Fetch from project collection
-    var prjColl = db.get("project");
-    var prjRegex = {$regex: config.PrjSubset};
-    var prjSubset = {name: prjRegex};
-    console.info("Checking if entry exists for project " + prjName);
-    prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
-        res.render("project", {
-            user: req.user,
-            CveRptBase: config.CveRptBase,
-            CveRptSuffix: config.CveRptSuffix,
-            prj: prj
+        // Check for input validation errors in the request
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
+        }
+
+        // Fetch from project collection
+        var prjColl = db.get("project");
+        var prjRegex = {$regex: config.PrjSubset};
+        var prjSubset = {name: prjRegex};
+        console.info("Checking if entry exists for project " + prjName);
+        prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
+            res.render("project", {
+                user: req.user,
+                CveRptBase: config.CveRptBase,
+                CveRptSuffix: config.CveRptSuffix,
+                prj: prj
+            });
         });
-    });
-});
+    }
+);
 
-app.get("/testing/:prjName", ensureAuthenticated, ensureAuthorized, function(req, res) {
-    // TODO Check prjName
-    var prjName = req.params.prjName;
-    var prjRegex = {$regex: config.PrjSubset};
-    var prjSubset = {name: prjRegex};
+app.get(
+    "/testing/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    function(req, res) {
+        var prjName = req.params.prjName;
+        var prjRegex = {$regex: config.PrjSubset};
+        var prjSubset = {name: prjRegex};
 
-    // Fetch from project collection
-    var prjColl = db.get("project");
-    console.debug("Checking if entry exists for project " + prjName);
-    prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
-        // Fetch from testkb collection
-        console.info("Searching TestDB with scope", prj.scopeQry);
-        var testKB = db.get("testkb");
-        var issuesColl = db.get("issues");
-        var cweColl = db.get("cwe");
-        let PciTests = prj.PciTests;
-        let Top10Tests = prj.Top10Tests;
-        let Top25Tests = prj.Top25Tests;
-        let StdTests = prj.StdTests;
-
-        // Build scope query
-        //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
-        let scopeQuery = {};
-        // Whitelist scope value
-        switch (prj.scopeQry) {
-            case "Default":
-                scopeQuery = {
-                    $or: [
-                        {TSource: "OWASP-TG4"},
-                        {TSource: "WAHH2"},
-                        {TSource: "TBHM2015"},
-                        {TSource: "Extras"}
-                    ]
-                };
-                break;
-            case "Extras":
-            case "TBHM2015":
-            case "OWASP-TG4":
-            case "SEC542":
-            case "SEC642":
-            case "WAHH2":
-            case "WebSvc":
-                scopeQuery = {$or: [{TSource: prj.scopeQry}, {TSource: "Extras"}]};
+        // Check for input validation errors in the request
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
         }
 
-        if (PciTests || Top10Tests || Top25Tests || StdTests) {
-            let filter = {};
-            if (PciTests)
-                filter =
-                    JSON.stringify(filter).length <= 2
-                        ? {TPCI: PciTests}
-                        : {$or: [filter, {TPCI: PciTests}]};
-            if (Top10Tests)
-                filter =
-                    JSON.stringify(filter).length <= 2
-                        ? {TTop10: Top10Tests}
-                        : {$or: [filter, {TTop10: Top10Tests}]};
-            if (Top25Tests)
-                filter =
-                    JSON.stringify(filter).length <= 2
-                        ? {TTop25: Top25Tests}
-                        : {$or: [filter, {TTop25: Top25Tests}]};
-            if (StdTests)
-                filter =
-                    JSON.stringify(filter).length <= 2
-                        ? {TStdTest: StdTests}
-                        : {$or: [filter, {TStdTest: StdTests}]};
-            scopeQuery = {$and: [scopeQuery, filter]};
-        }
+        // Fetch from project collection
+        var prjColl = db.get("project");
+        console.debug("Checking if entry exists for project " + prjName);
+        prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
+            // Fetch from testkb collection
+            console.info("Searching TestDB with scope", prj.scopeQry);
+            var testKB = db.get("testkb");
+            var issuesColl = db.get("issues");
+            var cweColl = db.get("cwe");
+            let PciTests = prj.PciTests;
+            let Top10Tests = prj.Top10Tests;
+            let Top25Tests = prj.Top25Tests;
+            let StdTests = prj.StdTests;
 
-        // Search the issue collection
-        testKB.find(scopeQuery, {sort: {TID: 1}}, function(e, tests) {
-            issuesColl.find({PrjName: prjName}, {sort: {IPriority: -1}}, function(e, issues) {
-                cweColl.find({}, {sort: {ID: 1}}, function(e, cwes) {
-                    res.render("testing", {
-                        user: req.user,
-                        prj: prj,
-                        tests: tests,
-                        issues: issues,
-                        cwes: cwes,
-                        CweUriBase: config.CweUriBase,
-                        CveRptBase: config.CveRptBase,
-                        CveRptSuffix: config.CveRptSuffix,
-                        TestRefBase: config.TestRefBase,
-                        ScopeQuery: JSON.stringify(scopeQuery)
+            // Build scope query
+            //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
+            let scopeQuery = {};
+            // Whitelist scope value
+            switch (prj.scopeQry) {
+                case "Default":
+                    scopeQuery = {
+                        $or: [
+                            {TSource: "OWASP-TG4"},
+                            {TSource: "WAHH2"},
+                            {TSource: "TBHM2015"},
+                            {TSource: "Extras"}
+                        ]
+                    };
+                    break;
+                case "Extras":
+                case "TBHM2015":
+                case "OWASP-TG4":
+                case "SEC542":
+                case "SEC642":
+                case "WAHH2":
+                case "WebSvc":
+                    scopeQuery = {$or: [{TSource: prj.scopeQry}, {TSource: "Extras"}]};
+            }
+
+            if (PciTests || Top10Tests || Top25Tests || StdTests) {
+                let filter = {};
+                if (PciTests)
+                    filter =
+                        JSON.stringify(filter).length <= 2
+                            ? {TPCI: PciTests}
+                            : {$or: [filter, {TPCI: PciTests}]};
+                if (Top10Tests)
+                    filter =
+                        JSON.stringify(filter).length <= 2
+                            ? {TTop10: Top10Tests}
+                            : {$or: [filter, {TTop10: Top10Tests}]};
+                if (Top25Tests)
+                    filter =
+                        JSON.stringify(filter).length <= 2
+                            ? {TTop25: Top25Tests}
+                            : {$or: [filter, {TTop25: Top25Tests}]};
+                if (StdTests)
+                    filter =
+                        JSON.stringify(filter).length <= 2
+                            ? {TStdTest: StdTests}
+                            : {$or: [filter, {TStdTest: StdTests}]};
+                scopeQuery = {$and: [scopeQuery, filter]};
+            }
+
+            // Search the issue collection
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function(e, tests) {
+                issuesColl.find({PrjName: prjName}, {sort: {IPriority: -1}}, function(e, issues) {
+                    cweColl.find({}, {sort: {ID: 1}}, function(e, cwes) {
+                        res.render("testing", {
+                            user: req.user,
+                            prj: prj,
+                            tests: tests,
+                            issues: issues,
+                            cwes: cwes,
+                            CweUriBase: config.CweUriBase,
+                            CveRptBase: config.CveRptBase,
+                            CveRptSuffix: config.CveRptSuffix,
+                            TestRefBase: config.TestRefBase,
+                            ScopeQuery: JSON.stringify(scopeQuery)
+                        });
                     });
                 });
             });
         });
-    });
-});
+    }
+);
 
 // ========================================== REST ROUTES ==========================================
 var prjRes = require("./server/ProjectRes");
@@ -499,54 +524,173 @@ var issueRes = require("./server/IssueRes");
 var cweRes = require("./server/CweRes");
 var reporting = require("./server/reporting");
 
-// TODO: check all these HTTP inputs
 app.get("/api/project", ensureAuthenticated, ensureAuthorized, prjRes.findAll);
-app.get("/api/project/:name", ensureAuthenticated, ensureAuthorized, prjRes.findByName);
-app.post("/api/project", ensureAuthenticated, ensureAuthorized, prjRes.create);
-app.put("/api/project/:name", ensureAuthenticated, ensureAuthorized, prjRes.update);
-app.delete("/api/project/:name", ensureAuthenticated, ensureAuthorized, prjRes.removeByName);
+app.get(
+    "/api/project/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    prjRes.findByName
+);
+app.post(
+    "/api/project",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // TODO: check other fields that may have been added in POST body
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("name").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    prjRes.create
+);
+app.put(
+    "/api/project/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    prjRes.update
+);
+app.delete(
+    "/api/project/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    prjRes.removeByName
+);
 app.get("/api/testkb", ensureAuthenticated, ensureAuthorized, testkbRes.findAll);
-app.get("/api/testkb/:tid", ensureAuthenticated, ensureAuthorized, testkbRes.findByTID);
-app.post("/api/testkb", ensureAuthenticated, ensureAuthorized, testkbRes.create);
-app.put("/api/testkb/:tid", ensureAuthenticated, ensureAuthorized, testkbRes.update);
+app.get(
+    "/api/testkb/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    testkbRes.findByTID
+);
+app.post(
+    "/api/testkb",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // TODO: check other fields that may have been added in POST body
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    testkbRes.create
+);
+app.put(
+    "/api/testkb/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    testkbRes.update
+);
 app.get("/api/issue", ensureAuthenticated, ensureAuthorized, issueRes.findAll);
-app.get("/api/issue/:prjName", ensureAuthenticated, ensureAuthorized, issueRes.findProjectIssues);
-app.delete("/api/issue/:prjName", ensureAuthenticated, ensureAuthorized, issueRes.removeAllForPrj);
-app.get("/api/issue/:prjName/:tid", ensureAuthenticated, ensureAuthorized, issueRes.findIssue);
-app.put("/api/issue/:prjName/:tid", ensureAuthenticated, ensureAuthorized, issueRes.upsert);
+app.get(
+    "/api/issue/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    issueRes.findProjectIssues
+);
+app.delete(
+    "/api/issue/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    issueRes.removeAllForPrj
+);
+app.get(
+    "/api/issue/:prjName/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
+    issueRes.findIssue
+);
+app.put(
+    "/api/issue/:prjName/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
+    issueRes.upsert
+);
 app.delete(
     "/api/issue/:prjName/:tid",
     ensureAuthenticated,
     ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
     issueRes.removeByName
 );
-app.get("/api/issue/:prjName/:tid", ensureAuthenticated, ensureAuthorized, issueRes.findIssue);
-app.put("/api/issue/:prjName/:tid", ensureAuthenticated, ensureAuthorized, issueRes.upsert);
+app.get(
+    "/api/issue/:prjName/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    issueRes.findIssue
+);
+app.put(
+    "/api/issue/:prjName/:tid",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    issueRes.upsert
+);
 app.delete(
     "/api/issue/:prjName/:tid",
     ensureAuthenticated,
     ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     issueRes.removeByName
 );
 app.get("/api/cwe", ensureAuthenticated, ensureAuthorized, cweRes.findAll);
-app.get("/api/cwe/:id", ensureAuthenticated, ensureAuthorized, cweRes.findById);
+app.get(
+    "/api/cwe/:id",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check CWE ID
+    check("id").matches(/^[0-9]{1,4}$/),
+    cweRes.findById
+);
 app.get("/issues.csv", ensureAuthenticated, ensureAuthorized, reporting.exportIssuesCSV);
 app.get(
     "/report/csv/:prjName",
     ensureAuthenticated,
     ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueReportCSV
 );
 app.get(
     "/report/html/findings/:prjName",
     ensureAuthenticated,
     ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueFindingsReportHtml
 );
 app.get(
     "/report/html/full/:prjName",
     ensureAuthenticated,
     ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueFullReportHtml
 );
 
