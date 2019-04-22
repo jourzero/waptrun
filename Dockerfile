@@ -8,6 +8,7 @@ COPY . .
 
 # Get node modules
 RUN npm install
+RUN npm install -g nodemon
 
 EXPOSE 5000
 CMD npm start
