@@ -2,26 +2,25 @@
 
 <!-- TOC -->
 
--   [Web App Pen Test Runner](#web-app-pen-test-runner)
-    -   [Overview](#overview)
-    -   [Running this code within Docker](#running-this-code-within-docker)
-        -   [Get the code](#get-the-code)
-        -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
-        -   [Browse to the app](#browse-to-the-app)
-        -   [Stop App and DB containers](#stop-app-and-db-containers)
-    -   [Basic Idea](#basic-idea)
-    -   [Design focus](#design-focus)
-        -   [Phase 1](#phase-1)
-        -   [Phase 2](#phase-2)
-        -   [Phase 3](#phase-3)
-        -   [Phase 4](#phase-4)
-        -   [Phase 5](#phase-5)
-        -   [Phase 6](#phase-6)
-    -   [Additional Criteria](#additional-criteria)
-    -   [Current Features](#current-features)
-    -   [IMPORTANT NOTE](#important-note)
-    -   [TODOs](#todos)
-        -   [Snyk Results](#snyk-results)
+- [Web App Pen Test Runner](#web-app-pen-test-runner)
+    - [Overview](#overview)
+    - [Running this code within Docker](#running-this-code-within-docker)
+        - [Get the code](#get-the-code)
+        - [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
+        - [Browse to the app](#browse-to-the-app)
+        - [Stop App and DB containers](#stop-app-and-db-containers)
+    - [Basic Idea](#basic-idea)
+    - [Design focus](#design-focus)
+        - [Phase 1](#phase-1)
+        - [Phase 2](#phase-2)
+        - [Phase 3](#phase-3)
+        - [Phase 4](#phase-4)
+        - [Phase 5](#phase-5)
+        - [Phase 6](#phase-6)
+    - [Additional Criteria](#additional-criteria)
+    - [Current Features](#current-features)
+    - [IMPORTANT NOTE](#important-note)
+    - [Snyk Results](#snyk-results)
 
 <!-- /TOC -->
 
@@ -33,7 +32,7 @@ It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB to persist
 
 ## Running this code within Docker
 
-**WARNING**: This won't work until I include a sanitized MongoDB snapshot (see TODO below).
+**WARNING**: This won't work until I include a sanitized MongoDB snapshot or an import mechanism. See [Issues](https://github.com/jourzero/waptrun/issues).
 
 ### Get the code
 
@@ -169,14 +168,9 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
 
 ## IMPORTANT NOTE
 
--   Without a starting MongoDB dataset, this app is useless for anyone else but me. See my pending TODO below...
+-   Without a starting MongoDB dataset, this app is useless for anyone else but me. See [Issues](https://github.com/jourzero/waptrun/issues)
 
-## TODOs
 
--   Remove links to my local methodology files/text or add the content to this repo
--   Add import data and scripts for TestKB into MongoDB
--   Improve server-side security (use Helmet, tighter input validations/sanitization, fix static scanner findings, support OAuth to avoid keeping hashes)
-
-### Snyk Results
+## Snyk Results
 
 [![Known Vulnerabilities](https://snyk.io/test/github/jourzero/waptrun/badge.svg)](https://snyk.io/test/github/jourzero/waptrun)
