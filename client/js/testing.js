@@ -246,11 +246,6 @@ function evtNewTest() {
         .replace(/[-:]/g, "");
     console.info("-- New test event, creating a new empty test", tid);
     restCreateTest(tid);
-
-    // Move test runner to new test by setting the lastTid to the new TID and reload the page
-    $("#testIn").val(tid);
-    alertOnUpdate();
-    setTimeout(reloadPage, 1000);
 }
 
 // Show issue data when clicking in the Findings table

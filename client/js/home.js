@@ -19,9 +19,6 @@ function evtCreateNewPrj() {
     let prjName = $("#newProjectInput").val();
     //$("#newProjectDiv").prop("hidden", "true");
     restCreatePrj(prjName);
-    alert("Inserted a new project " + prjName + ".");
-    console.info("Reloading the page");
-    location.reload();
 }
 
 // Delete Project

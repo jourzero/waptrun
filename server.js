@@ -5,26 +5,27 @@ const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
 const passport = require("passport");
-//var LocalStrategy = require('passport-local');
-//var http = require('http');
+//const LocalStrategy = require('passport-local');
+//const http = require('http');
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-//var errorHandler = require('errorhandler');
+//const errorHandler = require('errorhandler');
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
-//var users = require("./users.js");
-//var mongoAuth = require('./server/mongoAuth.js');
-const {check, validationResult} = require("express-validator/check");
+//const users = require("./users.js");
+//const mongoAuth = require('./server/mongoAuth.js');
+const {check, checkSchema, validationResult} = require("express-validator/check");
+const validationSchema = require("./validationSchema.js");
 
 // ========================================== GET CONFIG ==========================================
-var port = process.env.PORT || config.port;
-var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
-var oauthConfig = {};
+const port = process.env.PORT || config.port;
+const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+let oauthConfig = {};
 oauthConfig.github = {};
 oauthConfig.google = {};
 oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
@@ -209,7 +210,7 @@ function ensureAuthorized(req, res, next) {
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
-var app = express();
+let app = express();
 app.use(logger("dev"));
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
@@ -225,7 +226,7 @@ app.use(express.static(path.join(__dirname, "client")));
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {
-    var err = req.session.error,
+    let err = req.session.error,
         msg = req.session.notice,
         success = req.session.success;
 
@@ -242,7 +243,7 @@ app.use(function(req, res, next) {
 
 // ========================================== HANDLEBARS ==========================================
 // Configure express to use handlebars templates
-var hbs = exphbs.create({
+let hbs = exphbs.create({
     defaultLayout: "main",
     extname: ".hbs"
 });
@@ -252,9 +253,8 @@ app.set("view engine", ".hbs");
 // ========================================== DATABASE ==========================================
 // Make our db accessible to our router
 // Test 3
-var mongo = require("mongodb");
-var monk = require("monk");
-var db = monk(mongodbUrl);
+const monk = require("monk");
+const db = monk(mongodbUrl);
 app.use(function(req, res, next) {
     req.db = db;
     next();
@@ -270,7 +270,6 @@ app.get("/signin", function(req, res) {
 */
 
 //sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
-/* TODO: Reenable later (maybe) */
 /*
 app.post('/local-reg', passport.authenticate('local-signup', {
   successRedirect: '/',
@@ -291,7 +290,7 @@ app.post('/login', passport.authenticate('local-signin', {
 //logs user out of site, deleting them from the session, and returns to homepage
 /*
 app.get('/logout', function(req, res){
-  var name = req.user.username;
+  let name = req.user.username;
   console.log("LOGGIN OUT " + req.user.username);
   req.logout();
   res.redirect("/");
@@ -367,10 +366,10 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
     console.debug("Logged in. User data = ", JSON.stringify(req.user));
 
     // Fetch from project collection
-    var coll = db.get("project");
-    var sortName = {name: -1};
-    var prjRegex = {$regex: config.PrjSubset};
-    var prjSubset = {name: prjRegex};
+    let coll = db.get("project");
+    let sortName = {name: -1};
+    let prjRegex = {$regex: config.PrjSubset};
+    let prjSubset = {name: prjRegex};
 
     coll.find(prjSubset, {sort: sortName}, function(e, projects) {
         res.render("home", {
@@ -380,7 +379,7 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
         });
     });
 });
-//var projects = funct.getProjects("project");
+//let projects = funct.getProjects("project");
 
 app.get(
     "/project/:prjName",
@@ -389,7 +388,7 @@ app.get(
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     function(req, res) {
-        var prjName = req.params.prjName;
+        let prjName = req.params.prjName;
 
         // Check for input validation errors in the request
         const errors = validationResult(req);
@@ -398,9 +397,9 @@ app.get(
         }
 
         // Fetch from project collection
-        var prjColl = db.get("project");
-        var prjRegex = {$regex: config.PrjSubset};
-        var prjSubset = {name: prjRegex};
+        let prjColl = db.get("project");
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
         console.info("Checking if entry exists for project " + prjName);
         prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
             res.render("project", {
@@ -420,25 +419,27 @@ app.get(
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     function(req, res) {
-        var prjName = req.params.prjName;
-        var prjRegex = {$regex: config.PrjSubset};
-        var prjSubset = {name: prjRegex};
-
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({errors: errors.array()});
         }
 
+        let prjName = req.params.prjName;
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
+
         // Fetch from project collection
-        var prjColl = db.get("project");
+        let prjColl = db.get("project");
         console.debug("Checking if entry exists for project " + prjName);
         prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
+            if (prj === null) return;
+
             // Fetch from testkb collection
             console.info("Searching TestDB with scope", prj.scopeQry);
-            var testKB = db.get("testkb");
-            var issuesColl = db.get("issues");
-            var cweColl = db.get("cwe");
+            let testKB = db.get("testkb");
+            let issuesColl = db.get("issues");
+            let cweColl = db.get("cwe");
             let PciTests = prj.PciTests;
             let Top10Tests = prj.Top10Tests;
             let Top25Tests = prj.Top25Tests;
@@ -518,11 +519,11 @@ app.get(
 );
 
 // ========================================== REST ROUTES ==========================================
-var prjRes = require("./server/ProjectRes");
-var testkbRes = require("./server/TestKBRes");
-var issueRes = require("./server/IssueRes");
-var cweRes = require("./server/CweRes");
-var reporting = require("./server/reporting");
+const prjRes = require("./server/ProjectRes");
+const testkbRes = require("./server/TestKBRes");
+const issueRes = require("./server/IssueRes");
+const cweRes = require("./server/CweRes");
+const reporting = require("./server/reporting");
 
 app.get("/api/project", ensureAuthenticated, ensureAuthorized, prjRes.findAll);
 app.get(
@@ -537,51 +538,46 @@ app.post(
     "/api/project",
     ensureAuthenticated,
     ensureAuthorized,
-    // TODO: check other fields that may have been added in POST body
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("name").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    checkSchema(validationSchema.project),
     prjRes.create
 );
 app.put(
-    "/api/project/:prjName",
+    "/api/project/:name",
     ensureAuthenticated,
     ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    checkSchema(validationSchema.project),
     prjRes.update
 );
 app.delete(
-    "/api/project/:prjName",
+    "/api/project/:name",
     ensureAuthenticated,
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("name").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     prjRes.removeByName
 );
 app.get("/api/testkb", ensureAuthenticated, ensureAuthorized, testkbRes.findAll);
 app.get(
-    "/api/testkb/:tid",
+    "/api/testkb/:TID",
     ensureAuthenticated,
     ensureAuthorized,
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     testkbRes.findByTID
 );
 app.post(
     "/api/testkb",
     ensureAuthenticated,
     ensureAuthorized,
-    // TODO: check other fields that may have been added in POST body
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
-    testkbRes.create
+    checkSchema(validationSchema.testKB),
+    testkbRes.create // filtering out additional fields that aren't in the schema happens here
 );
+
 app.put(
     "/api/testkb/:tid",
     ensureAuthenticated,
     ensureAuthorized,
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    checkSchema(validationSchema.testKB),
     testkbRes.update
 );
 app.get("/api/issue", ensureAuthenticated, ensureAuthorized, issueRes.findAll);
@@ -612,13 +608,10 @@ app.get(
     issueRes.findIssue
 );
 app.put(
-    "/api/issue/:prjName/:tid",
+    "/api/issue/:PrjName/:TID",
     ensureAuthenticated,
     ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
+    checkSchema(validationSchema.issue),
     issueRes.upsert
 );
 app.delete(
@@ -632,32 +625,12 @@ app.delete(
     issueRes.removeByName
 );
 app.get(
-    "/api/issue/:prjName/:tid",
+    "/api/issue/:PrjName/:TID",
     ensureAuthenticated,
     ensureAuthorized,
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     issueRes.findIssue
-);
-app.put(
-    "/api/issue/:prjName/:tid",
-    ensureAuthenticated,
-    ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
-    issueRes.upsert
-);
-app.delete(
-    "/api/issue/:prjName/:tid",
-    ensureAuthenticated,
-    ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
-    issueRes.removeByName
 );
 app.get("/api/cwe", ensureAuthenticated, ensureAuthorized, cweRes.findAll);
 app.get(
@@ -668,6 +641,8 @@ app.get(
     check("id").matches(/^[0-9]{1,4}$/),
     cweRes.findById
 );
+
+// ========================================== REPORTING ROUTES ==========================================
 app.get("/issues.csv", ensureAuthenticated, ensureAuthorized, reporting.exportIssuesCSV);
 app.get(
     "/report/csv/:prjName",
@@ -676,6 +651,14 @@ app.get(
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueReportCSV
+);
+app.get(
+    "/export/json/:prjName",
+    ensureAuthenticated,
+    ensureAuthorized,
+    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    reporting.genPrjIssueExportJSON
 );
 app.get(
     "/report/html/findings/:prjName",

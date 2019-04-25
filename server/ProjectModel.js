@@ -1,7 +1,8 @@
 // export this module, so that it is accessible to our application modules
 module.exports = Projects;
-var config = require("../config.js");
-var mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+const config = require("../config.js");
+const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+const db = require("monk")(mongodbUrl);
 
 // Projects constructor
 function Projects() {
@@ -9,8 +10,6 @@ function Projects() {
         return new Projects();
     }
 
-    // Connect to our mongodb running on localhost and named 'test'
-    var db = require("monk")(mongodbUrl);
     // obtain a reference to our projects collection within mongodb
     this.projects = db.get("project");
 }
@@ -28,8 +27,8 @@ Projects.prototype.findById = function(id, success, error) {
 
 // Retrieve a project by its Name
 // TODO: fix the find query to make it work with the name
-Projects.prototype.findByName = function(prjName, success, error) {
-    this.projects.findOne({name: prjName}, response(success, error));
+Projects.prototype.findByName = function(name, success, error) {
+    this.projects.findOne({name: name}, response(success, error));
 };
 
 // Persist a new project document to mongodb
@@ -38,10 +37,12 @@ Projects.prototype.create = function(project, success, error) {
 };
 
 // Update an existing project document by id in mongodb
-Projects.prototype.update = function(prjName, data, success, error) {
-    console.log("Updating", prjName, "with", JSON.stringify(data));
+Projects.prototype.update = function(name, data, success, error) {
+    console.log("Updating", name, "with", JSON.stringify(data));
+    let op = {};
+    op["$set"] = data;
 
-    this.projects.update({name: prjName}, data, response(success, error));
+    this.projects.update({name: name}, op, response(success, error));
 };
 
 // Remove a project by id from the mongodb
@@ -50,15 +51,15 @@ Projects.prototype.removeById = function(id, success, error) {
 };
 
 // Remove a project by name from the mongodb
-Projects.prototype.removeByName = function(prjName, success, error) {
-    this.projects.remove({name: prjName}, response(success, error));
+Projects.prototype.removeByName = function(name, success, error) {
+    this.projects.remove({name: name}, response(success, error));
 };
 
 // Callback to the supplied success and error functions
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
 // the caller's implementation will send an appropriate http response.
-var response = function(success, error) {
+let response = function(success, error) {
     return function(err, doc) {
         if (err) {
             // an error occurred, call the supplied error function

@@ -168,7 +168,7 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
 
 ## IMPORTANT NOTE
 
--   Without a starting MongoDB dataset, this app is useless for anyone else but me. See [Issues](https://github.com/jourzero/waptrun/issues)
+-   Without a starting MongoDB dataset, this app is useless for anyone else but me. See [Issues](https://github.com/jourzero/waptrun/issues).
 
 
 ## Snyk Results

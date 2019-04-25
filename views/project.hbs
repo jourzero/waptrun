@@ -82,6 +82,8 @@
     Report</button>
 <button id="btnCsvReport" class="button black"
     title="Generate an issue report for this project in CSV and download it.">CSV Report</button>
+<button id="btnJsonExport" class="button black"
+    title="Generate an export for this project in JSON and download it.">JSON Export</button>
 <!--
 <button id="btnCsvExport"   class="button black"       title="Export all issue data from all projects as CSV and download." onclick="window.open('/issues.csv', 'DownloadWin')">Export all</button>
 <button id="btnChecklist"   class="button black" title="Show methodology checklist.">Checklist</button>
@@ -92,6 +94,7 @@
 <script src="/js/utils.js"></script>
 <script src="/js/rest.js"></script>
 <script src="/js/project.js"></script>
+<script src="/js/validator.min.js"></script>
 <script>
     var prjName = "{{prj.name}}";
     var cveRptBase = "{{{CveRptBase}}}";

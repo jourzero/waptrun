@@ -1,5 +1,5 @@
-var issue = require("./IssueModel")();
-var marked = require("marked");
+const issue = require("./IssueModel")();
+const marked = require("marked");
 
 // Set markdown options
 marked.setOptions({
@@ -17,11 +17,11 @@ marked.setOptions({
 
 // Generate issue report for a specific project in CSV format
 exports.genPrjIssueReportCSV = function(req, res) {
-    var prjName = req.params.prjName;
-    var filename = prjName + "-issues.csv";
-    var fileData = "";
+    let prjName = req.params.prjName;
+    let filename = prjName + "-issues.csv";
+    let fileData = "";
 
-    var ok = function(records) {
+    let ok = function(records) {
         console.log("Got " + records.length + " issue records for project " + prjName);
         fileData += toCsv(records);
         res.set("Content-type", "text/csv");
@@ -29,7 +29,33 @@ exports.genPrjIssueReportCSV = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    var err = function(err) {
+    let err = function(err) {
+        res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
+    };
+    issue.findProjectIssues(req.params.prjName, ok, err);
+};
+
+// Generate issue report for a specific project in CSV format
+exports.genPrjIssueExportJSON = function(req, res) {
+    let prjName = req.params.prjName;
+    let filename = prjName + "-issues.json";
+    let fileData = "";
+
+    let ok = function(records) {
+        console.log("Got " + records.length + " issue records for project " + prjName);
+        /*
+        for (let i in records) {
+            delete records[i]._id;
+            delete records[i].__proto__;
+        }
+        */
+        fileData += JSON.stringify(records, undefined, 2);
+        res.set("Content-type", "application/json");
+        res.set("Content-Disposition", "attachment; filename=" + filename);
+        res.set("Content-Length", fileData.length);
+        res.send(fileData);
+    };
+    let err = function(err) {
         res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
     };
     issue.findProjectIssues(req.params.prjName, ok, err);
@@ -37,11 +63,11 @@ exports.genPrjIssueReportCSV = function(req, res) {
 
 // Generate findings issue report for a specific project in HTML format
 exports.genPrjIssueFindingsReportHtml = function(req, res) {
-    var prjName = req.params.prjName;
-    var filename = prjName + "-issues.html";
-    var fileData = "";
-    var showAllIssues = false;
-    var ok = function(records) {
+    let prjName = req.params.prjName;
+    let filename = prjName + "-issues.html";
+    let fileData = "";
+    let showAllIssues = false;
+    let ok = function(records) {
         console.log("Got " + records.length + " issue records for project " + prjName);
         fileData += toHtml(records, prjName, showAllIssues);
         res.set("Content-type", "text/html");
@@ -49,7 +75,7 @@ exports.genPrjIssueFindingsReportHtml = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    var err = function(err) {
+    let err = function(err) {
         //res.send(404);
         res.status(404).send(
             "Sorry, there was an error when generating the report: " + err.message
@@ -60,11 +86,11 @@ exports.genPrjIssueFindingsReportHtml = function(req, res) {
 
 // Generate full issue report for a specific project in HTML format
 exports.genPrjIssueFullReportHtml = function(req, res) {
-    var prjName = req.params.prjName;
-    var filename = prjName + "-issues.html";
-    var fileData = "";
-    var showAllIssues = true;
-    var ok = function(records) {
+    let prjName = req.params.prjName;
+    let filename = prjName + "-issues.html";
+    let fileData = "";
+    let showAllIssues = true;
+    let ok = function(records) {
         console.log("Got " + records.length + " issue records for project " + prjName);
         fileData += toHtml(records, prjName, showAllIssues);
         res.set("Content-type", "text/html");
@@ -72,7 +98,7 @@ exports.genPrjIssueFullReportHtml = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    var err = function(err) {
+    let err = function(err) {
         //res.send(404);
         res.status(404).send(
             "Sorry, there was an error when generating the report: " + err.message
@@ -83,9 +109,9 @@ exports.genPrjIssueFullReportHtml = function(req, res) {
 
 // Export all Issue data to CSV format
 exports.exportIssuesCSV = function(req, res) {
-    var filename = "all-issues.csv";
-    var fileData = "";
-    var ok = function(records) {
+    let filename = "all-issues.csv";
+    let fileData = "";
+    let ok = function(records) {
         console.log("Got " + records.length + " issue records");
         fileData += toCsv(records);
         res.set("Content-type", "text/csv");
@@ -93,7 +119,7 @@ exports.exportIssuesCSV = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.status(404).send("Sorry, there was an error when exporting: " + err.message);
     };
     issue.findAll(ok, err);
@@ -105,7 +131,7 @@ exports.exportIssuesCSV = function(req, res) {
  * @param {string} sDelimiter The string delimiter.  Defaults to a double quote (") if omitted.
  */
 function toCsvValue(theValue, sDelimiter) {
-    var t = typeof theValue,
+    let t = typeof theValue,
         output;
     if (theValue === null) theValue = "";
     theValue = String(theValue);
@@ -134,7 +160,7 @@ function toCsvValue(theValue, sDelimiter) {
  * @return {string} The CSV equivalent of objArray.
  */
 function toCsv(objArray, sDelimiter, cDelimiter) {
-    var i,
+    let i,
         l,
         names = [],
         name,
@@ -198,12 +224,12 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
  * @return {string} The CSV equivalent of objArray.
  */
 function toHtml(objArray, prjName, showAllIssues) {
-    var obj = {};
-    var output = "<html><head>\n";
-    var priority = "N/A",
+    let obj = {};
+    let output = "<html><head>\n";
+    let priority = "N/A",
         prevPrio = "",
         prio = -1;
-    var cweUriBase = "https://cwe.mitre.org/data/definitions/";
+    let cweUriBase = "https://cwe.mitre.org/data/definitions/";
     output += "<style>";
     output +=
         "body{width:1200px;}a{text-decoration:none;}\na:hover{color:purple;}.tdID{width:1100px;max-width:1100px;vertical-align:top;word-wrap:break-word;}.thID{text-align:right;vertical-align:top;width:80px;}th{vertical-align:top;}img{padding:1px;border:1px solid #021a40;}ol{padding-left:25px;}tr:nth-child(even){background:#EAEAEA;}tr:nth-child(odd){background:#F0F0F0;}";
@@ -244,7 +270,7 @@ function toHtml(objArray, prjName, showAllIssues) {
         if (!showAllIssues && prio !== undefined && prio < 0) continue;
 
         // Count the number of URIs
-        //var count = 0;
+        //let count = 0;
         //if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
 
         // Print each issue with the issue as the header and the details as part of a table.
@@ -306,8 +332,8 @@ function toHtml(objArray, prjName, showAllIssues) {
                 "</a></td></tr>\n";
         if (obj.IURIs !== undefined && obj.IURIs !== "") {
             output += "<tr><th class='thID'>URI(s): </th><td class='tdID'><ol>";
-            var uri = obj.IURIs.split("\n");
-            for (var j = 0; j < uri.length; j++) {
+            let uri = obj.IURIs.split("\n");
+            for (let j = 0; j < uri.length; j++) {
                 if (uri[j].length > 14) {
                     // TODO: sanitize link
                     output +=
@@ -437,8 +463,8 @@ jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, pluspl
  * @param {boolean} linkify    Linkify URLs when possible
  * @returns {Array|htmlEncode.result|String}
  */
-var htmlEncode = function(source, display, tabs, linkify) {
-    var i, s, ch, peek, line, result, next, endline, push, spaces;
+let htmlEncode = function(source, display, tabs, linkify) {
+    let i, s, ch, peek, line, result, next, endline, push, spaces;
 
     if (source === undefined) return "";
 
@@ -470,7 +496,7 @@ var htmlEncode = function(source, display, tabs, linkify) {
     };
 
     let toLink = function() {
-        var replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        let replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
     };
 

@@ -72,8 +72,8 @@ function restUpdateIssue(issue) {
     }
 
     // Check if issue already exists
-    let op = {};
-    op["$set"] = issue;
+    //let op = {};
+    //op["$set"] = issue;
 
     let url = "/api/issue/" + issue.PrjName + "/" + issue.TID;
     console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
@@ -82,7 +82,8 @@ function restUpdateIssue(issue) {
         url: url,
         type: "PUT",
         contentType: "application/json",
-        data: JSON.stringify(op),
+        //data: JSON.stringify(op),
+        data: JSON.stringify(issue),
         dataType: "json"
     });
 }
@@ -92,18 +93,18 @@ function restUpdateLastTID(testId, prjName) {
     console.info("Updating LastTID for project " + prjName);
 
     // Check if issue already exists
-    let op = {};
-    op["$set"] = {lastTID: testId};
-
-    var data = JSON.stringify(op);
+    //let op = {};
+    //op["$set"] = {lastTID: testId};
+    //var data = JSON.stringify(op);
 
     let url = "/api/project/" + prjName;
-    console.info("Sending PUT request to url " + url + " with data " + data);
+    console.info("Sending PUT request to url " + url + ": lastTID=" + testId);
     $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
-        data: data,
+        //data: data,
+        data: JSON.stringify({lastTID: testId}),
         dataType: "json"
     });
 }
@@ -126,7 +127,20 @@ function restCreatePrj(prjName) {
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(kvp),
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            201: function() {
+                alert("Inserted a new project " + prjName + ".");
+                console.info("Reloading the page");
+                location.reload();
+            },
+            409: function() {
+                alert("Could not process the request to create a new project");
+            },
+            422: function() {
+                alert("Invalid input data provided when attempting to create a new project.");
+            }
+        }
     });
 }
 
@@ -194,7 +208,7 @@ function restUpdateProject(prj) {
 // Update/insert test data to the TestKB collection
 function restUpdateTest(testId, data) {
     let op = {};
-    op["$set"] = data;
+    //op["$set"] = data;
 
     // Send put request
     let url = "/api/testkb/" + testId;
@@ -203,7 +217,8 @@ function restUpdateTest(testId, data) {
         url: url,
         type: "PUT",
         contentType: "application/json",
-        data: JSON.stringify(op),
+        //data: JSON.stringify(op),
+        data: JSON.stringify(data),
         dataType: "json"
     });
 }
@@ -213,8 +228,24 @@ function restCreateTest(tid) {
     let kvp = {};
     kvp.TID = "EXT-" + tid;
     kvp.TSource = "Extras";
-    kvp.TTestName = "";
     kvp.TPhase = "Extras";
+    kvp.TSection = "Extras";
+    kvp.TTestName = "TODO:RENAME TEST " + tid;
+    kvp.TTesterSupport =
+        "TODO:Test for ... issue by performing these steps:\n- STEP1\n- STEP2\n- STEP3\n";
+    kvp.TCweID = "0";
+    kvp.TIssueName = "TODO:Search for CWE and click 'Use CWE Data'.";
+    kvp.TIssueBackground = "For background on this issue, please refer to the CWE.";
+    kvp.TRemediationBackground = "See 'Potential Mitigations' section of the referenced CWE.";
+    kvp.TSeverity = "0";
+    kvp.TIssueType = "Extra Test";
+    kvp.TPCI = false;
+    kvp.TTop10 = false;
+    kvp.TTop25 = false;
+    kvp.TStdTest = false;
+    kvp.TTRef = "https://www.owasp.org/index.php/OWASP_Testing_Guide_v4_Table_of_Contents";
+    kvp.TRef1 = "http://cwe.mitre.org/index.html";
+    kvp.TRef2 = "https://github.com/OWASP/CheatSheetSeries/blob/master/Index.md";
 
     // Send post request
     let url = "/api/testkb";
@@ -224,8 +255,19 @@ function restCreateTest(tid) {
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(kvp),
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            201: function() {
+                alert("Inserted a new blank test " + kvp.TID + ".");
+                console.info("Reloading the page");
+                location.reload();
+            },
+            409: function() {
+                alert("Could not process the request to create a new test.");
+            },
+            422: function() {
+                alert("Invalid input data provided when attempting to create a new test.");
+            }
+        }
     });
-
-    alert("Inserted a new blank test " + kvp.TID + ".");
 }

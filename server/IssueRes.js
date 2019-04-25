@@ -1,5 +1,6 @@
-var issue = require("./IssueModel")();
+const issue = require("./IssueModel")();
 const {validationResult} = require("express-validator/check");
+const {matchedData} = require("express-validator/filter");
 
 // Find all issues in all projects (routes: /api/issue, /issues.csv)
 exports.findAll = function(req, res) {
@@ -8,183 +9,102 @@ exports.findAll = function(req, res) {
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    var ok = function(doc) {
+    let ok = function(doc) {
         res.json(doc);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.send(404);
     };
     issue.findAll(ok, err);
 };
 
-/* 
-// Find an issue by is ID (unused) 
-exports.findById = function(req, res) {
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.array()});
-    }
-    var ok = function(doc) {
-        res.json(doc);
-    };
-    var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
-    };
-    issue.findById(req.params.id, ok, err);
-};
-*/
-
-/*
-// Find an issue by it' name (unused)
-exports.findByName = function(req, res) {
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.array()});
-    }
-    var ok = function(doc) {
-        res.json(doc);
-    };
-    var err = function(err) {
-        //res.send(404);
-        res.status(404).send('Sorry, we cannot find that!');
-    };
-    issue.findByName(req.params.name, ok, err);
-};
-*/
-
-// Find an issue by project name and test ID (route: /api/issue/:prjName/:tid)
+// Find an issue by project name and test ID (route: /api/issue/:PrjName/:TID)
 exports.findIssue = function(req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    var ok = function(doc) {
+    let ok = function(doc) {
         res.json(doc);
     };
-    var err = function(err) {
+    let err = function(err) {
         //res.send(404);
         res.sendStatus(404);
     };
-    issue.findIssue(req.params.prjName, req.params.tid, ok, err);
+    issue.findIssue(req.params.PrjName, req.params.TID, ok, err);
 };
 
-// Find all issues for a project (routes: /api/issue/:prjName, /report/csv/:prjName, /report/html/:prjName)
+// Find all issues for a project (routes: /api/issue/:PrjName, /report/csv/:PrjName, /report/html/:PrjName)
 exports.findProjectIssues = function(req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    var ok = function(doc) {
+    let ok = function(doc) {
         res.json(doc);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.sendStatus(404);
     };
-    issue.findIssue(req.params.prjName, ok, err);
+    issue.findIssue(req.params.PrjName, ok, err);
 };
 
-/*
-// Create a new issue. Unused.
-exports.create = function(req, res) {
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.array()});
-    }
-    var ok = function(doc) {
-        res.location('/issue/doc._id');
-        res.send(201);
-    };
-    var err = function(err) {
-        res.send(409, "Failed to create object");
-    };
-    issue.create(req.body, ok, err);
-};
-*/
-
-// Upsert an issue (route: /api/issue/:prjName/:tid)
+// Upsert an issue (route: /api/issue/:PrjName/:TID)
 exports.upsert = function(req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    //if (!req.body._id) {
-    //        res.send(404, "id required");
-    //} else {
-    var ok = function(doc) {
+
+    // Use the filter API of express-validator to only include the fields included in the schema
+    const bodyData = matchedData(req, {
+        includeOptionals: true,
+        onlyValidData: true,
+        locations: ["body"]
+    });
+
+    let ok = function(doc) {
         res.sendStatus(200);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.send(409, "update failed");
     };
-    issue.upsert(req.params.prjName, req.params.tid, req.body, ok, err);
-    //}
+    issue.upsert(req.params.PrjName, req.params.TID, bodyData, ok, err);
 };
 
-/*
-// Remove an issue by ID (unused)
-exports.removeById = function(req, res) {
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.array()});
-    }
-    if (!req.body._id) {
-        res.send(404, "id required");
-    } else {
-        var ok = function(doc) {
-            res.send(200);
-        };
-        var err = function(err) {
-            res.send(409, "Failed to remove object");
-        };
-        issue.removeById(req.params.id, ok, err);
-    }
-};
-*/
-
-// Remove an issue by name (route: /api/issue/:prjName/:tid)
+// Remove an issue by name (route: /api/issue/:PrjName/:TID)
 exports.removeByName = function(req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    //if (!req.body._id) {
-    //    res.send(404, "id required");
-    //} else {
-    var ok = function(doc) {
+
+    let ok = function(doc) {
         res.sendStatus(200);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.send(409, "Failed to remove object");
     };
-    issue.removeByName(req.params.prjName, req.params.tid, ok, err);
-    //}
+    issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
 };
 
-// Remove all issues for a project (route: /api/issue/:prjName)
+// Remove all issues for a project (route: /api/issue/:PrjName)
 exports.removeAllForPrj = function(req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({errors: errors.array()});
     }
-    //if (!req.body._id) {
-    //    res.send(404, "id required");
-    //} else {
-    var ok = function(doc) {
+
+    let ok = function(doc) {
         res.sendStatus(200);
     };
-    var err = function(err) {
+    let err = function(err) {
         res.send(409, "Failed to remove object");
     };
-    issue.removeAllForPrj(req.params.prjName, ok, err);
-    //}
+    issue.removeAllForPrj(req.params.PrjName, ok, err);
 };
