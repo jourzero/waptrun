@@ -22,7 +22,6 @@ Issue.prototype.findAll = function(success, error) {
 
 // Retrieve a document by its id
 Issue.prototype.findById = function(id, success, error) {
-    console.log("Trying to find by id", id);
     this.issue.findOne({_id: id}, response(success, error));
 };
 
@@ -61,7 +60,6 @@ Issue.prototype.upsert = function(PrjName, TID, data, success, error) {
     crit["$and"] = [kvp1, kvp2];
     op["$set"] = data;
 
-    console.log("Updating", JSON.stringify(crit), "with", JSON.stringify(data));
     this.issue.update(crit, op, options, response(success, error));
 };
 

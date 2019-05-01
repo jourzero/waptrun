@@ -21,7 +21,6 @@ Projects.prototype.findAll = function(success, error) {
 
 // Retrieve a project by its id
 Projects.prototype.findById = function(id, success, error) {
-    console.log("Trying to find by id", id);
     this.projects.findOne({_id: id}, response(success, error));
 };
 
@@ -38,7 +37,6 @@ Projects.prototype.create = function(project, success, error) {
 
 // Update an existing project document by id in mongodb
 Projects.prototype.update = function(name, data, success, error) {
-    console.log("Updating", name, "with", JSON.stringify(data));
     let op = {};
     op["$set"] = data;
 

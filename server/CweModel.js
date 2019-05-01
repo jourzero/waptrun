@@ -30,31 +30,6 @@ CWE.prototype.findByName = function(cweName, success, error) {
     this.cwe.findOne({Name: cweName}, response(success, error));
 };
 
-// Persist a new cwe document to mongodb
-/*
-CWE.prototype.create = function(cwe, success, error) {
-    this.cwe.insert(cwe, response(success,error));
-};
-*/
-
-// Update an existing cwe document by id in mongodb
-/*
-CWE.prototype.update = function(cweID, data, success, error) {
-    console.log("Updating", cweID, "with", JSON.stringify(data));
-
-    //this.cwe.findAndModify(cwe._id, { $set: { name: cwe.name } }, response(success, error));
-    //this.cwe.findOneAndUpdate({name:prjName}, data, response(success, error));
-    this.cwe.update({ID:cweID}, data, response(success, error));
-};
-*/
-
-// Remove a cwe by id from the mongodb
-/*
-CWE.prototype.removeById = function(id, success, error) {
-    this.cwe.remove({_id : id}, response(success, error));
-};
-*/
-
 // Callback to the supplied success and error functions
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
