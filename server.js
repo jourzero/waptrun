@@ -9,7 +9,8 @@ const passport = require("passport");
 //const http = require('http');
 const path = require("path");
 const favicon = require("serve-favicon");
-const logger = require("morgan");
+const reqLogger = require("./lib/reqLogger.js");
+const logger = require("./lib/appLogger.js");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -21,6 +22,11 @@ const config = require("./config.js");
 //const mongoAuth = require('./server/mongoAuth.js');
 const {check, checkSchema, validationResult} = require("express-validator/check");
 const validationSchema = require("./validationSchema.js");
+const prjRes = require("./server/ProjectRes");
+const testkbRes = require("./server/TestKBRes");
+const issueRes = require("./server/IssueRes");
+const cweRes = require("./server/CweRes");
+const reporting = require("./server/reporting");
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
@@ -54,12 +60,12 @@ for (let i in userConfig) {
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
 passport.serializeUser(function(user, done) {
-    console.debug("serializing " + user.username);
+    logger.debug(`Serializing user ${user.username}`);
     done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-    console.debug("deserializing " + obj);
+    logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
     done(null, obj);
 });
 
@@ -165,23 +171,20 @@ function ensureAuthenticated(req, res, next) {
 function ensureAuthorized(req, res, next) {
     let id = req.user.id;
     let provider = req.user.provider;
-    console.debug(
-        "Ensuring that user",
-        id,
-        "from provider",
-        provider,
-        "is authorized. User data = ",
-        JSON.stringify(req.user)
+    logger.silly(
+        `Ensuring that user ${id} from provider ${provider} is authorized. User data = ${JSON.stringify(
+            req.user
+        )}`
     );
     let user = users.find(usr => {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
-        console.warn("User", id, "is NOT authorized.");
+        logger.warn(`User ${id} is NOT authorized.`);
         req.session.error = "User ID " + id + " is not Authorized!";
         res.redirect("/login");
     } else {
-        console.info("User", id, "is authorized");
+        logger.info(`User ${id} is authorized`);
         return next();
     }
     /*
@@ -211,7 +214,7 @@ function ensureAuthorized(req, res, next) {
 // ========================================== EXPRESS ==========================================
 // Configure Express
 let app = express();
-app.use(logger("dev"));
+app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
@@ -219,6 +222,8 @@ app.use(methodOverride());
 app.use(session({resave: true, saveUninitialized: true, secret: "eugaefoiu"}));
 app.use(passport.initialize());
 app.use(passport.session());
+// Disable caching during some testing
+//app.disable("etag");
 
 // EP: serve favicon and static content
 app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
@@ -363,7 +368,8 @@ app.get("/account", ensureAuthenticated, ensureAuthorized, function(req, res) {
 });
 
 app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
-    console.debug("Logged in. User data = ", JSON.stringify(req.user));
+    logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
+    logger.silly(`User data = ${JSON.stringify(req.user)}`);
 
     // Fetch from project collection
     let coll = db.get("project");
@@ -382,14 +388,12 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
 //let projects = funct.getProjects("project");
 
 app.get(
-    "/project/:prjName",
+    "/project/:PrjName",
     ensureAuthenticated,
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     function(req, res) {
-        let prjName = req.params.prjName;
-
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -400,8 +404,8 @@ app.get(
         let prjColl = db.get("project");
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
-        console.info("Checking if entry exists for project " + prjName);
-        prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
+        logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
             res.render("project", {
                 user: req.user,
                 CveRptBase: config.CveRptBase,
@@ -413,11 +417,11 @@ app.get(
 );
 
 app.get(
-    "/testing/:prjName",
+    "/testing/:PrjName",
     ensureAuthenticated,
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     function(req, res) {
         // Check for input validation errors in the request
         const errors = validationResult(req);
@@ -425,18 +429,17 @@ app.get(
             return res.status(422).json({errors: errors.array()});
         }
 
-        let prjName = req.params.prjName;
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
 
         // Fetch from project collection
         let prjColl = db.get("project");
-        console.debug("Checking if entry exists for project " + prjName);
-        prjColl.findOne({$and: [{name: prjName}, prjSubset]}, function(e, prj) {
+        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
             if (prj === null) return;
 
             // Fetch from testkb collection
-            console.info("Searching TestDB with scope", prj.scopeQry);
+            logger.info(`Searching TestDB with scope ${prj.scopeQry}`);
             let testKB = db.get("testkb");
             let issuesColl = db.get("issues");
             let cweColl = db.get("cwe");
@@ -497,7 +500,10 @@ app.get(
 
             // Search the issue collection
             testKB.find(scopeQuery, {sort: {TID: 1}}, function(e, tests) {
-                issuesColl.find({PrjName: prjName}, {sort: {IPriority: -1}}, function(e, issues) {
+                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: -1}}, function(
+                    e,
+                    issues
+                ) {
                     cweColl.find({}, {sort: {ID: 1}}, function(e, cwes) {
                         res.render("testing", {
                             user: req.user,
@@ -519,166 +525,153 @@ app.get(
 );
 
 // ========================================== REST ROUTES ==========================================
-const prjRes = require("./server/ProjectRes");
-const testkbRes = require("./server/TestKBRes");
-const issueRes = require("./server/IssueRes");
-const cweRes = require("./server/CweRes");
-const reporting = require("./server/reporting");
 
-app.get("/api/project", ensureAuthenticated, ensureAuthorized, prjRes.findAll);
+// Check if authenticated/authorized to use the REST API
+app.all("/api/*", ensureAuthenticated, ensureAuthorized, function(req, res, next) {
+    next();
+});
+
+// Show all projects
+app.get("/api/project", prjRes.findAll);
+
+// Show project data
 app.get(
-    "/api/project/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/api/project/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     prjRes.findByName
 );
-app.post(
-    "/api/project",
-    ensureAuthenticated,
-    ensureAuthorized,
-    checkSchema(validationSchema.project),
-    prjRes.create
-);
-app.put(
-    "/api/project/:name",
-    ensureAuthenticated,
-    ensureAuthorized,
-    checkSchema(validationSchema.project),
-    prjRes.update
-);
+
+// Create project
+app.post("/api/project", checkSchema(validationSchema.project), prjRes.create);
+
+// Update project
+app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.update);
+
+// Delete project
 app.delete(
     "/api/project/:name",
-    ensureAuthenticated,
-    ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("name").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     prjRes.removeByName
 );
-app.get("/api/testkb", ensureAuthenticated, ensureAuthorized, testkbRes.findAll);
+
+// Get data for all tests
+app.get("/api/testkb", testkbRes.findAll);
+
+// Get data for a specifid Test ID
 app.get(
     "/api/testkb/:TID",
-    ensureAuthenticated,
-    ensureAuthorized,
     // check for allowable TID chars (letters, numbers, dash, dots)
     check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     testkbRes.findByTID
 );
+
+// Create a new test
 app.post(
     "/api/testkb",
-    ensureAuthenticated,
-    ensureAuthorized,
     checkSchema(validationSchema.testKB),
     testkbRes.create // filtering out additional fields that aren't in the schema happens here
 );
 
-app.put(
-    "/api/testkb/:tid",
-    ensureAuthenticated,
-    ensureAuthorized,
-    checkSchema(validationSchema.testKB),
-    testkbRes.update
-);
-app.get("/api/issue", ensureAuthenticated, ensureAuthorized, issueRes.findAll);
+// Update an existing test
+app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), testkbRes.update);
+
+// Get all issues for all projects
+app.get("/api/issue", issueRes.findAll);
+
+// Get all issues for a specific project
 app.get(
-    "/api/issue/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/api/issue/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     issueRes.findProjectIssues
 );
+
+// Delete a project
 app.delete(
-    "/api/issue/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/api/issue/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     issueRes.removeAllForPrj
 );
-app.get(
-    "/api/issue/:prjName/:tid",
-    ensureAuthenticated,
-    ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
-    issueRes.findIssue
-);
-app.put(
-    "/api/issue/:PrjName/:TID",
-    ensureAuthenticated,
-    ensureAuthorized,
-    checkSchema(validationSchema.issue),
-    issueRes.upsert
-);
+
+// Create/update an issue
+app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
+
+// Delete an issue
 app.delete(
-    "/api/issue/:prjName/:tid",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/api/issue/:PrjName/:TID",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("tid").matches(/^[0-9a-zA-Z\-\.]{5,20}/),
+    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     issueRes.removeByName
 );
+
+// Get data for an issue
 app.get(
     "/api/issue/:PrjName/:TID",
-    ensureAuthenticated,
-    ensureAuthorized,
     // check for allowable TID chars (letters, numbers, dash, dots)
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
     issueRes.findIssue
 );
-app.get("/api/cwe", ensureAuthenticated, ensureAuthorized, cweRes.findAll);
+
+// Get list of CWEs
+app.get("/api/cwe", cweRes.findAll);
+
+// Get data for a CWE
 app.get(
     "/api/cwe/:id",
-    ensureAuthenticated,
-    ensureAuthorized,
     // check CWE ID
     check("id").matches(/^[0-9]{1,4}$/),
     cweRes.findById
 );
 
-// ========================================== REPORTING ROUTES ==========================================
-app.get("/issues.csv", ensureAuthenticated, ensureAuthorized, reporting.exportIssuesCSV);
+// ======================================= EXPORT/REPORT ROUTES =======================================
+// Check if authenticated/authorized to export data
+app.all("/export/*", ensureAuthenticated, ensureAuthorized, function(req, res, next) {
+    next();
+});
+
+// Export all issues for all projects in CSV
+app.get("/export/issues.csv", reporting.exportIssuesCSV);
+
+// Export all issues for a specific project in CSV
 app.get(
-    "/report/csv/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/export/csv/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueReportCSV
 );
+
+// Export all issues for a specific project in JSON
 app.get(
-    "/export/json/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/export/json/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueExportJSON
 );
+
+// Generate a Findings Report for a project in HTML
 app.get(
-    "/report/html/findings/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/export/html/findings/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueFindingsReportHtml
 );
+
+// Generate a Full Report for a project in HTML
 app.get(
-    "/report/html/full/:prjName",
-    ensureAuthenticated,
-    ensureAuthorized,
+    "/export/html/full/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("prjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
     reporting.genPrjIssueFullReportHtml
 );
 
 // ========================================== START LISTENER ==========================================
 app.listen(port);
 /* eslint-disable */
-console.info("Listening on port", port);
+logger.info(`Listening on port ${port}`);
 /* eslint-enable */

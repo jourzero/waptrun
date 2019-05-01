@@ -96,7 +96,7 @@ module.exports = {
         },
         lastTID: {
             optional: true,
-            matches: {options: /^[0-9a-zA-Z\-\.]{5,40}$/},
+            matches: {options: /^[0-9a-zA-Z\-\.]{0,40}$/},
             errorMessage: "Expected: 5 to 40 alpha-numeric characters, dashes or dots.",
             trim: true
         },
