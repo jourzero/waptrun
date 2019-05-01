@@ -102,7 +102,7 @@ function evtAddIssueTemplateText(event) {
             iEvidence =
                 "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
             $("#IEvidence").val(iEvidence);
-            $("#IEvidence").attr("title", iEvidence);
+            //$("#IEvidence").attr("title", iEvidence);
         }
     }
 
@@ -139,7 +139,7 @@ ADD RISK DETAILS AS NEEDED:
                 "### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
             iNotes += "### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
             $("#INotes").val(iNotes);
-            $("#INotes").attr("title", iNotes);
+            //$("#INotes").attr("title", iNotes);
         }
     }
 }
@@ -229,9 +229,9 @@ function evtIssueDataChanged() {
         restUpdateIssue(issue);
 
         // Update titles so that mouse-over information matches the content
-        $("#IURIs").attr("title", issue.IURIs);
-        $("#IEvidence").attr("title", issue.IEvidence);
-        $("#INotes").attr("title", issue.INotes);
+        //$("#IURIs").attr("title", issue.IURIs);
+        //$("#IEvidence").attr("title", issue.IEvidence);
+        //$("#INotes").attr("title", issue.INotes);
     }
     uiUpdateScreenshots();
     //reloadPage("Reloading page to refresh the issue list");
@@ -363,12 +363,12 @@ function uiClearIssueFields() {
     console.info("Clearing Issue fields");
     var empty = "";
     $("#IURIs").val(empty);
-    $("#IURIs").attr("title", empty);
+    //$("#IURIs").attr("title", empty);
     $("#IEvidence").val(empty);
-    $("#IEvidence").attr("title", empty);
+    //$("#IEvidence").attr("title", empty);
     $("#IScreenshots").val(empty);
     $("#INotes").val(empty);
-    $("#INotes").attr("title", empty);
+    //$("#INotes").attr("title", empty);
     $("#IPriority").val(empty);
     $("#IScreenshotsArea").html("");
     $("#IPriority").prop("selectedIndex", 0);
@@ -383,7 +383,7 @@ function uiClearTestingFields() {
     $("#TTestName").val("");
     //$("#TType").val("");
     $("#TTesterSupport").val("");
-    $("#TTesterSupport").attr("title", "");
+    //$("#TTesterSupport").attr("title", "");
     //$("#TDescr").val("");
     $("#TTRef").val("");
     $("#TTRefA").attr("href", "");
@@ -535,14 +535,14 @@ function uiParseBurpIssue() {
             .replace(/ +/g, " ")
             .trim();
         $("#TIssueBackground").val(issueBG);
-        $("#TIssueBackground").attr("title", issueBG);
+        //$("#TIssueBackground").attr("title", issueBG);
     }
     if (remedBG !== undefined && remedBG.length > 0) {
         remedBG = stripHtmlTags(remedBG)
             .replace(/ +/g, " ")
             .trim();
         $("#TRemediationBackground").val(remedBG);
-        $("#TRemediationBackground").attr("title", remedBG);
+        //$("#TRemediationBackground").attr("title", remedBG);
     }
     if (evidence !== undefined && evidence.length > 0) {
         // Decode the Base64 value
@@ -554,11 +554,11 @@ function uiParseBurpIssue() {
                 .join("")
         ).trim();
         $("#IEvidence").val(evidence);
-        $("#IEvidence").attr("title", evidence);
+        //$("#IEvidence").attr("title", evidence);
     }
     if (urls !== undefined && urls.length > 0) {
         $("#IURIs").val(urls);
-        $("#IURIs").attr("title", urls);
+        //$("#IURIs").attr("title", urls);
     }
     if (sev >= 0) {
         $("#IPriority").val(sev);
@@ -572,7 +572,7 @@ function uiParseBurpIssue() {
             .replace(/ +/g, " ")
             .trim();
         $("#INotes").val(newNotes);
-        $("#INotes").attr("title", newNotes);
+        //$("#INotes").attr("title", newNotes);
     }
 }
 
@@ -663,9 +663,9 @@ function uiUpdateFromTestKB(testId) {
             $("#TPhase").html(rec.TPhase);
             $("#TSection").html(rec.TSection);
             $("#TTestName").val(rec.TTestName);
-            $("#TTestName").attr("title", rec.TTesterSupport);
+            //$("#TTestName").attr("title", rec.TTesterSupport);
             $("#TTesterSupport").val(rec.TTesterSupport);
-            $("#TTesterSupport").attr("title", rec.TTesterSupport);
+            //$("#TTesterSupport").attr("title", rec.TTesterSupport);
             $("#TTRef").val(rec.TTRef);
             let testRef = rec.TTRef;
             if (testRef !== undefined && !testRef.startsWith("http"))
@@ -689,11 +689,11 @@ function uiUpdateFromTestKB(testId) {
             }
 
             $("#TIssueName").val(rec.TIssueName);
-            $("#TIssueName").attr("title", rec.TIssueName);
+            //$("#TIssueName").attr("title", rec.TIssueName);
             $("#TIssueBackground").val(rec.TIssueBackground);
-            $("#TIssueBackground").attr("title", rec.TIssueBackground);
+            //$("#TIssueBackground").attr("title", rec.TIssueBackground);
             $("#TRemediationBackground").val(rec.TRemediationBackground);
-            $("#TRemediationBackground").attr("title", rec.TRemediationBackground);
+            //$("#TRemediationBackground").attr("title", rec.TRemediationBackground);
             $("#TSeverity").val(rec.TSeverity);
             $("#TIssueType").val(rec.TIssueType);
 
@@ -768,16 +768,17 @@ function uiUpdateFromIssueColl(testID) {
             //uiUpdateStatus("Received REST response for issue with Test ID " + testID);
             // Update UI values
             $("#IURIs").val(i.IURIs);
-            $("#IURIs").attr("title", i.IURIs);
+            //$("#IURIs").attr("title", i.IURIs);
             $("#IEvidence").val(i.IEvidence);
-            $("#IEvidence").attr("title", i.IEvidence);
+            //$("#IEvidence").attr("title", i.IEvidence);
             $("#IScreenshots").val(i.IScreenshots);
             $("#INotes").val(i.INotes);
-            $("#INotes").attr("title", i.INotes);
+            //$("#INotes").attr("title", i.INotes);
             $("#IPriority").val(i.IPriority);
             uiUpdateScreenshots();
         } else {
-            let msg = "NOTE: Could not find an issue for Test ID " + testID;
+            let msg =
+                "NOTE: Could not find an issue for Test ID " + testID + " in project " + prjName;
             console.info(msg);
             uiUpdateStatus(msg);
         }

@@ -17,7 +17,7 @@ marked.setOptions({
 
 // Generate issue report for a specific project in CSV format
 exports.genPrjIssueReportCSV = function(req, res) {
-    let prjName = req.params.prjName;
+    let prjName = req.params.PrjName;
     let filename = prjName + "-issues.csv";
     let fileData = "";
 
@@ -32,12 +32,12 @@ exports.genPrjIssueReportCSV = function(req, res) {
     let err = function(err) {
         res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
     };
-    issue.findProjectIssues(req.params.prjName, ok, err);
+    issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Generate issue report for a specific project in CSV format
 exports.genPrjIssueExportJSON = function(req, res) {
-    let prjName = req.params.prjName;
+    let prjName = req.params.PrjName;
     let filename = prjName + "-issues.json";
     let fileData = "";
 
@@ -58,12 +58,12 @@ exports.genPrjIssueExportJSON = function(req, res) {
     let err = function(err) {
         res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
     };
-    issue.findProjectIssues(req.params.prjName, ok, err);
+    issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Generate findings issue report for a specific project in HTML format
 exports.genPrjIssueFindingsReportHtml = function(req, res) {
-    let prjName = req.params.prjName;
+    let prjName = req.params.PrjName;
     let filename = prjName + "-issues.html";
     let fileData = "";
     let showAllIssues = false;
@@ -81,12 +81,12 @@ exports.genPrjIssueFindingsReportHtml = function(req, res) {
             "Sorry, there was an error when generating the report: " + err.message
         );
     };
-    issue.findProjectIssues(req.params.prjName, ok, err);
+    issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Generate full issue report for a specific project in HTML format
 exports.genPrjIssueFullReportHtml = function(req, res) {
-    let prjName = req.params.prjName;
+    let prjName = req.params.PrjName;
     let filename = prjName + "-issues.html";
     let fileData = "";
     let showAllIssues = true;
@@ -104,7 +104,7 @@ exports.genPrjIssueFullReportHtml = function(req, res) {
             "Sorry, there was an error when generating the report: " + err.message
         );
     };
-    issue.findProjectIssues(req.params.prjName, ok, err);
+    issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Export all Issue data to CSV format
