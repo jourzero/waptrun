@@ -49,7 +49,7 @@ exports.create = function(req, res) {
 
     // Use the filter API of express-validator to only include the fields included in the schema
     const bodyData = matchedData(req, {
-        includeOptionals: true,
+        includeOptionals: false,
         onlyValidData: true,
         locations: ["body"]
     });
@@ -80,7 +80,7 @@ exports.update = function(req, res) {
 
     // Use the filter API of express-validator to only include the fields included in the schema
     const bodyData = matchedData(req, {
-        includeOptionals: true,
+        includeOptionals: false,
         onlyValidData: true,
         locations: ["body"]
     });
@@ -93,5 +93,6 @@ exports.update = function(req, res) {
         logger.warn(`Failed DB update: ${JSON.stringify(err)}`);
         res.send(409, "update failed");
     };
+    logger.debug(`Updating TestKB with: ${JSON.stringify(bodyData)}`);
     testkb.update(req.params.TID, bodyData, ok, err);
 };

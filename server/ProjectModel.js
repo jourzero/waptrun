@@ -37,10 +37,7 @@ Projects.prototype.create = function(project, success, error) {
 
 // Update an existing project document by id in mongodb
 Projects.prototype.update = function(name, data, success, error) {
-    let op = {};
-    op["$set"] = data;
-
-    this.projects.update({name: name}, op, response(success, error));
+    this.projects.update({name: name}, {$set: data}, response(success, error));
 };
 
 // Remove a project by id from the mongodb

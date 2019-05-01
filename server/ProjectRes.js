@@ -49,13 +49,13 @@ exports.create = function(req, res) {
 
     // Use the filter API of express-validator to only include the fields included in the schema
     const bodyData = matchedData(req, {
-        includeOptionals: true,
+        includeOptionals: false,
         onlyValidData: true,
         locations: ["body"]
     });
 
     let ok = function(doc) {
-        logger.info("Successful DB creation");
+        logger.info("Successful DB document creation");
         res.location("/projects/doc._id");
         res.sendStatus(201);
     };
@@ -81,7 +81,7 @@ exports.update = function(req, res) {
     });
 
     let ok = function(doc) {
-        logger.info("Successful DB update");
+        logger.info("Successful DB document update");
         res.sendStatus(200);
     };
     let err = function(err) {
@@ -99,7 +99,7 @@ exports.removeByName = function(req, res) {
         return res.status(422).json({errors: errors.array()});
     }
     let ok = function(doc) {
-        logger.info("Successful DB removal");
+        logger.info("Successful DB document removal");
         res.sendStatus(200);
     };
     let err = function(err) {

@@ -22,6 +22,7 @@ const config = require("./config.js");
 //const mongoAuth = require('./server/mongoAuth.js');
 const {check, checkSchema, validationResult} = require("express-validator/check");
 const validationSchema = require("./validationSchema.js");
+const validationValues = require("./validationValues.js");
 const prjRes = require("./server/ProjectRes");
 const testkbRes = require("./server/TestKBRes");
 const issueRes = require("./server/IssueRes");
@@ -56,6 +57,8 @@ for (let i in userConfig) {
 
 //console.debug("OAuth config:", JSON.stringify(oauthConfig));
 //console.debug("Users:", JSON.stringify(users));
+//logger.debug(`Validation Schema: ${JSON.stringify(validationSchema)}`);
+//logger.debug(`Validation Values: ${JSON.stringify(validationValues)}`);
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
@@ -223,7 +226,7 @@ app.use(session({resave: true, saveUninitialized: true, secret: "eugaefoiu"}));
 app.use(passport.initialize());
 app.use(passport.session());
 // Disable caching during some testing
-//app.disable("etag");
+app.disable("etag");
 
 // EP: serve favicon and static content
 app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
@@ -392,7 +395,7 @@ app.get(
     ensureAuthenticated,
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     function(req, res) {
         // Check for input validation errors in the request
         const errors = validationResult(req);
@@ -421,7 +424,7 @@ app.get(
     ensureAuthenticated,
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     function(req, res) {
         // Check for input validation errors in the request
         const errors = validationResult(req);
@@ -538,7 +541,7 @@ app.get("/api/project", prjRes.findAll);
 app.get(
     "/api/project/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     prjRes.findByName
 );
 
@@ -552,7 +555,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.upda
 app.delete(
     "/api/project/:name",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("name").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("name").matches(validationValues.PrjName.matches),
     prjRes.removeByName
 );
 
@@ -563,7 +566,7 @@ app.get("/api/testkb", testkbRes.findAll);
 app.get(
     "/api/testkb/:TID",
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    check("TID").matches(validationValues.TID.matches),
     testkbRes.findByTID
 );
 
@@ -584,7 +587,7 @@ app.get("/api/issue", issueRes.findAll);
 app.get(
     "/api/issue/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     issueRes.findProjectIssues
 );
 
@@ -592,7 +595,7 @@ app.get(
 app.delete(
     "/api/issue/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     issueRes.removeAllForPrj
 );
 
@@ -603,9 +606,9 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRe
 app.delete(
     "/api/issue/:PrjName/:TID",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    check("TID").matches(validationValues.TID.matches),
     issueRes.removeByName
 );
 
@@ -613,8 +616,8 @@ app.delete(
 app.get(
     "/api/issue/:PrjName/:TID",
     // check for allowable TID chars (letters, numbers, dash, dots)
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
-    check("TID").matches(/^[0-9a-zA-Z\-\.]{5,20}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
+    check("TID").matches(validationValues.TID.matches),
     issueRes.findIssue
 );
 
@@ -625,7 +628,7 @@ app.get("/api/cwe", cweRes.findAll);
 app.get(
     "/api/cwe/:id",
     // check CWE ID
-    check("id").matches(/^[0-9]{1,4}$/),
+    check("id").isInt(validationValues.CweId.isInt),
     cweRes.findById
 );
 
@@ -642,7 +645,7 @@ app.get("/export/issues.csv", reporting.exportIssuesCSV);
 app.get(
     "/export/csv/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     reporting.genPrjIssueReportCSV
 );
 
@@ -650,7 +653,7 @@ app.get(
 app.get(
     "/export/json/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     reporting.genPrjIssueExportJSON
 );
 
@@ -658,7 +661,7 @@ app.get(
 app.get(
     "/export/html/findings/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     reporting.genPrjIssueFindingsReportHtml
 );
 
@@ -666,7 +669,7 @@ app.get(
 app.get(
     "/export/html/full/:PrjName",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(/^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/),
+    check("PrjName").matches(validationValues.PrjName.matches),
     reporting.genPrjIssueFullReportHtml
 );
 

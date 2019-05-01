@@ -38,10 +38,7 @@ TestKB.prototype.create = function(doc, success, error) {
 
 // Update an existing document by id in mongodb
 TestKB.prototype.update = function(tid, data, success, error) {
-    console.log("Updating", tid, "with", JSON.stringify(data));
-    let op = {};
-    op["$set"] = data;
-    this.testkb.update({TID: tid}, op, response(success, error));
+    this.testkb.update({TID: tid}, {$set: data}, response(success, error));
 };
 
 // Remove a document by id from the mongodb

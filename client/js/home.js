@@ -26,9 +26,7 @@ function evtDeletePrj() {
     let prjName = $("#delProjectInput").val();
     console.info("-- Deleting project " + prjName);
     restDeletePrj(prjName);
-    alert("Deleted the project " + prjName);
     restDeletePrjIssues(prjName);
-    alert("Deleted the issues for project " + prjName);
     console.info("Reloading the page");
     location.reload();
 }

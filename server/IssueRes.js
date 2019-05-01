@@ -72,7 +72,7 @@ exports.upsert = function(req, res) {
 
     // Use the filter API of express-validator to only include the fields included in the schema
     const bodyData = matchedData(req, {
-        includeOptionals: true,
+        includeOptionals: false,
         onlyValidData: true,
         locations: ["body"]
     });
@@ -82,8 +82,8 @@ exports.upsert = function(req, res) {
         res.sendStatus(200);
     };
     let err = function(err) {
-        logger.warn(`Issue upsert failed: ${JSON.stringify(err)}`);
-        res.send(409, "update failed");
+        logger.warn(`Upsert failed: ${JSON.stringify(err)}`);
+        res.send(409, "Upsert failed");
     };
     issue.upsert(req.params.PrjName, req.params.TID, bodyData, ok, err);
 };
@@ -98,11 +98,11 @@ exports.removeByName = function(req, res) {
     }
 
     let ok = function(doc) {
-        logger.info("Successful delete completed");
+        logger.info("Successful DB document delete");
         res.sendStatus(200);
     };
     let err = function(err) {
-        logger.warn(`Delete failed: ${JSON.stringify(err)}`);
+        logger.warn(`DB document deletion failed: ${JSON.stringify(err)}`);
         res.send(409, "Failed to remove object");
     };
     issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
@@ -118,7 +118,7 @@ exports.removeAllForPrj = function(req, res) {
     }
 
     let ok = function(doc) {
-        logger.info("Successful delete completed");
+        logger.info("Successful DB document delete");
         res.sendStatus(200);
     };
     let err = function(err) {
