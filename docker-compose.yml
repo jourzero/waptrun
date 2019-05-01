@@ -16,6 +16,7 @@ services:
     container_name: waptrdb
     volumes:
       - "/tmp/backup:/backup"
+      - ./utils:/utils
     image: mongo
     ports:
       - "27017:27017"
