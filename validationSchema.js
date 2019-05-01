@@ -123,7 +123,7 @@ module.exports = {
             errorMessage: "Expected: 5 to 40 alpha-numeric characters, dashes or dots."
         },
         TTestName: {
-            isAscii: true,
+            optional: true,
             isLength: {options: {min: 5, max: 80}},
             errorMessage: "Expected: 5 to 80 characters.",
             trim: true
@@ -161,7 +161,7 @@ module.exports = {
             isNumeric: true
         },
         TIssueName: {
-            isAscii: true,
+            optional: true,
             isLength: {options: {min: 5, max: 100}},
             trim: true
         },
