@@ -71,20 +71,23 @@ function restUpdateIssue(issue) {
         return;
     }
 
-    // Check if issue already exists
-    //let op = {};
-    //op["$set"] = issue;
-
     let url = "/api/issue/" + issue.PrjName + "/" + issue.TID;
-    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
+    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(issue));
 
     $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
-        //data: JSON.stringify(op),
         data: JSON.stringify(issue),
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            200: function() {
+                successMessage("Issue updated successfully.");
+            },
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 
@@ -92,18 +95,12 @@ function restUpdateIssue(issue) {
 function restUpdateLastTID(testId, prjName) {
     console.info("Updating LastTID for project " + prjName);
 
-    // Check if issue already exists
-    //let op = {};
-    //op["$set"] = {lastTID: testId};
-    //var data = JSON.stringify(op);
-
     let url = "/api/project/" + prjName;
     console.info("Sending PUT request to url " + url + ": lastTID=" + testId);
     $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
-        //data: data,
         data: JSON.stringify({lastTID: testId}),
         dataType: "json"
     });
@@ -127,20 +124,7 @@ function restCreatePrj(prjName) {
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(kvp),
-        dataType: "json",
-        statusCode: {
-            201: function() {
-                alert("Inserted a new project " + prjName + ".");
-                console.info("Reloading the page");
-                location.reload();
-            },
-            409: function() {
-                alert("Could not process the request to create a new project");
-            },
-            422: function() {
-                alert("Invalid input data provided when attempting to create a new project.");
-            }
-        }
+        dataType: "json"
     });
 }
 
@@ -207,19 +191,20 @@ function restUpdateProject(prj) {
 
 // Update/insert test data to the TestKB collection
 function restUpdateTest(testId, data) {
-    let op = {};
-    //op["$set"] = data;
-
     // Send put request
     let url = "/api/testkb/" + testId;
-    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(op));
+    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(data));
     $.ajax({
         url: url,
         type: "PUT",
         contentType: "application/json",
-        //data: JSON.stringify(op),
         data: JSON.stringify(data),
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 
@@ -258,16 +243,66 @@ function restCreateTest(tid) {
         dataType: "json",
         statusCode: {
             201: function() {
-                alert("Inserted a new blank test " + kvp.TID + ".");
-                console.info("Reloading the page");
-                location.reload();
+                successMessage(
+                    `Test created successfully: ${kvp.TID}. Reload page to add details to it.`
+                );
             },
             409: function() {
-                alert("Could not process the request to create a new test.");
+                warningMessage("Could not process the request to create a new test.");
             },
-            422: function() {
-                alert("Invalid input data provided when attempting to create a new test.");
+            422: function(data) {
+                formatValidationError(data);
             }
         }
     });
+}
+
+// Clear status message popup
+function clearMsg() {
+    $("#msg").html("");
+    $("#msg").removeClass("alert-success alert-warning alert-danger ");
+}
+
+// Extract validation error and format it nicely for UI output
+function formatValidationError(data) {
+    let errMsg = "Input Validation Error: ";
+    let msg = "";
+    if (data !== undefined && data.responseText !== undefined) {
+        if (
+            data.responseText !== undefined &&
+            data.responseText.length !== undefined &&
+            typeof data.responseText === "string"
+        ) {
+            let body = JSON.parse(data.responseText);
+
+            if (body !== undefined && body.errors !== undefined) {
+                for (let i in body.errors) {
+                    if (msg.length > 0) msg += "<br/>";
+                    msg += body.errors[i].param + ": " + body.errors[i].msg;
+                }
+            }
+        }
+    }
+    errMsg += msg;
+    $("#msg").addClass("alert alert-danger");
+    $("#msg").html(errMsg);
+    setTimeout(clearMsg, 5000);
+}
+
+// Show success message message
+function successMessage(msg) {
+    if (msg !== undefined) {
+        $("#msg").addClass("alert alert-success");
+        $("#msg").html(msg);
+        setTimeout(clearMsg, 5000);
+    }
+}
+
+// Show warning message message
+function warningMessage(msg) {
+    if (msg !== undefined) {
+        $("#msg").addClass("alert alert-warning");
+        $("#msg").html(msg);
+        setTimeout(clearMsg, 5000);
+    }
 }

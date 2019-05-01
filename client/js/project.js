@@ -26,17 +26,17 @@ $("#StartTesting").click(function() {
 });
 
 $("#btnFindingsHtmlReport").click(function() {
-    let url = "/report/html/findings/" + $("#PrjName").val();
+    let url = "/export/html/findings/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
 $("#btnFullHtmlReport").click(function() {
-    let url = "/report/html/full/" + $("#PrjName").val();
+    let url = "/export/html/full/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
 $("#btnCsvReport").click(function() {
-    let url = "/report/csv/" + $("#PrjName").val();
+    let url = "/export/csv/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
