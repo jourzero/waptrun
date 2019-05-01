@@ -9,7 +9,7 @@ const passport = require("passport");
 //const http = require('http');
 const path = require("path");
 const favicon = require("serve-favicon");
-const reqLogger = require("./lib/reqLogger.js");
+//const reqLogger = require("./lib/reqLogger.js");
 const logger = require("./lib/appLogger.js");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
@@ -214,7 +214,7 @@ function ensureAuthorized(req, res, next) {
 // ========================================== EXPRESS ==========================================
 // Configure Express
 let app = express();
-app.use(reqLogger);
+//app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
