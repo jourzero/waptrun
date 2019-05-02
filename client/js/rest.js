@@ -185,7 +185,12 @@ function restUpdateProject(prj) {
         type: "PUT",
         contentType: "application/json",
         data: data,
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 

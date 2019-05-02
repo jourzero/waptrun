@@ -75,7 +75,7 @@ exports.update = function(req, res) {
     }
 
     const bodyData = matchedData(req, {
-        includeOptionals: true,
+        includeOptionals: false,
         onlyValidData: true,
         locations: ["body"]
     });

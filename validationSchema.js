@@ -13,10 +13,8 @@ module.exports = {
         },
         TIssueName: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 5, max: 100}},
-            errorMessage: "Expected: 5 to 100 characters.",
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         CweId: {
@@ -26,18 +24,14 @@ module.exports = {
         },
         TIssueBackground: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: 0 to 3000 characters.",
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         TRemediationBackground: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: 0 to 3000 characters.",
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         TSeverity: {
@@ -48,40 +42,40 @@ module.exports = {
         TRef1: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: URL with max 3000 characters",
+            isLength: {options: {min: 0, max: 2000}},
+            errorMessage: "Expected: URL with max 2000 characters",
             trim: true
         },
         TRef2: {
             optional: true,
             //isURL: {options: {require_tld: false, require_protocol: false, require_host: false}},
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: URL with max 3000 characters",
+            isLength: {options: {min: 0, max: 2000}},
+            errorMessage: "Expected: URL with max 2000 characters",
             trim: true
         },
         TSeverityText: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
+            isAlpha: {locale: "en-US"},
+            errorMessage: "Expected: severity text: Info , Low, Medium, High",
             trim: true
         },
         IURIs: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
+            matches: {options: vals.MultilineURIs.matches},
+            errorMessage: vals.MultilineURIs.errorMessage,
             trim: true
         },
         IEvidence: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         IScreenshots: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         IPriority: {
@@ -91,15 +85,16 @@ module.exports = {
         },
         IPriorityText: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
+            isAlpha: {locale: "en-US"},
             isLength: {options: {min: 0, max: 10}},
+            errorMessage:
+                "Expected: priority text: Info , Low, Medium, High, Tested, Fixed, TODO, Exclude",
             trim: true
         },
         INotes: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         }
     },
@@ -110,16 +105,14 @@ module.exports = {
         },
         notes: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 800}},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         software: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 400}},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         scope: {
@@ -140,19 +133,24 @@ module.exports = {
         },
         PciTests: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)",
+            trim: true
         },
         Top10Tests: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)"
         },
         Top25Tests: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)"
         },
         StdTests: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)"
         }
     },
     testKB: {
@@ -162,73 +160,62 @@ module.exports = {
         },
         TTestName: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 5, max: 80}},
-            errorMessage: "Expected: 5 to 80 characters.",
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TPhase: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 0, max: 40}},
-            errorMessage: "Expected: 0 to 40 characters.",
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TSection: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 0, max: 40}},
-            errorMessage: "Expected: 0 to 40 characters.",
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TSource: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 0, max: 40}},
-            errorMessage: "Expected: 0 to 40 characters.",
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TTesterSupport: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 800}},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         TTRef: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: URL with max 3000 characters",
+            isLength: {options: {min: 0, max: 2000}},
+            errorMessage: "Expected: URL with max 2000 characters",
             trim: true
         },
         TCweID: {
             optional: true,
-            isNumeric: true
+            isInt: {options: vals.CweId.isInt},
+            errorMessage: vals.CweId.errorMessage
         },
         TIssueName: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 5, max: 100}},
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TIssueBackground: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 3000}},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         TRemediationBackground: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: true},
-            isLength: {options: {min: 0, max: 3000}},
+            matches: {options: vals.Multiline.matches},
+            errorMessage: vals.Multiline.errorMessage,
             trim: true
         },
         TSeverity: {
@@ -238,39 +225,42 @@ module.exports = {
         },
         TIssueType: {
             optional: true,
-            isAscii: true,
-            stripLow: {keep_new_lines: false},
-            isLength: {options: {min: 0, max: 100}},
+            matches: {options: vals.Singleline.matches},
+            errorMessage: vals.Singleline.errorMessage,
             trim: true
         },
         TPCI: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)."
         },
         TTop10: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)."
         },
         TTop25: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)."
         },
         TStdTest: {
             optional: true,
-            isBoolean: true
+            isBoolean: true,
+            errorMessage: "Expected: Boolean value (true or false)."
         },
         TRef1: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: URL with max 3000 characters",
+            isLength: {options: {min: 0, max: 2000}},
+            errorMessage: "Expected: URL with max 2000 characters",
             trim: true
         },
         TRef2: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 3000}},
-            errorMessage: "Expected: URL with max 3000 characters",
+            isLength: {options: {min: 0, max: 2000}},
+            errorMessage: "Expected: URL with max 2000 characters",
             trim: true
         }
     }

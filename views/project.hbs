@@ -1,3 +1,5 @@
+<div id='msg' role='alert'></div>
+
 <table class="issueTab">
 
     <tr class="iTR">
@@ -99,10 +101,10 @@
     var prjName = "{{prj.name}}";
     var cveRptBase = "{{{CveRptBase}}}";
     var cveRptSuffix = "{{{CveRptSuffix}}}";
-    var scopeQry = "{{{prj.scopeQry}}}";
+    var scopeQry = "{{prj.scopeQry}}";
 
     $(document).ready(function () {
-        $("#ScopeSel").val("{{{prj.scopeQry}}}");
+        $("#ScopeSel").val("{{prj.scopeQry}}");
         uiUpdateCveLinks();
         $("#TPCI").prop('checked', {{ prj.PciTests }});
     $("#TTop10").prop('checked', {{ prj.Top10Tests }});

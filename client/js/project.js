@@ -104,11 +104,9 @@ function uiUpdateCveLinks() {
     for (let i = 0; i < swList.length; i++) {
         swLinksHtml +=
             "<a class='smallLink' href='" +
-            cveRptBase +
-            swList[i].trim() +
-            cveRptSuffix +
+            encodeURI(cveRptBase + swList[i].trim() + cveRptSuffix) +
             "'target='cveRptUI'>" +
-            swList[i].trim() +
+            validator.escape(swList[i].trim()) +
             "</a>&nbsp;&nbsp;";
     }
     $("#CveRptLinks").html(swLinksHtml);

@@ -21,6 +21,20 @@ module.exports = {
         errorMessage: "Expected: integer in the range [0-9999]"
     },
     URL: {
-        matches: /^(((https?:\/\/)?([-a-zA-Z0-9@:._]{2,256})\/?([-a-zA-Z0-9@:%_\+.~#?&/=()]*))|())?$/
+        matches: /^(((https?:\/\/)?([-a-zA-Z0-9@:._]{2,256})\/?([-a-zA-Z0-9@:%_\+.~#?&/=()]*))|())?$/,
+        errorMessage:
+            "Expected: URL in the form http[s]://FQDN[:PORT]/PATH/FILENAME?PARM1=VAL1&PARM2=VAL2"
+    },
+    Singleline: {
+        matches: /^[\x20-\x7e]{0,200}$/,
+        errorMessage: "Expected: 0 to 200 printable charachers"
+    },
+    Multiline: {
+        matches: /^[\x20-\x7e\r\n]{0,2000}$/m,
+        errorMessage: "Expected: 0 to 2000 printable charachers"
+    },
+    MultilineURIs: {
+        matches: /^[-a-zA-Z0-9@:._@:%_\+.~#?&/=()\n]{0,2000}$/,
+        errorMessage: "Expected: 0 to 2000 characters of multiline URIs"
     }
 };
