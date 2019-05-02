@@ -330,6 +330,7 @@ function formatValidationError(data) {
         }
     }
     errMsg += msg;
+    clearMsg();
     $("#msg").addClass("alert alert-danger");
     $("#msg").html(errMsg);
     setTimeout(clearMsg, 8000);
@@ -338,6 +339,7 @@ function formatValidationError(data) {
 // Show success message message
 function successMessage(msg) {
     if (msg !== undefined) {
+        clearMsg();
         $("#msg").addClass("alert alert-success");
         $("#msg").html(msg);
         setTimeout(clearMsg, 5000);
@@ -347,6 +349,7 @@ function successMessage(msg) {
 // Show warning message message
 function warningMessage(msg) {
     if (msg !== undefined) {
+        clearMsg();
         $("#msg").addClass("alert alert-warning");
         $("#msg").html(msg);
         setTimeout(clearMsg, 8000);
