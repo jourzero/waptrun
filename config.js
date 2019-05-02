@@ -31,7 +31,14 @@ module.exports = {
     // Get appName from package.json
     appName: appName,
 
-    // Configure logging
+    // Configure request logging
+    reqLogging: {
+        file: {
+            filename: `${appRoot}/logs/access.log`
+        }
+    },
+
+    // Configure app logging
     logging: {
         file: {
             format: winston.format.json(), // This format shouldn't cause CRLF issues
@@ -41,8 +48,7 @@ module.exports = {
             colorize: false,
             maxsize: 5242880, // 5MB
             maxFiles: 2,
-            //filename: `${appRoot}/logs/app.log`
-            filename: `${__dirname}/logs/app.log`
+            filename: `${appRoot}/logs/app.log`
         },
         console: {
             format: winston.format.simple(),
