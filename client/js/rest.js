@@ -84,6 +84,9 @@ function restUpdateIssue(issue) {
             200: function() {
                 successMessage("Issue updated successfully.");
             },
+            409: function() {
+                warningMessage("Could not process the request to update issue.");
+            },
             422: function(data) {
                 formatValidationError(data);
             }
@@ -124,7 +127,19 @@ function restCreatePrj(prjName) {
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(kvp),
-        dataType: "json"
+        dataType: "json",
+        statusCode: {
+            201: function() {
+                successMessage(`Project created successfully. Reloading page...`);
+                setTimeout(() => location.reload(), 2000);
+            },
+            409: function() {
+                warningMessage("Could not process the request to create project.");
+            },
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 
@@ -146,7 +161,19 @@ function restDeletePrj(prjName) {
     console.info("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
-        type: "DELETE"
+        type: "DELETE",
+        statusCode: {
+            200: function() {
+                successMessage(`Project deleted successfully. Reloading page...`);
+                setTimeout(() => location.reload(), 2000);
+            },
+            409: function() {
+                warningMessage("Could not process the request to delete project.");
+            },
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 
@@ -168,7 +195,15 @@ function restDeletePrjIssues(prjName) {
     console.info("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
-        type: "DELETE"
+        type: "DELETE",
+        statusCode: {
+            409: function() {
+                warningMessage("Could not process the request to delete project issues.");
+            },
+            422: function(data) {
+                formatValidationError(data);
+            }
+        }
     });
 }
 
@@ -206,6 +241,12 @@ function restUpdateTest(testId, data) {
         data: JSON.stringify(data),
         dataType: "json",
         statusCode: {
+            200: function() {
+                successMessage(`Test updated successfully.`);
+            },
+            409: function() {
+                warningMessage("Could not process the request to update test.");
+            },
             422: function(data) {
                 formatValidationError(data);
             }
@@ -291,7 +332,7 @@ function formatValidationError(data) {
     errMsg += msg;
     $("#msg").addClass("alert alert-danger");
     $("#msg").html(errMsg);
-    setTimeout(clearMsg, 5000);
+    setTimeout(clearMsg, 8000);
 }
 
 // Show success message message
@@ -308,6 +349,6 @@ function warningMessage(msg) {
     if (msg !== undefined) {
         $("#msg").addClass("alert alert-warning");
         $("#msg").html(msg);
-        setTimeout(clearMsg, 5000);
+        setTimeout(clearMsg, 8000);
     }
 }

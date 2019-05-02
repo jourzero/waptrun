@@ -41,7 +41,8 @@ module.exports = {
             colorize: false,
             maxsize: 5242880, // 5MB
             maxFiles: 2,
-            filename: `${appRoot}/logs/app.log`
+            //filename: `${appRoot}/logs/app.log`
+            filename: `${__dirname}/logs/app.log`
         },
         console: {
             format: winston.format.simple(),

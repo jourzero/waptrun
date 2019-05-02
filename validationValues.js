@@ -1,8 +1,7 @@
 module.exports = {
     PrjName: {
         matches: /^[0-9]{6,8}-[a-zA-Z0-9_]{2,20}-[a-zA-Z0-9_]{2,10}$/,
-        errorMessage:
-            "Expected: YYYYMM[DD]-PRJNAME-ENV (40 max., alpha-numeric, underscore accepted)"
+        errorMessage: "Expected: YYYYMM[DD]-PRJNAME-ENV (40 max., alpha-num., underscores)"
     },
     TID: {
         matches: /^[0-9a-zA-Z\-\.]{0,40}$/,
