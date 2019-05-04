@@ -233,6 +233,10 @@ app.disable("etag");
 app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "client")));
 
+// Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
+app.use("/dist/jquery", express.static(__dirname + "/node_modules/jquery/dist/"));
+app.use("/dist/bootstrap", express.static(__dirname + "/node_modules/bootstrap/dist/"));
+
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     let err = req.session.error,

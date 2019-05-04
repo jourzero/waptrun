@@ -351,7 +351,6 @@ function uiChangeTest(testId) {
 // Clear Issue Information
 function uiClearCweFields() {
     console.info("Clearing CWE values");
-    //$('#cwename').typeahead('val', "");
     $("#cweIn").val("");
     $("#cweref").attr("href", "");
     $("#cweref").html("");
