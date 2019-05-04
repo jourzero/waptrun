@@ -4,4 +4,5 @@
 // NOTE: Run this from Mongo shell via: ./mongo.sh /utils/startLogging.js
 //=======================================================================
 
-db.setLogLevel(1,"command")
+db.setLogLevel(0);
+db.setLogLevel(1,"command");
