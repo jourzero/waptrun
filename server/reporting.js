@@ -1,5 +1,7 @@
 const issue = require("./IssueModel")();
 const marked = require("marked");
+const menuWidth = "300px";
+const menuMaxTextLen = 45;
 
 // Set markdown options
 marked.setOptions({
@@ -229,16 +231,26 @@ function toHtml(objArray, prjName, showAllIssues) {
     let cweUriBase = "https://cwe.mitre.org/data/definitions/";
     output += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
     output += "<style>";
+
+    // Control the width of the table
     output += "td,th{max-width:700px;vertical-align:top;}";
     output += "img{max-height:700px;max-width:700px;height:auto;width:auto;}";
+
+    // Colorize the cells based on their Priority
     output +=
         ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}";
     output +=
         ".TestedP{background-color:lightgreen;}.FixedP{background-color:lightgreen;}.TODOP{background-color:lightcyan;}";
+
+    // Evidence text processing:
+    // - Grey-out carriage-return/linefeed
+    output += ".greybg{background-color:#dddddd;font-size:11px}";
+    // - Make sure that text wraps to avoid wide scrolling
+    output += ".evidencetext{word-break:break-all;font-size:11px;line-height:1em;}";
+
     output += "</style>";
 
-    // Add CSS from pure-min.css. Ref.: https://purecss.io
-    // Add pure-min full bundle (1.0.0)
+    // Add CSS from pure-min.css. Ref.: https://purecss.io (customized for our needs)
     output += "<style>\n";
     output +=
         "img,legend{border:0}legend,td,th{padding:0}html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,optgroup,strong{font-weight:700}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre,textarea{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type=checkbox],input[type=radio]{box-sizing:border-box;padding:0}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{height:auto}input[type=search]{-webkit-appearance:textfield;box-sizing:content-box}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}table{border-collapse:collapse;border-spacing:0}.hidden,[hidden]{display:none!important}.pure-img{max-width:100%;height:auto;display:block}";
@@ -251,9 +263,37 @@ function toHtml(objArray, prjName, showAllIssues) {
     // add pure-release-1.0.0/menus-min.js
     output +=
         '.pure-menu{box-sizing:border-box}.pure-menu-fixed{position:fixed;left:0;top:0;z-index:3}.pure-menu-item,.pure-menu-list{position:relative}.pure-menu-list{list-style:none;margin:0;padding:0}.pure-menu-item{padding:0;margin:0;height:100%}.pure-menu-heading,.pure-menu-link{display:block;text-decoration:none;white-space:nowrap;font-size:12px}.pure-menu-horizontal{width:100%;white-space:nowrap}.pure-menu-horizontal .pure-menu-list{display:inline-block}.pure-menu-horizontal .pure-menu-heading,.pure-menu-horizontal .pure-menu-item,.pure-menu-horizontal .pure-menu-separator{display:inline-block;zoom:1;vertical-align:middle}.pure-menu-item .pure-menu-item{display:block}.pure-menu-children{display:none;position:absolute;left:100%;top:0;margin:0;padding:0;z-index:3}.pure-menu-horizontal .pure-menu-children{left:0;top:auto;width:inherit}.pure-menu-active>.pure-menu-children,.pure-menu-allow-hover:hover>.pure-menu-children{display:block;position:absolute}.pure-menu-has-children>.pure-menu-link:after{padding-left:.5em;content:"\25B8";font-size:small}.pure-menu-horizontal .pure-menu-has-children>.pure-menu-link:after{content:"\25BE"}.pure-menu-scrollable{overflow-y:scroll;overflow-x:hidden}.pure-menu-scrollable .pure-menu-list{display:block}.pure-menu-horizontal.pure-menu-scrollable .pure-menu-list{display:inline-block}.pure-menu-horizontal.pure-menu-scrollable{white-space:nowrap;overflow-y:hidden;overflow-x:auto;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding:.5em 0}.pure-menu-horizontal.pure-menu-scrollable::-webkit-scrollbar{display:none}.pure-menu-horizontal .pure-menu-children .pure-menu-separator,.pure-menu-separator{background-color:#ccc;height:1px;margin:.3em 0}.pure-menu-horizontal .pure-menu-separator{width:1px;height:1.3em;margin:0 .3em}.pure-menu-horizontal .pure-menu-children .pure-menu-separator{display:block;width:auto}.pure-menu-heading{text-transform:uppercase;color:#565d64}.pure-menu-link{color:#777}.pure-menu-children{background-color:#fff}.pure-menu-disabled,.pure-menu-heading,.pure-menu-link{padding:.5em 1em}.pure-menu-disabled{opacity:.5}.pure-menu-disabled .pure-menu-link:hover{background-color:transparent}.pure-menu-active>.pure-menu-link,.pure-menu-link:focus,.pure-menu-link:hover{background-color:#eee}.pure-menu-selected .pure-menu-link,.pure-menu-selected .pure-menu-link:visited{color:#000}';
-    // add Responsive Side Menu layout
+
+    // Add CSS for optional Responsive Side Menu layout (customized for our needs)
     output +=
-        'body { color: #777; } .pure-img-responsive { max-width: 100%; height: auto; } #layout, #menu, .menu-link { -webkit-transition: all 0.2s ease-out; -moz-transition: all 0.2s ease-out; -ms-transition: all 0.2s ease-out; -o-transition: all 0.2s ease-out; transition: all 0.2s ease-out; } #layout { position: relative; left: 0; padding-left: 0; } #layout.active #menu { left: 150px; width: 150px; } #layout.active .menu-link { left: 150px; } .content { margin: 0 auto; padding: 0 2em; max-width: 800px; margin-bottom: 50px; line-height: 1.6em; } .header { margin: 0; color: #333; text-align: center; padding: 2.5em 2em 0; border-bottom: 1px solid #eee; } .header h1 { margin: 0.2em 0; font-size: 3em; font-weight: 300; } .header h2 { font-weight: 300; color: #ccc; padding: 0; margin-top: 0; } .content-subhead { margin: 50px 0 20px 0; font-weight: 300; color: #888; } #menu { margin-left: -150px; width: 150px; position: fixed; top: 0; left: 0; bottom: 0; z-index: 1000; background: #191818; overflow-y: auto; -webkit-overflow-scrolling: touch; } #m a { olor: #999; border: none; padding: 0.6em 0 0.6em 0.6em; } #menu .pure-menu, #menu .pure-menu ul { border: none; background: transparent; } #menu .pure-menu ul, #menu .pure-menu .menu-item-divided { border-top: 1px solid #333; } #menu .pure-menu li a:hover, #menu .pure-menu li a:focus { background: #333; } #menu .pure-menu-selected, #menu .pure-menu-heading { background: #1f8dd6; } #menu .pure-menu-selected a { color: #fff; } #menu .pure-menu-heading { font-size: 100%; color: #fff; margin: 0; } .menu-link { position: fixed; display: block; top: 0; left: 0; background: #000; background: rgba(0,0,0,0.7); font-size: 10px; z-index: 10; width: 2em; height: auto; padding: 2.1em 1.6em; } .menu-link:hover, .menu-link:focus { background: #000; } .menu-link span { position: relative; display: block; } .menu-link span, .menu-link span:before, .menu-link span:after { background-color: #fff; width: 100%; height: 0.2em; } .menu-link span:before, .menu-link span:after { position: absolute; margin-top: -0.6em; content: " "; } .menu-link span:after { margin-top: 0.6em; } @media (min-width: 48em) { .header, .content { padding-left: 2em; padding-right: 2em; } #layout { padding-left: 150px; left: 0; } #menu { left: 150px; } .menu-link { position: fixed; left: 150px; display: none; } #layout.active .menu-link { left: 150px; } } @media (max-width: 48em) { #layout.active { position: relative; left: 150px; } } \n';
+        "body { color: #777; } .pure-img-responsive { max-width: 100%; height: auto; } #layout, #menu, .menu-link { -webkit-transition: all 0.2s ease-out; -moz-transition: all 0.2s ease-out; -ms-transition: all 0.2s ease-out; -o-transition: all 0.2s ease-out; transition: all 0.2s ease-out; } #layout { position: relative; left: 0; padding-left: 0; }";
+    output +=
+        "#layout.active #menu { left: " +
+        menuWidth +
+        "; width: " +
+        menuWidth +
+        "; } #layout.active .menu-link { left: " +
+        menuWidth +
+        "; } .content { margin: 0 auto; padding: 0 2em; max-width: 800px; margin-bottom: 50px; line-height: 1.6em; } .header { margin: 0; color: #333; text-align: center; padding: 2.5em 2em 0; border-bottom: 1px solid #eee; } .header h1 { margin: 0.2em 0; font-size: 3em; font-weight: 300; } .header h2 { font-weight: 300; color: #ccc; padding: 0; margin-top: 0; } .content-subhead { margin: 50px 0 20px 0; font-weight: 300; color: #888; }";
+    output +=
+        "#menu { margin-left: -" +
+        menuWidth +
+        "; width: " +
+        menuWidth +
+        '; position: fixed; top: 0; left: 0; bottom: 0; z-index: 1000; background: #191818; overflow-y: auto; -webkit-overflow-scrolling: touch; } #m a { olor: #999; border: none; padding: 0.6em 0 0.6em 0.6em; } #menu .pure-menu, #menu .pure-menu ul { border: none; background: transparent; } #menu .pure-menu ul, #menu .pure-menu .menu-item-divided { border-top: 1px solid #333; } #menu .pure-menu li a:hover, #menu .pure-menu li a:focus { background: #333; } #menu .pure-menu-selected, #menu .pure-menu-heading { background: #1f8dd6; } #menu .pure-menu-selected a { color: #fff; } #menu .pure-menu-heading { font-size: 100%; color: #fff; margin: 0; } .menu-link { position: fixed; display: block; top: 0; left: 0; background: #000; background: rgba(0,0,0,0.7); font-size: 10px; z-index: 10; width: 2em; height: auto; padding: 2.1em 1.6em; } .menu-link:hover, .menu-link:focus { background: #000; } .menu-link span { position: relative; display: block; } .menu-link span, .menu-link span:before, .menu-link span:after { background-color: #fff; width: 100%; height: 0.2em; } .menu-link span:before, .menu-link span:after { position: absolute; margin-top: -0.6em; content: " "; } .menu-link span:after { margin-top: 0.6em; }';
+    output +=
+        "@media (min-width: 48em) { .header, .content { padding-left: 2em; padding-right: 2em; } #layout { padding-left: " +
+        menuWidth +
+        "; left: 0; } #menu { left: " +
+        menuWidth +
+        "; } .menu-link { position: fixed; left: " +
+        menuWidth +
+        "; display: none; } #layout.active .menu-link { left: " +
+        menuWidth +
+        "; } } @media (max-width: 48em) { #layout.active { position: relative; left: " +
+        menuWidth +
+        "; } } \n";
+
     output += "</style>\n";
 
     // Traverse the array of issue objects
@@ -298,10 +338,9 @@ function toHtml(objArray, prjName, showAllIssues) {
         }
 
         // Add list item for issue
-        let maxLen = 25;
         let issueName = obj.TIssueName;
-        if (issueName.length >= maxLen) {
-            issueName = obj.TIssueName.substr(0, maxLen - 3) + "...";
+        if (issueName.length >= menuMaxTextLen) {
+            issueName = obj.TIssueName.substr(0, menuMaxTextLen - 3) + "...";
         }
         output +=
             '<li class="pure-menu-item"><a href="#' +
@@ -444,7 +483,7 @@ function toHtml(objArray, prjName, showAllIssues) {
             }
 
             //output += "<tr><th class='thID'>Evidence: </th><td class='tdID'>" + evidence + "</td></tr>\n";
-            output += "<tr><td>Evidence:</td><td>" + evidence + "</td></tr>\n";
+            output += "<tr><td>Evidence:</td><td class='evidencetext'>" + evidence + "</td></tr>\n";
             //"<tr><th class='thID'>Evidence: </th><td class='tdID'><pre>" +
             //"</pre></td></tr>\n";
         }
@@ -560,9 +599,11 @@ let htmlEncode = function(source, display, tabs, linkify) {
                             if (peek === "\n") {
                                 next();
                             }
+                            line.push('<span class="greybg">&nbsp;</span>');
                             endline();
                             break;
                         case "\n":
+                            line.push('<span class="greybg">&nbsp;</span>');
                             endline();
                             break;
                         case "\t":
