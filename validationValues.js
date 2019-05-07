@@ -29,11 +29,11 @@ module.exports = {
         errorMessage: "Expected: 0 to 200 printable charachers"
     },
     Multiline: {
-        matches: /^[\x20-\x7e\r\n]{0,2000}$/m,
-        errorMessage: "Expected: 0 to 2000 printable charachers"
+        matches: /^[\x20-\x7e\r\n]{0,20000}$/m,
+        errorMessage: "Expected: 0 to 20000 printable charachers"
     },
     MultilineURIs: {
-        matches: /^[-a-zA-Z0-9@:._@:%_\+.~#?&/=()\n]{0,2000}$/,
-        errorMessage: "Expected: 0 to 2000 characters of multiline URIs"
+        matches: /^[-a-zA-Z0-9@:._@:%_\+.~#?&/=()!;\n]{0,20000}$/,
+        errorMessage: "Expected: 0 to 20000 characters of multiline URIs"
     }
 };

@@ -42,16 +42,16 @@ module.exports = {
         TRef1: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 2000}},
-            errorMessage: "Expected: URL with max 2000 characters",
+            isLength: {options: {min: 0, max: 20000}},
+            errorMessage: "Expected: URL with max 20000 characters",
             trim: true
         },
         TRef2: {
             optional: true,
             //isURL: {options: {require_tld: false, require_protocol: false, require_host: false}},
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 2000}},
-            errorMessage: "Expected: URL with max 2000 characters",
+            isLength: {options: {min: 0, max: 20000}},
+            errorMessage: "Expected: URL with max 20000 characters",
             trim: true
         },
         TSeverityText: {
@@ -191,8 +191,8 @@ module.exports = {
         TTRef: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 2000}},
-            errorMessage: "Expected: URL with max 2000 characters",
+            isLength: {options: {min: 0, max: 20000}},
+            errorMessage: "Expected: URL with max 20000 characters",
             trim: true
         },
         TCweID: {
@@ -252,15 +252,15 @@ module.exports = {
         TRef1: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 2000}},
-            errorMessage: "Expected: URL with max 2000 characters",
+            isLength: {options: {min: 0, max: 20000}},
+            errorMessage: "Expected: URL with max 20000 characters",
             trim: true
         },
         TRef2: {
             optional: true,
             matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 2000}},
-            errorMessage: "Expected: URL with max 2000 characters",
+            isLength: {options: {min: 0, max: 20000}},
+            errorMessage: "Expected: URL with max 20000 characters",
             trim: true
         }
     }

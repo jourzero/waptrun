@@ -106,13 +106,13 @@ function evtAddIssueTemplateText(event) {
         }
     }
 
-    // Fill Notes field with template text if empty
+    // Fill Notes field with template text in Markdown format if empty
     //var iNotes = $("#INotes").val();
     if (event.target.id === "INotes") {
         let iNotes = event.target.value;
         if (iNotes === undefined || iNotes.length === 0) {
             console.info("Adding template text to Notes field");
-            iNotes = `### Issue Details\n
+            iNotes = `#### Issue Details\n
 The NAME feature is vulnerable to ISSUETYPE due to REASON. 
 
 ADD THREAT DETAILS AS NEEDED:
@@ -123,7 +123,7 @@ ADD THREAT DETAILS AS NEEDED:
 - Denial of Service - cause a system failure causing unavailability
 - Elevation of Privilege - having unauthorized access 
 \n`;
-            iNotes += `### Risk\n
+            iNotes += `#### Risk\n
 The perceived risk for this issue is RATING, considering its likelihood (reproducibility, exploitability, discoverability)
 and its impact (damage, number of users affected).
 
@@ -134,10 +134,10 @@ ADD RISK DETAILS AS NEEDED:
 - Affected users – how many people will be impacted?
 - Discoverability – how easy is it to discover the threat?
 \n`;
-            iNotes += "### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
+            iNotes += "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
             iNotes +=
-                "### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
-            iNotes += "### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
+                "#### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
+            iNotes += "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
             $("#INotes").val(iNotes);
             //$("#INotes").attr("title", iNotes);
         }

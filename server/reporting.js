@@ -309,11 +309,12 @@ function toHtml(objArray, prjName, showAllIssues) {
 
     // Add menu content (level 3)
     output += '<div class="pure-menu">\n';
-    output += '<a class="pure-menu-heading" href="#">Results</a>\n';
+    output += '<a class="pure-menu-heading" href="#">Findings</a>\n';
 
     // Add list for issues
     output += '<ul class="pure-menu-list">\n';
 
+    // Add menu items for each issue (issue summary)
     for (let i = 0; i < objArray.length; i++) {
         obj = objArray[i];
         prevPrio = priority;
@@ -334,7 +335,12 @@ function toHtml(objArray, prjName, showAllIssues) {
         // Print each issue with the issue as the header and the details as part of a table.
         if (priority !== undefined && priority !== "" && priority !== prevPrio) {
             // Add priority link
-            output += '<li class="pure-menu-item menu-item-divided">' + priority + "</li>\n";
+            output +=
+                '<li class="pure-menu-item menu-item-divided"><a href="#' +
+                priority +
+                '" class="pure-menu-link">' +
+                priority +
+                "</a></li>\n";
         }
 
         // Add list item for issue
@@ -345,7 +351,7 @@ function toHtml(objArray, prjName, showAllIssues) {
         output +=
             '<li class="pure-menu-item"><a href="#' +
             htmlEncode(obj.TID, true, 4, false) +
-            '" class="pure-menu-link">' +
+            '" class="pure-menu-link"> - ' +
             issueName +
             "</a></li>\n";
     }
@@ -366,14 +372,14 @@ function toHtml(objArray, prjName, showAllIssues) {
     output += '<div class="content">\n';
 
     // Add report intro
-    output += '<h2 class="content-subhead">How to use this report</h2>\n\n';
+    output += '<h2 class="content-subhead">Intro</h2>\n\n';
     //output += "<p>Project: " + prjName + "</p>\n";
     output +=
         "<p>The below table contains a summary of the findings that were captured during manual security testing. ";
     output += "   Those findings should be combined with the results from automated scanning.";
 
-    // Generate detailed issue report
-    output += '<h2 class "content-subhead">Issue Details</h2>\n';
+    // Print detailed findings
+    output += '<h2 class="content-subhead">Findings</h2>\n';
     output += '<table class="pure-table-bordered">\n';
     for (let i = 0; i < objArray.length; i++) {
         obj = objArray[i];
@@ -388,23 +394,27 @@ function toHtml(objArray, prjName, showAllIssues) {
         // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
         if (!showAllIssues && prio !== undefined && prio < 0) continue;
 
-        // Add " (no follow-up needed)" to priority values Tested:-1 and Fixed:-2.
-        if (prio == -1 || prio == -2) {
-            priority += " (no follow-up needed)";
+        // Add a row for each priority (for jumping from menu)
+        if (priority !== undefined && priority !== "" && priority !== prevPrio) {
+            output +=
+                "<tr><th>&nbsp;</th><th id='" +
+                priority +
+                "'>PRIORITY: " +
+                priority +
+                "</th></tr>\n";
         }
 
         // Print each issue with the issue as the header and the details as part of a table.
         output +=
-            "<tr><th class='" +
-            priority +
-            "P'></th><th class='" +
+            "<tr><td></td><th><h3 class='" +
             priority +
             "P' id='" +
             htmlEncode(obj.TID, true, 4, false) +
             "'>" +
             obj.TIssueName +
-            "</th></tr>\n";
-        //output += "<tr><th></th><th class id='" + htmlEncode(obj.TID, true, 4, false) + "'>" + obj.TIssueName + "</th></tr>\n";
+            "</h3></th></tr>\n";
+
+        // Print CWE ID and link to reference pages
         if (obj.CweId !== undefined && obj.CweId !== "")
             output +=
                 //"<tr><th class='thID'>CWE ID: </th><td class='tdID'><a href='" +
@@ -414,7 +424,8 @@ function toHtml(objArray, prjName, showAllIssues) {
                 ".html' target='refWin'>" +
                 obj.CweId +
                 "</a></td></tr>\n";
-        //output += "<tr><th>CWE ID: </th><td><a href='" + cweUriBase + obj.CweId + ".html' target='refWin'>" + obj.CweId + "</a></td></tr>\n";
+
+        // Print URIs where issue was discovered
         if (obj.IURIs !== undefined && obj.IURIs !== "") {
             //output += "<tr><th class='thID'>URI(s): </th><td class='tdID'><ol>";
             output += "<tr><td>URI(s):</td><td><ol>";
@@ -432,6 +443,8 @@ function toHtml(objArray, prjName, showAllIssues) {
             }
             output += "</ol></td></tr>\n";
         }
+
+        // Print severity text
         if (obj.TSeverityText !== undefined && obj.TSeverityText !== "" && prio >= 0)
             //output += "<tr><th class='thID'>Severity: </th><td class='tdID'>" + obj.TSeverityText + "</td></tr>\n";
             output += "<tr><td>Severity:</td><td>" + obj.TSeverityText + "</td></tr>\n";
