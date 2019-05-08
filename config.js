@@ -31,6 +31,15 @@ module.exports = {
     // Get appName from package.json
     appName: appName,
 
+    // Session secret
+    session: {
+        resave: true,
+        saveUninitialized: true,
+        secret: "fawefjeaiaoeifj",
+        //cookie: {path: "/", httpOnly: true, secure: true, sameSite: "lax"}
+        cookie: {path: "/", httpOnly: true, secure: false, sameSite: "lax"}
+    },
+
     // Configure request logging
     reqLogging: {
         file: {

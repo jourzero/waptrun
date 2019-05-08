@@ -223,7 +223,7 @@ app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(methodOverride());
-app.use(session({resave: true, saveUninitialized: true, secret: "eugaefoiu"}));
+app.use(session(config.session));
 app.use(passport.initialize());
 app.use(passport.session());
 // Disable caching during some testing
