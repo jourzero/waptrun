@@ -1,5 +1,11 @@
+require("dotenv").config();
 const issue = require("./IssueModel")();
 const marked = require("marked");
+const config = require("../config.js");
+const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+const db = require("monk")(mongodbUrl);
+
+// Width of Left Menu in HTML report
 const menuWidth = "300px";
 const menuMaxTextLen = 45;
 
@@ -57,48 +63,14 @@ exports.genPrjIssueExportJSON = function(req, res) {
 
 // Generate findings issue report for a specific project in HTML format
 exports.genPrjIssueFindingsReportHtml = function(req, res) {
-    let prjName = req.params.PrjName;
-    let filename = prjName + "-issues.html";
-    let fileData = "";
     let showAllIssues = false;
-    let ok = function(records) {
-        console.log("Got " + records.length + " issue records for project " + prjName);
-        fileData += toHtml(records, prjName, showAllIssues);
-        res.set("Content-type", "text/html");
-        res.set("Content-Disposition", "attachment; filename=" + filename);
-        res.set("Content-Length", fileData.length);
-        res.send(fileData);
-    };
-    let err = function(err) {
-        //res.send(404);
-        res.status(404).send(
-            "Sorry, there was an error when generating the report: " + err.message
-        );
-    };
-    issue.findProjectIssues(req.params.PrjName, ok, err);
+    genFindingsReportHtml(req, res, showAllIssues);
 };
 
 // Generate full issue report for a specific project in HTML format
 exports.genPrjIssueFullReportHtml = function(req, res) {
-    let prjName = req.params.PrjName;
-    let filename = prjName + "-issues.html";
-    let fileData = "";
     let showAllIssues = true;
-    let ok = function(records) {
-        console.log("Got " + records.length + " issue records for project " + prjName);
-        fileData += toHtml(records, prjName, showAllIssues);
-        res.set("Content-type", "text/html");
-        res.set("Content-Disposition", "attachment; filename=" + filename);
-        res.set("Content-Length", fileData.length);
-        res.send(fileData);
-    };
-    let err = function(err) {
-        //res.send(404);
-        res.status(404).send(
-            "Sorry, there was an error when generating the report: " + err.message
-        );
-    };
-    issue.findProjectIssues(req.params.PrjName, ok, err);
+    genFindingsReportHtml(req, res, showAllIssues);
 };
 
 // Export all Issue data to CSV format
@@ -118,6 +90,36 @@ exports.exportIssuesCSV = function(req, res) {
     };
     issue.findAll(ok, err);
 };
+
+function genFindingsReportHtml(req, res, showAllIssues) {
+    let prjName = req.params.PrjName;
+    let filename = prjName + "-issues.html";
+    let fileData = "";
+
+    // Fetch project document from project collection
+    let prjColl = db.get("project");
+    let issueColl = db.get("issues");
+
+    prjColl
+        .findOne({name: prjName})
+        .then(prj => {
+            issueColl
+                .find({PrjName: prjName}, {sort: {IPriority: -1, TIssueName: 1}})
+                .then(records => {
+                    console.log("Got " + records.length + " issue records for project " + prjName);
+                    fileData += toHtml(records, prjName, prj, showAllIssues);
+                    res.set("Content-type", "text/html");
+                    res.set("Content-Disposition", "attachment; filename=" + filename);
+                    res.set("Content-Length", fileData.length);
+                    res.send(fileData);
+                });
+        })
+        .catch(err => {
+            res.status(404).send(
+                "Sorry, there was an error when generating the report: " + err.message
+            );
+        });
+}
 
 /**
  * Converts a value to a string appropriate for entry into a CSV table (surrounded by quotes).
@@ -217,7 +219,7 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
  * @param {String} prjName   Name of project
  * @return {string} The CSV equivalent of objArray.
  */
-function toHtml(objArray, prjName, showAllIssues) {
+function toHtml(objArray, prjName, prj, showAllIssues) {
     let obj = {};
     let title = "Security Testing Report";
 
@@ -373,10 +375,13 @@ function toHtml(objArray, prjName, showAllIssues) {
 
     // Add report intro
     output += '<h2 class="content-subhead">Intro</h2>\n\n';
-    //output += "<p>Project: " + prjName + "</p>\n";
     output +=
         "<p>The below table contains a summary of the findings that were captured during manual security testing. ";
     output += "   Those findings should be combined with the results from automated scanning.";
+
+    // Add project scope
+    output += '<h2 class="content-subhead">Scope</h2>\n\n';
+    output += "<p>" + htmlEncode(prj.notes, true, 4, true) + "</p>";
 
     // Print detailed findings
     output += '<h2 class="content-subhead">Findings</h2>\n';

@@ -360,21 +360,24 @@ app.get(
 );
 
 // ========================================== WEB APP ROUTES ==========================================
+// Logout
 app.get("/logout", function(req, res) {
     req.logout();
     res.redirect("/");
     //req.session.notice = "You have successfully been logged out " + name + "!";
 });
 
-//displays our login page
+// Display login page
 app.get("/login", function(req, res) {
     res.render("login");
 });
 
+// Show account information
 app.get("/account", ensureAuthenticated, ensureAuthorized, function(req, res) {
     res.render("account", {user: req.user});
 });
 
+// Home
 app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
     logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
     logger.silly(`User data = ${JSON.stringify(req.user)}`);
@@ -395,6 +398,7 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
 });
 //let projects = funct.getProjects("project");
 
+// Show Project page
 app.get(
     "/project/:PrjName",
     ensureAuthenticated,
@@ -424,6 +428,7 @@ app.get(
     }
 );
 
+// Show Testing Runner page
 app.get(
     "/testing/:PrjName",
     ensureAuthenticated,

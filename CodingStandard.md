@@ -2,23 +2,23 @@
 
 <!-- TOC -->
 
-- [Secure Coding Standard](#secure-coding-standard)
-    - [Security-specific](#security-specific)
-        - [Authentication](#authentication)
-        - [Session Management](#session-management)
-        - [Database security](#database-security)
-        - [Input Validation & Sanitization](#input-validation--sanitization)
-        - [Output encoding](#output-encoding)
-        - [Software Updates](#software-updates)
-        - [Secrets Management](#secrets-management)
-        - [Data Encryption](#data-encryption)
-        - [HTTP Headers](#http-headers)
-    - [Security-related](#security-related)
-        - [Dev. Environment](#dev-environment)
-        - [Concurrency](#concurrency)
-        - [Logging & Monitoring](#logging--monitoring)
-        - [Documentation & Reporting](#documentation--reporting)
-        - [Testing & QA](#testing--qa)
+-   [Secure Coding Standard](#secure-coding-standard)
+    -   [Security-specific](#security-specific)
+        -   [Authentication](#authentication)
+        -   [Session Management](#session-management)
+        -   [Database security](#database-security)
+        -   [Input Validation & Sanitization](#input-validation--sanitization)
+        -   [Output encoding](#output-encoding)
+        -   [Software Updates](#software-updates)
+        -   [Secrets Management](#secrets-management)
+        -   [Data Encryption](#data-encryption)
+        -   [HTTP Headers](#http-headers)
+    -   [Security-related](#security-related)
+        -   [Dev. Environment](#dev-environment)
+        -   [Concurrency](#concurrency)
+        -   [Logging & Monitoring](#logging--monitoring)
+        -   [Documentation & Reporting](#documentation--reporting)
+        -   [Testing & QA](#testing--qa)
 
 <!-- /TOC -->
 
@@ -33,7 +33,18 @@ Existing coding standard to be expanded during development / research.
 
 ### Session Management
 
--   Use "express-session" for session management. <mark>**TODO**</mark>: Add details
+-   Use "express-session" for session management:
+    -   Session cookie protection: set httpOnly and secure cookie flags via [Express-Session cookie parameters](https://github.com/expressjs/session).
+    -   CSRF prevention: set sameSite attribute on session cookie to 'lax" via [Express-Session cookie parameter](https://github.com/expressjs/session). Using 'strict' would break the authentication via OAuth2.
+        ```json
+        config.session: {
+            resave: true,
+            saveUninitialized: true,
+            secret: "some string",
+            cookie: {path: "/", httpOnly: true, secure: true, sameSite: "lax"}
+        },
+        express.use(session(config.session));
+        ```
 
 ### Database security
 
@@ -104,9 +115,6 @@ Existing coding standard to be expanded during development / research.
         -   Perf. tweaks
     -   Using ExpressJS features when needed
         -   Helmet (if app is not fronted by a separate web server or reverse proxy)
-        -   Cookie protection: set httpOnly and secure cookie flags via [Express session parameters](https://github.com/expressjs/session).
-            cookie: {path: "/", httpOnly: true, secure: false, maxAge: null, sameSite: "lax"}
-        -   CSRF prevention: set sameSite cookie attribute to 'lax" via [Express session parameters](https://github.com/expressjs/session). Using 'strict' would break the authentication via OAuth2.
 
 ## Security-related
 
