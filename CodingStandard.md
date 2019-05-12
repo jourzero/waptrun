@@ -19,6 +19,7 @@
         -   [Logging & Monitoring](#logging--monitoring)
         -   [Documentation & Reporting](#documentation--reporting)
         -   [Testing & QA](#testing--qa)
+-   [References](#references)
 
 <!-- /TOC -->
 
@@ -154,6 +155,11 @@ Existing coding standard to be expanded during development / research.
 
 ### Testing & QA
 
--   <mark>**TODO**</mark>: add details on unit, integration and regression testing
+-   <mark>**TODO**</mark>: add details on unit testing via testing framework via [mocha](https://github.com/mochajs/mocha) and assertion module [should.js](https://github.com/shouldjs/should.js).
+-   <mark>**TODO**</mark>: add details on coverage assurance via istanbul or blanket
 -   <mark>**TODO**</mark>: add details on regression testing for main app features after libraries/dependencies/frameworks/plugins are updated/upgraded/migrated.
 -   <mark>**TODO**</mark>: web services testing, web services interface def. (swagger) and testing (swagger, postman...)
+
+# References
+
+-   [Top 10 mistakes Node.js developers make](https://www.airpair.com/node.js/posts/top-10-mistakes-node-developers-make)
