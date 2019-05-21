@@ -243,6 +243,7 @@ function toHtml(objArray, prjName, prj, showAllIssues) {
         ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}";
     output +=
         ".TestedP{background-color:lightgreen;}.FixedP{background-color:lightgreen;}.TODOP{background-color:lightcyan;}";
+    output += ".InfoP{background-color:lightgray;}";
 
     // Evidence text processing:
     // - Grey-out carriage-return/linefeed
