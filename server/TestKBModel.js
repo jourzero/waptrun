@@ -21,6 +21,15 @@ TestKB.prototype.findAll = function(success, error) {
 
 // Retrieve a document by its id
 TestKB.prototype.findById = function(id, success, error) {
+    /*
+    TODO: CWE-117 Improper Output Neutralization for Logs
+    TestKBModel.js: 24
+    Severity: Medium
+    Attack Vector: console.log
+    Number of Modules Affected: 1
+    Description: This call to console.log() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
+    Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+    */
     console.log("Trying to find by id", id);
     this.testkb.findOne({_id: id}, response(success, error));
 };

@@ -180,6 +180,14 @@ function ensureAuthorized(req, res, next) {
             req.user
         )}`
     );
+    /*  
+    TODO: CWE-639: Authorization Bypass Through User-Controlled Key (server.js: 183)
+    Severity: High
+    Attack Vector: !func
+    Number of Modules Affected: 1
+    Description: The property named !func contains untrusted data, and (due to its name) may contain internal authorization data.
+    Remediation: Ensure that nothing in this application relies on this value to be a trusted indicator of security privilege or identity.
+    */
     let user = users.find(usr => {
         return usr.id === id && usr.provider === provider;
     });
@@ -217,14 +225,38 @@ function ensureAuthorized(req, res, next) {
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
+/*
+TODO: CWE-352 Cross-Site Request Forgery (CSRF) (server.js: 220). 
+Severity: Medium
+Attack Vector: express
+Number of Modules Affected: 1
+Description: This Express application does not appear to use a known library or tool to protect against cross-site request forgery.
+Remediation: Ensure that all actions and routes that modify data are either protected with anti-CSRF tokens, or are designed in such a way to eliminate CSRF risk. 
+*/
 let app = express();
 app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(methodOverride());
+/* 
+TODO: CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute (server.js: 226)
+Severity: Low
+Attack Vector: !func
+Number of Modules Affected: 1
+Description: This call to !func() adds a cookie to the HTTP response that does not have the Secure attribute set. Failing to set this attribute allows the browser to send the cookie unencrypted over an HTTP session.
+Remediation: Set the Secure attribute for all cookies used by HTTPS sessions.
+*/
 app.use(session(config.session));
 app.use(passport.initialize());
+/* 
+TODO: CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute (server.js: 228)
+Severity: Low
+Attack Vector: !func
+Number of Modules Affected: 1
+Description: This call to !func() adds a cookie to the HTTP response that does not have the Secure attribute set. Failing to set this attribute allows the browser to send the cookie unencrypted over an HTTP session.
+Remediation: Set the Secure attribute for all cookies used by HTTPS sessions.
+*/
 app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
@@ -416,6 +448,19 @@ app.get(
         let prjColl = db.get("project");
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
+        /* 
+        TODO: CWE-117: Improper Output Neutralization for Logs (server.js: 419) 
+        Severity: Medium
+        Attack Vector: console.info
+        Number of Modules Affected: 1
+        Description: This call to console.info() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. 
+        Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, if a web administrator uses a browser-based 
+        utility to review logs, a cross-site scripting attack might be possible.
+        Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which 
+        will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS escaping functions from the 
+        OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, 
+        using centralized data validation routines when possible.
+        */
         logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
         prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
             res.render("project", {
@@ -447,6 +492,18 @@ app.get(
 
         // Fetch from project collection
         let prjColl = db.get("project");
+        /* 
+        TODO: CWE-117: Improper Output Neutralization for Logs. (server.js: 450) 
+        Severity: Medium
+        Attack Vector: util.debug
+        Description: This call to util.debug() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious 
+        content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, 
+        if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
+        Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, 
+        which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS 
+        escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure 
+        that it conforms to the expected format, using centralized data validation routines when possible.
+        */
         logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
         prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
             if (prj === null) return;

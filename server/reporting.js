@@ -28,6 +28,15 @@ exports.genPrjIssueReportCSV = function(req, res) {
     let fileData = "";
 
     let ok = function(records) {
+        /* 
+        TODO: cwe-117 improper output neutralization for logs
+        reporting.js: 31
+        severity: medium
+        attack vector: console.log
+        number of modules affected: 1
+        description: this call to console.log() could result in a log forging attack. writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. for example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
+        remediation: avoid directly embedding user input in log files when possible. sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the owasp esapi logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use html entity encoding for non-alphanumeric data. alternatively, some of the xss escaping functions from the owasp java encoder project will also sanitize crlf sequences. only write custom blacklisting code when absolutely necessary. always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+        */
         console.log("Got " + records.length + " issue records for project " + prjName);
         fileData += toCsv(records);
         res.set("Content-type", "text/csv");
@@ -48,11 +57,29 @@ exports.genPrjIssueExportJSON = function(req, res) {
     let fileData = "";
 
     let ok = function(records) {
+        /* 
+        TODO: CWE-117   Improper Output Neutralization for Logs
+        reporting.js: 51
+        Severity: Medium
+        Attack Vector: console.log
+        Number of Modules Affected: 1
+        Description: This call to console.log() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
+        Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+        */
         console.log("Got " + records.length + " issue records for project " + prjName);
         fileData += JSON.stringify(records, undefined, 2);
         res.set("Content-type", "application/json");
         res.set("Content-Disposition", "attachment; filename=" + filename);
         res.set("Content-Length", fileData.length);
+        /* 
+        TODO: CWE-80   Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS) 
+        reporting.js: 56
+        Severity: Medium
+        Attack Vector: express.Response.send
+        Number of Modules Affected: 1
+        Description: This call to express.Response.send() contains a cross-site scripting (XSS) flaw. The application populates the HTTP response with untrusted input, allowing an attacker to embed malicious content, such as Javascript code, which will be executed in the context of the victim's browser. XSS vulnerabilities are commonly exploited to steal or manipulate cookies, modify presentation of content, and compromise confidential information, with new attack vectors being discovered on a regular basis.
+        Remediation: Use contextual escaping on all untrusted data before using it to construct any portion of an HTTP response. The escaping method should be chosen based on the specific use case of the untrusted data, otherwise it may not protect fully against the attack. For example, if the data is being written to the body of an HTML page, use HTML entity escaping; if the data is being written to an attribute, use attribute escaping; etc. Both the OWASP Java Encoder library and the Microsoft AntiXSS library provide contextual escaping methods. For more details on contextual escaping, see https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md. In addition, as a best practice, always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+        */
         res.send(fileData);
     };
     let err = function(err) {
@@ -106,11 +133,28 @@ function genFindingsReportHtml(req, res, showAllIssues) {
             issueColl
                 .find({PrjName: prjName}, {sort: {IPriority: -1, TIssueName: 1}})
                 .then(records => {
+                    /* 
+                    TODO: CWE-117   Improper Output Neutralization for Logs
+                    reporting.js: 109
+                    Severity: Medium
+                    Attack Vector: console.log
+                    Number of Modules Affected: 1
+                    Description: This call to console.log() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
+                    Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+                    */
                     console.log("Got " + records.length + " issue records for project " + prjName);
                     fileData += toHtml(records, prjName, prj, showAllIssues);
                     res.set("Content-type", "text/html");
                     res.set("Content-Disposition", "attachment; filename=" + filename);
                     res.set("Content-Length", fileData.length);
+                    /* 
+                    TODO: 80   Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)
+                    reporting.js: 114
+                    Attack Vector: express.Response.send
+                    Number of Modules Affected: 1
+                    Description: This call to express.Response.send() contains a cross-site scripting (XSS) flaw. The application populates the HTTP response with untrusted input, allowing an attacker to embed malicious content, such as Javascript code, which will be executed in the context of the victim's browser. XSS vulnerabilities are commonly exploited to steal or manipulate cookies, modify presentation of content, and compromise confidential information, with new attack vectors being discovered on a regular basis.
+                    Remediation: Use contextual escaping on all untrusted data before using it to construct any portion of an HTTP response. The escaping method should be chosen based on the specific use case of the untrusted data, otherwise it may not protect fully against the attack. For example, if the data is being written to the body of an HTML page, use HTML entity escaping; if the data is being written to an attribute, use attribute escaping; etc. Both the OWASP Java Encoder library and the Microsoft AntiXSS library provide contextual escaping methods. For more details on contextual escaping, see https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md. In addition, as a best practice, always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+                    */
                     res.send(fileData);
                 });
         })

@@ -827,6 +827,14 @@ var url = document.location.href;
 let sessionCheckInterval = 1 * 60 * 1000; // 1 minute
 var refreshCounter = 1;
 function checkSession() {
+    /*
+    TODO: CWE-601 URL Redirection to Untrusted Site ('Open Redirect') (testing.js: 830)
+    Severity: Medium
+    Attack Vector: XMLHttpRequest.open
+    Number of Modules Affected: 1
+    Description: This call to XMLHttpRequest.open() contains a URL redirection to untrusted site flaw. Writing untrusted input into a URL value could cause the web application to redirect the request to the specified URL, leading to phishing attempts to steal user credentials.
+    Remediation: Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+    */
     xhr.open("GET", url, true);
     xhr.onload = function() {
         if (xhr.status === 200) {

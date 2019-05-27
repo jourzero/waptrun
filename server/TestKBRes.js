@@ -94,5 +94,14 @@ exports.update = function(req, res) {
         res.send(409, "update failed");
     };
     logger.debug(`Updating TestKB with: ${JSON.stringify(bodyData)}`);
+    /* 
+    TODO: CWE-943 Improper Neutralization of Special Elements in Data Query Logic
+    TestKBRes.js: 97
+    Severity: High
+    Attack Vector: mongodb.Collection.update
+    Number of Modules Affected: 1
+    Description: This NoSQL API call contains an injection flaw. In the call or reference to mongodb.Collection.update, the application executes an operation designed to manipulate data in the database, but part of that query is constructed from untrusted data. An attacker could exploit this flaw to modify arbitrary data inside the database or replace a query value to bypass authentication or access unauthorized data.
+    Remediation: Avoid passing user-generated data to queries outside of data fields. Ensure that query values are validated to authorize the requesting user before accessing the data.
+    */
     testkb.update(req.params.TID, bodyData, ok, err);
 };
