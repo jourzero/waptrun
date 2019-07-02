@@ -22,7 +22,7 @@
         "express": "^4.11.1",
         "express-handlebars": "^3.0.2",
         "express-session": "^1.10.1",
-        "express-validator": "^5.3.1",
+        "express-validator": "^6.1.1",
         "jquery": "^3.4.1",
         "marked": "^0.6.2",
         "method-override": "^2.1.2",
