@@ -27,7 +27,7 @@
         "marked": "^0.6.2",
         "method-override": "^2.1.2",
         "mongodb": "^2.2.11",
-        "monk": "^6.0.5",
+        "monk": "^7.1.0",
         "morgan": "^1.9.1",
         "passport": "^0.2.2",
         "passport-github": "^1.1.0",
