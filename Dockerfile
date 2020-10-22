@@ -1,4 +1,5 @@
-FROM node:current
+# Force node:12 to avoid issue with node:14: "Accessing non-existent property XXX of module exports inside circular dependency"
+FROM node:12
 
 # Create app directory
 WORKDIR /app
