@@ -79,3 +79,5 @@ data/
 start.sh
 users.js
 .package.json.swp
+config/
+test/validationTests.js
