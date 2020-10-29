@@ -420,10 +420,10 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
     let prjRegex = {$regex: config.PrjSubset};
     let prjSubset = {name: prjRegex};
 
-    logger.debug("Searching for projects")
+    logger.info("Searching for projects")
     coll.find(prjSubset, {sort: sortName}, function(e, projects) {
-        if (e) throw err;
-        logger.debug("Rendering home page");
+        if (e) logger.error("Project search error")
+        logger.info("Rendering home page");
         res.render("home", {
             user: req.user,
             TestRefBase: config.TestRefBase,
