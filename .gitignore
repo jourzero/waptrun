@@ -79,3 +79,13 @@ data/
 start.sh
 users.js
 .package.json.swp
+config/
+test/validationTests.js
+config.js.1
+OAuthNotes.md
+utils/test.js
+test.js
+docker-run.sh
+waptrdb-bash.sh
+utils/importTestKB.js
+utils/mongorestore.sh

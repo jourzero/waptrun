@@ -1,22 +1,22 @@
 version: "2"
 services:
-  app:
-    container_name: waptr
-    restart: always
-    build: .
-    command: /bin/sh -c "npm install && npm install -g nodemon && nodemon server.js"
-    volumes:
-      - .:/app
-    ports:
-      - "5000:5000"
-    links:
-      - waptrdb
+    app:
+        container_name: waptr
+        restart: always
+        build: .
+        command: /bin/sh -c "npm install && npm install -g nodemon && nodemon server.js"
+        volumes:
+            - .:/app
+        ports:
+            - "5000:5000"
+        links:
+            - waptrdb
 
-  waptrdb:
-    container_name: waptrdb
-    volumes:
-      - "/tmp/backup:/backup"
-      - ./utils:/utils
-    image: mongo
-    ports:
-      - "27017:27017"
+    waptrdb:
+        container_name: waptrdb
+        volumes:
+            - ../waptrdb/data:/data
+            - ./utils:/utils
+        image: mongo
+        ports:
+            - "27017:27017"
