@@ -89,3 +89,4 @@ docker-run.sh
 waptrdb-bash.sh
 utils/importTestKB.js
 utils/mongorestore.sh
+utils/export/
