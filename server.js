@@ -62,12 +62,12 @@ for (let i in userConfig) {
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     logger.debug(`Serializing user ${user.username}`);
     done(null, user);
 });
 
-passport.deserializeUser(function(obj, done) {
+passport.deserializeUser(function (obj, done) {
     logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
     done(null, obj);
 });
@@ -103,9 +103,9 @@ passport.use(
             clientID: oauthConfig.google.client_id,
             clientSecret: oauthConfig.google.client_secret,
             callbackURL: oauthConfig.google.redirect_uri,
-            passReqToCallback: true
+            passReqToCallback: true,
         },
-        function(request, accessToken, refreshToken, profile, cb) {
+        function (request, accessToken, refreshToken, profile, cb) {
             return cb(null, profile);
             /*
     User.findOrCreate({ googleId: profile.id }, function (err, user) {
@@ -121,9 +121,9 @@ passport.use(
         {
             clientID: oauthConfig.github.client_id,
             clientSecret: oauthConfig.github.client_secret,
-            callbackURL: oauthConfig.github.redirect_uri
+            callbackURL: oauthConfig.github.redirect_uri,
         },
-        function(accessToken, refreshToken, profile, cb) {
+        function (accessToken, refreshToken, profile, cb) {
             return cb(null, profile);
             /*
     User.findOrCreate({ githubId: profile.id }, function (err, user) {
@@ -188,7 +188,7 @@ function ensureAuthorized(req, res, next) {
     Description: The property named !func contains untrusted data, and (due to its name) may contain internal authorization data.
     Remediation: Ensure that nothing in this application relies on this value to be a trusted indicator of security privilege or identity.
     */
-    let user = users.find(usr => {
+    let user = users.find((usr) => {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
@@ -270,7 +270,7 @@ app.use("/dist/jquery", express.static(__dirname + "/node_modules/jquery/dist/")
 app.use("/dist/bootstrap", express.static(__dirname + "/node_modules/bootstrap/dist/"));
 
 // Session-persisted message middleware
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     let err = req.session.error,
         msg = req.session.notice,
         success = req.session.success;
@@ -290,7 +290,7 @@ app.use(function(req, res, next) {
 // Configure express to use handlebars templates
 let hbs = exphbs.create({
     defaultLayout: "main",
-    extname: ".hbs"
+    extname: ".hbs",
 });
 app.engine(".hbs", hbs.engine);
 app.set("view engine", ".hbs");
@@ -299,8 +299,20 @@ app.set("view engine", ".hbs");
 // Make our db accessible to our router
 // Test 3
 const monk = require("monk");
+const {exit} = require("process");
+const mongoURL = new URL(mongodbUrl);
+logger.debug(`Connecting to MongoDB server at ${mongoURL.host}`);
 const db = monk(mongodbUrl);
-app.use(function(req, res, next) {
+
+// Check DB connection
+db.then(() => {
+    logger.debug("Connected successfully to mongodb server");
+}).catch((err) => {
+    logger.error("Mongodb connection error:", err);
+    exit(1);
+});
+
+app.use(function (req, res, next) {
     req.db = db;
     next();
 });
@@ -371,7 +383,7 @@ app.get(
 app.get(
     "/auth/google/callback",
     passport.authenticate("google", {failureRedirect: "/login"}),
-    function(req, res) {
+    function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/");
     }
@@ -385,7 +397,7 @@ app.get("/auth/github", passport.authenticate("github"));
 app.get(
     "/auth/github/callback",
     passport.authenticate("github", {failureRedirect: "/login"}),
-    function(req, res) {
+    function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/");
     }
@@ -393,44 +405,51 @@ app.get(
 
 // ========================================== WEB APP ROUTES ==========================================
 // Logout
-app.get("/logout", function(req, res) {
+app.get("/logout", function (req, res) {
     req.logout();
     res.redirect("/");
     //req.session.notice = "You have successfully been logged out " + name + "!";
 });
 
 // Display login page
-app.get("/login", function(req, res) {
+app.get("/login", function (req, res) {
     res.render("login");
 });
 
 // Show account information
-app.get("/account", ensureAuthenticated, ensureAuthorized, function(req, res) {
+app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
     res.render("account", {user: req.user});
 });
 
 // Home
-app.get("/", ensureAuthenticated, ensureAuthorized, function(req, res) {
+app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
     logger.silly(`User data = ${JSON.stringify(req.user)}`);
 
     // Fetch from project collection
-    let coll = db.get("project");
+    let prjColl = db.get("project");
+    let testkbColl = db.get("testkb");
     let sortName = {name: -1};
     let prjRegex = {$regex: config.PrjSubset};
     let prjSubset = {name: prjRegex};
 
-    logger.info("Searching for projects")
-    coll.find(prjSubset, {sort: sortName}, function(e, projects) {
-        if (e) logger.error("Project search error")
+    // Print the count of records
+    prjColl.count().then((count) => {
+        logger.debug(`Count of documents in collection "project": ${count}`);
+    });
+    testkbColl.count().then((count) => {
+        logger.debug(`Count of documents in collection "testkb": ${count}`);
+    });
+
+    logger.info("Searching for projects");
+    prjColl.find(prjSubset, {sort: sortName}).then((projects) => {
         logger.info("Rendering home page");
         res.render("home", {
             user: req.user,
             TestRefBase: config.TestRefBase,
-            projects: projects
+            projects: projects,
         });
     });
-    logger.debug("Done.");
 });
 //let projects = funct.getProjects("project");
 
@@ -441,7 +460,7 @@ app.get(
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("PrjName").matches(validationValues.PrjName.matches),
-    function(req, res) {
+    function (req, res) {
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -466,12 +485,12 @@ app.get(
         using centralized data validation routines when possible.
         */
         logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             res.render("project", {
                 user: req.user,
                 CveRptBase: config.CveRptBase,
                 CveRptSuffix: config.CveRptSuffix,
-                prj: prj
+                prj: prj,
             });
         });
     }
@@ -484,7 +503,7 @@ app.get(
     ensureAuthorized,
     // check for pattern YYYYMM[DD]-PrjName-EnvName
     check("PrjName").matches(validationValues.PrjName.matches),
-    function(req, res) {
+    function (req, res) {
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -509,7 +528,7 @@ app.get(
         that it conforms to the expected format, using centralized data validation routines when possible.
         */
         logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function(e, prj) {
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             if (prj === null) return;
 
             // Fetch from testkb collection
@@ -533,8 +552,8 @@ app.get(
                             {TSource: "OWASP-TG4"},
                             {TSource: "WAHH2"},
                             {TSource: "TBHM2015"},
-                            {TSource: "Extras"}
-                        ]
+                            {TSource: "Extras"},
+                        ],
                     };
                     break;
                 case "Extras":
@@ -573,12 +592,12 @@ app.get(
             }
 
             // Search the issue collection
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function(e, tests) {
-                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: -1}}, function(
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
+                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: -1}}, function (
                     e,
                     issues
                 ) {
-                    cweColl.find({}, {sort: {ID: 1}}, function(e, cwes) {
+                    cweColl.find({}, {sort: {ID: 1}}, function (e, cwes) {
                         res.render("testing", {
                             user: req.user,
                             prj: prj,
@@ -589,7 +608,7 @@ app.get(
                             CveRptBase: config.CveRptBase,
                             CveRptSuffix: config.CveRptSuffix,
                             TestRefBase: config.TestRefBase,
-                            ScopeQuery: JSON.stringify(scopeQuery)
+                            ScopeQuery: JSON.stringify(scopeQuery),
                         });
                     });
                 });
@@ -601,7 +620,7 @@ app.get(
 // ========================================== REST ROUTES ==========================================
 
 // Check if authenticated/authorized to use the REST API
-app.all("/api/*", ensureAuthenticated, ensureAuthorized, function(req, res, next) {
+app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
 });
 
@@ -705,7 +724,7 @@ app.get(
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
 // Check if authenticated/authorized to export data
-app.all("/export/*", ensureAuthenticated, ensureAuthorized, function(req, res, next) {
+app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
 });
 
@@ -759,7 +778,7 @@ function error(status, msg) {
 // it will be passed through the defined middleware
 // in order, but ONLY those with an arity of 4, ignoring
 // regular middleware.
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     // whatever you want here, feel free to populate
     // properties on `err` to treat it differently in here.
     res.status(err.status || 500);
@@ -769,7 +788,7 @@ app.use(function(err, req, res, next) {
 // our custom JSON 404 middleware. Since it's placed last
 // it will be the last middleware called, if all others
 // invoke next() and do not respond.
-app.use(function(req, res) {
+app.use(function (req, res) {
     res.status(404);
     res.send({Error: "This request is unsupported!"});
 });
