@@ -37,14 +37,14 @@ module.exports = {
         saveUninitialized: true,
         secret: "fawefjeaiaoeifj",
         //cookie: {path: "/", httpOnly: true, secure: true, sameSite: "lax"}
-        cookie: {path: "/", httpOnly: true, secure: false, sameSite: "lax"}
+        cookie: {path: "/", httpOnly: true, secure: false, sameSite: "lax"},
     },
 
     // Configure request logging
     reqLogging: {
         file: {
-            filename: `${appRoot}/logs/access.log`
-        }
+            filename: `${appRoot}/logs/access.log`,
+        },
     },
 
     // Configure app logging
@@ -57,14 +57,14 @@ module.exports = {
             colorize: false,
             maxsize: 5242880, // 5MB
             maxFiles: 2,
-            filename: `${appRoot}/logs/app.log`
+            filename: `${appRoot}/logs/app.log`,
         },
         console: {
             format: winston.format.simple(),
             level: "debug",
             handleExceptions: true,
             json: false,
-            colorize: true
+            colorize: true,
         },
         syslog: {
             app_name: appName, // The name of the application (Default: process.title).
@@ -77,8 +77,8 @@ module.exports = {
             path: "/dev/log", // The path to the syslog dgram socket (i.e. /dev/log or /var/run/syslog for OS X).
             facility: "local0", // Syslog facility to use (Default: local0).
             type: "BSD", // The type of the syslog protocol to use (Default: BSD, also valid: 5424).
-            pid: process.pid // PID of the process that log messages are coming from (Default process.pid).
+            pid: process.pid, // PID of the process that log messages are coming from (Default process.pid).
             //eol      : "\0"                // The end of line character to be added to the end of the message (Default: Message without modifications).
-        }
-    }
+        },
+    },
 };
