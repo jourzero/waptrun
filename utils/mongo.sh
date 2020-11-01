@@ -1,8 +1,7 @@
 #!/bin/bash
 #========================================================================================
-# mongo.sh: Run mongo in the waptrdb container (where our mongoDB is).
+# mongo.sh: Run mongo CLI in local container
 #========================================================================================
+. ../.env
 CONTAINER_NAME="waptrdb"
-BACKUP_DIR="/backup/waptrunner.$(date +%Y%m%d)"
-
-docker exec -it "$CONTAINER_NAME" /usr/bin/mongo 127.0.0.1:27017/waptrunner $*
+docker exec -it "$CONTAINER_NAME" /usr/bin/mongo $MONGODB_URL
