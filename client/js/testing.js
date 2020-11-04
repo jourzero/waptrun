@@ -2,7 +2,7 @@
 //                               UI EVENTS
 //==============================================================================
 // Clear test input upon double-clicking it
-$("#testIn").on("dblclick", function() {
+$("#testIn").on("dblclick", function () {
     $("#testIn").val("");
 });
 
@@ -22,10 +22,9 @@ $("#cweIn").on("blur", evtCweInputChanged);
 $("#kbBtnNew").on("click", evtNewTest);
 
 // When the test fields values change, update the Test KB
-$("#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground").on(
-    "change",
-    evtTestKBDataChanged
-);
+$(
+    "#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground"
+).on("change", evtTestKBDataChanged);
 $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on(
     "change",
     evtTestKBDataChanged
@@ -33,7 +32,10 @@ $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on(
 $("#TPCI, #TTop10, #TTop25, #TStdTest").on("change", evtTestKBDataChanged);
 
 // When the Specific Issue Data changes, save it to the Issue collection
-$("#IURIs, #IEvidence, #IScreenshots, #IPriority").on("change", evtIssueDataChanged);
+$("#IURIs, #IEvidence, #IScreenshots, #IPriority").on(
+    "change",
+    evtIssueDataChanged
+);
 
 // When Evidence and Notes fields are double-clicked, prefill them with template text.
 $("#IEvidence, #INotes").on("dblclick", evtAddIssueTemplateText);
@@ -48,7 +50,7 @@ $(".delete").on("click", evtDeleteIssue);
 $(".issueTD").on("click", evtShowIssue);
 
 // When the notes field changes, try to parse it as an issue that comes from Burp Clipboarder.
-$("#INotes").on("blur", function(event) {
+$("#INotes").on("blur", function (event) {
     uiParseBurpIssue();
     //$("#" + event.target.id).height(20);
     issue = uiGetIssue();
@@ -67,8 +69,10 @@ $("#refreshBtn").on("click", evtRefreshPage);
 //==============================================================================
 //                               UI TWEAK EVENTS
 //==============================================================================
-$(".issueTH").click(function() {
-    console.log("Clicked one of the issueTH fields, collapsing all text fields.");
+$(".issueTH").click(function () {
+    console.log(
+        "Clicked one of the issueTH fields, collapsing all text fields."
+    );
     $("#TTesterSupport").height(20);
     $("#TIssueBackground").height(20);
     $("#TRemediationBackground").height(20);
@@ -81,7 +85,7 @@ $(".issueTH").click(function() {
 // When some fields are clicked, increase the text box size
 $(
     "#IURIs, #IEvidence, #IScreenshots, #INotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
-).on("click", function(event) {
+).on("click", function (event) {
     $("#" + event.target.id).height(500);
 });
 
@@ -134,10 +138,12 @@ ADD RISK DETAILS AS NEEDED:
 - Affected users – how many people will be impacted?
 - Discoverability – how easy is it to discover the threat?
 \n`;
-            iNotes += "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
+            iNotes +=
+                "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
             iNotes +=
                 "#### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
-            iNotes += "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
+            iNotes +=
+                "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
             $("#INotes").val(iNotes);
             //$("#INotes").attr("title", iNotes);
         }
@@ -170,20 +176,12 @@ function evtToNextTest() {
     // Get current input value and the index in the datalist
     let testId = $("#testIn").val();
     let i = uiGetDatalistInputIndex(testId);
-    testId = $($("#testList").prop("options"))
-        .eq(i)
-        .val();
+    testId = $($("#testList").prop("options")).eq(i).val();
     let testCount = $("#testList").prop("options").length;
     if (i >= testCount - 1) i = 0;
     else i++;
-    $("#testIn").val(
-        $($("#testList").prop("options"))
-            .eq(i)
-            .val()
-    );
-    testId = $($("#testList").prop("options"))
-        .eq(i)
-        .val();
+    $("#testIn").val($($("#testList").prop("options")).eq(i).val());
+    testId = $($("#testList").prop("options")).eq(i).val();
     uiUpdateStatus("At #" + i + ": " + testId);
 
     // Refresh UI with test KB data
@@ -198,21 +196,13 @@ function evtToPreviousTest() {
     let testId = $("#testIn").val();
     let i = uiGetDatalistInputIndex(testId);
     let testCount = $("#testList").prop("options").length;
-    testId = $($("#testList").prop("options"))
-        .eq(i)
-        .val();
+    testId = $($("#testList").prop("options")).eq(i).val();
 
     // Go to previous test. Adjust text in input.
     if (i <= 0) i = testCount - 1;
     else i--;
-    $("#testIn").val(
-        $($("#testList").prop("options"))
-            .eq(i)
-            .val()
-    );
-    testId = $($("#testList").prop("options"))
-        .eq(i)
-        .val();
+    $("#testIn").val($($("#testList").prop("options")).eq(i).val());
+    testId = $($("#testList").prop("options")).eq(i).val();
     uiUpdateStatus("At #" + i + ": " + testId);
 
     // Refresh UI with test KB data
@@ -240,10 +230,7 @@ function evtIssueDataChanged() {
 
 // Create a new test
 function evtNewTest() {
-    let tid = new Date()
-        .toISOString()
-        .split(".")[0]
-        .replace(/[-:]/g, "");
+    let tid = new Date().toISOString().split(".")[0].replace(/[-:]/g, "");
     console.info("-- New test event, creating a new empty test", tid);
     restCreateTest(tid);
 }
@@ -274,16 +261,19 @@ function evtPasteScreenshot(event) {
     console.info("-- UI paste screenshot event");
 
     // Get clipboard entries and search for images
-    let items = (event.clipboardData || event.originalEvent.clipboardData).items;
+    let items = (event.clipboardData || event.originalEvent.clipboardData)
+        .items;
     for (let index in items) {
         let item = items[index];
         if (item.kind === "file") {
             let blob = item.getAsFile();
             let reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 let dataUrl = event.target.result;
                 let imgTag =
-                    "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
+                    "<span class='ssCaption'>CAPTION:<br/>\n<img src='" +
+                    dataUrl +
+                    "' /></span>\n";
                 // Append the data URL to the Evidence field.
                 let iScreenshots = $("#IScreenshots").val();
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
@@ -308,9 +298,7 @@ function evtTestInputChanged() {
     // Get the testId and the index in the datalist
     let testId = $("#testIn").val();
     let i = uiGetDatalistInputIndex(testId);
-    testId = $($("#testList").prop("options"))
-        .eq(i)
-        .val();
+    testId = $($("#testList").prop("options")).eq(i).val();
     uiUpdateStatus("At #" + i + ": " + testId);
 
     // Refresh UI with test KB data
@@ -324,7 +312,12 @@ function evtTestKBDataChanged(event) {
     let testId = $("#testIn").val();
 
     // Tweak the new value if it comes from one of the checkboxes
-    if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest")
+    if (
+        field === "TPCI" ||
+        field === "TTop10" ||
+        field === "TTop25" ||
+        field === "TStdTest"
+    )
         value = $("#" + field).prop("checked");
 
     console.info("-- Updating Test " + testId + " with " + field + "=" + value);
@@ -416,9 +409,7 @@ function uiGetDatalistInputIndex(testId) {
     let testCount = $("#testList").prop("options").length;
     let foundAt = testCount;
     for (let i = 0; i < testCount; i++) {
-        let listVal = $($("#testList").prop("options"))
-            .eq(i)
-            .val();
+        let listVal = $($("#testList").prop("options")).eq(i).val();
         if (listVal === testId) {
             foundAt = i;
             break;
@@ -530,16 +521,12 @@ function uiParseBurpIssue() {
         $("#TIssueName").val(issueName);
     }
     if (issueBG !== undefined && issueBG.length > 0) {
-        issueBG = stripHtmlTags(issueBG)
-            .replace(/ +/g, " ")
-            .trim();
+        issueBG = stripHtmlTags(issueBG).replace(/ +/g, " ").trim();
         $("#TIssueBackground").val(issueBG);
         //$("#TIssueBackground").attr("title", issueBG);
     }
     if (remedBG !== undefined && remedBG.length > 0) {
-        remedBG = stripHtmlTags(remedBG)
-            .replace(/ +/g, " ")
-            .trim();
+        remedBG = stripHtmlTags(remedBG).replace(/ +/g, " ").trim();
         $("#TRemediationBackground").val(remedBG);
         //$("#TRemediationBackground").attr("title", remedBG);
     }
@@ -547,8 +534,10 @@ function uiParseBurpIssue() {
         // Decode the Base64 value
         evidence = decodeURIComponent(
             Array.prototype.map
-                .call(atob(evidence), function(c) {
-                    return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+                .call(atob(evidence), function (c) {
+                    return (
+                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                    );
                 })
                 .join("")
         ).trim();
@@ -567,9 +556,7 @@ function uiParseBurpIssue() {
     // Save the note after removing "~", stripping HTML tags and collapsing
     // multiple spaces (from Burp Clipboarder extension).
     if (newNotes.length > 0) {
-        newNotes = stripHtmlTags(newNotes)
-            .replace(/ +/g, " ")
-            .trim();
+        newNotes = stripHtmlTags(newNotes).replace(/ +/g, " ").trim();
         $("#INotes").val(newNotes);
         //$("#INotes").attr("title", newNotes);
     }
@@ -593,7 +580,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
         $("#cweref").attr("href", gCweUriBase + cweId + ".html");
         $("#cweref").html("CWE-" + cweId);
 
-        restGetCwe(cweId, function(cwe) {
+        restGetCwe(cweId, function (cwe) {
             if (cwe !== null) {
                 let data = {};
                 uiUpdateStatus("Received REST response for CWE ID " + cweId);
@@ -612,8 +599,12 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 // If the issue background is empty, use the CWE description.
                 let issueBG = $("#TIssueBackground").val();
                 if (issueBG.length <= 0 || forceUpdate) {
-                    $("#TIssueBackground").val(cwe.Description);
-                    data["TIssueBackground"] = cwe.Description;
+                    let description = cwe.Description_Summary;
+                    let extendedDescr = cwe.Description_Summary;
+                    if (description.length && extendedDescr)
+                        description += "\n\n" + extendedDescr;
+                    $("#TIssueBackground").val(description);
+                    data["TIssueBackground"] = description;
                 }
 
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
@@ -626,8 +617,14 @@ function uiUpdateCwe(cweId, forceUpdate) {
                         cweMitig = cweMitig.replace(/:STRATEGY::/g, ":");
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS::/g, ":");
                         cweMitig = cweMitig.replace(/:STRATEGY/g, "\nSTRATEGY");
-                        cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
-                        cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
+                        cweMitig = cweMitig.replace(
+                            /:EFFECTIVENESS/g,
+                            "\nEFFECTIVENESS"
+                        );
+                        cweMitig = cweMitig.replace(
+                            /:DESCRIPTION/g,
+                            "\nDESCRIPTION"
+                        );
                         cweMitig = cweMitig.replace(/::/g, "");
                         $("#TRemediationBackground").val(cweMitig);
                         data["TRemediationBackground"] = cweMitig;
@@ -640,7 +637,9 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 restUpdateTest(testId, data);
             } else {
                 msg = "WARNING: Did not receive REST response for CWE " + cweId;
-                uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+                uiUpdateStatus(
+                    "<span class='statusHighlight'>" + msg + "</span>"
+                );
             }
         });
     } else {
@@ -656,7 +655,7 @@ function uiUpdateFromTestKB(testId) {
     uiClearTestingFields();
     $("#testIn").val(testId);
 
-    restGetTest(testId, function(rec) {
+    restGetTest(testId, function (rec) {
         if (rec !== null) {
             //uiUpdateStatus("Received REST response for Test ID " + testId);
             $("#TPhase").html(rec.TPhase);
@@ -762,7 +761,7 @@ function uiUpdateFromIssueColl(testID) {
         return;
     }
 
-    restGetIssue(testID, prjName, function(i) {
+    restGetIssue(testID, prjName, function (i) {
         if (i !== null) {
             //uiUpdateStatus("Received REST response for issue with Test ID " + testID);
             // Update UI values
@@ -777,7 +776,10 @@ function uiUpdateFromIssueColl(testID) {
             uiUpdateScreenshots();
         } else {
             let msg =
-                "NOTE: Could not find an issue for Test ID " + testID + " in project " + prjName;
+                "NOTE: Could not find an issue for Test ID " +
+                testID +
+                " in project " +
+                prjName;
             console.info(msg);
             uiUpdateStatus(msg);
         }
@@ -836,10 +838,14 @@ function checkSession() {
     Remediation: Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
     */
     xhr.open("GET", url, true);
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
-                console.info("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
+                console.info(
+                    "checkSession(): Last page refresh",
+                    refreshCounter++,
+                    "min. ago."
+                );
             } else {
                 alert(
                     "Session is not active, you will be redirected to the login page.",
