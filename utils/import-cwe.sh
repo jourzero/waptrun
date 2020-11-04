@@ -2,7 +2,6 @@
 #===========================================================================================
 # import-cwe.sh: Import CWE data in CSV format (originating from the Mitre site) into the
 #                WAPT Runner's MongoDB
-# Prerequisites: run env.sh that contains an environment value for MONGO_URL
 #===========================================================================================
 
 # Import parameters
@@ -22,12 +21,11 @@ CWE_VIEW_NAME[0]="COMPREHENSIVE_LIST"
 CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
-MONGO_URL="mongodb://waptrdb:27017/waptrunner"
+MONGODB_URL="mongodb://waptrdb:27017/waptrunner"
 
 # cd to $DATA_DIR to simplify things
 mkdir "$DATA_DIR" 2>/dev/null
 cd "$DATA_DIR"
-
 
 # Check if we didn't run this script by mistake
 read -p "Ready to import CWEs? [n] " answer
@@ -36,17 +34,14 @@ if [ "$answer" != y ];then
   exit 1
 fi
 
-
 # Check if we have the MongoDB URL
-if [ "$MONGO_URL" == "" ];then
-  echo "Missing MongoDB URL in MONGO_URL env. var! Exiting."  
+if [ "$MONGODB_URL" == "" ];then
+  echo "Missing MongoDB URL in MONGODB_URL env. var! Exiting."  
   exit 2
 fi
 
-
 # Save the previous files just in case
 mv "$IMPORTED_CSVFILE" "$IMPORTED_CSVFILE.old.$$" 2>/dev/null
-
 
 # Convert CSV file from Mitre into the format we currently support 
 # TODO: code change in WAPT Runner app to avoid having to do this.
@@ -55,7 +50,6 @@ echo "$NEW_HEADER"            > "$IMPORTED_CSVFILE"
 echo "$NO_CWE_FOUND_DATA"    >> "$IMPORTED_CSVFILE"
 echo "$TOP10_2013_A9"        >> "$IMPORTED_CSVFILE"
 echo "$TOP10_2017_A9"        >> "$IMPORTED_CSVFILE"
-
 
 # Download CSV files from the Mitre site and append their content
 for view in $(seq 0 $LAST_VIEW); do
@@ -77,15 +71,11 @@ for view in $(seq 0 $LAST_VIEW); do
   sed -n '2,$p' "${file}" >> "$IMPORTED_CSVFILE"
 done
 
-
-# 
-
 # Run mongodump
 read -p "Run mongoimport for CWE list? [n] " answer
 if [ "$answer" = y ];then
-  mongoimport --drop --uri="$MONGO_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
+  mongoimport --drop --uri="$MONGODB_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
 fi
-
 
 # cd back to where we were
 cd -
