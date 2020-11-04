@@ -4,7 +4,6 @@
 #========================================================================================
 . ../.env
 CONTAINER_NAME="waptrdb"
-DB=waptrunner
 COLLECTIONS[1]="testkb"
 COLLECTIONS[2]="issues"
 COLLECTIONS[3]="project"
@@ -17,11 +16,18 @@ FIELDS[4]='ID,Name,Weakness_Abstraction,Status,Description_Summary,Extended_Desc
 NUM_COLLS=4
 EXPORT_TYPE="csv"
 OUTPUT_DIR=/utils/export
+DB_LOCATION="remote"
 
+read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
+if [ "$answer" = "" -o "$answer" = "y" ];then
+    MONGODB_URL="$MONGODB_URL_LOCAL"
+    DB_LOCATION="local"
+fi
 
 for i in $(seq 1 $NUM_COLLS);do
-    OUT_FILENAME="$OUTPUT_DIR/mongoexport.${COLLECTIONS[$i]}.$$.csv"
+    OUT_FILENAME="$OUTPUT_DIR/${DB_LOCATION}/${COLLECTIONS[$i]}.csv"
     echo -e "\n-- Exporting data from ${COLLECTIONS[$i]} collection to $OUT_FILENAME..."
+    docker exec -it "$CONTAINER_NAME" mkdir -p "$OUTPUT_DIR/${DB_LOCATION}" 2>/dev/null
     docker exec -it "$CONTAINER_NAME" /usr/bin/mongoexport \
     --fields="${FIELDS[$i]}" \
     --collection="${COLLECTIONS[$i]}" \
