@@ -2,25 +2,25 @@
 
 <!-- TOC -->
 
-- [Web App Pen Test Runner](#web-app-pen-test-runner)
-    - [Overview](#overview)
-    - [Running this code within Docker](#running-this-code-within-docker)
-        - [Get the code](#get-the-code)
-        - [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
-        - [Browse to the app](#browse-to-the-app)
-        - [Stop App and DB containers](#stop-app-and-db-containers)
-    - [Basic Idea](#basic-idea)
-    - [Design focus](#design-focus)
-        - [Phase 1](#phase-1)
-        - [Phase 2](#phase-2)
-        - [Phase 3](#phase-3)
-        - [Phase 4](#phase-4)
-        - [Phase 5](#phase-5)
-        - [Phase 6](#phase-6)
-    - [Additional Criteria](#additional-criteria)
-    - [Current Features](#current-features)
-    - [IMPORTANT NOTE](#important-note)
-    - [Snyk Results](#snyk-results)
+-   [Web App Pen Test Runner](#web-app-pen-test-runner)
+    -   [Overview](#overview)
+    -   [Running this code within Docker](#running-this-code-within-docker)
+        -   [Get the code](#get-the-code)
+        -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
+        -   [Browse to the app](#browse-to-the-app)
+        -   [Stop App and DB containers](#stop-app-and-db-containers)
+    -   [Basic Idea](#basic-idea)
+    -   [Design focus](#design-focus)
+        -   [Phase 1](#phase-1)
+        -   [Phase 2](#phase-2)
+        -   [Phase 3](#phase-3)
+        -   [Phase 4](#phase-4)
+        -   [Phase 5](#phase-5)
+        -   [Phase 6](#phase-6)
+    -   [Additional Criteria](#additional-criteria)
+    -   [Current Features](#current-features)
+    -   [IMPORTANT NOTE](#important-note)
+    -   [Snyk Results](#snyk-results)
 
 <!-- /TOC -->
 
@@ -45,11 +45,32 @@ $ cd waptrun
 
 ```bash
 # Build and run
-$ docker-compose up -d
+HOST$ docker-compose up -d
 
-# Get a shell in each container (App and DB servers)
-$ docker exec -it waptr /bin/sh
-$ docker exec -it waptrdb /bin/sh
+# At first run, import CWE and TestKB data
+HOST$ docker exec -it waptr /bin/bash
+
+/app/utils# cd utils/
+
+/app/utils# ./download-mongo-client.sh
+
+/app/utils# mv mongodb-database-tools-debian92-x86_64-100.2.0 /opt
+
+/app/utils# PATH="$PATH:/opt/mongodb-database-tools-debian92-x86_64-100.2.0/bin"
+
+/app/utils# ./import-cwe.sh
+Ready to import CWEs? [n] y
+Creating a new file
+Append the data from 2000.csv
+Append the data from 1026.csv
+Run mongoimport for CWE list? [n] y
+2020-11-04T20:07:29.398+0000    connected to: mongodb://waptrdb:27017/waptrunner
+2020-11-04T20:07:29.399+0000    dropping: waptrunner.cwe
+2020-11-04T20:07:29.518+0000    907 document(s) imported successfully. 0 document(s) failed to import.
+/app/utils
+
+# To get a shell in the Mongo DB container:
+HOST$ docker exec -it waptrdb /bin/bash
 ```
 
 ### Browse to the app
@@ -169,7 +190,6 @@ Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue Li
 ## IMPORTANT NOTE
 
 -   Without a starting MongoDB dataset, this app is useless for anyone else but me. See [Issues](https://github.com/jourzero/waptrun/issues).
-
 
 ## Snyk Results
 
