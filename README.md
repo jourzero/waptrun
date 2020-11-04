@@ -69,6 +69,14 @@ Run mongoimport for CWE list? [n] y
 2020-11-04T20:07:29.518+0000    907 document(s) imported successfully. 0 document(s) failed to import.
 /app/utils
 
+/app/utils# ./mongoimport.sh
+Do you want the operation on local DB (mongodb://waptrdb:27017/waptrunner)? [y]: y
+
+-- Importing data to testkb collection from /app/data/testkb.csv...
+2020-11-04T20:38:40.053+0000    connected to: mongodb://waptrdb:27017/waptrunner
+2020-11-04T20:38:40.055+0000    dropping: waptrunner.testkb
+2020-11-04T20:38:40.163+0000    2517 document(s) imported successfully. 0 document(s) failed to import.
+
 # To get a shell in the Mongo DB container:
 HOST$ docker exec -it waptrdb /bin/bash
 ```
