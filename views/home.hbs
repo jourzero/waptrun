@@ -14,6 +14,7 @@
     </div>
 
     <table class="projectList">
+    {{#if projects}}
         {{#projects}}
         <tr>
             <!--
@@ -23,6 +24,11 @@
             <td><a href="/testing/{{name}}">Start Testing</td>
         </tr>
         {{/projects}}
+    {{else}}
+        <div class="jumbotron">
+            NO PROJECT! Make sure that your MongoDB has been prepared properly! Refer to the <a href='https://github.com/jourzero/waptrun/blob/master/README.md#start-app-and-db-servers-in-separate-containers'>README</a> for details. 
+            If you're ready, click <strong>Create Project</strong> below</div>
+    {{/if}}
     </table>
 
     <div>
