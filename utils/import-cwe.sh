@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #===========================================================================================
 # import-cwe.sh: Import CWE data in CSV format (originating from the Mitre site) into the
 #                WAPT Runner's MongoDB
@@ -22,6 +22,7 @@ CWE_VIEW_NAME[0]="COMPREHENSIVE_LIST"
 CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
+MONGO_URL="mongodb://waptrdb:27017/waptrunner"
 
 # cd to $DATA_DIR to simplify things
 mkdir "$DATA_DIR" 2>/dev/null
@@ -72,7 +73,7 @@ for view in $(seq 0 $LAST_VIEW); do
   fi
 
   # Append the data 
-  echo "Append the data from $file"
+  echo "Appending data from $file"
   sed -n '2,$p' "${file}" >> "$IMPORTED_CSVFILE"
 done
 
