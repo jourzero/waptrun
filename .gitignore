@@ -90,3 +90,4 @@ waptrdb-bash.sh
 utils/importTestKB.js
 utils/mongorestore.sh
 utils/export/
+utils/download-mongo-client.sh
