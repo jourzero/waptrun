@@ -72,7 +72,6 @@ package-lock.json
 screenshots/.DS_Store
 .DS_Store
 go.sh
-data/
 .eslintrc.json
 .oauth.js
 .vscode/
@@ -89,4 +88,5 @@ docker-run.sh
 waptrdb-bash.sh
 utils/importTestKB.js
 utils/mongorestore.sh
-utils/export/
+utils/export
+/data/old/
