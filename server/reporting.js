@@ -18,16 +18,16 @@ marked.setOptions({
     sanitize: false,
     smartLists: true,
     smartypants: false,
-    xhtml: false
+    xhtml: false,
 });
 
 // Generate issue report for a specific project in CSV format
-exports.genPrjIssueReportCSV = function(req, res) {
+exports.genPrjIssueReportCSV = function (req, res) {
     let prjName = req.params.PrjName;
     let filename = prjName + "-issues.csv";
     let fileData = "";
 
-    let ok = function(records) {
+    let ok = function (records) {
         /* 
         TODO: cwe-117 improper output neutralization for logs
         reporting.js: 31
@@ -44,19 +44,19 @@ exports.genPrjIssueReportCSV = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    let err = function(err) {
+    let err = function (err) {
         res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
     };
     issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Generate issue report for a specific project in CSV format
-exports.genPrjIssueExportJSON = function(req, res) {
+exports.genPrjIssueExportJSON = function (req, res) {
     let prjName = req.params.PrjName;
     let filename = prjName + "-issues.json";
     let fileData = "";
 
-    let ok = function(records) {
+    let ok = function (records) {
         /* 
         TODO: CWE-117   Improper Output Neutralization for Logs
         reporting.js: 51
@@ -82,29 +82,29 @@ exports.genPrjIssueExportJSON = function(req, res) {
         */
         res.send(fileData);
     };
-    let err = function(err) {
+    let err = function (err) {
         res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
     };
     issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Generate findings issue report for a specific project in HTML format
-exports.genPrjIssueFindingsReportHtml = function(req, res) {
+exports.genPrjIssueFindingsReportHtml = function (req, res) {
     let showAllIssues = false;
     genFindingsReportHtml(req, res, showAllIssues);
 };
 
 // Generate full issue report for a specific project in HTML format
-exports.genPrjIssueFullReportHtml = function(req, res) {
+exports.genPrjIssueFullReportHtml = function (req, res) {
     let showAllIssues = true;
     genFindingsReportHtml(req, res, showAllIssues);
 };
 
 // Export all Issue data to CSV format
-exports.exportIssuesCSV = function(req, res) {
+exports.exportIssuesCSV = function (req, res) {
     let filename = "all-issues.csv";
     let fileData = "";
-    let ok = function(records) {
+    let ok = function (records) {
         console.log("Got " + records.length + " issue records");
         fileData += toCsv(records);
         res.set("Content-type", "text/csv");
@@ -112,7 +112,7 @@ exports.exportIssuesCSV = function(req, res) {
         res.set("Content-Length", fileData.length);
         res.send(fileData);
     };
-    let err = function(err) {
+    let err = function (err) {
         res.status(404).send("Sorry, there was an error when exporting: " + err.message);
     };
     issue.findAll(ok, err);
@@ -129,10 +129,10 @@ function genFindingsReportHtml(req, res, showAllIssues) {
 
     prjColl
         .findOne({name: prjName})
-        .then(prj => {
+        .then((prj) => {
             issueColl
                 .find({PrjName: prjName}, {sort: {IPriority: -1, TIssueName: 1}})
-                .then(records => {
+                .then((records) => {
                     /* 
                     TODO: CWE-117   Improper Output Neutralization for Logs
                     reporting.js: 109
@@ -158,7 +158,7 @@ function genFindingsReportHtml(req, res, showAllIssues) {
                     res.send(fileData);
                 });
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(404).send(
                 "Sorry, there was an error when generating the report: " + err.message
             );
@@ -261,9 +261,12 @@ function toCsv(objArray, sDelimiter, cDelimiter) {
  * Converts an array of objects (with identical schemas) into HTML
  * @param {Array}  objArray  An array of objects.  Each object in the array must have the same property list.
  * @param {String} prjName   Name of project
+ * @param {Object} prj       Project object
+ * @param {Boolean} showAllIssues   Show all findings, even remediated ones?
+ * @param {Boolean} includeMenu     Include the left pane menu in the report?
  * @return {string} The CSV equivalent of objArray.
  */
-function toHtml(objArray, prjName, prj, showAllIssues) {
+function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     let obj = {};
     let title = "Security Testing Report";
 
@@ -348,64 +351,66 @@ function toHtml(objArray, prjName, prj, showAllIssues) {
 
     // Use side-menu layout from https://purecss.io.
     // Create the Layout div (Level 1 div)
-    output +=
-        '<div id="layout">\n<a href="#menu" id="menuLink" class="menu-link">\n<span></span></a>\n';
+    if (includeMenu) {
+        output +=
+            '<div id="layout">\n<a href="#menu" id="menuLink" class="menu-link">\n<span></span></a>\n';
 
-    // Add Menu div (level 2)
-    output += '<div id="menu">\n';
+        // Add Menu div (level 2)
+        output += '<div id="menu">\n';
 
-    // Add menu content (level 3)
-    output += '<div class="pure-menu">\n';
-    output += '<a class="pure-menu-heading" href="#">Findings</a>\n';
+        // Add menu content (level 3)
+        output += '<div class="pure-menu">\n';
+        output += '<a class="pure-menu-heading" href="#">Findings</a>\n';
 
-    // Add list for issues
-    output += '<ul class="pure-menu-list">\n';
+        // Add list for issues
+        output += '<ul class="pure-menu-list">\n';
 
-    // Add menu items for each issue (issue summary)
-    for (let i = 0; i < objArray.length; i++) {
-        obj = objArray[i];
-        prevPrio = priority;
-        priority = obj.IPriorityText;
-        prio = parseInt(obj.IPriority);
+        // Add menu items for each issue (issue summary)
+        for (let i = 0; i < objArray.length; i++) {
+            obj = objArray[i];
+            prevPrio = priority;
+            priority = obj.IPriorityText;
+            prio = parseInt(obj.IPriority);
 
-        // Decide which priorities to keep in the report
-        // Priority values: 0:Info, 1:Low, 2:Medium, 3:High, -1:Tested, -2:Fixed, -3:TODO,  -4:Exclude
-        // If all issues logged need to be printed (for compliance reports), only skip the ones marked as "Exclude"
-        if (showAllIssues && prio !== undefined && prio < -3) continue;
-        // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
-        if (!showAllIssues && prio !== undefined && prio < 0) continue;
+            // Decide which priorities to keep in the report
+            // Priority values: 0:Info, 1:Low, 2:Medium, 3:High, -1:Tested, -2:Fixed, -3:TODO,  -4:Exclude
+            // If all issues logged need to be printed (for compliance reports), only skip the ones marked as "Exclude"
+            if (showAllIssues && prio !== undefined && prio < -3) continue;
+            // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
+            if (!showAllIssues && prio !== undefined && prio < 0) continue;
 
-        // Count the number of URIs
-        //let count = 0;
-        //if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
+            // Count the number of URIs
+            //let count = 0;
+            //if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
 
-        // Print each issue with the issue as the header and the details as part of a table.
-        if (priority !== undefined && priority !== "" && priority !== prevPrio) {
-            // Add priority link
+            // Print each issue with the issue as the header and the details as part of a table.
+            if (priority !== undefined && priority !== "" && priority !== prevPrio) {
+                // Add priority link
+                output +=
+                    '<li class="pure-menu-item menu-item-divided"><a href="#' +
+                    priority +
+                    '" class="pure-menu-link">' +
+                    priority +
+                    "</a></li>\n";
+            }
+
+            // Add list item for issue
+            let issueName = obj.TIssueName;
+            if (issueName.length >= menuMaxTextLen) {
+                issueName = obj.TIssueName.substr(0, menuMaxTextLen - 3) + "...";
+            }
             output +=
-                '<li class="pure-menu-item menu-item-divided"><a href="#' +
-                priority +
-                '" class="pure-menu-link">' +
-                priority +
+                '<li class="pure-menu-item"><a href="#' +
+                htmlEncode(obj.TID, true, 4, false) +
+                '" class="pure-menu-link"> - ' +
+                issueName +
                 "</a></li>\n";
         }
-
-        // Add list item for issue
-        let issueName = obj.TIssueName;
-        if (issueName.length >= menuMaxTextLen) {
-            issueName = obj.TIssueName.substr(0, menuMaxTextLen - 3) + "...";
-        }
-        output +=
-            '<li class="pure-menu-item"><a href="#' +
-            htmlEncode(obj.TID, true, 4, false) +
-            '" class="pure-menu-link"> - ' +
-            issueName +
-            "</a></li>\n";
+        //output += "</tbody>\n</table>\n";
+        output += "</ul>\n"; // Close list of menu items
+        output += "</div>\n"; // close menu content div (level 3)
+        output += "</div>\n"; // close menu div (level 2)
     }
-    //output += "</tbody>\n</table>\n";
-    output += "</ul>\n"; // Close list of menu items
-    output += "</div>\n"; // close menu content div (level 3)
-    output += "</div>\n"; // close menu div (level 2)
 
     // Add Main div (level 2) to hold main content (as per side-menu layout from https://purecss.io)
     output +=
@@ -582,19 +587,19 @@ jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, pluspl
  * @param {boolean} linkify    Linkify URLs when possible
  * @returns {Array|htmlEncode.result|String}
  */
-let htmlEncode = function(source, display, tabs, linkify) {
+let htmlEncode = function (source, display, tabs, linkify) {
     let i, s, ch, peek, line, result, next, endline, push, spaces;
 
     if (source === undefined) return "";
 
     // Stash the next character and advance the pointer
-    next = function() {
+    next = function () {
         peek = source.charAt(i);
         i += 1;
     };
 
     // Start a new "line" of output, to be joined later by <br />
-    endline = function() {
+    endline = function () {
         line = line.join("");
         if (display) {
             // If a line starts or ends with a space, it evaporates in html
@@ -606,7 +611,7 @@ let htmlEncode = function(source, display, tabs, linkify) {
     };
 
     // Push a character or its entity onto the current line
-    push = function() {
+    push = function () {
         if (ch < " " || ch > "~") {
             line.push("&#" + ch.charCodeAt(0) + ";");
         } else {
@@ -614,7 +619,7 @@ let htmlEncode = function(source, display, tabs, linkify) {
         }
     };
 
-    let toLink = function() {
+    let toLink = function () {
         let replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
     };
