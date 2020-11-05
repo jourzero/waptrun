@@ -90,3 +90,5 @@ utils/importTestKB.js
 utils/mongorestore.sh
 utils/export
 /data/old/
+utils/import
+utils/export
