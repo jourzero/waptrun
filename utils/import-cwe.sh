@@ -28,7 +28,7 @@ mkdir "$DATA_DIR" 2>/dev/null
 cd "$DATA_DIR"
 
 # Check if we didn't run this script by mistake
-read -p "Ready to import CWEs? [n] " answer
+read -p "-- Ready to import CWEs? [n] " answer
 if [ "$answer" != y ];then
   echo "See you later!"
   exit 1
@@ -45,7 +45,7 @@ mv "$IMPORTED_CSVFILE" "$IMPORTED_CSVFILE.old.$$" 2>/dev/null
 
 # Convert CSV file from Mitre into the format we currently support 
 # TODO: code change in WAPT Runner app to avoid having to do this.
-echo "Creating a new file"
+echo -e "\n-- Creating a new file $IMPORTED_CSVFILE"
 echo "$NEW_HEADER"            > "$IMPORTED_CSVFILE"
 echo "$NO_CWE_FOUND_DATA"    >> "$IMPORTED_CSVFILE"
 echo "$TOP10_2013_A9"        >> "$IMPORTED_CSVFILE"
@@ -54,25 +54,33 @@ echo "$TOP10_2017_A9"        >> "$IMPORTED_CSVFILE"
 # Download CSV files from the Mitre site and append their content
 for view in $(seq 0 $LAST_VIEW); do
   file="${CWE_VIEW_ID[$view]}.csv"
+  echo -e "\n- Processing view ${CWE_VIEW_ID[$view]}"
   if [ ! -f "$file" ];then
 
     # Download CSV files from the Mitre site 
-    curl -o "${file}.zip" "${URL_BASE}/${file}.zip"
+    echo -e "- Downloading ${URL_BASE}/${file}.zip"
+    curl --silent -o "${file}.zip" "${URL_BASE}/${file}.zip"
 
     # Unzip the file
+    echo -e "- Uncompressing ${file}.zip"
     unzip "$file"
 
     # Remove zip file
+    echo -e "- Removing zip file ${file}.zip"
     rm "${file}.zip"
+  else
+    echo "File already exists. Skipping download."
   fi
 
   # Append the data 
-  echo "Appending data from $file"
+  echo -e "- Appending data from $file"
   sed -n '2,$p' "${file}" >> "$IMPORTED_CSVFILE"
+  echo -e "Done building content in $IMPORTED_CSVFILE."
 done
 
 # Run mongodump
-read -p "Run mongoimport for CWE list? [n] " answer
+echo ""
+read -p "-- Run mongoimport for CWE list? [n] " answer
 if [ "$answer" = y ];then
   mongoimport --drop --uri="$MONGODB_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
 fi
