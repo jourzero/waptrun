@@ -21,14 +21,18 @@ CWE_VIEW_NAME[0]="COMPREHENSIVE_LIST"
 CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
-MONGODB_URL="mongodb://waptrdb:27017/waptrunner"
+#MONGODB_URL="mongodb://waptrdb:27017/waptrunner"
 
 # cd to $DATA_DIR to simplify things
 mkdir "$DATA_DIR" 2>/dev/null
 cd "$DATA_DIR"
 
 # Check if we didn't run this script by mistake
-read -p "-- Ready to import CWEs? [n] " answer
+if [ $(id -u) -eq 0 ];then
+    read -p "-- Ready to import CWEs? [n] " answer
+else
+    answer="y"
+fi
 if [ "$answer" != y ];then
   echo "See you later!"
   exit 1
@@ -80,7 +84,11 @@ done
 
 # Run mongodump
 echo ""
-read -p "-- Run mongoimport for CWE list? [n] " answer
+if [ $(id -u) -eq 0 ];then
+    read -p "-- Run mongoimport for CWE list? [n] " answer
+else
+    answer="y"
+fi
 if [ "$answer" = y ];then
   mongoimport --drop --uri="$MONGODB_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
 fi
