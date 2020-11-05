@@ -7,6 +7,7 @@
     -   [Running this code within Docker](#running-this-code-within-docker)
         -   [Get the code](#get-the-code)
         -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
+        -   [At first run, download Mongo client, import CWE and import TestKB data](#at-first-run-download-mongo-client-import-cwe-and-import-testkb-data)
         -   [Browse to the app](#browse-to-the-app)
         -   [Stop App and DB containers](#stop-app-and-db-containers)
     -   [Basic Idea](#basic-idea)
@@ -46,29 +47,62 @@ $ cd waptrun
 ```bash
 # Build and run
 HOST$ docker-compose up -d
+```
 
-# At first run, import CWE and TestKB data
+### At first run, download Mongo client, import CWE and import TestKB data
+
+```bash
 HOST$ docker exec -it waptr /bin/bash
 
 /app/utils# cd utils/
 
+# Download Mongo client
 /app/utils# ./download-mongo-client.sh
 
 /app/utils# mv mongodb-database-tools-debian92-x86_64-100.2.0 /opt
 
 /app/utils# PATH="$PATH:/opt/mongodb-database-tools-debian92-x86_64-100.2.0/bin"
 
-/app/utils# ./import-cwe.sh
-Ready to import CWEs? [n] y
-Creating a new file
-Append the data from 2000.csv
-Append the data from 1026.csv
-Run mongoimport for CWE list? [n] y
-2020-11-04T20:07:29.398+0000    connected to: mongodb://waptrdb:27017/waptrunner
-2020-11-04T20:07:29.399+0000    dropping: waptrunner.cwe
-2020-11-04T20:07:29.518+0000    907 document(s) imported successfully. 0 document(s) failed to import.
+# Download and import CWE data
+root@56b0043d4fdb:/app/utils# ./import-cwe.sh
+-- Ready to import CWEs? [n] y
+
+-- Creating a new file CWE3.2-Import-Data.csv
+
+- Processing view 2000
+- Downloading https://cwe.mitre.org/data/csv/2000.csv.zip
+- Uncompressing 2000.csv.zip
+Archive:  2000.csv.zip
+  inflating: 2000.csv
+- Removing zip file 2000.csv.zip
+- Appending data from 2000.csv
+Done building content in CWE3.2-Import-Data.csv.
+
+- Processing view 1026
+- Downloading https://cwe.mitre.org/data/csv/1026.csv.zip
+- Uncompressing 1026.csv.zip
+Archive:  1026.csv.zip
+  inflating: 1026.csv
+- Removing zip file 1026.csv.zip
+- Appending data from 1026.csv
+Done building content in CWE3.2-Import-Data.csv.
+
+- Processing view 928
+- Downloading https://cwe.mitre.org/data/csv/928.csv.zip
+- Uncompressing 928.csv.zip
+Archive:  928.csv.zip
+  inflating: 928.csv
+- Removing zip file 928.csv.zip
+- Appending data from 928.csv
+Done building content in CWE3.2-Import-Data.csv.
+
+-- Run mongoimport for CWE list? [n] y
+2020-11-05T01:23:54.039+0000    connected to: mongodb://waptrdb:27017/waptrunner
+2020-11-05T01:23:54.040+0000    dropping: waptrunner.cwe
+2020-11-05T01:23:54.170+0000    994 document(s) imported successfully. 0 document(s) failed to import.
 /app/utils
 
+# Import TestKB data
 /app/utils# ./mongoimport.sh
 Do you want the operation on local DB (mongodb://waptrdb:27017/waptrunner)? [y]: y
 
@@ -77,7 +111,7 @@ Do you want the operation on local DB (mongodb://waptrdb:27017/waptrunner)? [y]:
 2020-11-04T20:38:40.055+0000    dropping: waptrunner.testkb
 2020-11-04T20:38:40.163+0000    2517 document(s) imported successfully. 0 document(s) failed to import.
 
-# To get a shell in the Mongo DB container:
+# If you need to get a shell in the Mongo DB container:
 HOST$ docker exec -it waptrdb /bin/bash
 ```
 
