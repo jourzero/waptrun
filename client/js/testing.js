@@ -22,9 +22,10 @@ $("#cweIn").on("blur", evtCweInputChanged);
 $("#kbBtnNew").on("click", evtNewTest);
 
 // When the test fields values change, update the Test KB
-$(
-    "#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground"
-).on("change", evtTestKBDataChanged);
+$("#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground").on(
+    "change",
+    evtTestKBDataChanged
+);
 $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on(
     "change",
     evtTestKBDataChanged
@@ -32,10 +33,7 @@ $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on(
 $("#TPCI, #TTop10, #TTop25, #TStdTest").on("change", evtTestKBDataChanged);
 
 // When the Specific Issue Data changes, save it to the Issue collection
-$("#IURIs, #IEvidence, #IScreenshots, #IPriority").on(
-    "change",
-    evtIssueDataChanged
-);
+$("#IURIs, #IEvidence, #IScreenshots, #IPriority").on("change", evtIssueDataChanged);
 
 // When Evidence and Notes fields are double-clicked, prefill them with template text.
 $("#IEvidence, #INotes").on("dblclick", evtAddIssueTemplateText);
@@ -70,9 +68,7 @@ $("#refreshBtn").on("click", evtRefreshPage);
 //                               UI TWEAK EVENTS
 //==============================================================================
 $(".issueTH").click(function () {
-    console.log(
-        "Clicked one of the issueTH fields, collapsing all text fields."
-    );
+    console.log("Clicked one of the issueTH fields, collapsing all text fields.");
     $("#TTesterSupport").height(20);
     $("#TIssueBackground").height(20);
     $("#TRemediationBackground").height(20);
@@ -138,12 +134,10 @@ ADD RISK DETAILS AS NEEDED:
 - Affected users – how many people will be impacted?
 - Discoverability – how easy is it to discover the threat?
 \n`;
-            iNotes +=
-                "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
+            iNotes += "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
             iNotes +=
                 "#### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
-            iNotes +=
-                "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
+            iNotes += "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
             $("#INotes").val(iNotes);
             //$("#INotes").attr("title", iNotes);
         }
@@ -261,8 +255,7 @@ function evtPasteScreenshot(event) {
     console.info("-- UI paste screenshot event");
 
     // Get clipboard entries and search for images
-    let items = (event.clipboardData || event.originalEvent.clipboardData)
-        .items;
+    let items = (event.clipboardData || event.originalEvent.clipboardData).items;
     for (let index in items) {
         let item = items[index];
         if (item.kind === "file") {
@@ -271,9 +264,7 @@ function evtPasteScreenshot(event) {
             reader.onload = function (event) {
                 let dataUrl = event.target.result;
                 let imgTag =
-                    "<span class='ssCaption'>CAPTION:<br/>\n<img src='" +
-                    dataUrl +
-                    "' /></span>\n";
+                    "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
                 // Append the data URL to the Evidence field.
                 let iScreenshots = $("#IScreenshots").val();
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
@@ -312,12 +303,7 @@ function evtTestKBDataChanged(event) {
     let testId = $("#testIn").val();
 
     // Tweak the new value if it comes from one of the checkboxes
-    if (
-        field === "TPCI" ||
-        field === "TTop10" ||
-        field === "TTop25" ||
-        field === "TStdTest"
-    )
+    if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest")
         value = $("#" + field).prop("checked");
 
     console.info("-- Updating Test " + testId + " with " + field + "=" + value);
@@ -535,9 +521,7 @@ function uiParseBurpIssue() {
         evidence = decodeURIComponent(
             Array.prototype.map
                 .call(atob(evidence), function (c) {
-                    return (
-                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
-                    );
+                    return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
                 })
                 .join("")
         ).trim();
@@ -600,9 +584,8 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 let issueBG = $("#TIssueBackground").val();
                 if (issueBG.length <= 0 || forceUpdate) {
                     let description = cwe.Description_Summary;
-                    let extendedDescr = cwe.Description_Summary;
-                    if (description.length && extendedDescr)
-                        description += "\n\n" + extendedDescr;
+                    let extendedDescr = cwe.Extended_Description;
+                    if (description.length && extendedDescr) description += "\n\n" + extendedDescr;
                     $("#TIssueBackground").val(description);
                     data["TIssueBackground"] = description;
                 }
@@ -617,14 +600,8 @@ function uiUpdateCwe(cweId, forceUpdate) {
                         cweMitig = cweMitig.replace(/:STRATEGY::/g, ":");
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS::/g, ":");
                         cweMitig = cweMitig.replace(/:STRATEGY/g, "\nSTRATEGY");
-                        cweMitig = cweMitig.replace(
-                            /:EFFECTIVENESS/g,
-                            "\nEFFECTIVENESS"
-                        );
-                        cweMitig = cweMitig.replace(
-                            /:DESCRIPTION/g,
-                            "\nDESCRIPTION"
-                        );
+                        cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
+                        cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
                         cweMitig = cweMitig.replace(/::/g, "");
                         $("#TRemediationBackground").val(cweMitig);
                         data["TRemediationBackground"] = cweMitig;
@@ -637,9 +614,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 restUpdateTest(testId, data);
             } else {
                 msg = "WARNING: Did not receive REST response for CWE " + cweId;
-                uiUpdateStatus(
-                    "<span class='statusHighlight'>" + msg + "</span>"
-                );
+                uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
             }
         });
     } else {
@@ -776,10 +751,7 @@ function uiUpdateFromIssueColl(testID) {
             uiUpdateScreenshots();
         } else {
             let msg =
-                "NOTE: Could not find an issue for Test ID " +
-                testID +
-                " in project " +
-                prjName;
+                "NOTE: Could not find an issue for Test ID " + testID + " in project " + prjName;
             console.info(msg);
             uiUpdateStatus(msg);
         }
@@ -841,11 +813,7 @@ function checkSession() {
     xhr.onload = function () {
         if (xhr.status === 200) {
             if (xhr.responseURL === url) {
-                console.info(
-                    "checkSession(): Last page refresh",
-                    refreshCounter++,
-                    "min. ago."
-                );
+                console.info("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
             } else {
                 alert(
                     "Session is not active, you will be redirected to the login page.",
