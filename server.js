@@ -20,7 +20,11 @@ const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
 //const users = require("./users.js");
 //const mongoAuth = require('./server/mongoAuth.js');
-const {check, checkSchema, validationResult} = require("express-validator/check");
+const {
+    check,
+    checkSchema,
+    validationResult,
+} = require("express-validator/check");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
 const prjRes = require("./server/ProjectRes");
@@ -68,7 +72,9 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (obj, done) {
-    logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
+    logger.silly(
+        `Deserialized user ID ${obj.id} from provider ${obj.provider}`
+    );
     done(null, obj);
 });
 
@@ -236,8 +242,8 @@ Remediation: Ensure that all actions and routes that modify data are either prot
 let app = express();
 app.use(reqLogger);
 app.use(cookieParser());
-app.use(bodyParser.json({limit: "5mb"}));
-app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
+app.use(bodyParser.json({ limit: "5mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
 app.use(methodOverride());
 /* 
 TODO: CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute (server.js: 226)
@@ -266,8 +272,14 @@ app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "client")));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
-app.use("/dist/jquery", express.static(__dirname + "/node_modules/jquery/dist/"));
-app.use("/dist/bootstrap", express.static(__dirname + "/node_modules/bootstrap/dist/"));
+app.use(
+    "/dist/jquery",
+    express.static(__dirname + "/node_modules/jquery/dist/")
+);
+app.use(
+    "/dist/bootstrap",
+    express.static(__dirname + "/node_modules/bootstrap/dist/")
+);
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -299,7 +311,7 @@ app.set("view engine", ".hbs");
 // Make our db accessible to our router
 // Test 3
 const monk = require("monk");
-const {exit} = require("process");
+const { exit } = require("process");
 const mongoURL = new URL(mongodbUrl);
 logger.debug(`Connecting to MongoDB server at ${mongoURL.host}`);
 const db = monk(mongodbUrl);
@@ -374,7 +386,9 @@ app.get('/auth/google/callback',
 */
 app.get(
     "/auth/google",
-    passport.authenticate("google", {scope: ["https://www.googleapis.com/auth/plus.login"]})
+    passport.authenticate("google", {
+        scope: ["https://www.googleapis.com/auth/plus.login"],
+    })
 );
 //    [ 'https://www.googleapis.com/auth/plus.login',
 //    , 'https://www.googleapis.com/auth/plus.profile.emails.read' ] }
@@ -382,7 +396,7 @@ app.get(
 
 app.get(
     "/auth/google/callback",
-    passport.authenticate("google", {failureRedirect: "/login"}),
+    passport.authenticate("google", { failureRedirect: "/login" }),
     function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/");
@@ -396,7 +410,7 @@ app.get("/auth/github", passport.authenticate("github"));
 
 app.get(
     "/auth/github/callback",
-    passport.authenticate("github", {failureRedirect: "/login"}),
+    passport.authenticate("github", { failureRedirect: "/login" }),
     function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/");
@@ -418,20 +432,22 @@ app.get("/login", function (req, res) {
 
 // Show account information
 app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    res.render("account", {user: req.user});
+    res.render("account", { user: req.user });
 });
 
 // Home
 app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
+    logger.debug(
+        `Logged in. User ID ${req.user.id} from provider ${req.user.provider}`
+    );
     logger.silly(`User data = ${JSON.stringify(req.user)}`);
 
     // Fetch from project collection
     let prjColl = db.get("project");
     let testkbColl = db.get("testkb");
-    let sortName = {name: -1};
-    let prjRegex = {$regex: config.PrjSubset};
-    let prjSubset = {name: prjRegex};
+    let sortName = { name: -1 };
+    let prjRegex = { $regex: config.PrjSubset };
+    let prjSubset = { name: prjRegex };
 
     // Print the count of records
     prjColl.count().then((count) => {
@@ -442,7 +458,7 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     });
 
     logger.info("Searching for projects");
-    prjColl.find(prjSubset, {sort: sortName}).then((projects) => {
+    prjColl.find(prjSubset, { sort: sortName }).then((projects) => {
         logger.info("Rendering home page");
         res.render("home", {
             user: req.user,
@@ -464,13 +480,13 @@ app.get(
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.array()});
+            return res.status(422).json({ errors: errors.array() });
         }
 
         // Fetch from project collection
         let prjColl = db.get("project");
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
+        let prjRegex = { $regex: config.PrjSubset };
+        let prjSubset = { name: prjRegex };
         /* 
         TODO: CWE-117: Improper Output Neutralization for Logs (server.js: 419) 
         Severity: Medium
@@ -484,15 +500,20 @@ app.get(
         OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, 
         using centralized data validation routines when possible.
         */
-        logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
-            res.render("project", {
-                user: req.user,
-                CveRptBase: config.CveRptBase,
-                CveRptSuffix: config.CveRptSuffix,
-                prj: prj,
-            });
-        });
+        logger.info(
+            `Checking if entry exists for project ${req.params.PrjName}`
+        );
+        prjColl.findOne(
+            { $and: [{ name: req.params.PrjName }, prjSubset] },
+            function (e, prj) {
+                res.render("project", {
+                    user: req.user,
+                    CveRptBase: config.CveRptBase,
+                    CveRptSuffix: config.CveRptSuffix,
+                    prj: prj,
+                });
+            }
+        );
     }
 );
 
@@ -507,11 +528,11 @@ app.get(
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.array()});
+            return res.status(422).json({ errors: errors.array() });
         }
 
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
+        let prjRegex = { $regex: config.PrjSubset };
+        let prjSubset = { name: prjRegex };
 
         // Fetch from project collection
         let prjColl = db.get("project");
@@ -527,100 +548,129 @@ app.get(
         escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure 
         that it conforms to the expected format, using centralized data validation routines when possible.
         */
-        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
-            if (prj === null) return;
+        logger.debug(
+            `Checking if entry exists for project ${req.params.PrjName}`
+        );
+        prjColl.findOne(
+            { $and: [{ name: req.params.PrjName }, prjSubset] },
+            function (e, prj) {
+                if (prj === null) return;
 
-            // Fetch from testkb collection
-            logger.info(`Searching TestDB with scope ${prj.scopeQry}`);
-            let testKB = db.get("testkb");
-            let issuesColl = db.get("issues");
-            let cweColl = db.get("cwe");
-            let PciTests = prj.PciTests;
-            let Top10Tests = prj.Top10Tests;
-            let Top25Tests = prj.Top25Tests;
-            let StdTests = prj.StdTests;
+                // Fetch from testkb collection
+                logger.info(
+                    `Searching TestDB with scope keyword ${prj.scopeQry}`
+                );
+                let testKB = db.get("testkb");
+                let issuesColl = db.get("issues");
+                let cweColl = db.get("cwe");
+                let PciTests = prj.PciTests;
+                let Top10Tests = prj.Top10Tests;
+                let Top25Tests = prj.Top25Tests;
+                let StdTests = prj.StdTests;
 
-            // Build scope query
-            //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
-            let scopeQuery = {};
-            // Whitelist scope value
-            switch (prj.scopeQry) {
-                case "Default":
-                    scopeQuery = {
-                        $or: [
-                            {TSource: "OWASP-TG4"},
-                            {TSource: "WAHH2"},
-                            {TSource: "TBHM2015"},
-                            {TSource: "Extras"},
-                        ],
-                    };
-                    break;
-                case "Extras":
-                case "TBHM2015":
-                case "OWASP-TG4":
-                case "SEC542":
-                case "SEC642":
-                case "WAHH2":
-                case "WebSvc":
-                    scopeQuery = {$or: [{TSource: prj.scopeQry}, {TSource: "Extras"}]};
-            }
+                // Build scope query
+                //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
+                let scopeQuery = {};
+                // Whitelist scope value
+                switch (prj.scopeQry) {
+                    case "Default":
+                        scopeQuery = {
+                            $or: [
+                                { TSource: "CWE-Top-25" },
+                                { TSource: "OWASP-TG4" },
+                                { TSource: "WAHH2" },
+                                { TSource: "TBHM2015" },
+                                { TSource: "Extras" },
+                            ],
+                        };
+                        break;
+                    case "BCVRT":
+                    case "Extras":
+                    case "TBHM2015":
+                    case "OWASP-TG4":
+                    case "SEC542":
+                    case "SEC642":
+                    case "WAHH2":
+                    case "WebSvc":
+                    case "CWE-Top-25":
+                        scopeQuery = {
+                            $or: [
+                                { TSource: prj.scopeQry },
+                                { TSource: "Extras" },
+                            ],
+                        };
+                }
 
-            if (PciTests || Top10Tests || Top25Tests || StdTests) {
-                let filter = {};
-                if (PciTests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TPCI: PciTests}
-                            : {$or: [filter, {TPCI: PciTests}]};
-                if (Top10Tests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TTop10: Top10Tests}
-                            : {$or: [filter, {TTop10: Top10Tests}]};
-                if (Top25Tests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TTop25: Top25Tests}
-                            : {$or: [filter, {TTop25: Top25Tests}]};
-                if (StdTests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TStdTest: StdTests}
-                            : {$or: [filter, {TStdTest: StdTests}]};
-                scopeQuery = {$and: [scopeQuery, filter]};
-            }
+                /*
+                if (PciTests || Top10Tests || Top25Tests || StdTests) {
+                    let filter = {};
+                    if (PciTests)
+                        filter =
+                            JSON.stringify(filter).length <= 2
+                                ? { TPCI: PciTests }
+                                : { $or: [filter, { TPCI: PciTests }] };
+                    if (Top10Tests)
+                        filter =
+                            JSON.stringify(filter).length <= 2
+                                ? { TTop10: Top10Tests }
+                                : { $or: [filter, { TTop10: Top10Tests }] };
+                    if (Top25Tests)
+                        filter =
+                            JSON.stringify(filter).length <= 2
+                                ? { TTop25: Top25Tests }
+                                : { $or: [filter, { TTop25: Top25Tests }] };
+                    if (StdTests)
+                        filter =
+                            JSON.stringify(filter).length <= 2
+                                ? { TStdTest: StdTests }
+                                : { $or: [filter, { TStdTest: StdTests }] };
+                    scopeQuery = { $and: [scopeQuery, filter] };
+                }
+                */
 
-            // Search the issue collection
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
-                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: -1}}, function (
+                // Search the issue collection
+                logger.info("Searching TestKB with scope query ", scopeQuery);
+                testKB.find(scopeQuery, { sort: { TID: 1 } }, function (
                     e,
-                    issues
+                    tests
                 ) {
-                    cweColl.find({}, {sort: {ID: 1}}, function (e, cwes) {
-                        res.render("testing", {
-                            user: req.user,
-                            prj: prj,
-                            tests: tests,
-                            issues: issues,
-                            cwes: cwes,
-                            CweUriBase: config.CweUriBase,
-                            CveRptBase: config.CveRptBase,
-                            CveRptSuffix: config.CveRptSuffix,
-                            TestRefBase: config.TestRefBase,
-                            ScopeQuery: JSON.stringify(scopeQuery),
-                        });
-                    });
+                    issuesColl.find(
+                        { PrjName: req.params.PrjName },
+                        { sort: { IPriority: -1 } },
+                        function (e, issues) {
+                            cweColl.find({}, { sort: { ID: 1 } }, function (
+                                e,
+                                cwes
+                            ) {
+                                res.render("testing", {
+                                    user: req.user,
+                                    prj: prj,
+                                    tests: tests,
+                                    issues: issues,
+                                    cwes: cwes,
+                                    CweUriBase: config.CweUriBase,
+                                    CveRptBase: config.CveRptBase,
+                                    CveRptSuffix: config.CveRptSuffix,
+                                    TestRefBase: config.TestRefBase,
+                                    ScopeQuery: JSON.stringify(scopeQuery),
+                                });
+                            });
+                        }
+                    );
                 });
-            });
-        });
+            }
+        );
     }
 );
 
 // ========================================== REST ROUTES ==========================================
 
 // Check if authenticated/authorized to use the REST API
-app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
+app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (
+    req,
+    res,
+    next
+) {
     next();
 });
 
@@ -639,7 +689,11 @@ app.get(
 app.post("/api/project", checkSchema(validationSchema.project), prjRes.create);
 
 // Update project
-app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.update);
+app.put(
+    "/api/project/:name",
+    checkSchema(validationSchema.project),
+    prjRes.update
+);
 
 // Delete project
 app.delete(
@@ -668,7 +722,11 @@ app.post(
 );
 
 // Update an existing test
-app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), testkbRes.update);
+app.put(
+    "/api/testkb/:TID",
+    checkSchema(validationSchema.testKB),
+    testkbRes.update
+);
 
 // Get all issues for all projects
 app.get("/api/issue", issueRes.findAll);
@@ -690,7 +748,11 @@ app.delete(
 );
 
 // Create/update an issue
-app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
+app.put(
+    "/api/issue/:PrjName/:TID",
+    checkSchema(validationSchema.issue),
+    issueRes.upsert
+);
 
 // Delete an issue
 app.delete(
@@ -724,7 +786,11 @@ app.get(
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
 // Check if authenticated/authorized to export data
-app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
+app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (
+    req,
+    res,
+    next
+) {
     next();
 });
 
@@ -782,7 +848,7 @@ app.use(function (err, req, res, next) {
     // whatever you want here, feel free to populate
     // properties on `err` to treat it differently in here.
     res.status(err.status || 500);
-    res.send({error: err.message});
+    res.send({ error: err.message });
 });
 
 // our custom JSON 404 middleware. Since it's placed last
@@ -790,7 +856,7 @@ app.use(function (err, req, res, next) {
 // invoke next() and do not respond.
 app.use(function (req, res) {
     res.status(404);
-    res.send({Error: "This request is unsupported!"});
+    res.send({ Error: "This request is unsupported!" });
 });
 
 // ========================================== START LISTENER ==========================================
