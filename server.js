@@ -20,11 +20,8 @@ const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
 //const users = require("./users.js");
 //const mongoAuth = require('./server/mongoAuth.js');
-const {
-    check,
-    checkSchema,
-    validationResult,
-} = require("express-validator/check");
+//const { check, checkSchema, validationResult, } = require("express-validator/check");
+const { check, checkSchema, validationResult } = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
 const prjRes = require("./server/ProjectRes");
@@ -569,9 +566,7 @@ app.get(
                 let StdTests = prj.StdTests;
 
                 // Build scope query
-                //let scopeQuery = (prj.scopeQry==="") ? {}:{ $or: [{TSource: prj.scopeQry},{TSource: "Extras"}]};
                 let scopeQuery = {};
-                // Whitelist scope value
                 switch (prj.scopeQry) {
                     case "Default":
                         scopeQuery = {
@@ -600,8 +595,10 @@ app.get(
                             ],
                         };
                 }
+                logger.info(
+                    `Scope without filtering: ${JSON.stringify(scopeQuery)}`
+                );
 
-                /*
                 if (PciTests || Top10Tests || Top25Tests || StdTests) {
                     let filter = {};
                     if (PciTests)
@@ -626,7 +623,6 @@ app.get(
                                 : { $or: [filter, { TStdTest: StdTests }] };
                     scopeQuery = { $and: [scopeQuery, filter] };
                 }
-                */
 
                 // Search the issue collection
                 logger.info("Searching TestKB with scope query ", scopeQuery);

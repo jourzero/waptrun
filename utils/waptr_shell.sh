@@ -4,4 +4,4 @@
 #========================================================================================
 CONTAINER_NAME="waptr"
 
-docker exec -it "$CONTAINER_NAME" /bin/sh
+docker exec -it "$CONTAINER_NAME" /bin/bash

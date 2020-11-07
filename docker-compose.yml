@@ -14,6 +14,7 @@ services:
 
     waptrdb:
         container_name: waptrdb
+        restart: always
         volumes:
             - ../waptrdb/data:/data
             - ./utils:/utils

@@ -4,264 +4,263 @@ const vals = require("./validationValues.js");
 module.exports = {
     issue: {
         PrjName: {
-            matches: {options: vals.PrjName.matches},
-            errorMessage: vals.PrjName.errorMessage
+            matches: { options: vals.PrjName.matches },
+            errorMessage: vals.PrjName.errorMessage,
         },
         TID: {
-            matches: {options: vals.TID.matches},
-            errorMessage: vals.TID.errorMessage
+            matches: { options: vals.TID.matches },
+            errorMessage: vals.TID.errorMessage,
         },
         TIssueName: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         CweId: {
             optional: true,
-            isInt: {options: vals.CweId.isInt},
-            errorMessage: vals.CweId.errorMessage
+            isInt: { options: vals.CweId.isInt },
+            errorMessage: vals.CweId.errorMessage,
         },
         TIssueBackground: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         TRemediationBackground: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         TSeverity: {
             optional: true,
-            isInt: {options: {min: 0, max: 3}},
-            errorMessage: "Expected: integer in the range [0-3]"
+            isInt: { options: { min: 0, max: 3 } },
+            errorMessage: "Expected: integer in the range [0-3]",
         },
         TRef1: {
             optional: true,
-            matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 20000}},
+            matches: { options: vals.URL.matches },
+            isLength: { options: { min: 0, max: 20000 } },
             errorMessage: "Expected: URL with max 20000 characters",
-            trim: true
+            trim: true,
         },
         TRef2: {
             optional: true,
             //isURL: {options: {require_tld: false, require_protocol: false, require_host: false}},
-            matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 20000}},
+            matches: { options: vals.URL.matches },
+            isLength: { options: { min: 0, max: 20000 } },
             errorMessage: "Expected: URL with max 20000 characters",
-            trim: true
+            trim: true,
         },
         TSeverityText: {
             optional: true,
-            isAlpha: {locale: "en-US"},
+            isAlpha: { locale: "en-US" },
             errorMessage: "Expected: severity text: Info , Low, Medium, High",
-            trim: true
+            trim: true,
         },
         IURIs: {
             optional: true,
-            matches: {options: vals.MultilineURIs.matches},
+            matches: { options: vals.MultilineURIs.matches },
             errorMessage: vals.MultilineURIs.errorMessage,
-            trim: true
+            trim: true,
         },
         IEvidence: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         IScreenshots: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         IPriority: {
             optional: true,
-            isInt: {options: {min: -4, max: 3}},
-            errorMessage: "Expected: integer in the range from -4 to 3]"
+            isInt: { options: { min: -4, max: 3 } },
+            errorMessage: "Expected: integer in the range from -4 to 3]",
         },
         IPriorityText: {
             optional: true,
-            isAlpha: {locale: "en-US"},
-            isLength: {options: {min: 0, max: 10}},
+            isAlpha: { locale: "en-US" },
+            isLength: { options: { min: 0, max: 10 } },
             errorMessage:
                 "Expected: priority text: Info , Low, Medium, High, Tested, Fixed, TODO, Exclude",
-            trim: true
+            trim: true,
         },
         INotes: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
-        }
+            trim: true,
+        },
     },
     project: {
         name: {
-            matches: {options: vals.PrjName.matches},
-            errorMessage: vals.PrjName.errorMessage
+            matches: { options: vals.PrjName.matches },
+            errorMessage: vals.PrjName.errorMessage,
         },
         notes: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         software: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         scope: {
             optional: true,
-            matches: {options: vals.scope.matches},
-            errorMessage: vals.scope.errorMessage
+            matches: { options: vals.scope.matches },
+            errorMessage: vals.scope.errorMessage,
         },
         scopeQry: {
             optional: true,
-            matches: {options: vals.scopeQry.matches},
-            errorMessage: vals.scopeQry.errorMessage
+            matches: { options: vals.scopeQry.matches },
+            errorMessage: vals.scopeQry.errorMessage,
         },
         lastTID: {
             optional: true,
-            matches: {options: vals.TID.matches},
+            matches: { options: vals.TID.matches },
             errorMessage: vals.TID.errorMessage,
-            trim: true
+            trim: true,
         },
         PciTests: {
             optional: true,
             isBoolean: true,
             errorMessage: "Expected: Boolean value (true or false)",
-            trim: true
         },
         Top10Tests: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)"
+            errorMessage: "Expected: Boolean value (true or false)",
         },
         Top25Tests: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)"
+            errorMessage: "Expected: Boolean value (true or false)",
         },
         StdTests: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)"
-        }
+            errorMessage: "Expected: Boolean value (true or false)",
+        },
     },
     testKB: {
         TID: {
-            matches: {options: vals.TID.matches},
-            errorMessage: vals.TID.errorMessage
+            matches: { options: vals.TID.matches },
+            errorMessage: vals.TID.errorMessage,
         },
         TTestName: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TPhase: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TSection: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TSource: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TTesterSupport: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         TTRef: {
             optional: true,
-            matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 20000}},
+            matches: { options: vals.URL.matches },
+            isLength: { options: { min: 0, max: 20000 } },
             errorMessage: "Expected: URL with max 20000 characters",
-            trim: true
+            trim: true,
         },
         TCweID: {
             optional: true,
-            isInt: {options: vals.CweId.isInt},
-            errorMessage: vals.CweId.errorMessage
+            isInt: { options: vals.CweId.isInt },
+            errorMessage: vals.CweId.errorMessage,
         },
         TIssueName: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TIssueBackground: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         TRemediationBackground: {
             optional: true,
-            matches: {options: vals.Multiline.matches},
+            matches: { options: vals.Multiline.matches },
             errorMessage: vals.Multiline.errorMessage,
-            trim: true
+            trim: true,
         },
         TSeverity: {
             optional: true,
-            isInt: {options: {min: 0, max: 3}},
-            errorMessage: "Expected: integer in the range [0-3]"
+            isInt: { options: { min: 0, max: 3 } },
+            errorMessage: "Expected: integer in the range [0-3]",
         },
         TIssueType: {
             optional: true,
-            matches: {options: vals.Singleline.matches},
+            matches: { options: vals.Singleline.matches },
             errorMessage: vals.Singleline.errorMessage,
-            trim: true
+            trim: true,
         },
         TPCI: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)."
+            errorMessage: "Expected: Boolean value (true or false).",
         },
         TTop10: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)."
+            errorMessage: "Expected: Boolean value (true or false).",
         },
         TTop25: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)."
+            errorMessage: "Expected: Boolean value (true or false).",
         },
         TStdTest: {
             optional: true,
             isBoolean: true,
-            errorMessage: "Expected: Boolean value (true or false)."
+            errorMessage: "Expected: Boolean value (true or false).",
         },
         TRef1: {
             optional: true,
-            matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 20000}},
+            matches: { options: vals.URL.matches },
+            isLength: { options: { min: 0, max: 20000 } },
             errorMessage: "Expected: URL with max 20000 characters",
-            trim: true
+            trim: true,
         },
         TRef2: {
             optional: true,
-            matches: {options: vals.URL.matches},
-            isLength: {options: {min: 0, max: 20000}},
+            matches: { options: vals.URL.matches },
+            isLength: { options: { min: 0, max: 20000 } },
             errorMessage: "Expected: URL with max 20000 characters",
-            trim: true
-        }
-    }
+            trim: true,
+        },
+    },
 };

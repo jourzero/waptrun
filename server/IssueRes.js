@@ -1,21 +1,20 @@
 const issue = require("./IssueModel")();
-const {validationResult} = require("express-validator/check");
-const {matchedData} = require("express-validator/filter");
+const { validationResult, matchedData } = require("express-validator");
 const logger = require("../lib/appLogger.js");
 
 // Find all issues in all projects (routes: /api/issue, /issues.csv)
-exports.findAll = function(req, res) {
+exports.findAll = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Successful DB search.");
         res.json(doc);
     };
-    let err = function(err) {
+    let err = function (err) {
         logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
         res.send(404);
     };
@@ -23,18 +22,18 @@ exports.findAll = function(req, res) {
 };
 
 // Find an issue by project name and test ID (route: /api/issue/:PrjName/:TID)
-exports.findIssue = function(req, res) {
+exports.findIssue = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Succeeded with DB search");
         res.json(doc);
     };
-    let err = function(err) {
+    let err = function (err) {
         //res.send(404);
         logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
         res.sendStatus(404);
@@ -43,18 +42,18 @@ exports.findIssue = function(req, res) {
 };
 
 // Find all issues for a project (routes: /api/issue/:PrjName, /export/csv/:PrjName, /export/html/:PrjName)
-exports.findProjectIssues = function(req, res) {
+exports.findProjectIssues = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Succeeded with DB search");
         res.json(doc);
     };
-    let err = function(err) {
+    let err = function (err) {
         logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
         res.sendStatus(404);
     };
@@ -62,26 +61,26 @@ exports.findProjectIssues = function(req, res) {
 };
 
 // Upsert an issue (route: /api/issue/:PrjName/:TID)
-exports.upsert = function(req, res) {
+exports.upsert = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
     const bodyData = matchedData(req, {
         includeOptionals: false,
         onlyValidData: true,
-        locations: ["body"]
+        locations: ["body"],
     });
 
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Successful upsert completed");
         res.sendStatus(200);
     };
-    let err = function(err) {
+    let err = function (err) {
         logger.warn(`Upsert failed: ${JSON.stringify(err)}`);
         res.send(409, "Upsert failed");
     };
@@ -89,19 +88,19 @@ exports.upsert = function(req, res) {
 };
 
 // Remove an issue by name (route: /api/issue/:PrjName/:TID)
-exports.removeByName = function(req, res) {
+exports.removeByName = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
 
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Successful DB document delete");
         res.sendStatus(200);
     };
-    let err = function(err) {
+    let err = function (err) {
         logger.warn(`DB document deletion failed: ${JSON.stringify(err)}`);
         res.send(409, "Failed to remove object");
     };
@@ -109,21 +108,23 @@ exports.removeByName = function(req, res) {
 };
 
 // Remove all issues for a project (route: /api/issue/:PrjName)
-exports.removeAllForPrj = function(req, res) {
+exports.removeAllForPrj = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        return res.status(422).json({ errors: errors.array() });
     }
 
-    let ok = function(doc) {
+    let ok = function (doc) {
         logger.info("Successful DB document delete");
         res.sendStatus(200);
     };
-    let err = function(err) {
+    let err = function (err) {
         logger.warn(
-            `Delete failed for all issues in project ${req.params.PrjName}: ${JSON.stringify(err)}`
+            `Delete failed for all issues in project ${
+                req.params.PrjName
+            }: ${JSON.stringify(err)}`
         );
         res.send(409, "Failed to remove object");
     };
