@@ -98,3 +98,5 @@ data/backup.1
 data/issues.csv
 data/project.csv
 data/CWE3.2-Import-Data.csv
+static/
+backup/
