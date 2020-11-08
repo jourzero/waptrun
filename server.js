@@ -270,6 +270,9 @@ app.use(express.static(path.join(__dirname, "client")));
 app.use("/dist/jquery", express.static(__dirname + "/node_modules/jquery/dist/"));
 app.use("/dist/bootstrap", express.static(__dirname + "/node_modules/bootstrap/dist/"));
 
+// Server private static content
+app.use("/static", express.static(__dirname + "/static/"));
+
 // Session-persisted message middleware
 app.use(function (req, res, next) {
     let err = req.session.error,

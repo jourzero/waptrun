@@ -23,7 +23,7 @@ module.exports = {
     CveUriBase: "http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=",
 
     // Path to add to URI to show test reference details
-    TestRefBase: "https://www.wapt.me/static",
+    TestRefBase: "/static",
 
     // Query for use to show a subset of available projects
     PrjSubset: ".*",
