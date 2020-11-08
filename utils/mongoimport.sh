@@ -1,10 +1,9 @@
 #!/bin/bash
+set -x
 #========================================================================================
 # mongoimport.sh: Run mongoimport from within the waptr container
-#
 # Prerequisite: Set the MONGODB_URL env. variable if the import is for a remote DB.
 #========================================================================================
-#CONTAINER_NAME="waptrdb"
 COLLECTIONS[1]="testkb"
 COLLECTIONS[2]="issues"
 COLLECTIONS[3]="project"
@@ -33,10 +32,12 @@ for i in $(seq 1 $NUM_COLLS);do
         --collection="${COLLECTIONS[$i]}" \
         --file="$IN_FILENAME"  \
         --type=csv \
-        --fields="${FIELDS[$i]}" \
+        --columnsHaveTypes \
+        --headerline \
         --ignoreBlanks \
         --drop  \
         $MONGODB_URL
+        #--fields="${FIELDS[$i]}" \
     else
         echo "ERROR: Input file ../$IN_FILENAME does not exist"
     fi
