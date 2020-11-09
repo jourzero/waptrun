@@ -1,5 +1,5 @@
 const issue = require("./IssueModel")();
-const { validationResult, matchedData } = require("express-validator");
+const {validationResult, matchedData} = require("express-validator");
 const logger = require("../lib/appLogger.js");
 
 // Find all issues in all projects (routes: /api/issue, /issues.csv)
@@ -8,7 +8,7 @@ exports.findAll = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Successful DB search.");
@@ -27,7 +27,7 @@ exports.findIssue = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Succeeded with DB search");
@@ -47,7 +47,7 @@ exports.findProjectIssues = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Succeeded with DB search");
@@ -66,7 +66,7 @@ exports.upsert = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -87,13 +87,34 @@ exports.upsert = function (req, res) {
     issue.upsert(req.params.PrjName, req.params.TID, bodyData, ok, err);
 };
 
+// Create TODO issues (route: /api/issue/:PrjName/todos)
+exports.createTodos = function (req, res, tests) {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        return res.status(422).json({errors: errors.array()});
+    }
+
+    let ok = function (doc) {
+        logger.info("Successful createTodos operation");
+        res.sendStatus(200);
+    };
+    let err = function (err) {
+        logger.warn(`createTodos failed: ${JSON.stringify(err)}`);
+        res.send(409, "createTodos failed");
+    };
+    logger.info(`Creating TODOs for ${req.params.PrjName}`);
+    issue.createTodos(req.params.PrjName, tests, ok, err);
+};
+
 // Remove an issue by name (route: /api/issue/:PrjName/:TID)
 exports.removeByName = function (req, res) {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     let ok = function (doc) {
@@ -113,7 +134,7 @@ exports.removeAllForPrj = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     let ok = function (doc) {
@@ -122,9 +143,7 @@ exports.removeAllForPrj = function (req, res) {
     };
     let err = function (err) {
         logger.warn(
-            `Delete failed for all issues in project ${
-                req.params.PrjName
-            }: ${JSON.stringify(err)}`
+            `Delete failed for all issues in project ${req.params.PrjName}: ${JSON.stringify(err)}`
         );
         res.send(409, "Failed to remove object");
     };

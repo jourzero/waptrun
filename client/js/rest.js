@@ -27,7 +27,7 @@ function restDeleteIssue(prjName, testId) {
     console.info("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
-        type: "DELETE"
+        type: "DELETE",
     });
 }
 
@@ -81,16 +81,16 @@ function restUpdateIssue(issue) {
         data: JSON.stringify(issue),
         dataType: "json",
         statusCode: {
-            200: function() {
+            200: function () {
                 successMessage("Issue updated successfully.");
             },
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to update issue.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -105,7 +105,7 @@ function restUpdateLastTID(testId, prjName) {
         type: "PUT",
         contentType: "application/json",
         data: JSON.stringify({lastTID: testId}),
-        dataType: "json"
+        dataType: "json",
     });
 }
 
@@ -129,17 +129,17 @@ function restCreatePrj(prjName) {
         data: JSON.stringify(kvp),
         dataType: "json",
         statusCode: {
-            201: function() {
+            201: function () {
                 successMessage(`Project created successfully. Reloading page...`);
                 setTimeout(() => location.reload(), 2000);
             },
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to create project.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -163,17 +163,17 @@ function restDeletePrj(prjName) {
         url: url,
         type: "DELETE",
         statusCode: {
-            200: function() {
+            200: function () {
                 successMessage(`Project deleted successfully. Reloading page...`);
                 setTimeout(() => location.reload(), 2000);
             },
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to delete project.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -197,13 +197,13 @@ function restDeletePrjIssues(prjName) {
         url: url,
         type: "DELETE",
         statusCode: {
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to delete project issues.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -222,10 +222,10 @@ function restUpdateProject(prj) {
         data: data,
         dataType: "json",
         statusCode: {
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -241,16 +241,16 @@ function restUpdateTest(testId, data) {
         data: JSON.stringify(data),
         dataType: "json",
         statusCode: {
-            200: function() {
+            200: function () {
                 successMessage(`Test updated successfully.`);
             },
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to update test.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
     });
 }
 
@@ -288,18 +288,47 @@ function restCreateTest(tid) {
         data: JSON.stringify(kvp),
         dataType: "json",
         statusCode: {
-            201: function() {
+            201: function () {
                 successMessage(
                     `Test created successfully: ${kvp.TID}. Reload page to add details to it.`
                 );
             },
-            409: function() {
+            409: function () {
                 warningMessage("Could not process the request to create a new test.");
             },
-            422: function(data) {
+            422: function (data) {
                 formatValidationError(data);
-            }
-        }
+            },
+        },
+    });
+}
+
+/**
+ * restAddTodos
+ * @param {string} prjName
+ */
+function restAddTodos(prjName) {
+    // Send post request
+    let url = `/api/issue/${prjName}/todos`;
+    console.info("Sending POST request to url " + url);
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({}),
+        dataType: "json",
+        statusCode: {
+            201: function () {
+                successMessage(`Project issue TODOs created successfully. Reloading page...`);
+                setTimeout(() => location.reload(), 2000);
+            },
+            409: function () {
+                warningMessage("Could not process the request to create TODO issues.");
+            },
+            422: function (data) {
+                formatValidationError(data);
+            },
+        },
     });
 }
 

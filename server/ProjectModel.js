@@ -15,38 +15,38 @@ function Projects() {
 }
 
 // Retrieve a list of all persisted
-Projects.prototype.findAll = function(success, error) {
+Projects.prototype.findAll = function (success, error) {
     this.projects.find({}, {}, response(success, error));
 };
 
 // Retrieve a project by its id
-Projects.prototype.findById = function(id, success, error) {
+Projects.prototype.findById = function (id, success, error) {
     this.projects.findOne({_id: id}, response(success, error));
 };
 
 // Retrieve a project by its Name
 // TODO: fix the find query to make it work with the name
-Projects.prototype.findByName = function(name, success, error) {
+Projects.prototype.findByName = function (name, success, error) {
     this.projects.findOne({name: name}, response(success, error));
 };
 
 // Persist a new project document to mongodb
-Projects.prototype.create = function(project, success, error) {
+Projects.prototype.create = function (project, success, error) {
     this.projects.insert(project, response(success, error));
 };
 
 // Update an existing project document by id in mongodb
-Projects.prototype.update = function(name, data, success, error) {
+Projects.prototype.update = function (name, data, success, error) {
     this.projects.update({name: name}, {$set: data}, response(success, error));
 };
 
 // Remove a project by id from the mongodb
-Projects.prototype.removeById = function(id, success, error) {
+Projects.prototype.removeById = function (id, success, error) {
     this.projects.remove({_id: id}, response(success, error));
 };
 
 // Remove a project by name from the mongodb
-Projects.prototype.removeByName = function(name, success, error) {
+Projects.prototype.removeByName = function (name, success, error) {
     this.projects.remove({name: name}, response(success, error));
 };
 
@@ -54,8 +54,8 @@ Projects.prototype.removeByName = function(name, success, error) {
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
 // the caller's implementation will send an appropriate http response.
-let response = function(success, error) {
-    return function(err, doc) {
+let response = function (success, error) {
+    return function (err, doc) {
         if (err) {
             // an error occurred, call the supplied error function
             error(err);

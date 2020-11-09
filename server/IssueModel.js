@@ -1,9 +1,11 @@
 // export this module, so that it is accessible to our application modules
 module.exports = Issue;
 
+const {data} = require("jquery");
 const config = require("../config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
+const logger = require("../lib/appLogger.js");
 
 // Issue constructor
 function Issue() {
@@ -13,21 +15,22 @@ function Issue() {
 
     // obtain a reference to our collection within mongodb
     this.issue = db.get("issues");
+    this.projects = db.get("project");
 }
 
 // Retrieve a list of all persisted
-Issue.prototype.findAll = function(success, error) {
+Issue.prototype.findAll = function (success, error) {
     this.issue.find({}, {}, response(success, error));
 };
 
 // Retrieve a document by its id
-Issue.prototype.findById = function(id, success, error) {
+Issue.prototype.findById = function (id, success, error) {
     this.issue.findOne({_id: id}, response(success, error));
 };
 
 // Retrieve a document by its Name
 // TODO: fix the find query to make it work with the name
-Issue.prototype.findIssue = function(PrjName, TID, success, error) {
+Issue.prototype.findIssue = function (PrjName, TID, success, error) {
     // Build search criteria
     let crit = {},
         kvp1 = {},
@@ -39,7 +42,7 @@ Issue.prototype.findIssue = function(PrjName, TID, success, error) {
 };
 
 // Retrieve a document by its Name
-Issue.prototype.findProjectIssues = function(PrjName, success, error) {
+Issue.prototype.findProjectIssues = function (PrjName, success, error) {
     this.issue.find(
         {PrjName: PrjName},
         {sort: {IPriority: -1, TIssueName: 1}},
@@ -48,7 +51,7 @@ Issue.prototype.findProjectIssues = function(PrjName, success, error) {
 };
 
 // Update an existing document by id in mongodb
-Issue.prototype.upsert = function(PrjName, TID, data, success, error) {
+Issue.prototype.upsert = function (PrjName, TID, data, success, error) {
     // Build search criteria
     const options = {upsert: true};
     let op = {},
@@ -63,8 +66,30 @@ Issue.prototype.upsert = function(PrjName, TID, data, success, error) {
     this.issue.update(crit, op, options, response(success, error));
 };
 
+// Create TODO items for a given project, only if it doesn't exist (insert only)
+Issue.prototype.createTodos = function (PrjName, tests, success, error) {
+    for (let issueObj of tests) {
+        logger.info(`Creating TODO for TID ${issueObj.TID}`);
+        issueObj.PrjName = PrjName;
+        issueObj.CweId = issueObj.TCweID;
+        issueObj.IPriority = -3;
+        issueObj.IPriorityText = "TODO";
+        issueObj.INotes =
+            "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";
+        this.issue
+            .insert(issueObj)
+            .then(() => {
+                logger.info(`Insert success for ${issueObj.TID}`);
+            })
+            .catch((err) => {
+                logger.warning(`Insert error for ${issueObj.TID}: ${err}`);
+            });
+    }
+    success({});
+};
+
 // Remove a document by name from the mongodb
-Issue.prototype.removeByName = function(PrjName, TID, success, error) {
+Issue.prototype.removeByName = function (PrjName, TID, success, error) {
     let crit = {},
         kvp1 = {},
         kvp2 = {};
@@ -76,7 +101,7 @@ Issue.prototype.removeByName = function(PrjName, TID, success, error) {
 };
 
 // Remove a document by name from the mongodb
-Issue.prototype.removeAllForPrj = function(PrjName, success, error) {
+Issue.prototype.removeAllForPrj = function (PrjName, success, error) {
     let kvp = {};
     kvp.PrjName = PrjName;
 
@@ -87,8 +112,8 @@ Issue.prototype.removeAllForPrj = function(PrjName, success, error) {
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
 // the caller's implementation will send an appropriate http response.
-var response = function(success, error) {
-    return function(err, doc) {
+var response = function (success, error) {
+    return function (err, doc) {
         if (err) {
             // an error occurred, call the supplied error function
             error(err);

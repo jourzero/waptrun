@@ -224,6 +224,72 @@ function ensureAuthorized(req, res, next) {
     */
 }
 
+// Build filter for scope query
+function getScopeQuery(prj) {
+    logger.info(`Building scope query from scope keyword ${prj.scopeQry}`);
+    let scopeQuery = {};
+    let PciTests = prj.PciTests;
+    let Top10Tests = prj.Top10Tests;
+    let Top25Tests = prj.Top25Tests;
+    let StdTests = prj.StdTests;
+
+    // Build scope query
+    switch (prj.scopeQry) {
+        case "All":
+            scopeQuery = {};
+            break;
+        case "Combo":
+            scopeQuery = {
+                $or: [
+                    {TSource: "CWE-Top-25"},
+                    {TSource: "OWASP-TG4"},
+                    {TSource: "WAHH2"},
+                    {TSource: "TBHM2015"},
+                    {TSource: "Extras"},
+                ],
+            };
+            break;
+        case "BCVRT":
+        case "Extras":
+        case "TBHM2015":
+        case "OWASP-TG4":
+        case "SEC542":
+        case "SEC642":
+        case "WAHH2":
+        case "WebSvc":
+        case "CWE-Top-25":
+            scopeQuery = {TSource: prj.scopeQry};
+        //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
+    }
+    logger.info(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
+
+    if (PciTests || Top10Tests || Top25Tests || StdTests) {
+        let filter = {};
+        if (PciTests)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? {TPCI: PciTests}
+                    : {$or: [filter, {TPCI: PciTests}]};
+        if (Top10Tests)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? {TTop10: Top10Tests}
+                    : {$or: [filter, {TTop10: Top10Tests}]};
+        if (Top25Tests)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? {TTop25: Top25Tests}
+                    : {$or: [filter, {TTop25: Top25Tests}]};
+        if (StdTests)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? {TStdTest: StdTests}
+                    : {$or: [filter, {TStdTest: StdTests}]};
+        scopeQuery = {$and: [scopeQuery, filter]};
+    }
+    return scopeQuery;
+}
+
 // ========================================== EXPRESS ==========================================
 // Configure Express
 /*
@@ -507,7 +573,7 @@ app.get(
     "/testing/:PrjName",
     ensureAuthenticated,
     ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
+    // Check for pattern YYYYMM[DD]-PrjName-EnvName
     check("PrjName").matches(validationValues.PrjName.matches),
     function (req, res) {
         // Check for input validation errors in the request
@@ -516,100 +582,29 @@ app.get(
             return res.status(422).json({errors: errors.array()});
         }
 
+        // Fetch from project collection
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
-
-        // Fetch from project collection
         let prjColl = db.get("project");
-        /* 
-        TODO: CWE-117: Improper Output Neutralization for Logs. (server.js: 450) 
-        Severity: Medium
-        Attack Vector: util.debug
-        Description: This call to util.debug() could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious 
-        content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, 
-        if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.
-        Remediation: Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, 
-        which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Alternatively, some of the XSS 
-        escaping functions from the OWASP Java Encoder project will also sanitize CRLF sequences. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure 
-        that it conforms to the expected format, using centralized data validation routines when possible.
-        */
         logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
         prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             if (prj === null) return;
 
-            // Fetch from testkb collection
-            logger.info(`Searching TestDB with scope keyword ${prj.scopeQry}`);
+            // Get scope query
+            let scopeQuery = getScopeQuery(prj);
+
+            // Search the Test KB for matching tests
+            logger.info("Searching TestKB with scope query ", scopeQuery);
             let testKB = db.get("testkb");
             let issuesColl = db.get("issues");
             let cweColl = db.get("cwe");
-            let PciTests = prj.PciTests;
-            let Top10Tests = prj.Top10Tests;
-            let Top25Tests = prj.Top25Tests;
-            let StdTests = prj.StdTests;
-
-            // Build scope query
-            let scopeQuery = {};
-            switch (prj.scopeQry) {
-                case "All":
-                    scopeQuery = {};
-                    break;
-                case "Combo":
-                    scopeQuery = {
-                        $or: [
-                            {TSource: "CWE-Top-25"},
-                            {TSource: "OWASP-TG4"},
-                            {TSource: "WAHH2"},
-                            {TSource: "TBHM2015"},
-                            {TSource: "Extras"},
-                        ],
-                    };
-                    break;
-                case "BCVRT":
-                case "Extras":
-                case "TBHM2015":
-                case "OWASP-TG4":
-                case "SEC542":
-                case "SEC642":
-                case "WAHH2":
-                case "WebSvc":
-                case "CWE-Top-25":
-                    scopeQuery = {TSource: prj.scopeQry};
-                //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
-            }
-            logger.info(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
-
-            if (PciTests || Top10Tests || Top25Tests || StdTests) {
-                let filter = {};
-                if (PciTests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TPCI: PciTests}
-                            : {$or: [filter, {TPCI: PciTests}]};
-                if (Top10Tests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TTop10: Top10Tests}
-                            : {$or: [filter, {TTop10: Top10Tests}]};
-                if (Top25Tests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TTop25: Top25Tests}
-                            : {$or: [filter, {TTop25: Top25Tests}]};
-                if (StdTests)
-                    filter =
-                        JSON.stringify(filter).length <= 2
-                            ? {TStdTest: StdTests}
-                            : {$or: [filter, {TStdTest: StdTests}]};
-                scopeQuery = {$and: [scopeQuery, filter]};
-            }
-
-            // Search the issue collection
-            logger.info("Searching TestKB with scope query ", scopeQuery);
             testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
+                // Search issues collection for matching issues
                 issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: -1}}, function (
                     e,
                     issues
                 ) {
+                    // Get sorted list of CWEs
                     cweColl.find({}, {sort: {ID: 1}}, function (e, cwes) {
                         res.render("testing", {
                             user: req.user,
@@ -704,6 +699,39 @@ app.delete(
 
 // Create/update an issue
 app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
+
+// Create issue TODOs for a given project
+app.post(
+    "/api/issue/:PrjName/todos",
+    // Check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("PrjName").matches(validationValues.PrjName.matches),
+    function (req, res) {
+        // Check for input validation errors in the request
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
+        }
+
+        // Fetch from project collection
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
+        let prjColl = db.get("project");
+        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
+            if (prj === null) return;
+
+            // Get scope query
+            let scopeQuery = getScopeQuery(prj);
+
+            // Search the Test KB for matching tests
+            logger.info("Searching TestKB with scope query ", scopeQuery);
+            let testKB = db.get("testkb");
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
+                issueRes.createTodos(req, res, tests);
+            });
+        });
+    }
+);
 
 // Delete an issue
 app.delete(

@@ -64,6 +64,9 @@ $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
 // Refresh Page button
 $("#refreshBtn").on("click", evtRefreshPage);
 
+// TODOs button
+$("#todosBtn").on("click", evtAddTodos);
+
 //==============================================================================
 //                               UI TWEAK EVENTS
 //==============================================================================
@@ -91,7 +94,7 @@ $(
 //
 // Create template text into finding sections
 function evtAddIssueTemplateText(event) {
-    console.info("-- UI add issue template template text event");
+    console.info("UI add issue template template text event");
 
     // Fill Evidence field with template text if empty
     //var iEvidence = $("#IEvidence").val();
@@ -147,7 +150,7 @@ ADD RISK DETAILS AS NEEDED:
 // Show issue data when clicking in the Findings table
 function evtCweInputChanged(event) {
     let cweId = event.target.value;
-    console.info("-- CWE input changed. CWE selected: " + cweId);
+    console.info("CWE input changed. CWE selected: " + cweId);
     uiUpdateCwe(cweId, false);
 }
 
@@ -156,7 +159,7 @@ function evtDeleteIssue(event) {
     let testId = $(this).attr("tid");
     let action = $(this).attr("action");
     if (action === "delete") {
-        console.info("-- Deleting issue for " + testId);
+        console.info("Deleting issue for " + testId);
         restDeleteIssue(prjName, testId);
     }
     //reloadPage("Reloading page to refresh the issue list");
@@ -165,7 +168,7 @@ function evtDeleteIssue(event) {
 
 // Go to next test in the list
 function evtToNextTest() {
-    console.info("-- To next test event");
+    console.info("To next test event");
 
     // Get current input value and the index in the datalist
     let testId = $("#testIn").val();
@@ -184,7 +187,7 @@ function evtToNextTest() {
 
 // Go to the previous test in the list
 function evtToPreviousTest() {
-    console.info("-- To previous test event");
+    console.info("To previous test event");
 
     // Get current input value and the index in the datalist
     let testId = $("#testIn").val();
@@ -205,7 +208,7 @@ function evtToPreviousTest() {
 
 // Save issue data in UI to issue collection
 function evtIssueDataChanged() {
-    console.info("-- Issue data changed event");
+    console.info("Issue data changed event");
     //let attrib = event.target.id;
     //let value  = event.target.value;
     issue = uiGetIssue();
@@ -225,34 +228,42 @@ function evtIssueDataChanged() {
 // Create a new test
 function evtNewTest() {
     let tid = new Date().toISOString().split(".")[0].replace(/[-:]/g, "");
-    console.info("-- New test event, creating a new empty test", tid);
+    console.info("New test event, creating a new empty test", tid);
     restCreateTest(tid);
 }
 
 // Show issue data when clicking in the Findings table
 function evtShowIssue() {
     let testId = $(this).attr("tid");
-    console.info("-- Show issue event for TID " + testId);
+    console.info("Show issue event for TID " + testId);
     uiUpdateFromTestKB(testId);
     uiUpdateFromIssueColl(testId);
 }
 
 // Save issue data in UI to issue collection
 function evtUseCweIssueData() {
-    console.info("-- Overriding generic issue data from CWE data");
+    console.info("Overriding generic issue data from CWE data");
     let cweId = $("#cweIn").val();
     uiUpdateCwe(cweId, true);
 }
 
 // Refresh Page event
 function evtRefreshPage() {
-    console.info("-- Refreshing page content");
+    console.info("Refreshing page content");
     reloadPage();
+}
+
+// Add TODOs event
+function evtAddTodos() {
+    //let scopeQuery = $("#ScopeQuery").html();
+    //console.info(`Adding TODO items in ${prjName} with scope: ${scopeQuery}`);
+    console.info(`Adding TODO items in ${prjName}`);
+    restAddTodos(prjName);
 }
 
 // When pasting images in Evidence, add a Base64 representation
 function evtPasteScreenshot(event) {
-    console.info("-- UI paste screenshot event");
+    console.info("UI paste screenshot event");
 
     // Get clipboard entries and search for images
     let items = (event.clipboardData || event.originalEvent.clipboardData).items;
@@ -284,7 +295,7 @@ function evtPasteScreenshot(event) {
 
 // When the test selector is changed, update the Testing and Generic Issue sections
 function evtTestInputChanged() {
-    console.info("-- Test input change event");
+    console.info("Test input change event");
 
     // Get the testId and the index in the datalist
     let testId = $("#testIn").val();
@@ -306,7 +317,7 @@ function evtTestKBDataChanged(event) {
     if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest")
         value = $("#" + field).prop("checked");
 
-    console.info("-- Updating Test " + testId + " with " + field + "=" + value);
+    console.info("Updating Test " + testId + " with " + field + "=" + value);
 
     // Update the DB
     let data = {};

@@ -1,7 +1,7 @@
 const projects = require("./ProjectModel")();
 //const { validationResult } = require("express-validator/check");
 //const { matchedData } = require("express-validator/filter");
-const { validationResult, matchedData } = require("express-validator");
+const {validationResult, matchedData} = require("express-validator");
 const logger = require("../lib/appLogger.js");
 
 exports.findAll = function (req, res) {
@@ -9,7 +9,7 @@ exports.findAll = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Successful DB search");
@@ -27,7 +27,7 @@ exports.findByName = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Successful DB search");
@@ -45,7 +45,7 @@ exports.create = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -72,7 +72,7 @@ exports.update = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     const bodyData = matchedData(req, {
@@ -98,7 +98,7 @@ exports.removeByName = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
         logger.info("Successful DB document removal");
