@@ -1,7 +1,6 @@
 // export this module, so that it is accessible to our application modules
 module.exports = Issue;
 
-const {data} = require("jquery");
 const config = require("../config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
@@ -68,21 +67,27 @@ Issue.prototype.upsert = function (PrjName, TID, data, success, error) {
 
 // Create TODO items for a given project, only if it doesn't exist (insert only)
 Issue.prototype.createTodos = function (PrjName, tests, success, error) {
-    for (let issueObj of tests) {
-        logger.info(`Creating TODO for TID ${issueObj.TID}`);
-        issueObj.PrjName = PrjName;
-        issueObj.CweId = issueObj.TCweID;
-        issueObj.IPriority = -3;
-        issueObj.IPriorityText = "TODO";
-        issueObj.INotes =
+    for (let data of tests) {
+        logger.info(`Creating TODO for TID ${data.TID}`);
+
+        // Add all TestKB data to issue (except for _id)
+        delete data._id;
+        data.PrjName = PrjName;
+        data.CweId = data.TCweID;
+        data.IPriority = -3;
+        data.IPriorityText = "TODO";
+        data.INotes =
             "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";
+
+        // Add issue
+        logger.debug(`Adding TODO: ${JSON.stringify(data)}`);
         this.issue
-            .insert(issueObj)
+            .insert(data)
             .then(() => {
-                logger.info(`Insert success for ${issueObj.TID}`);
+                logger.info(`Insert success for ${data.TID}`);
             })
             .catch((err) => {
-                logger.warn(`Insert failed for ${issueObj.TID}: ${err}`);
+                logger.warn(`Insert failed for ${data.TID}: ${err}`);
             });
     }
     success({});

@@ -11,11 +11,11 @@ exports.findAll = function (req, res) {
         return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
-        logger.info("Successful DB search.");
+        logger.info("Successful search for all issues.");
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed search for all issues: ${JSON.stringify(err)}`);
         res.send(404);
     };
     issue.findAll(ok, err);
@@ -30,12 +30,12 @@ exports.findIssue = function (req, res) {
         return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
-        logger.info("Succeeded with DB search");
+        logger.info("Succeeded search for issue");
         res.json(doc);
     };
     let err = function (err) {
         //res.send(404);
-        logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed issue search: ${JSON.stringify(err)}`);
         res.sendStatus(404);
     };
     issue.findIssue(req.params.PrjName, req.params.TID, ok, err);
@@ -50,11 +50,11 @@ exports.findProjectIssues = function (req, res) {
         return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
-        logger.info("Succeeded with DB search");
+        logger.info("Succeeded with project issue search");
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed search for project issues: ${JSON.stringify(err)}`);
         res.sendStatus(404);
     };
     issue.findIssue(req.params.PrjName, ok, err);
@@ -77,12 +77,12 @@ exports.upsert = function (req, res) {
     });
 
     let ok = function (doc) {
-        logger.info("Successful upsert completed");
+        logger.info("Successful issue upsert completed");
         res.sendStatus(200);
     };
     let err = function (err) {
-        logger.warn(`Upsert failed: ${JSON.stringify(err)}`);
-        res.send(409, "Upsert failed");
+        logger.warn(`Upsert issue failed: ${JSON.stringify(err)}`);
+        res.send(409, "Upsert issue failed");
     };
     issue.upsert(req.params.PrjName, req.params.TID, bodyData, ok, err);
 };
@@ -118,12 +118,12 @@ exports.removeByName = function (req, res) {
     }
 
     let ok = function (doc) {
-        logger.info("Successful DB document delete");
+        logger.info("Successful issue delete");
         res.sendStatus(200);
     };
     let err = function (err) {
-        logger.warn(`DB document deletion failed: ${JSON.stringify(err)}`);
-        res.send(409, "Failed to remove object");
+        logger.warn(`Issue deletion failed: ${JSON.stringify(err)}`);
+        res.send(409, "Failed to remove issue");
     };
     issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
 };
@@ -138,14 +138,14 @@ exports.removeAllForPrj = function (req, res) {
     }
 
     let ok = function (doc) {
-        logger.info("Successful DB document delete");
+        logger.info("Successful deletion of all issues for project");
         res.sendStatus(200);
     };
     let err = function (err) {
         logger.warn(
             `Delete failed for all issues in project ${req.params.PrjName}: ${JSON.stringify(err)}`
         );
-        res.send(409, "Failed to remove object");
+        res.send(409, "Failed to remove issue");
     };
     issue.removeAllForPrj(req.params.PrjName, ok, err);
 };
