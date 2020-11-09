@@ -82,7 +82,7 @@ Issue.prototype.createTodos = function (PrjName, tests, success, error) {
                 logger.info(`Insert success for ${issueObj.TID}`);
             })
             .catch((err) => {
-                logger.warning(`Insert error for ${issueObj.TID}: ${err}`);
+                logger.warn(`Insert failed for ${issueObj.TID}: ${err}`);
             });
     }
     success({});
