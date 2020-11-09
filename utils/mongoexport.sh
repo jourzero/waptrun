@@ -18,16 +18,28 @@ EXPORT_TYPE="csv"
 OUTPUT_DIR=/app/data
 MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
 
+# Get path for mongoexport tool
+TOOL_PATH=$(ls mongodb-database-tools*/bin/mongoexport)
+if [ $? -ne 0 -a -f "$TOOL_PATH" ];
+then
+    echo "ERROR Could not find the tool path"
+    exit 1
+fi
+CMD="docker-compose exec app /app/utils/$TOOL_PATH"
+#$CMD --help; exit 0
+
+# Prompt for Mongo URL choice
 read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
 if [ "$answer" = "" -o "$answer" = "y" ];then
     MONGODB_URL="$MONGODB_URL_LOCAL"
 fi
 
+# Perform export on all target collections
 for i in $(seq 1 $NUM_COLLS);do
     OUT_FILENAME="$OUTPUT_DIR/${COLLECTIONS[$i]}.csv"
     echo -e "\n-- Exporting data from ${COLLECTIONS[$i]} collection to $OUT_FILENAME..."
     mkdir -p "$OUTPUT_DIR" 2>/dev/null
-    mongoexport \
+    $CMD \
     --fields="${FIELDS[$i]}" \
     --collection="${COLLECTIONS[$i]}" \
     --out="$OUT_FILENAME" \

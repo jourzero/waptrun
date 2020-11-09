@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 #========================================================================================
 # mongoimport.sh: Run mongoimport from within the waptr container
 # Prerequisite: Set the MONGODB_URL env. variable if the import is for a remote DB.
@@ -15,6 +14,16 @@ NUM_COLLS=3 # import all collections
 INPUT_DIR="/app/data"
 MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
 
+# Get path for mongoimport tool
+TOOL_PATH=$(ls mongodb-database-tools*/bin/mongoimport)
+if [ $? -ne 0 -a -f "$TOOL_PATH" ];
+then
+    echo "ERROR Could not find the tool path"
+    exit 1
+fi
+CMD="docker-compose exec app /app/utils/$TOOL_PATH"
+#$CMD --help; exit 0
+
 read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
 if [ "$answer" = "" -o "$answer" = "y" ];then
     MONGODB_URL="$MONGODB_URL_LOCAL"
@@ -27,7 +36,7 @@ for i in $(seq 1 $NUM_COLLS);do
         continue
     fi
     if [ -f "$IN_FILENAME" ];then
-        mongoimport \
+        $CMD \
         --db=waptrunner \
         --collection="${COLLECTIONS[$i]}" \
         --file="$IN_FILENAME"  \

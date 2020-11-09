@@ -3,7 +3,8 @@
 # backup-container-db.sh: Run mongodump in the waptrdb container (where our mongoDB is).
 #========================================================================================
 CONTAINER_NAME="waptrdb"
-BACKUP_DIR="/backup/waptrunner.$(date +%Y%m%d)"
+#BACKUP_DIR="/backup/waptrunner.$(date +%Y%m%d)"
+BACKUP_DIR="/utils/waptrunner.$(date +%Y%m%d).$$"
 
 read -p "Back-up MongoDB to directory ${BACKUP_DIR} [n] " answer
 if [ "$answer" = y ];then
