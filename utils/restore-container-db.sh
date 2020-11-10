@@ -2,7 +2,7 @@
 #===============================================================================================================
 # restore-container-db.sh: Restore/populate the MongoDB (from data files) that's running in the waptrdb container.
 #
-# Prerequisite: a previous MongoDB backup should exist under /backup/waptrunning, within the waptrdb container
+# Prerequisite: a previous MongoDB backup should exist under /dbinit/waptrunner, within the waptrdb container
 #===============================================================================================================
 CONTAINER_NAME="waptrdb"
 RESTORE_DIR="/backup/waptrunner"
