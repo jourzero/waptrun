@@ -11,6 +11,7 @@
         -   [When needed backup your database](#when-needed-backup-your-database)
         -   [When needed add TestKB data (e.g. using Excel)](#when-needed-add-testkb-data-eg-using-excel)
         -   [When needed, download new CWE data from Mitre and import it](#when-needed-download-new-cwe-data-from-mitre-and-import-it)
+        -   [When needed, use the mongo shell](#when-needed-use-the-mongo-shell)
         -   [Browse to the app](#browse-to-the-app)
         -   [Stop App and DB containers](#stop-app-and-db-containers)
     -   [Basic Idea](#basic-idea)
@@ -202,6 +203,19 @@ Done building content in /Users/eric_paquet/github/waptrun/utils/../data/cwe-dat
 2020-11-10T15:47:40.800+0000    connected to: mongodb://waptrdb:27017/waptrunner
 2020-11-10T15:47:40.802+0000    dropping: waptrunner.cwe
 2020-11-10T15:47:41.127+0000    994 document(s) imported successfully. 0 document(s) failed to import.
+```
+
+### When needed, use the mongo shell
+
+```bash
+[utils]$ ./mongo.sh
+Do you want the operation on local DB (mongodb://waptrdb:27017/waptrunner)? [y]:
+MongoDB shell version v4.4.1
+connecting to: mongodb://waptrdb:27017/waptrunner?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("87df9521-786d-43c0-b665-191bdac4f130") }
+MongoDB server version: 4.4.1
+Welcome to the MongoDB shell.
+[...]
 ```
 
 ### Browse to the app
