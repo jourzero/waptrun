@@ -2,6 +2,6 @@
 #========================================================================================
 # waptr_shell.sh: Run shell in the waptr container (where our main app is).
 #========================================================================================
-CONTAINER_NAME="waptr"
+SVC_NAME="app"
 
-docker exec -it "$CONTAINER_NAME" /bin/bash
+docker-compose exec "$SVC_NAME" /bin/bash

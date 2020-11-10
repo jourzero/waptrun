@@ -16,9 +16,7 @@ services:
         container_name: waptrdb
         restart: always
         volumes:
-            - ./data:/data
-            - ./backup:/backup
-            - ./utils:/utils
+            - .:/app
         image: mongo
         ports:
             - "27017:27017"

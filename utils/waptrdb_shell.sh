@@ -2,6 +2,6 @@
 #========================================================================================
 # waptrdb_shell.sh: Run shell in the waptrdb container (where our mongoDB is).
 #========================================================================================
-CONTAINER_NAME="waptrdb"
+SVC_NAME="waptrdb"
 
-docker exec -it "$CONTAINER_NAME" /bin/bash
+docker-compose exec "$SVC_NAME" /bin/bash

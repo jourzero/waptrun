@@ -9,10 +9,11 @@ COLLECTIONS[3]="project"
 FIELDS[1]='TID.string(),TSource.string(),TTestName.string(),TType.string(),TDescription.string(),TIssueName.string(),TIssueType.string(),TSeverity.int32(),TTesterSupport.string(),TPhase.string(),TSection.string(),TStep.string(),TIssueBackground.string(),TRemediationBackground.string(),TRef1.string(),TRef2.string(),TTRef.string(),TCweID.string(),TPCI.boolean(),TTop10.boolean(),TTop25.boolean(),TStdTest.boolean()'
 FIELDS[2]='PrjName.string(),TID.string(),CweId.int32(),TIssueName.string(),TIssueBackground.string(),TRemediationBackground.string(),TSeverity.int32(),TRef1.string(),TRef2.string(),TSeverityText.string(),IURIs.string(),IEvidence.string(),IPriority.int32(),IPriorityText.string(),INotes.string()'
 FIELDS[3]='name.string(),scope.string(),scopeQry.string(),lastTID.string()'
-NUM_COLLS=1 # only import testkb
 NUM_COLLS=3 # import all collections
+NUM_COLLS=1 # only import testkb
 INPUT_DIR="/app/data"
 MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
+SVC_NAME="app"
 
 # Get path for mongoimport tool
 TOOL_PATH=$(ls mongodb-database-tools*/bin/mongoimport)
@@ -21,8 +22,7 @@ then
     echo "ERROR Could not find the tool path"
     exit 1
 fi
-CMD="docker-compose exec app /app/utils/$TOOL_PATH"
-#$CMD --help; exit 0
+CMD="docker-compose exec $SVC_NAME /app/utils/$TOOL_PATH"
 
 read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
 if [ "$answer" = "" -o "$answer" = "y" ];then

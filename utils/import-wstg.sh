@@ -25,6 +25,7 @@ TTop10="false"
 TTop25="false"
 TStdTest="false"
 TTesterSupport="Click TTRef link."
+SVC_NAME="app"
 
 # Save PWD
 START_DIR="$PWD"
@@ -104,7 +105,7 @@ then
     echo "ERROR Could not find the tool path"
     exit 1
 fi
-CMD="docker-compose exec app /app/utils/$TOOL_PATH"
+CMD="docker-compose exec $SVC_NAME /app/utils/$TOOL_PATH"
 
 # Prompt for destination
 read -p "Do you want the import operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer

@@ -3,7 +3,6 @@
 # import-cwe.sh: Import CWE data in CSV format (originating from the Mitre site) into the
 #                WAPT Runner's MongoDB
 #===========================================================================================
-set -x
 
 # Import parameters
 HOST_DATA_DIR="$PWD/../data"
@@ -25,6 +24,7 @@ CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
 MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
+SVC_NAME="app"
 
 read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
 if [ "$answer" = "" -o "$answer" = "y" ];then
@@ -60,7 +60,7 @@ then
 else
     echo "Tool path: $TOOL_PATH"
 fi
-CMD="docker-compose exec app /app/utils/$TOOL_PATH"
+CMD="docker-compose exec $SVC_NAME /app/utils/$TOOL_PATH"
 
 # Save the previous files just in case
 mv "$IMPORTED_CSVFILE" "$IMPORTED_CSVFILE.old.$$" 2>/dev/null

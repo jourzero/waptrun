@@ -1,6 +1,6 @@
 #!/bin/bash
 #========================================================================================
-# mongoexport.sh: Run mongoexport from within the waptr container
+# mongoexport.sh: Run mongoexport from within the app container/service
 #
 # Prerequisite: Set MONGODB_URL env. variable if the export is from a remote DB.
 #========================================================================================
@@ -18,6 +18,7 @@ EXPORT_TYPE="csv"
 OUTPUT_DIR_LOCAL=../data
 OUTPUT_DIR=/app/data
 MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
+SVC_NAME="app"
 
 # Get path for mongoexport tool
 TOOL_PATH=$(ls mongodb-database-tools*/bin/mongoexport)
@@ -26,8 +27,7 @@ then
     echo "ERROR Could not find the tool path"
     exit 1
 fi
-CMD="docker-compose exec app /app/utils/$TOOL_PATH"
-#$CMD --help; exit 0
+CMD="docker-compose exec $SVC_NAME /app/utils/$TOOL_PATH"
 
 # Prompt for Mongo URL choice
 read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer

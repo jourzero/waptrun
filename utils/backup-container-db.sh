@@ -2,7 +2,7 @@
 #========================================================================================
 # backup-container-db.sh: Run mongodump in the waptrdb/mongodb container
 #========================================================================================
-BACKUP_DIR="/backup/waptrunner.$(date +%Y%m%d).$$" 
+BACKUP_DIR="/app/backup/waptrunner.$(date +%Y%m%d).$$" 
 SVC_NAME="waptrdb"
 
 read -p "Back-up MongoDB to directory ${BACKUP_DIR} in $SVC_NAME container? [n] " answer

@@ -2,10 +2,10 @@
 #===============================================================================================================
 # restore-container-db.sh: Restore/populate the MongoDB (from data files) that's running in the waptrdb container.
 #
-# Prerequisite: a previous MongoDB backup should exist under /dbinit/waptrunner, within the waptrdb container
+# Prerequisite: a previous MongoDB backup should exist under /app/dbinit/waptrunner, within the waptrdb container
 #===============================================================================================================
-CONTAINER_NAME="waptrdb"
-RESTORE_DIR="/backup/waptrunner"
+SVC_NAME="waptrdb"
+RESTORE_DIR="/app/backup/waptrunner"
 
 read -p "This will execute mongorestore and you may lose existing waptrunner data in MongoDB. Proceed? [n] " answer
 
@@ -23,7 +23,7 @@ if [ "$answer" = y ];then
   for i in $(seq 0 7);do
     read -p "Execute this in container ${CONTAINER_NAME}: ${CMD[$i]} ? [n] " answer
     if [ "$answer" = y ];then
-      docker exec "$CONTAINER_NAME" ${CMD[$i]}
+      docker-compose exec "$SVC_NAME" ${CMD[$i]}
     fi
   done
 
