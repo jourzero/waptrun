@@ -37,8 +37,6 @@ It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB to persist
 
 ## Running this code within Docker
 
-**WARNING**: This won't work until I include a sanitized MongoDB snapshot or an import mechanism. See [Issues](https://github.com/jourzero/waptrun/issues).
-
 ### Get the code
 
 ```bash
