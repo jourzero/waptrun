@@ -3,10 +3,13 @@
 # import-cwe.sh: Import CWE data in CSV format (originating from the Mitre site) into the
 #                WAPT Runner's MongoDB
 #===========================================================================================
+set -x
 
 # Import parameters
-DATA_DIR="../data"
-IMPORTED_CSVFILE="CWE3.2-Import-Data.csv"
+HOST_DATA_DIR="$PWD/../data"
+CTR_DATA_DIR="/app/data"
+IMPORTED_CSVFILE="$HOST_DATA_DIR/cwe-data-from-mitre.csv"
+IMPORTED_CSVFILE_CTR="$CTR_DATA_DIR/cwe-data-from-mitre.csv"
 OLD_HEADER="ID,Name,Weakness_Abstraction,Status,Description_Summary,Likelihood_of_Exploit,Causal_Nature"
 STD_HEADER="CWE-ID,Name,Weakness Abstraction,Status,Description,Extended Description,Related Weaknesses,Weakness Ordinalities,Applicable Platforms,Background Details,Alternate Terms,Modes Of Introduction,Exploitation Factors,Likelihood of Exploit,Common Consequences,Detection Methods,Potential Mitigations,Observed Examples,Functional Areas,Affected Resources,Taxonomy Mappings,Related Attack Patterns,Notes"
 NEW_HEADER="ID,Name,Weakness_Abstraction,Status,Description_Summary,Extended_Description,Related_Weaknesses,Weakness_Ordinalities,Applicable_Platforms,Background_Details,Alternate_Terms,Modes_Of_Introduction,Exploitation_Factors,Likelihood_of_Exploit,Common_Consequences,Detection_Methods,Potential_Mitigations,Observed_Examples,Functional_Areas,Affected_Resources,Taxonomy_Mappings,Related_Attack_Patterns,Notes"
@@ -21,11 +24,15 @@ CWE_VIEW_NAME[0]="COMPREHENSIVE_LIST"
 CWE_VIEW_NAME[1]="OWASP_TOP10_2017"
 CWE_VIEW_NAME[2]="OWASP_TOP10_2013"
 LAST_VIEW=2
-#MONGODB_URL="mongodb://waptrdb:27017/waptrunner"
+MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
+
+read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
+if [ "$answer" = "" -o "$answer" = "y" ];then
+    MONGODB_URL="$MONGODB_URL_LOCAL"
+fi
 
 # cd to $DATA_DIR to simplify things
-mkdir "$DATA_DIR" 2>/dev/null
-cd "$DATA_DIR"
+mkdir "$HOST_DATA_DIR" 2>/dev/null
 
 # Check if we didn't run this script by mistake
 if [ $(id -u) -eq 0 ];then
@@ -44,6 +51,17 @@ if [ "$MONGODB_URL" == "" ];then
   exit 2
 fi
 
+# Get path for mongoimport tool
+TOOL_PATH=$(ls ./mongodb-database-tools*/bin/mongoimport)
+if [ $? -ne 0 -a -f "$TOOL_PATH" ];
+then
+    echo "ERROR Could not find the tool path"
+    exit 3
+else
+    echo "Tool path: $TOOL_PATH"
+fi
+CMD="docker-compose exec app /app/utils/$TOOL_PATH"
+
 # Save the previous files just in case
 mv "$IMPORTED_CSVFILE" "$IMPORTED_CSVFILE.old.$$" 2>/dev/null
 
@@ -55,7 +73,9 @@ echo "$NO_CWE_FOUND_DATA"    >> "$IMPORTED_CSVFILE"
 echo "$TOP10_2013_A9"        >> "$IMPORTED_CSVFILE"
 echo "$TOP10_2017_A9"        >> "$IMPORTED_CSVFILE"
 
+
 # Download CSV files from the Mitre site and append their content
+cd "$HOST_DATA_DIR"
 for view in $(seq 0 $LAST_VIEW); do
   file="${CWE_VIEW_ID[$view]}.csv"
   echo -e "\n- Processing view ${CWE_VIEW_ID[$view]}"
@@ -82,16 +102,9 @@ for view in $(seq 0 $LAST_VIEW); do
   echo -e "Done building content in $IMPORTED_CSVFILE."
 done
 
-# Run mongodump
+# Run mongoimport
 echo ""
-if [ $(id -u) -eq 0 ];then
-    read -p "-- Run mongoimport for CWE list? [n] " answer
-else
-    answer="y"
-fi
+read -p "-- Run mongoimport for CWE list? [n] " answer
 if [ "$answer" = y ];then
-  mongoimport --drop --uri="$MONGODB_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE" --headerline
+  $CMD --drop --uri="$MONGODB_URL" --collection cwe --type csv --file "$IMPORTED_CSVFILE_CTR" --headerline
 fi
-
-# cd back to where we were
-cd -
