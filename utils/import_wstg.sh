@@ -29,6 +29,13 @@ TTesterSupport="Click TTRef link."
 # Save PWD
 START_DIR="$PWD"
 
+# Clone the repo
+read -p "Clone the OWASP WSTG repo? [n] " answer
+if [ "$answer" = "y" ];then
+    cd ~/github
+    git clone https://github.com/OWASP/wstg.git
+fi
+
 # Update data
 read -p "Update the local OWASP WSTG copy? [n] " answer
 if [ "$answer" = "y" ];then
