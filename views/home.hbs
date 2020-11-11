@@ -1,13 +1,7 @@
 <div id='msg' role='alert'></div>
 
-<!-- views/home.handlebars -->
 {{#if user}}
-<!--
-  <div class="jumbotron">
-    <h1>MongoDB User Authentication</h1>
-    <p>Below is your profile information!</p>
-  </div>
--->
+<!-- <div class="jumbotron"> <h1>MongoDB User Authentication</h1> <p>Below is your profile information!</p> </div> -->
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">Projects</h3>
@@ -17,7 +11,7 @@
     {{#if projects}}
         {{#projects}}
         <tr>
-            <!--
+            <!-- Commented-out, we're preffering that the user types the project name to avoid accidental removal
                 <td class="issueDeleteTD" width="20px">
                     <button class="delete" title="Delete this project" action="delete" prjName='{{name}}'>&times;</button></td> -->
             <td><a href="/project/{{name}}">{{name}}</a></td>
@@ -52,15 +46,14 @@
         Enter project name to delete: <input type="text" id="delProjectInput"" />
     </div>
  
-<!-- Comment-out links to static content (may restore this later)
     <div class=" panel-body">
         Static Content:
         <a href="{{TestRefBase}}/sec542/index.htm">SEC-542</a> |
         <a href="{{TestRefBase}}/sec642/index.htm">SEC-642</a> |
         <a href="{{TestRefBase}}/wahh2/index.htm">WAHHv2</a> |
-        <a href="{{TestRefBase}}/websvc/Web_Services_Assessment_Methodology.pdf">Web Services</a>
+        <a href="{{TestRefBase}}/websvc/Web_Services_Assessment_Methodology.pdf">Web Services</a> |
+        <a href="{{TestRefBase}}/proxy.pac">Proxy Auto Config</a> 
     </div>
-    -->
 
 </div>
 
