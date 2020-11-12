@@ -12,13 +12,15 @@
         -   [When needed add TestKB data (e.g. using Excel)](#when-needed-add-testkb-data-eg-using-excel)
         -   [When needed, download new CWE data from Mitre and import it](#when-needed-download-new-cwe-data-from-mitre-and-import-it)
         -   [When needed, use the mongo shell](#when-needed-use-the-mongo-shell)
+    -   [Design Criteria](#design-criteria)
+    -   [Current Features](#current-features)
     -   [Snyk Results](#snyk-results)
 
 <!-- /TOC -->
 
 ## Usage Help
 
-Refer to [Help](doc/Help.md) for end-user documentation.
+Refer to [Help](doc/Help.md) for end-user documentation and to [methodologies supported](doc/Methodologies.md) for additional details.
 
 ## Running this code within Docker
 
@@ -200,6 +202,42 @@ MongoDB server version: 4.4.1
 Welcome to the MongoDB shell.
 [...]
 ```
+
+## Design Criteria
+
+-   Keep the app's window small and useful. Use field auto-expansion to avoid scrolling and to provide a compact snapshot of results.
+-   Avoid too many clicks by keeping all inputs in a single window and use UI automations and artifacts (mouse hovering, links).
+-   Separate field for Severity and Priority. The latter is representative of risk and other factors that should adjust how quickly we should implement a fix.
+-   Keep history of remediated issues (use Priority = Remediated)
+
+Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue List:
+
+![Compact Test Runner](../screenshots/c1.png)
+
+## Current Features
+
+-   Multi-project
+-   Multiple [methodologies supported](Methodologies.md)
+-   Test stepping
+-   Dynamic Test KB updates
+-   Dynamic, color-coded issue list, per project
+-   Auto-type test names and CWEs
+-   Ability to add new tests based on new CVEs or other
+-   CVE search on cvedetails.com
+-   Export to CSV and HTML from UI
+-   Import Burp issues from my Clipboarder Burp App. To use it:
+    -   Download my [Clipboarder extension](https://github.com/jourzero/clipboarder/blob/master/dist/Clipboarder.jar)
+    -   Add Clipboarder extension to Burp
+    -   Select one issue from Target/Issues
+    -   Use context menu "Copy as free text to clipboard"
+    -   Paste clipboard content into WAPT Runner's Notes field
+    -   Result: Burp issue text will be parsed and UI fields like Issue Name, Evidence, Severity, Priority will be adjusted accordingly.
+-   Import screen shots from clipboard and paste them into the Paste Area as HTML5 Base64 images.
+    -   Screen shots are shown when viewing an issue from the issue list.
+    -   Screen shots are included in reports.
+-   User Authentication with Passport, and MongoDB.
+-   Serve static content with Express.js
+-   App was dockerized.
 
 ## Snyk Results
 
