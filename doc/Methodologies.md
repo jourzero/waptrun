@@ -1,6 +1,4 @@
 <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css">
-<script src="/dist/jquery/jquery.min.js"></script>
-<script src="/dist/bootstrap/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/stylesheets/main.css">
 
 # Methodologies
