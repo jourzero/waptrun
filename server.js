@@ -333,9 +333,15 @@ app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
 
-// EP: serve favicon and static content
+// !!!IMPORTANT: place this before static or similar middleware
+app.use(
+    require("express-markdown")({ directory: path.join(__dirname, "doc") })
+);
+
+// Serve favicon and static content
 app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "client")));
+app.use("/screenshots", express.static(__dirname + "/screenshots/"));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
 app.use(
@@ -347,7 +353,7 @@ app.use(
     express.static(__dirname + "/node_modules/bootstrap/dist/")
 );
 
-// Server private static content
+// Serve private static content
 app.use("/static", express.static(__dirname + "/static/"));
 
 // Session-persisted message middleware
