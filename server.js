@@ -255,6 +255,7 @@ function getScopeQuery(prj) {
         case "BCVRT":
         case "Extras":
         case "TBHM2015":
+        case "OWASP-ASVS":
         case "OWASP-TG4":
         case "OWASP-WSTG":
         case "SEC542":
