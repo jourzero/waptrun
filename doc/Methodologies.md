@@ -1,7 +1,10 @@
 <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="/stylesheets/main.css">
+<link rel="stylesheet" href="/stylesheets/table.css">
+<div class="container">
 
 # Methodologies
+
+**Table of Contents**
 
 <!-- TOC -->
 
@@ -60,13 +63,13 @@ Our combined list of API tests from various sources. We use a complex database q
 
 The [Bugcrowd’s Vulnerability Rating Taxonomy](https://bugcrowd.com/vulnerability-rating-taxonomy) is a resource outlining Bugcrowd’s baseline priority rating, including certain edge cases, for common vulnerabilities.
 
-![BCVRT Screenshot](../screenshots/BCVRT.png)
+<img src="../screenshots/BCVRT.png" width="800"/>
 
 ### CWE Top 25
 
 The 2020 Common Weakness Enumeration (CWE™) [Top 25 Most Dangerous Software Weaknesses](https://cwe.mitre.org/top25/archive/2020/2020_cwe_top25.html) (CWE Top 25) is a demonstrative list of the most common and impactful issues experienced over the previous two calendar years. These weaknesses are dangerous because they are often easy to find, exploit, and can allow adversaries to completely take over a system, steal data, or prevent an application from working. The CWE Top 25 is a valuable community resource that can help developers, testers, and users — as well as project managers, security researchers, and educators — provide insight into the most severe and current security weaknesses.
 
-![Top25](../screenshots/Top25.png)
+<img src="../screenshots/Top25.png" width="800"/>
 
 ### Extras
 
@@ -80,19 +83,19 @@ Refer to [OWASP Web App Testing Guide](https://owasp.org/www-project-web-securit
 
 Refer to the current [Web Security Test Guide](https://github.com/OWASP/wstg) (v5).
 
-![WSTG](../screenshots/WSTG-UseAndMisuseCase.png)
+<img src="../screenshots/WSTG-UseAndMisuseCase.png" width="700"/>
 
 ### OWASP ASVS
 
 Refer to [OWASP ASVS v4.0.2](https://github.com/OWASP/ASVS/tree/v4.0.2/4.0/en).
 
-![ASVS 4.0](../screenshots/asvs_40_levels.png)
+<img src="../screenshots/asvs_40_levels.png" width="1000"/>
 
 ### SANS SEC-542
 
 Refer to the SANS [SEC-542 Syllabus](https://www.sans.org/cyber-security-courses/web-app-penetration-testing-ethical-hacking/).
 
-![SEC542](../screenshots/SEC542.png)
+<img src="../screenshots/SEC542.png" width="400"/>
 
 ### SANS SEC-642
 
@@ -106,4 +109,5 @@ Refer to the [Bug Hunter's Methodology](https://github.com/jhaddix/tbhm#the-bug-
 
 Refer to the [Web Application Hacker's Handbook](https://portswigger.net/web-security/web-application-hackers-handbook). There's also the related [Burp Documentation](https://portswigger.net/burp/documentation/contents) that provides additional substance and [workflow](https://portswigger.net/burp/documentation/desktop/penetration-testing#testing-workflow) details.
 
-![WAHH](../screenshots/WAHH.jpg)
+<img src="../screenshots/WAHH.jpg" width="800"/>
+</div>

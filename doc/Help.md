@@ -1,7 +1,9 @@
 <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="/stylesheets/main.css">
+<div class="container">
 
 # Web App Pen Test Runner
+
+**Table of Contents**
 
 <!-- TOC -->
 
@@ -105,3 +107,5 @@ Export to a single-file HTML for easy pasting or attachment into emails or ticke
 Export to CSV to help PMs with remediation tracking:
 
 ![CSV Report](../screenshots/p6b.png)
+
+</div>
