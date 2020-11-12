@@ -9,6 +9,7 @@
     -   [Summary](#summary)
     -   [Filters](#filters)
     -   [References](#references)
+        -   [API Tests](#api-tests)
         -   [Bugcrowd VRT](#bugcrowd-vrt)
         -   [CWE Top 25](#cwe-top-25)
         -   [Extras](#extras)
@@ -27,17 +28,18 @@
 | Type        | Methodology Name                                        | Version Supported | Summary                                      |
 | ----------- | ------------------------------------------------------- | ----------------- | -------------------------------------------- |
 | Combination | All Tests                                               |                   | Includes all tests from below methodologies  |
+| Combination | API Tests                                               |                   | Includes API tests from below methodologies  |
 | Combination | Combo                                                   |                   | Includes combination of below with "(\*)"    |
-| Helpers     | [BugCrowd Vulnerability Rating Taxonomy](#bugcrowd-vrt) | 1.3 (2017)        | Not a methodology but a useful ref.          |
+| Helpers     | [BugCrowd Vulnerability Rating Taxonomy](#bugcrowd-vrt) | v1.3 (2017)       | Not a methodology but a useful ref.          |
 | Helpers     | [CWE Top 25](#cwe-top-25)                               | (2020)            | SANS' list of top 25 software bugs (as CWEs) |
 | Helpers     | [Extras](#extras) (\*)                                  | (2020)            | Tests we added manually ourselves            |
-| OWASP       | [Test Guide](#owasp-tg)                                 | v4                | Test Guide from OWASP (current release)      |
-| OWASP       | [Web Security Testing Guide](#owasp-wstg) (\*)          |                   | Test Guide from OWASP (next release)         |
-| OWASP       | [ASVS](#owasp-asvs)                                     | 4.0.2 (2020)      | App Security Verification Standard           |
+| OWASP       | [Web App Security Test Guide](#owasp-tg)                | V4.0 (2014)       | Test Guide from OWASP (current release)      |
+| OWASP       | [Web Security Testing Guide](#owasp-wstg) (\*)          | V5.0 (2020)       | Test Guide from OWASP (next release)         |
+| OWASP       | [ASVS](#owasp-asvs)                                     | v4.0.2 (2020)     | App Security Verification Standard           |
 | SANS        | [SEC542](#sans-sec-542)                                 |                   | SANS Web App Pen Testing Methodology         |
 | SANS        | [SEC642](#sans-sec-642)                                 |                   | SANS Advanced Web App Pen Testing (add-ons)  |
-| De-facto    | [The Bug Hunter Methodology](#tbhm) (\*)                | (2015)            | Useful tests for bug hunting                 |
-| De-facto    | [Web App Hacking Handbook (WAHH)](#wahh) (\*)           | v2                | Well-respected methodology (de-facto)        |
+| De-facto    | [The Bug Hunter Methodology](#tbhm) (\*)                | v1.0 (2015)       | Useful tests for bug hunting                 |
+| De-facto    | [Web App Hacking Handbook (WAHH)](#wahh) (\*)           | Vol. 2 (2011)     | Well-respected methodology (de-facto)        |
 
 ## Filters
 
@@ -49,6 +51,10 @@
 | Std | Tests that we want to perform in most of our assessments          |
 
 ## References
+
+### API Tests
+
+Our combined list of API tests from various sources. We use a complex database query to build this list.
 
 ### Bugcrowd VRT
 
@@ -68,14 +74,36 @@ The [Extras](https://github.com/jourzero/waptrun/blob/master/dbinit/testkb-extra
 
 ### OWASP TG
 
+Refer to [OWASP Web App Testing Guide](https://owasp.org/www-project-web-security-testing-guide/assets/archive/OWASP_Testing_Guide_v4.pdf) (v4).
+
 ### OWASP WSTG
+
+Refer to the current [Web Security Test Guide](https://github.com/OWASP/wstg) (v5).
+
+![WSTG](../screenshots/WSTG-UseAndMisuseCase.png)
 
 ### OWASP ASVS
 
+Refer to [OWASP ASVS v4.0.2](https://github.com/OWASP/ASVS/tree/v4.0.2/4.0/en).
+
+![ASVS 4.0](../screenshots/asvs_40_levels.png)
+
 ### SANS SEC-542
+
+Refer to the SANS [SEC-542 Syllabus](https://www.sans.org/cyber-security-courses/web-app-penetration-testing-ethical-hacking/).
+
+![SEC542](../screenshots/SEC542.png)
 
 ### SANS SEC-642
 
+Refer to the SANS [SEC-642 Syllabus](https://www.sans.org/cyber-security-courses/advanced-web-app-penetration-testing-ethical-hacking/).
+
 ### TBHM
 
+Refer to the [Bug Hunter's Methodology](https://github.com/jhaddix/tbhm#the-bug-hunters-methodology-tbhm) (TBHM).
+
 ### WAHH
+
+Refer to the [Web Application Hacker's Handbook](https://portswigger.net/web-security/web-application-hackers-handbook). There's also the related [Burp Documentation](https://portswigger.net/burp/documentation/contents) that provides additional substance and [workflow](https://portswigger.net/burp/documentation/desktop/penetration-testing#testing-workflow) details.
+
+![WAHH](../screenshots/WAHH.jpg)

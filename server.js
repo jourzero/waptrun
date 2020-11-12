@@ -240,6 +240,18 @@ function getScopeQuery(prj) {
         case "All":
             scopeQuery = {};
             break;
+        case "API":
+            scopeQuery = {
+                $or: [
+                    { TTName: { $regex: "^API" } },
+                    { TTName: { $regex: " API" } },
+                    { TType: { $regex: "^API" } },
+                    { TIssueName: { $regex: "^API" } },
+                    { TIssueName: { $regex: " API" } },
+                    { TSection: { $regex: "^API" } },
+                ],
+            };
+            break;
         case "Combo":
             scopeQuery = {
                 $or: [
