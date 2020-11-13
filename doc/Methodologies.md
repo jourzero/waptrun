@@ -9,8 +9,8 @@
 <!-- TOC -->
 
 -   [Methodologies](#methodologies)
-    -   [Summary](#summary)
-    -   [Filters](#filters)
+    -   [Supported Methodologies](#supported-methodologies)
+        -   [Filters](#filters)
     -   [References](#references)
         -   [API Tests](#api-tests)
         -   [Bugcrowd VRT](#bugcrowd-vrt)
@@ -26,7 +26,7 @@
 
 <!-- /TOC -->
 
-## Summary
+## Supported Methodologies
 
 | Type        | Methodology Name                                        | Version Supported | Summary                                      |
 | ----------- | ------------------------------------------------------- | ----------------- | -------------------------------------------- |
@@ -44,7 +44,7 @@
 | De-facto    | [The Bug Hunter Methodology](#tbhm) (\*)                | v1.0 (2015)       | Useful tests for bug hunting                 |
 | De-facto    | [Web App Hacking Handbook (WAHH)](#wahh) (\*)           | Vol. 2 (2011)     | Well-respected methodology (de-facto)        |
 
-## Filters
+### Filters
 
 | Key | Purpose                                                           |
 | --- | ----------------------------------------------------------------- |
