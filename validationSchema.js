@@ -115,6 +115,10 @@ module.exports = {
             errorMessage: vals.Multiline.errorMessage,
             trim: true,
         },
+        TTestNameKeyword: {
+            matches: { options: vals.TTestNameKeyword.matches },
+            errorMessage: vals.TTestNameKeyword.errorMessage,
+        },
         scope: {
             optional: true,
             matches: { options: vals.scope.matches },

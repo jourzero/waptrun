@@ -1,6 +1,6 @@
 //============== UI EVENT HANDLING ==============
 // When values change, persist the values
-$("#PrjName").on("change", function() {
+$("#PrjName").on("change", function () {
     let prj = uiGetProject();
     if (prj !== undefined) {
         restUpdateProject(prj);
@@ -9,48 +9,50 @@ $("#PrjName").on("change", function() {
     }
 });
 
-$("#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest").on("change", function() {
+$(
+    "#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest,#TTestNameKeyword"
+).on("change", function () {
     let prj = uiGetProject();
     if (prj !== undefined) restUpdateProject(prj);
 });
 
-$("#PrjSoftware").on("change", function() {
+$("#PrjSoftware").on("change", function () {
     uiUpdateCveLinks();
     let prj = uiGetProject();
     if (prj !== undefined) restUpdateProject(prj);
 });
 
-$("#StartTesting").click(function() {
+$("#StartTesting").click(function () {
     let url = "/testing/" + $("#PrjName").val();
     window.open(url, "_self");
 });
 
-$("#btnFindingsHtmlReport").click(function() {
+$("#btnFindingsHtmlReport").click(function () {
     let url = "/export/html/findings/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
-$("#btnFullHtmlReport").click(function() {
+$("#btnFullHtmlReport").click(function () {
     let url = "/export/html/full/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
-$("#btnCsvReport").click(function() {
+$("#btnCsvReport").click(function () {
     let url = "/export/csv/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
-$("#btnJsonExport").click(function() {
+$("#btnJsonExport").click(function () {
     let url = "/export/json/" + $("#PrjName").val();
     window.open(url, "reportWin");
 });
 
 //============== UI TWEAKS ==============
 // Dynamically adjust height of textarea
-$("textarea").click(function() {
+$("textarea").click(function () {
     $(this).height(200);
 });
-$("textarea").blur(function() {
+$("textarea").blur(function () {
     $(this).height(15);
 });
 
@@ -71,24 +73,13 @@ function uiClearProjectFields() {
 // Get Project data from UI
 function uiGetProject() {
     var prj = {};
-    prj.name = $("#PrjName")
-        .val()
-        .trim();
-    prj.notes = $("#PrjNotes")
-        .val()
-        .trim();
-    prj.software = $("#PrjSoftware")
-        .val()
-        .trim();
-    prj.scope = $("#ScopeSel option:selected")
-        .attr("title")
-        .trim();
-    prj.scopeQry = $("#ScopeSel")
-        .val()
-        .trim();
-    prj.lastTID = $("#LastTID")
-        .html()
-        .trim();
+    prj.name = $("#PrjName").val().trim();
+    prj.notes = $("#PrjNotes").val().trim();
+    prj.software = $("#PrjSoftware").val().trim();
+    prj.scope = $("#ScopeSel option:selected").attr("title").trim();
+    prj.scopeQry = $("#ScopeSel").val().trim();
+    prj.lastTID = $("#LastTID").html().trim();
+    prj.TTestNameKeyword = $("#TTestNameKeyword").val().trim();
     prj.PciTests = $("#TPCI").prop("checked");
     prj.Top10Tests = $("#TTop10").prop("checked");
     prj.Top25Tests = $("#TTop25").prop("checked");

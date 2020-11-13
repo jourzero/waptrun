@@ -228,12 +228,13 @@ function ensureAuthorized(req, res, next) {
 
 // Build filter for scope query
 function getScopeQuery(prj) {
-    logger.info(`Building scope query from scope keyword ${prj.scopeQry}`);
+    logger.info(`Building scope query from scope query ${prj.scopeQry}`);
     let scopeQuery = {};
     let PciTests = prj.PciTests;
     let Top10Tests = prj.Top10Tests;
     let Top25Tests = prj.Top25Tests;
     let StdTests = prj.StdTests;
+    let TTestNameKeyword = prj.TTestNameKeyword;
 
     // Build scope query
     switch (prj.scopeQry) {
@@ -278,9 +279,18 @@ function getScopeQuery(prj) {
             scopeQuery = { TSource: prj.scopeQry };
         //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
     }
-    logger.info(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
+    logger.debug(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
 
-    if (PciTests || Top10Tests || Top25Tests || StdTests) {
+    let UseKeyword = false;
+    if (
+        TTestNameKeyword !== undefined &&
+        TTestNameKeyword !== null &&
+        TTestNameKeyword.length > 0
+    ) {
+        UseKeyword = true;
+    }
+
+    if (PciTests || Top10Tests || Top25Tests || StdTests || UseKeyword) {
         let filter = {};
         if (PciTests)
             filter =
@@ -302,6 +312,12 @@ function getScopeQuery(prj) {
                 JSON.stringify(filter).length <= 2
                     ? { TStdTest: StdTests }
                     : { $or: [filter, { TStdTest: StdTests }] };
+        if (UseKeyword)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? { TTestName: TTestNameKeyword }
+                    : { $and: [filter, { TTestName: TTestNameKeyword }] };
+
         scopeQuery = { $and: [scopeQuery, filter] };
     }
     return scopeQuery;
