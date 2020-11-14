@@ -114,7 +114,11 @@ th {
 }
 
 .projectList {
-    width: 50%;
+    width: 80%;
+}
+
+.projectEntry {
+    width: 300px;
 }
 
 .prjMeta {
