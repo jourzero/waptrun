@@ -96,7 +96,8 @@ function restUpdateIssue(issue) {
 
 // TODO: Save LastTID to Project collection
 function restUpdateLastTID(testId, prjName) {
-    console.info("Updating LastTID for project " + prjName);
+    console.info("SKIPPED: Updating LastTID for project " + prjName);
+    return;
 
     let url = "/api/project/" + prjName;
     console.info("Sending PUT request to url " + url + ": lastTID=" + testId);

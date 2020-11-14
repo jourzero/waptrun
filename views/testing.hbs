@@ -62,10 +62,10 @@
                     Use CWE Data </button>
                 <button id="updateIssueListBtn" class="kbBtn"
                     title="Click this button when KB data is changed and the project issue data needs to be updated.">
-                    Update Project Issue </button>
+                    Update Issue </button>
                 <button id="refreshBtn" class="kbBtn"
                     title="Click this button when Test KB or Issue Data has changed and page needs to be refreshed.">
-                    Refresh Page</button>
+                    Reload Page</button>
                 <button id="todosBtn" class="kbBtn"
                     title="Click this button to add TODO items in the issue list.">
                     Add TODOs</button>
@@ -187,7 +187,9 @@
 <div class="prjMeta">Project Information:</div>
 <ul>
     <li class="prjMeta">Status: <span class="prjMeta" id="StatusMsg"></span></li>
+    <!--
     <li class="prjMeta">Last TID: <span class="prjMeta" id="LastTID"></span></li>
+    -->
     <li class="prjMeta">PrjName: <span class="prjMeta" id="PrjName">{{prj.name}}</span></li>
     <li class="prjMeta">Scope: <span class="prjMeta" id="PrjNotes">{{prj.notes}}</span></li>
     <li class="prjMeta">ScopeQuery: <span class="prjMeta" id="ScopeQuery">{{ScopeQuery}}</span></li>
@@ -212,6 +214,6 @@
         let testCount = $("#testList").prop("options").length;
         let statusMsg = "Loaded " + testCount + " tests";
         uiUpdateStatus(statusMsg);
-        uiChangeTest("{{prj.lastTID}}");
+        //uiChangeTest("{{prj.lastTID}}");
     });
 </script>

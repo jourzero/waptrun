@@ -3,6 +3,7 @@ module.exports = Projects;
 const config = require("../config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
+const logger = require("../lib/appLogger.js");
 
 // Projects constructor
 function Projects() {
@@ -37,6 +38,7 @@ Projects.prototype.create = function (project, success, error) {
 
 // Update an existing project document by id in mongodb
 Projects.prototype.update = function (name, data, success, error) {
+    logger.debug(`Updating project collection ${name} with data: ${JSON.stringify(data)}`);
     this.projects.update({name: name}, {$set: data}, response(success, error));
 };
 

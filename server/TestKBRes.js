@@ -1,7 +1,7 @@
 const testkb = require("./TestKBModel")();
 //const {validationResult} = require("express-validator/check");
 //const {matchedData} = require("express-validator/filter");
-const { validationResult, matchedData } = require("express-validator");
+const {validationResult, matchedData} = require("express-validator");
 const logger = require("../lib/appLogger.js");
 
 exports.findAll = function (req, res) {
@@ -9,14 +9,14 @@ exports.findAll = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
-        logger.info("Successful DB search.");
+        logger.info("Successful search for all testkb entries");
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed testkb search: ${JSON.stringify(err)}`);
         res.sendStatus(404);
     };
     testkb.findAll(ok, err);
@@ -27,14 +27,14 @@ exports.findByTID = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
     let ok = function (doc) {
-        logger.info("Successful DB search.");
+        logger.info("Successful testkb search by TID");
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed DB search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed testkb search by TID: ${JSON.stringify(err)}`);
         res.sendStatus(404);
     };
     testkb.findByTID(req.params.TID, ok, err);
@@ -45,7 +45,7 @@ exports.create = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -56,13 +56,13 @@ exports.create = function (req, res) {
     });
 
     let ok = function (doc) {
-        logger.info("Successful DB create.");
+        logger.info("Successful testkb entry creation");
         res.location("/api/testkb/doc.TID");
         res.status(201).json(bodyData).send();
     };
 
     let err = function (err) {
-        logger.warn(`Failed DB create: ${JSON.stringify(err)}`);
+        logger.warn(`Failed testkb create: ${JSON.stringify(err)}`);
         res.send(409, "Failed to create object");
     };
 
@@ -74,7 +74,7 @@ exports.update = function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()});
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -85,11 +85,11 @@ exports.update = function (req, res) {
     });
 
     let ok = function (doc) {
-        logger.info("Successful DB update.");
+        logger.info("Successful testkb update");
         res.sendStatus(200);
     };
     let err = function (err) {
-        logger.warn(`Failed DB update: ${JSON.stringify(err)}`);
+        logger.warn(`Failed testkb update: ${JSON.stringify(err)}`);
         res.send(409, "update failed");
     };
     logger.debug(`Updating TestKB with: ${JSON.stringify(bodyData)}`);

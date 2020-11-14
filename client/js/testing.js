@@ -334,8 +334,8 @@ function uiChangeTest(testId) {
     uiUpdateFromIssueColl(testId);
 
     // Update LastTID
-    $("#LastTID").html(testId);
-    restUpdateLastTID(testId, prjName);
+    //$("#LastTID").html(testId);
+    //restUpdateLastTID(testId, prjName);
 }
 
 // Clear Issue Information
@@ -800,8 +800,8 @@ function reloadPage() {
 function alertOnUpdate() {
     // Update LastTID
     let testId = $("#testIn").val();
-    $("#LastTID").html(testId);
-    restUpdateLastTID(testId, prjName);
+    //$("#LastTID").html(testId);
+    //restUpdateLastTID(testId, prjName);
     //alert("Press Refresh Page button as needed");
 }
 

@@ -14,7 +14,6 @@ function Issue() {
 
     // obtain a reference to our collection within mongodb
     this.issue = db.get("issues");
-    this.projects = db.get("project");
 }
 
 // Retrieve a list of all persisted
@@ -78,6 +77,9 @@ Issue.prototype.createTodos = function (PrjName, tests, success, error) {
         data.IPriorityText = "TODO";
         data.INotes =
             "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";
+        if (data.TIssueName === undefined || data.TIssueName === "") {
+            data.TIssueName = `TODO: ${data.TTestName}`;
+        }
 
         // Add issue
         logger.debug(`Adding TODO: ${JSON.stringify(data)}`);
