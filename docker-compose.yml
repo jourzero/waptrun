@@ -4,7 +4,7 @@ services:
         container_name: waptr
         restart: always
         build: .
-        command: /bin/sh -c "npm install && npm install -g nodemon && nodemon server.js"
+        command: /bin/sh -c "npm install && npm install -g nodemon && nodemon --watch server --watch views server --watch lib .js"
         volumes:
             - .:/app
         ports:

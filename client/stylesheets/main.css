@@ -23,8 +23,8 @@ button .kbBtn {
     margin-left: 0px;
 }
 
-.cweIdIn {
-    width: 40px;
+#cweIn {
+    width: 70px;
 }
 
 #cwedescr,
@@ -258,4 +258,8 @@ tr .ExcludePriority {
 
 img {
     max-width: 100%;
+}
+
+.navbar {
+    min-height: 24px;
 }

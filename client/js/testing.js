@@ -47,11 +47,23 @@ $(".delete").on("click", evtDeleteIssue);
 // Show the issue details when clicking in the list
 $(".issueTD").on("click", evtShowIssue);
 
+// When the evidence field changes, try to parse it as raw HTTP data that comes from Burp Clipboarder.
+$("#IEvidence").on("blur", function (event) {
+    let issue = uiGetIssue();
+    if (issue !== undefined) {
+        let evidence = $("#IEvidence").val();
+        let uri_list = $("#IURIs").val();
+        uri_list = extractURIs(evidence, uri_list);
+        $("#IURIs").val(uri_list);
+        restUpdateIssue(issue);
+    }
+});
+
 // When the notes field changes, try to parse it as an issue that comes from Burp Clipboarder.
 $("#INotes").on("blur", function (event) {
     uiParseBurpIssue();
     //$("#" + event.target.id).height(20);
-    issue = uiGetIssue();
+    let issue = uiGetIssue();
     if (issue !== undefined) restUpdateIssue(issue);
 });
 
@@ -836,4 +848,26 @@ function checkSession() {
     };
     xhr.send();
 }
+
+function extractURIs(evidence, uri_list) {
+    if (uri_list.length > 0) uri_list = uri_list.trim() + "\n";
+    console.debug("Initial URIs: ", uri_list);
+    let lines = evidence.split(/\r\n|\r|\n/);
+    let url_re = /^====*(http.*)===/;
+    for (let line of lines) {
+        if (line.match(url_re)) {
+            let matched_uri = line.replace(/^=*/, "").replace(/=*$/, "");
+            if (!uri_list.includes(matched_uri)) {
+                console.debug(`Adding URI '${matched_uri}' to the list`);
+                uri_list += matched_uri + "\n";
+            } else {
+                console.debug(`Matched evidence URI '${matched_uri}' already in URIs`);
+            }
+        }
+    }
+    uri_list = uri_list.trim();
+    console.debug("Updated URIs: ", uri_list);
+    return uri_list;
+}
+
 setInterval(checkSession, sessionCheckInterval);

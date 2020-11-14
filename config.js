@@ -2,8 +2,22 @@ const os = require("os");
 const winston = require("winston");
 const appRoot = require("app-root-path");
 const appName = "express-tests";
+const AUTH_MODE_NONE = 0;
+const AUTH_MODE_OAUTH = 1;
+const AUTH_MODE_LOCAL = 2;
+const LOCAL_USER = {
+    id: 0,
+    provider: "none",
+    username: "anonymous",
+    displayName: "Anonymous User",
+    local: true,
+};
 
 module.exports = {
+    AUTH_MODE_NONE,
+    AUTH_MODE_OAUTH,
+    AUTH_MODE_LOCAL,
+    LOCAL_USER,
     port: 5000,
     appname: "WAPT Runner",
     //'mongodbUrl': 'mongodb://USERNAME:PASSWORD!@HOSTNAME:PORT/DBNAME',
@@ -30,6 +44,11 @@ module.exports = {
 
     // Get appName from package.json
     appName: appName,
+
+    // Set authentication Mode. Supported: AUTH_MODE_NONE, AUTH_MODE_OAUTH
+    authMode: AUTH_MODE_NONE,
+    //authMode: AUTH_MODE_OAUTH,
+    //authMode: AUTH_MODE_LOCAL, // NOT SUPPORTED!
 
     // Session secret
     session: {

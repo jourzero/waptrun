@@ -14,8 +14,8 @@ exports.findAll = function (req, res) {
         logger.info("Successful search for all issues.");
         res.json(doc);
     };
-    let err = function (err) {
-        logger.warn(`Failed search for all issues: ${JSON.stringify(err)}`);
+    let err = function (_err) {
+        logger.warn(`Failed search for all issues: ${JSON.stringify(_err)}`);
         res.send(404);
     };
     issue.findAll(ok, err);
@@ -33,9 +33,9 @@ exports.findIssue = function (req, res) {
         logger.info("Succeeded search for issue");
         res.json(doc);
     };
-    let err = function (err) {
+    let err = function (_err) {
         //res.send(404);
-        logger.warn(`Failed issue search: ${JSON.stringify(err)}`);
+        logger.warn(`Failed issue search: ${JSON.stringify(_err)}`);
         res.sendStatus(404);
     };
     issue.findIssue(req.params.PrjName, req.params.TID, ok, err);
@@ -53,8 +53,8 @@ exports.findProjectIssues = function (req, res) {
         logger.info("Succeeded with project issue search");
         res.json(doc);
     };
-    let err = function (err) {
-        logger.warn(`Failed search for project issues: ${JSON.stringify(err)}`);
+    let err = function (_err) {
+        logger.warn(`Failed search for project issues: ${JSON.stringify(_err)}`);
         res.sendStatus(404);
     };
     issue.findIssue(req.params.PrjName, ok, err);
@@ -80,8 +80,8 @@ exports.upsert = function (req, res) {
         logger.info("Successful issue upsert completed");
         res.sendStatus(200);
     };
-    let err = function (err) {
-        logger.warn(`Upsert issue failed: ${JSON.stringify(err)}`);
+    let err = function (_err) {
+        logger.warn(`Upsert issue failed: ${JSON.stringify(_err)}`);
         res.send(409, "Upsert issue failed");
     };
     issue.upsert(req.params.PrjName, req.params.TID, bodyData, ok, err);
@@ -100,8 +100,8 @@ exports.createTodos = function (req, res, tests) {
         logger.info("Successful createTodos operation");
         res.sendStatus(200);
     };
-    let err = function (err) {
-        logger.warn(`createTodos failed: ${JSON.stringify(err)}`);
+    let err = function (_err) {
+        logger.warn(`createTodos failed: ${JSON.stringify(_err)}`);
         res.send(409, "createTodos failed");
     };
     logger.info(`Creating TODOs for ${req.params.PrjName}`);
@@ -121,8 +121,8 @@ exports.removeByName = function (req, res) {
         logger.info("Successful issue delete");
         res.sendStatus(200);
     };
-    let err = function (err) {
-        logger.warn(`Issue deletion failed: ${JSON.stringify(err)}`);
+    let err = function (_err) {
+        logger.warn(`Issue deletion failed: ${JSON.stringify(_err)}`);
         res.send(409, "Failed to remove issue");
     };
     issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
@@ -141,9 +141,9 @@ exports.removeAllForPrj = function (req, res) {
         logger.info("Successful deletion of all issues for project");
         res.sendStatus(200);
     };
-    let err = function (err) {
+    let err = function (_err) {
         logger.warn(
-            `Delete failed for all issues in project ${req.params.PrjName}: ${JSON.stringify(err)}`
+            `Delete failed for all issues in project ${req.params.PrjName}: ${JSON.stringify(_err)}`
         );
         res.send(409, "Failed to remove issue");
     };

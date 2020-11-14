@@ -1,12 +1,10 @@
 // Load .env file
 require("dotenv").config();
-
 const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
 const passport = require("passport");
-//const LocalStrategy = require('passport-local');
-//const http = require('http');
+const LocalStrategy = require("passport-local");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("./lib/appLogger.js");
@@ -14,13 +12,11 @@ const reqLogger = require("./lib/reqLogger.js");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-//const errorHandler = require('errorhandler');
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
 //const users = require("./users.js");
 //const mongoAuth = require('./server/mongoAuth.js');
-//const { check, checkSchema, validationResult, } = require("express-validator/check");
 const {check, checkSchema, validationResult} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
@@ -34,14 +30,16 @@ const reporting = require("./server/reporting");
 const port = process.env.PORT || config.port;
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 let oauthConfig = {};
-oauthConfig.github = {};
-oauthConfig.google = {};
-oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
-oauthConfig.github.client_secret = process.env.GITHUB_CLIENT_SECRET;
-oauthConfig.github.redirect_uri = process.env.GITHUB_REDIRECT_URI;
-oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
-oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
-oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+if (config.authMode == config.AUTH_MODE_OAUTH) {
+    oauthConfig.github = {};
+    oauthConfig.google = {};
+    oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
+    oauthConfig.github.client_secret = process.env.GITHUB_CLIENT_SECRET;
+    oauthConfig.github.redirect_uri = process.env.GITHUB_REDIRECT_URI;
+    oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
+    oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
+    oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+}
 let usersConfig = process.env.USERLIST;
 let userConfig = usersConfig.split(":");
 let users = [];
@@ -49,7 +47,7 @@ for (let i in userConfig) {
     let ava = userConfig[i].split(",");
     let user = {};
     for (let j in ava) {
-        [at, val] = ava[j].split("=");
+        let [at, val] = ava[j].split("=");
         user[at] = val;
     }
     //user.projects = [".*"];
@@ -63,106 +61,124 @@ for (let i in userConfig) {
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
-passport.serializeUser(function (user, done) {
-    logger.debug(`Serializing user ${user.username}`);
-    done(null, user);
-});
+if (config.authMode == config.AUTH_MODE_OAUTH) {
+    passport.serializeUser(function (user, done) {
+        logger.debug(`Serializing user ${user.username}`);
+        done(null, user);
+    });
 
-passport.deserializeUser(function (obj, done) {
-    logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
-    done(null, obj);
-});
+    passport.deserializeUser(function (obj, done) {
+        logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
+        done(null, obj);
+    });
+
+    passport.use(
+        new GoogleStrategy(
+            {
+                clientID: oauthConfig.google.client_id,
+                clientSecret: oauthConfig.google.client_secret,
+                callbackURL: oauthConfig.google.redirect_uri,
+                passReqToCallback: true,
+            },
+            function (request, accessToken, refreshToken, profile, cb) {
+                return cb(null, profile);
+                /*
+                User.findOrCreate({ googleId: profile.id }, function (err, user) {
+                return done(err, user);
+                }); */
+            }
+        )
+    );
+
+    passport.use(
+        new GitHubStrategy(
+            {
+                clientID: oauthConfig.github.client_id,
+                clientSecret: oauthConfig.github.client_secret,
+                callbackURL: oauthConfig.github.redirect_uri,
+            },
+            function (accessToken, refreshToken, profile, cb) {
+                return cb(null, profile);
+                /*
+                User.findOrCreate({ githubId: profile.id }, function (err, user) {
+                return cb(err, user); });
+                */
+            }
+        )
+    );
+}
 
 // Use the LocalStrategy within Passport to login users.
 /*
-passport.use('local-signin', new LocalStrategy(
-  {passReqToCallback : true}, //allows us to pass back the request to the callback
-  function(req, username, password, done) {
-    mongoAuth.localAuth(username, password)
-    .then(function (user) {
-      if (user) {
-        console.log("LOGGED IN AS: " + user.username);
-        req.session.success = 'You are successfully logged in ' + user.username + '!';
-        done(null, user);
-      }
-      if (!user) {
-        console.log("COULD NOT LOG IN");
-        req.session.error = 'Could not log user in. Please try again.'; //inform user could not log them in
-        done(null, user);
-      }
-    })
-    .fail(function (err){
-      console.log(err.body);
-    });
-  }
-));
+if (config.authMode == config.AUTH_MODE_LOCAL) {
+    passport.use(
+        "local-signin",
+        new LocalStrategy(
+            {passReqToCallback: true}, //allows us to pass back the request to the callback
+            function (req, username, password, done) {
+                mongoAuth
+                    .localAuth(username, password)
+                    .then(function (user) {
+                        if (user) {
+                            console.log("LOGGED IN AS: " + user.username);
+                            req.session.success =
+                                "You are successfully logged in " + user.username + "!";
+                            done(null, user);
+                        }
+                        if (!user) {
+                            console.log("COULD NOT LOG IN");
+                            req.session.error = "Could not log user in. Please try again."; //inform user could not log them in
+                            done(null, user);
+                        }
+                    })
+                    .fail(function (err) {
+                        console.log(err.body);
+                    });
+            }
+        )
+    );
+}
 */
-
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: oauthConfig.google.client_id,
-            clientSecret: oauthConfig.google.client_secret,
-            callbackURL: oauthConfig.google.redirect_uri,
-            passReqToCallback: true,
-        },
-        function (request, accessToken, refreshToken, profile, cb) {
-            return cb(null, profile);
-            /*
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      return done(err, user);
-    });
-    */
-        }
-    )
-);
-
-passport.use(
-    new GitHubStrategy(
-        {
-            clientID: oauthConfig.github.client_id,
-            clientSecret: oauthConfig.github.client_secret,
-            callbackURL: oauthConfig.github.redirect_uri,
-        },
-        function (accessToken, refreshToken, profile, cb) {
-            return cb(null, profile);
-            /*
-    User.findOrCreate({ githubId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });
-    */
-        }
-    )
-);
 
 // Use the LocalStrategy within Passport to Register/"signup" users.
 /* TODO: Renable below later (maybe) */
 /*
-passport.use('local-signup', new LocalStrategy(
- {passReqToCallback : true}, //allows us to pass back the request to the callback
- function(req, username, password, done) {
-   mongoAuth.localReg(username, password)
-   .then(function (user) {
-     if (user) {
-       console.log("REGISTERED: " + user.username);
-       req.session.success = 'You are successfully registered and logged in ' + user.username + '!';
-       done(null, user);
-     }
-     if (!user) {
-       console.log("COULD NOT REGISTER");
-       req.session.error = 'That username is already in use, please try a different one.'; //inform user could not log them in
-       done(null, user);
-     }
-   })
-   .fail(function (err){
-     console.log(err.body);
-   });
- }
-));
+if (config.authMode == config.AUTH_MODE_LOCAL) {
+    passport.use(
+        "local-signup",
+        new LocalStrategy(
+            {passReqToCallback: true}, //allows us to pass back the request to the callback
+            function (req, username, password, done) {
+                mongoAuth
+                    .localReg(username, password)
+                    .then(function (user) {
+                        if (user) {
+                            console.log("REGISTERED: " + user.username);
+                            req.session.success =
+                                "You are successfully registered and logged in " +
+                                user.username +
+                                "!";
+                            done(null, user);
+                        }
+                        if (!user) {
+                            console.log("COULD NOT REGISTER");
+                            req.session.error =
+                                "That username is already in use, please try a different one."; //inform user could not log them in
+                            done(null, user);
+                        }
+                    })
+                    .fail(function (err) {
+                        console.log(err.body);
+                    });
+            }
+        )
+    );
+}
 */
 
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
+    if (config.authMode == config.AUTH_MODE_NONE) return next();
     if (req.isAuthenticated()) {
         return next();
     }
@@ -173,6 +189,7 @@ function ensureAuthenticated(req, res, next) {
 
 // Test authorization
 function ensureAuthorized(req, res, next) {
+    if (config.authMode == config.AUTH_MODE_NONE) return next();
     let id = req.user.id;
     let provider = req.user.provider;
     let url = req.originalUrl;
@@ -181,14 +198,6 @@ function ensureAuthorized(req, res, next) {
             req.user
         )}`
     );
-    /*  
-    TODO: CWE-639: Authorization Bypass Through User-Controlled Key (server.js: 183)
-    Severity: High
-    Attack Vector: !func
-    Number of Modules Affected: 1
-    Description: The property named !func contains untrusted data, and (due to its name) may contain internal authorization data.
-    Remediation: Ensure that nothing in this application relies on this value to be a trusted indicator of security privilege or identity.
-    */
     let user = users.find((usr) => {
         return usr.id === id && usr.provider === provider;
     });
@@ -244,6 +253,10 @@ function getScopeQuery(prj) {
                 $or: [
                     {TTestName: {$regex: "^API"}},
                     {TTestName: {$regex: " API"}},
+                    {TTestName: {$regex: "REST"}},
+                    {TTestName: {$regex: "SOAP"}},
+                    {TTestName: {$regex: "AJAX"}},
+                    {TTestName: {$regex: "RPC"}},
                     {TType: {$regex: "^API"}},
                     {TIssueName: {$regex: "^API"}},
                     {TIssueName: {$regex: " API"}},
@@ -323,39 +336,15 @@ function getScopeQuery(prj) {
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
-/*
-TODO: CWE-352 Cross-Site Request Forgery (CSRF) (server.js: 220). 
-Severity: Medium
-Attack Vector: express
-Number of Modules Affected: 1
-Description: This Express application does not appear to use a known library or tool to protect against cross-site request forgery.
-Remediation: Ensure that all actions and routes that modify data are either protected with anti-CSRF tokens, or are designed in such a way to eliminate CSRF risk. 
-*/
 let app = express();
 app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(methodOverride());
-/* 
-TODO: CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute (server.js: 226)
-Severity: Low
-Attack Vector: !func
-Number of Modules Affected: 1
-Description: This call to !func() adds a cookie to the HTTP response that does not have the Secure attribute set. Failing to set this attribute allows the browser to send the cookie unencrypted over an HTTP session.
-Remediation: Set the Secure attribute for all cookies used by HTTPS sessions.
-*/
 app.use(session(config.session));
 app.use(passport.initialize());
-/* 
-TODO: CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute (server.js: 228)
-Severity: Low
-Attack Vector: !func
-Number of Modules Affected: 1
-Description: This call to !func() adds a cookie to the HTTP response that does not have the Secure attribute set. Failing to set this attribute allows the browser to send the cookie unencrypted over an HTTP session.
-Remediation: Set the Secure attribute for all cookies used by HTTPS sessions.
-*/
-app.use(passport.session());
+if (config.authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
 
@@ -461,77 +450,74 @@ app.get('/logout', function(req, res){
 */
 
 // ============================== GOOGLE AUTH ROUTES ==========================================
-/*
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve
-//   redirecting the user to google.com.  After authorization, Google
-//   will redirect the user back to this application at /auth/google/callback
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+if (config.authMode == config.AUTH_MODE_OAUTH) {
+    app.get(
+        "/auth/google",
+        passport.authenticate("google", {
+            scope: ["https://www.googleapis.com/auth/plus.login"],
+        })
+    );
 
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
-*/
-app.get(
-    "/auth/google",
-    passport.authenticate("google", {
-        scope: ["https://www.googleapis.com/auth/plus.login"],
-    })
-);
-//    [ 'https://www.googleapis.com/auth/plus.login',
-//    , 'https://www.googleapis.com/auth/plus.profile.emails.read' ] }
-//));
-
-app.get(
-    "/auth/google/callback",
-    passport.authenticate("google", {failureRedirect: "/login"}),
-    function (req, res) {
-        // Successful authentication, redirect home.
-        res.redirect("/");
-    }
-);
+    app.get(
+        "/auth/google/callback",
+        passport.authenticate("google", {failureRedirect: "/login"}),
+        function (req, res) {
+            // Successful authentication, redirect home.
+            res.redirect("/");
+        }
+    );
+}
 
 // ============================== GITHUB AUTH ROUTES ==========================================
-app.get("/auth/github", passport.authenticate("github"));
-//passport.authenticate('github', { scope: ['user:email']}));
-//passport.authenticate('github', { scope: ['user']}));
+if (config.authMode == config.AUTH_MODE_OAUTH) {
+    app.get("/auth/github", passport.authenticate("github"));
 
-app.get(
-    "/auth/github/callback",
-    passport.authenticate("github", {failureRedirect: "/login"}),
-    function (req, res) {
-        // Successful authentication, redirect home.
-        res.redirect("/");
-    }
-);
+    app.get(
+        "/auth/github/callback",
+        passport.authenticate("github", {failureRedirect: "/login"}),
+        function (req, res) {
+            // Successful authentication, redirect home.
+            res.redirect("/");
+        }
+    );
+}
 
 // ========================================== WEB APP ROUTES ==========================================
 // Logout
-app.get("/logout", function (req, res) {
-    req.logout();
-    res.redirect("/");
-    //req.session.notice = "You have successfully been logged out " + name + "!";
-});
+if (config.authMode == config.AUTH_MODE_NONE) {
+    app.get("/login", function (req, res) {
+        res.redirect("/");
+    });
+    app.get("/logout", function (req, res) {
+        res.redirect("/");
+    });
+    app.get("/account", function (req, res) {
+        res.redirect("/");
+    });
+} else {
+    app.get("/logout", function (req, res) {
+        req.logout();
+        res.redirect("/");
+        //req.session.notice = "You have successfully been logged out " + name + "!";
+    });
 
-// Display login page
-app.get("/login", function (req, res) {
-    res.render("login");
-});
+    // Display login page
+    app.get("/login", function (req, res) {
+        res.render("login");
+    });
 
-// Show account information
-app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    res.render("account", {user: req.user});
-});
+    // Show account information
+    app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
+        res.render("account", {user: req.user});
+    });
+}
 
 // Home
 app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
-    logger.silly(`User data = ${JSON.stringify(req.user)}`);
+    // Get user info
+    let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+    if (config.authMode == config.AUTH_MODE_OAUTH)
+        logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
 
     // Fetch from project collection
     let prjColl = db.get("project");
@@ -552,13 +538,12 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     prjColl.find(prjSubset, {sort: sortName}).then((projects) => {
         logger.info("Rendering home page");
         res.render("home", {
-            user: req.user,
+            user: user,
             TestRefBase: config.TestRefBase,
             projects: projects,
         });
     });
 });
-//let projects = funct.getProjects("project");
 
 // Show Project page
 app.get(
@@ -574,14 +559,18 @@ app.get(
             return res.status(422).json({errors: errors.array()});
         }
 
+        // Get user info
+        let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+
         // Fetch from project collection
         let prjColl = db.get("project");
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
         logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
         prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
+            logger.info(`Rendering project page for user ${user}`);
             res.render("project", {
-                user: req.user,
+                user: user,
                 CveRptBase: config.CveRptBase,
                 CveRptSuffix: config.CveRptSuffix,
                 prj: prj,
@@ -604,6 +593,9 @@ app.get(
             return res.status(422).json({errors: errors.array()});
         }
 
+        // Get user info
+        let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+
         // Fetch from project collection
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
@@ -620,16 +612,16 @@ app.get(
             let testKB = db.get("testkb");
             let issuesColl = db.get("issues");
             let cweColl = db.get("cwe");
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
                 // Search issues collection for matching issues
                 issuesColl.find(
                     {PrjName: req.params.PrjName},
                     {sort: {IPriority: -1, TIssueName: 1}},
-                    function (e, issues) {
+                    function (__e, issues) {
                         // Get sorted list of CWEs
-                        cweColl.find({}, {sort: {ID: 1}}, function (e, cwes) {
+                        cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
                             res.render("testing", {
-                                user: req.user,
+                                user: user,
                                 prj: prj,
                                 tests: tests,
                                 issues: issues,
@@ -749,7 +741,7 @@ app.post(
             // Search the Test KB for matching tests
             logger.info("Searching TestKB with scope query ", scopeQuery);
             let testKB = db.get("testkb");
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function (e, tests) {
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
                 issueRes.createTodos(req, res, tests);
             });
         });

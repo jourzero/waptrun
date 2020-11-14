@@ -42,9 +42,11 @@
         </tr>
 
         <tr class="iTR">
-            <th class="issueTH">Test Ref</th>
+            <th class="issueTH">Test Ref
+            <a href="#" id="TTRefA" target="TRWin">&gt;</a> 
+            </th>
             <td class="issueVals">
-                <a href="#" id="TTRefA" target="TRWin">&gt;</a> <input id="TTRef" class="testKbIn" type="text"
+                <input id="TTRef" class="testKbIn" type="text"
                     placeholder="URI reference for tester" /></td>
         </tr>
     </table>
@@ -55,7 +57,7 @@
         <tr class="iTR">
             <th class="issueTH">CWE</th>
             <td class="issueVals" id='cweTD'>
-                <input id="cweIn" type="text" list="cweDL" placeholder="Search by CWE Name">
+                <input id="cweIn" type="text" list="cweDL" placeholder="Search">
                 <a class="issueA" target="cweTab" id="cweref" href="https://cwe.mitre.org/" title="Ref URI"></a>
                 <button id="useCweIssueDataBtn" class="kbBtn"
                     title="Click this button if you want to use the CWE data to update the generic issue.">
@@ -112,7 +114,8 @@
 
         <tr class="iTR">
             <th class="issueTH">Issue Ref</th>
-            <td class="issueVals"><a href="#" id="TRef1A" target="TRWin">&gt;</a>
+            <td class="issueVals">
+                <a href="#" id="TRef1A" target="TRWin">&gt;</a>
                 <input id="TRef1" class="testKbInShort" type="text" placeholder="Ref 1" />
                 <a href="#" id="TRef2A" target="TRWin">&gt;</a>
                 <input id="TRef2" class="testKbInShort" type="text" placeholder="Ref 2" /></td>
