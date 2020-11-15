@@ -1,24 +1,25 @@
 #!/bin/bash
 #========================================================================================
-# mongorestore.sh: Run mongorestore from within the waptr container
-# Prerequisite: Set the MONGODB_URL env. variable if the import is for a remote DB.
+# mongorestore.sh: Run mongorestore in the waptrdb (mongodb) container
+# Prerequisites: 
+# - Set the REM_BACKUP_DIR env. variable if the backup needs to be pulled from a remote host.
 #========================================================================================
-MONGODB_URL_LOCAL="mongodb://waptrdb:27017/waptrunner"
-DEFAULT_DIR="/app/data/backup"
+set -x
+LOC_BACKUP_DIR="$PWD/../backup"
+CTR_BACKUP_DIR="/app/backup"
+SVC_NAME="waptrdb"
 
-read -p "Do you want the operation on local DB ($MONGODB_URL_LOCAL)? [y]: " answer
-if [ "$answer" = "" -o "$answer" = "y" ];then
-    MONGODB_URL="$MONGODB_URL_LOCAL"
+# Pull a remote backup
+if [ "$REM_BACKUP_DIR" != "" ];then
+    read -p "Pull backup data from remote host? [n] " answer
+    if [ "$answer" = y ];then
+        mv "$LOC_BACKUP_DIR/waptrunner" "${LOC_BACKUP_DIR}/waptrunner.$(date +%Y%m%d).$$" 2>/dev/null
+        scp -rp "$REM_BACKUP_DIR/waptrunner" "$LOC_BACKUP_DIR"
+    fi
 fi
 
-read -p "Data directory to restore [$DEFAULT_DIR] " DIR
-if [ "$DIR" = "" ];then
-    DIR="$DEFAULT_DIR"
-fi
-if [ -d "$DIR" ];then
-    echo -e "-- Restoring data from $DIR..."
-    mongorestore --drop --uri="$MONGODB_URL" "$DIR"
-else
-    echo -e "ERROR: Directory $DIR does not exist"
-    exit 1
+# Restore to local DB
+read -p "Restore MongoDB to local directory ${BACKUP_DIR} in $SVC_NAME container? [n] " answer
+if [ "$answer" = y ];then
+    docker-compose exec "$SVC_NAME" /usr/bin/mongorestore --drop --db=waptrunner --host 127.0.0.1:27017 "$CTR_BACKUP_DIR/waptrunner"
 fi
