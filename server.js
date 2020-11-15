@@ -264,12 +264,10 @@ function getScopeQuery(prj) {
                 ],
             };
             break;
-        case "Combo":
+        case "Default":
             scopeQuery = {
                 $or: [
-                    //{TSource: "CWE-Top-25"},
                     {TSource: "OWASP-WSTG"},
-                    //{TSource: "OWASP-TG4"},
                     {TSource: "WAHH2"},
                     {TSource: "TBHM2015"},
                     {TSource: "Extras"},

@@ -117,8 +117,8 @@ function restUpdateLastTID(testId, prjName) {
 function restCreatePrj(prjName) {
     let kvp = {};
     kvp.name = prjName;
-    kvp.scope = "TG4";
-    kvp.scopeQry = "OWASP-TG4";
+    kvp.scope = "DEF";
+    kvp.scopeQry = "Default";
 
     // Send post request
     let url = "/api/project";
