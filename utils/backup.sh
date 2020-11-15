@@ -17,7 +17,7 @@ COLLECTIONS[4]="cwe"
 FIELDS[1]="TID,TSource,TTestName,TType,TDescription,TIssueName,TIssueType,TSeverity,TTesterSupport,TPhase,TSection,TStep,TIssueBackground,TRemediationBackground,TStdTest,TRef1,TRef2,TTRef,TCweID,TPCI,TTop10,TTop25"
 # NOTE: The below field list excludes IScreenshots (from issues collection), to avoid breaking CSV and for smaller/editable exports
 FIELDS[2]='PrjName,TID,CweId,TIssueName,TIssueBackground,TRemediationBackground,TSeverity,TRef1,TRef2,TSeverityText,IURIs,IEvidence,IPriority,IPriorityText,INotes'
-FIELDS[3]='name,scope,scopeQry,lastTID'
+FIELDS[3]='name,TTestNameKeyword,scope,scopeQry,PciTests,StdTests,Top10Tests,Top25Tests,notes,software'
 FIELDS[4]='ID,Name,Weakness_Abstraction,Status,Description_Summary,Extended_Description,Related_Weaknesses,Weakness_Ordinalities,Applicable_Platforms,Background_Details,Alternate_Terms,Modes_Of_Introduction,Exploitation_Factors,Likelihood_of_Exploit,Common_Consequences,Detection_Methods,Potential_Mitigations,Observed_Examples,Functional_Areas,Affected_Resources,Taxonomy_Mappings,Related_Attack_Patterns,Notes'
 NUM_COLLS=4
 EXPORT_TYPE="csv"
