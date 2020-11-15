@@ -12,12 +12,19 @@
 
 ## Collection: project
 
-| Attribute | Description                                                              |
-| --------- | ------------------------------------------------------------------------ |
-| name      | Project Name in YYYYMM-NAME-ENV format -- e.g. 201903-NinaWebRuntime-Lab |
-| scope     | Short name for scope -- e.g. TG4                                         |
-| scopeQry  | Descriptive name for scope/methodology -- e.g. OWASP-TG4                 |
-| lastTID   | Last Test ID executed or viewed while testing -- e.g. OTG4-4.12.07       |
+| Attribute        | Description                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| name             | Project Name in YYYYMM-NAME-ENV format -- e.g. 201903-NinaWebRuntime-Lab                                     |
+| scope            | Short name for scope -- e.g. TG4                                                                             |
+| scopeQry         | Descriptive name for scope/methodology -- e.g. OWASP-TG4                                                     |
+| lastTID          | Last Test ID executed or viewed while testing -- e.g. OTG4-4.12.07                                           |
+| TTestNameKeyword | Filter keyword to use to choose a subset of tests -- e.g. XSS                                                |
+| PciTests         | Filter boolean to choose tests that apply to PCI-DSS -- e.g. true                                            |
+| StdTests         | Filter boolean to only choose tests that are part of our own standard battery of tests -- e.g. false         |
+| Top10Tests       | Filter boolean to only choose tests that apply to OWASP Top 10 -- e.g. false                                 |
+| Top25Tests       | Filter boolean to only choose tests that apply to SANS/CWE Top 25 most dangerous software bugs -- e.g. false |
+| notes            | Scope notes - e.g. This project is for testing app APP_NAME in Staging. Applicable URL is URL...             |
+| software         | Comma-separated list of software components -- e.g. apache+tomcat+6.0.0,jquery+1.4.2                         |
 
 ## Collection: testkb
 
