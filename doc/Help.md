@@ -33,19 +33,19 @@ Refer to [Methodologies](Methodologies.md).
 
 ### Intro
 
-This is a tool that has helped me run through app pen tests by stepping through various tests and log issues easily without taking too much screen space -- i.e. allowing tiling of the AUT on the left side of the screen (75% width) and this test runner app on the right (25% width).
+This is a tool that has helps executing app pen tests by stepping through various tests and log issues easily without taking too much screen space -- i.e. allowing tiling of the AUT on the left side of the screen (75% width) and this test runner app on the right (25% width).
 
 It is built on NodeJS, ExpressJS and PassportJS and it uses a MongoDB to persist the results and to evolve a Security Testing Knowledge Base over time, from our own testing. It can easily run in a lightweight Docker container and it allows for multiple testers to contribute on the same or different projects from the same Node server or the same MongoDB (issues are logged as quickly and atomically as possible). It's not impossible to experience some data update issues while working collaboratively but it is assumed that concurrent testers communicate via Slack/Teams/Skype while dividing and conquering.
 
 ### Concept
 
-This project was initiated when I started spending more time doing app security testing. I felt challenged trying to streamline my testing while trying to maximize coverage, trying to avoid missing special stuff and trying to capture useful findings without getting bogged down. In other words, I needed something to help keep my mind free, focused and engaged while not missing the capture of manual findings along the way.
+This project is meant solve the challenge of streamlining security testing while trying to maximize coverage and trying to capture useful findings without getting bogged down. In other words, it helps keep the tester's mind free, focused and engaged while not missing the capture of manual findings along the way.
 
-[Methodologies](Methodologies.md) are supposed to be good for test streamlining but they are traditionally not that good at reducing the time it takes to test and they prevent us from adjusting our strategy based on signs of weaknesses and choosing the right rabbit hole. However, I have to say that The Bug Hunter Methodology is the closest thing I can think of that can qualify as a nearly-repetitive and methodical hacker approach. But it doesn't help to capture the results and stay focused by completing a testing mandate. The missing link is a targeted tool to avoid losing context while testing by capturing findings easily and iteratively.
+[Methodologies](Methodologies.md) are supposed to be good for test streamlining but they are traditionally not that good at reducing the time it takes to test and they prevent us from adjusting our strategy based on signs of weaknesses and choosing the right rabbit hole. However, The Bug Hunter Methodology is the closest thing that can qualify as a nearly-repetitive and methodical hacker approach. But it doesn't help to capture the results and stay focused by completing a testing mandate. The missing link is a targeted tool to avoid losing context while testing by capturing findings easily and iteratively.
 
 ### Design
 
-The above Basic Idea was a statement of a pentester's frustrations that needed to be translated into a Design. Requirements and Design are blurred voluntarily to avoid losing track of _the thing_ to build. The problem I wanted to solve with this app is to streamline my work by following a methodology while preserving some agility during testing (jumping between phases).
+The above Basic Idea was a statement of a pentester's frustrations that needed to be translated into a Design. Requirements and Design are blurred voluntarily to avoid losing track of _the thing_ to build. The problem to solve with this app is to streamline my work by following a methodology while preserving some agility during testing (jumping between phases).
 
 The tool's design approach considered the Web App Pen Testing Workflow and Security Tester User Experience requirements.
 
