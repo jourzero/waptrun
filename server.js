@@ -260,6 +260,7 @@ function getScopeQuery(prj) {
                     {TType: {$regex: "^API"}},
                     {TIssueName: {$regex: "^API"}},
                     {TIssueName: {$regex: " API"}},
+                    {TSource: {$regex: "API"}},
                     {TSection: {$regex: "^API"}},
                 ],
             };
@@ -277,6 +278,7 @@ function getScopeQuery(prj) {
         case "BCVRT":
         case "Extras":
         case "TBHM2015":
+        case "OWASP-API-T10":
         case "OWASP-ASVS":
         case "OWASP-TG4":
         case "OWASP-WSTG":
