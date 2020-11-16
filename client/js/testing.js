@@ -256,7 +256,7 @@ function evtShowIssue() {
 function evtUseCweIssueData() {
     console.info("Overriding generic issue data from CWE data");
     let cweId = $("#cweIn").val();
-    uiUpdateCwe(cweId, true);
+    uiUpdateCwe(cweId, false);
 }
 
 // Refresh Page event
@@ -354,9 +354,8 @@ function uiChangeTest(testId) {
 function uiClearCweFields() {
     console.info("Clearing CWE values");
     $("#cweIn").val("");
-    $("#cweref").attr("href", "");
-    $("#cweref").html("");
-    $("#cweref").attr("title", "");
+    $("#cweref").attr("href", "#");
+    $("#cweref").attr("title", "Click here only when CWE ID is not empty");
 }
 
 // Clear Issue Information
@@ -585,7 +584,6 @@ function uiUpdateCwe(cweId, forceUpdate) {
         console.info("Updating UI for CWE-" + cweId);
         $("#cweIn").val(cweId);
         $("#cweref").attr("href", gCweUriBase + cweId + ".html");
-        $("#cweref").html("CWE-" + cweId);
 
         restGetCwe(cweId, function (cwe) {
             if (cwe !== null) {
@@ -593,8 +591,8 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 uiUpdateStatus("Received REST response for CWE ID " + cweId);
 
                 // Update the description in the title (visible via hovering)
-                let descr = cwe.Name + ": " + cwe.Description;
-                $("#cweref").attr("title", descr);
+                let title = "Click here for more details on CWE-" + cweId;
+                $("#cweref").attr("title", title);
 
                 // If the issue name is empty, use the CWE name.
                 let issueName = $("#TIssueName").val();
@@ -679,7 +677,7 @@ function uiUpdateFromTestKB(testId) {
             if (rec.TCweID !== undefined) {
                 $("#cweIn").val(rec.TCweID);
                 $("#cweref").attr("href", gCweUriBase + rec.TCweID + ".html");
-                $("#cweref").html("CWE-" + rec.TCweID);
+                $("#cweref").attr("title", "Click here to view more details for CWE-" + rec.TCweID);
             } else {
                 uiClearCweFields();
             }
