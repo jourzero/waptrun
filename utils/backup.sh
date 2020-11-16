@@ -37,6 +37,12 @@ exportAll(){
     done
 }
 
+# Warn on missing REM_BACKUP_DIR config
+if [ "$REM_BACKUP_DIR" = "" ];then
+    echo "WARNING: The environment variable REM_BACKUP_DIR is undefined. Will skip the backup push to a remote server."
+    sleep 5
+fi
+
 # Backup DB using tools in the DB container
 echo -e "\n"
 echo -e "\n- Creating container backup directory ${CTR_BACKUP_DIR}, just in case..."

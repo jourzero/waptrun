@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="/stylesheets/documentation.css">
 <div class="container">
 
 # Web App Pen Test Runner

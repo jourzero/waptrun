@@ -26,3 +26,11 @@ th {
     background-color: #4caf50;
     color: white;
 }
+
+img {
+    max-height: 700px;
+    max-width: 700px;
+    height: auto;
+    width: auto;
+    border: 1px dashed DarkSlateBlue;
+}
