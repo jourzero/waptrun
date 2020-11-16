@@ -4,7 +4,6 @@
 # Prerequisites: 
 # - Set the REM_BACKUP_DIR env. variable if the backup needs to be pulled from a remote host.
 #========================================================================================
-set -x
 LOC_BACKUP_DIR="$PWD/../backup"
 CTR_BACKUP_DIR="/app/backup"
 SVC_NAME="waptrdb"
@@ -13,8 +12,7 @@ SVC_NAME="waptrdb"
 if [ "$REM_BACKUP_DIR" != "" ];then
     read -p "Pull backup data from remote host? [n] " answer
     if [ "$answer" = y ];then
-        mv "$LOC_BACKUP_DIR/waptrunner" "${LOC_BACKUP_DIR}/waptrunner.$(date +%Y%m%d).$$" 2>/dev/null
-        scp -rp "$REM_BACKUP_DIR/waptrunner" "$LOC_BACKUP_DIR"
+        scp -rp "$REM_BACKUP_DIR/app/backup/waptrunner" "$LOC_BACKUP_DIR"
     fi
 fi
 
