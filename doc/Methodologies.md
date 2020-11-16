@@ -55,13 +55,13 @@
 | PCI | Tests that are applicable to help meet PCI-DSS (R6.5/R6.6)        |
 | T10 | Tests that apply to the OWASP Top 10 Issues                       |
 | T25 | Tests that apply to the SANS/CWE Top 25 dangerous security issues |
-| Std | Tests that we want to perform in most of our assessments          |
+| Std | Tests to perform in most assessments                              |
 
 ## References
 
 ### API Tests
 
-Our combined list of API tests from various sources. We use a complex database query to build this list.
+Our combined list of API tests from various sources. A complex database query is used to build this list.
 
 ### Bugcrowd VRT
 
@@ -77,7 +77,7 @@ The 2020 Common Weakness Enumeration (CWE™) [Top 25 Most Dangerous Software We
 
 ### Extras
 
-The [Extras](https://github.com/jourzero/waptrun/blob/master/dbinit/testkb-extras.csv) include tests that we felt were missing from common methodologies and that we decided to add manually in the Testing screen.
+The [Extras](https://github.com/jourzero/waptrun/blob/master/dbinit/testkb-extras.csv) include tests that were missing from common methodologies and were added manually in the Testing screen.
 
 ### OWASP API Top 10
 
