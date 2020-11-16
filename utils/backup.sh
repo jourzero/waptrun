@@ -61,11 +61,12 @@ docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${TODAY}.$$.tg
 echo -e "\n"
 if [ "$REM_BACKUP_DIR" != "" ];then
     echo -e "\n- Pushing ${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz to remote directory ${REM_BACKUP_DIR}..."
-    if [ "$answer" = y ];then
-        scp -rp "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$REM_BACKUP_DIR"
-    fi
-    echo -e "\n- Move ${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz to $HOST_DOWNLOADS_DIR..."
-    mv "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$HOST_DOWNLOADS_DIR"
+    scp -rp "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$REM_BACKUP_DIR"
+
 else
     echo -e "\nNOTE: Variable REM_BACKUP_DIR is not defined, skipping backup to remote host."
 fi
+
+# Move backup under ~/Downloads to avoid project accumulation
+echo -e "\n- Move ${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz to $HOST_DOWNLOADS_DIR..."
+mv "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$HOST_DOWNLOADS_DIR"
