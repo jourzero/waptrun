@@ -16,6 +16,7 @@
         -   [Bugcrowd VRT](#bugcrowd-vrt)
         -   [CWE Top 25](#cwe-top-25)
         -   [Extras](#extras)
+        -   [OWASP API Top 10](#owasp-api-top-10)
         -   [OWASP TG](#owasp-tg)
         -   [OWASP WSTG](#owasp-wstg)
         -   [OWASP ASVS](#owasp-asvs)
@@ -23,26 +24,29 @@
         -   [SANS SEC-642](#sans-sec-642)
         -   [TBHM](#tbhm)
         -   [WAHH](#wahh)
+        -   [Web Services](#web-services)
 
 <!-- /TOC -->
 
 ## Supported Methodologies
 
-| Type        | Methodology Name                                        | Version Supported | Summary                                      |
-| ----------- | ------------------------------------------------------- | ----------------- | -------------------------------------------- |
-| Combination | All Tests                                               |                   | Includes all tests from below methodologies  |
-| Combination | API Tests                                               |                   | Includes API tests from below methodologies  |
-| Combination | Combo                                                   |                   | Includes combination of below with "(\*)"    |
-| Helpers     | [BugCrowd Vulnerability Rating Taxonomy](#bugcrowd-vrt) | v1.3 (2017)       | Not a methodology but a useful ref.          |
-| Helpers     | [CWE Top 25](#cwe-top-25)                               | (2020)            | SANS' list of top 25 software bugs (as CWEs) |
-| Helpers     | [Extras](#extras) (\*)                                  | (2020)            | Tests we added manually ourselves            |
-| OWASP       | [Web App Security Test Guide](#owasp-tg)                | V4.0 (2014)       | Test Guide from OWASP (current release)      |
-| OWASP       | [Web Security Testing Guide](#owasp-wstg) (\*)          | V5.0 (2020)       | Test Guide from OWASP (next release)         |
-| OWASP       | [ASVS](#owasp-asvs)                                     | v4.0.2 (2020)     | App Security Verification Standard           |
-| SANS        | [SEC542](#sans-sec-542)                                 |                   | SANS Web App Pen Testing Methodology         |
-| SANS        | [SEC642](#sans-sec-642)                                 |                   | SANS Advanced Web App Pen Testing (add-ons)  |
-| De-facto    | [The Bug Hunter Methodology](#tbhm) (\*)                | v1.0 (2015)       | Useful tests for bug hunting                 |
-| De-facto    | [Web App Hacking Handbook (WAHH)](#wahh) (\*)           | Vol. 2 (2011)     | Well-respected methodology (de-facto)        |
+| Type        | Methodology Name                                              | Version Supported | Summary                                           |
+| ----------- | ------------------------------------------------------------- | ----------------- | ------------------------------------------------- |
+| Combination | All Tests                                                     |                   | Includes all tests from below methodologies       |
+| Combination | [API Tests](#api-tests)                                       |                   | Includes API tests from below methodologies       |
+| Combination | Default (all stars)                                           |                   | Combination of the best sources (in bold)         |
+| Helpers     | [BugCrowd Vulnerability Rating Taxonomy](#bugcrowd-vrt) (VRT) | v1.3 (2017)       | Not a methodology but a useful ref.               |
+| De-facto    | **[Bug Hunter](#tbhm)** (TBHM)                                | v1.0 (2015)       | Useful tests for bug hunting                      |
+| Helpers     | [CWE Top 25](#cwe-top-25)                                     | (2020)            | SANS' list of top 25 software bugs (as CWEs)      |
+| Helpers     | **[Extras](#extras)**                                         |
+| OWASP       | [OWASP API Top 10](#owasp-api-top-10)                         | V1.0 (2019)       | API Top 10 from OWASP                             |
+| OWASP       | [OWASP ASVS](#owasp-asvs)                                     | v4.0.2 (2020)     | App Security Verification Standard from OWASP     |
+| OWASP       | [OWASP TG4](#owasp-tg)                                        | V4.0 (2014)       | Test Guide from OWASP (current release)           |
+| OWASP       | **[OWASP WSTG](#owasp-wstg)**                                 | V5.0 (2020)       | Web Security Test Guide from OWASP (next release) |
+| SANS        | [SEC542](#sans-sec-542)                                       |                   | SANS Web App Pen Testing Methodology              |
+| SANS        | [SEC642](#sans-sec-642)                                       |                   | SANS Advanced Web App Pen Testing (add-ons)       |
+| De-facto    | **[Web App Hacking Handbook (WAHH)](#wahh)**                  | Vol. 2 (2011)     | Well-respected methodology (de-facto)             |
+| Helpers     | **[Web Services](#web-services)**                             | TBD               | Web Services testing methodology (from a book)    |
 
 ### Filters
 
@@ -75,6 +79,10 @@ The 2020 Common Weakness Enumeration (CWE™) [Top 25 Most Dangerous Software We
 
 The [Extras](https://github.com/jourzero/waptrun/blob/master/dbinit/testkb-extras.csv) include tests that we felt were missing from common methodologies and that we decided to add manually in the Testing screen.
 
+### OWASP API Top 10
+
+Refer to [OWASP Web App Testing Guide](https://owasp.org/www-project-web-security-testing-guide/assets/archive/OWASP_Testing_Guide_v4.pdf) (v4).
+
 ### OWASP TG
 
 Refer to [OWASP Web App Testing Guide](https://owasp.org/www-project-web-security-testing-guide/assets/archive/OWASP_Testing_Guide_v4.pdf) (v4).
@@ -95,8 +103,6 @@ Refer to [OWASP ASVS v4.0.2](https://github.com/OWASP/ASVS/tree/v4.0.2/4.0/en).
 
 Refer to the SANS [SEC-542 Syllabus](https://www.sans.org/cyber-security-courses/web-app-penetration-testing-ethical-hacking/).
 
-<img src="../screenshots/SEC542.png" width="400"/>
-
 ### SANS SEC-642
 
 Refer to the SANS [SEC-642 Syllabus](https://www.sans.org/cyber-security-courses/advanced-web-app-penetration-testing-ethical-hacking/).
@@ -111,3 +117,7 @@ Refer to the [Web Application Hacker's Handbook](https://portswigger.net/web-sec
 
 <img src="../screenshots/WAHH.jpg" width="800"/>
 </div>
+
+### Web Services
+
+> TODO: Add details on this methodology book.
