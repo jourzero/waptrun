@@ -1,2 +1,2 @@
-name,scope,scopeQry,lastTID
-202001-SampleProject-Dev,API,API,S542-1.1.02
+name,TTestNameKeyword,scope,scopeQry,PciTests,StdTests,Top10Tests,Top25Tests,notes,software
+202001-DVNA-Sandbox,,WAH,WAHH2,false,false,false,false,Demo this app while using the [Damn Vulnerable Node App](https://github.com/appsecco/dvna) in a sandboxed env.,
