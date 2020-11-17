@@ -8,7 +8,7 @@ HOST_BACKUP_DIR="$PWD/../backup"
 HOST_DOWNLOADS_DIR="$HOME/Downloads"
 CTR_BACKUP_DIR="/app/backup"
 SVC_NAME="waptrdb"
-TODAY="$(date +%Y%m%d)"
+NOW="$(date +%Y%m%d-%H%M%S)"
 DB="waptrunner"
 COLLECTIONS[1]="testkb"
 COLLECTIONS[2]="issues"
@@ -54,19 +54,19 @@ docker-compose exec "$SVC_NAME" /usr/bin/mongodump --db="${DB}" --host 127.0.0.1
 echo -e "\n- Running export and saving ${DB} collections to ${CTR_BACKUP_DIR}..."
 exportAll 
 
-echo -e "\n- Compressing to ${CTR_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz..."
-docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$CTR_BACKUP_DIR"
+echo -e "\n- Compressing to ${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz..."
+docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$CTR_BACKUP_DIR"
 
 # Push backup to remote host using SSH/SCP
 echo -e "\n"
 if [ "$REM_BACKUP_DIR" != "" ];then
-    echo -e "\n- Pushing ${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz to remote directory ${REM_BACKUP_DIR}..."
-    scp -rp "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$REM_BACKUP_DIR"
+    echo -e "\n- Pushing ${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz to remote directory ${REM_BACKUP_DIR}..."
+    scp -rp "${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$REM_BACKUP_DIR"
 
 else
     echo -e "\nNOTE: Variable REM_BACKUP_DIR is not defined, skipping backup to remote host."
 fi
 
 # Move backup under ~/Downloads to avoid project accumulation
-echo -e "\n- Move ${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz to $HOST_DOWNLOADS_DIR..."
-mv "${HOST_BACKUP_DIR}/${DB}.${TODAY}.$$.tgz" "$HOST_DOWNLOADS_DIR"
+echo -e "\n- Move ${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz to $HOST_DOWNLOADS_DIR..."
+mv "${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$HOST_DOWNLOADS_DIR"
