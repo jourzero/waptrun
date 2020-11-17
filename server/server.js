@@ -15,16 +15,15 @@ const cookieParser = require("cookie-parser");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
-//const users = require("./users.js");
-//const mongoAuth = require('./server/mongoAuth.js');
+//const mongoAuth = require('mongoAuth.js');
 const {check, checkSchema, validationResult} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
-const prjRes = require("./server/ProjectRes");
-const testkbRes = require("./server/TestKBRes");
-const issueRes = require("./server/IssueRes");
-const cweRes = require("./server/CweRes");
-const reporting = require("./server/reporting");
+const prjRes = require("./ProjectRes.js");
+const testkbRes = require("./TestKBRes.js");
+const issueRes = require("./IssueRes.js");
+const cweRes = require("./CweRes.js");
+const reporting = require("./reporting.js");
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
@@ -356,19 +355,19 @@ if (config.authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 app.disable("etag");
 
 // !!!IMPORTANT: place this before static or similar middleware
-app.use(require("express-markdown")({directory: path.join(__dirname, "doc")}));
+app.use(require("express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve favicon and static content
-app.use(favicon(path.join(__dirname, "client", "favicon.ico")));
-app.use(express.static(path.join(__dirname, "client")));
-app.use("/screenshots", express.static(__dirname + "/screenshots/"));
+app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
+app.use(express.static(path.join(__dirname, "../client")));
+app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/")));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
-app.use("/dist/jquery", express.static(__dirname + "/node_modules/jquery/dist/"));
-app.use("/dist/bootstrap", express.static(__dirname + "/node_modules/bootstrap/dist/"));
+app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/")));
+app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
 
 // Serve private static content
-app.use("/static", express.static(__dirname + "/static/"));
+app.use("/static", express.static(path.join(__dirname, "../static/")));
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {

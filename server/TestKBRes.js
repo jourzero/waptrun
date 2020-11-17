@@ -2,7 +2,7 @@ const testkb = require("./TestKBModel")();
 //const {validationResult} = require("express-validator/check");
 //const {matchedData} = require("express-validator/filter");
 const {validationResult, matchedData} = require("express-validator");
-const logger = require("../lib/appLogger.js");
+const logger = require("./lib/appLogger.js");
 
 exports.findAll = function (req, res) {
     // Check for input validation errors in the request

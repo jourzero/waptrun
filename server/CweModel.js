@@ -1,4 +1,4 @@
-const config = require("../config.js");
+const config = require("./config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 
 // CWE constructor
@@ -14,19 +14,19 @@ function CWE() {
 }
 
 // Retrieve a list of all persisted
-CWE.prototype.findAll = function(success, error) {
+CWE.prototype.findAll = function (success, error) {
     this.cwe.find({}, {}, response(success, error));
 };
 
 // Retrieve a cwe by its id
-CWE.prototype.findById = function(id, success, error) {
+CWE.prototype.findById = function (id, success, error) {
     console.log("Trying to find by id", id);
     this.cwe.findOne({ID: parseInt(id)}, response(success, error));
 };
 
 // Retrieve a cwe by its Name
 // TODO: fix the find query to make it work with the name
-CWE.prototype.findByName = function(cweName, success, error) {
+CWE.prototype.findByName = function (cweName, success, error) {
     this.cwe.findOne({Name: cweName}, response(success, error));
 };
 
@@ -34,8 +34,8 @@ CWE.prototype.findByName = function(cweName, success, error) {
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
 // the caller's implementation will send an appropriate http response.
-var response = function(success, error) {
-    return function(err, doc) {
+var response = function (success, error) {
+    return function (err, doc) {
         if (err) {
             // an error occurred, call the supplied error function
             error(err);
