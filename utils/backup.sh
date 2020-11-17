@@ -55,7 +55,8 @@ echo -e "\n- Running export and saving ${DB} collections to ${CTR_BACKUP_DIR}...
 exportAll 
 
 echo -e "\n- Compressing to ${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz..."
-docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$CTR_BACKUP_DIR"
+docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$CTR_BACKUP_DIR/${DB}" \
+    "$CTR_BACKUP_DIR/cwe.csv" "$CTR_BACKUP_DIR/issues.csv" "$CTR_BACKUP_DIR/project.csv" "$CTR_BACKUP_DIR/testkb.csv"
 
 # Push backup to remote host using SSH/SCP
 echo -e "\n"
