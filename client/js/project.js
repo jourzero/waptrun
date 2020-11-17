@@ -9,13 +9,12 @@ $("#PrjName").on("change", function () {
     }
 });
 
-$("#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest,#TTestNameKeyword").on(
-    "change",
-    function () {
-        let prj = uiGetProject();
-        if (prj !== undefined) restUpdateProject(prj);
-    }
-);
+$(
+    "#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest,#TTestNameKeyword,#TCweIDSearch"
+).on("change", function () {
+    let prj = uiGetProject();
+    if (prj !== undefined) restUpdateProject(prj);
+});
 
 $("#PrjSoftware").on("change", function () {
     uiUpdateCveLinks();
@@ -63,6 +62,7 @@ function uiClearProjectFields() {
     $("#PrjSoftware").val("");
     $("#CveRptLinks").html("");
     $("#TTestNameKeyword").val("");
+    $("#TCweIDSearch").val("");
     $("#PrjNotes").val("");
     $("#PrjNotes").attr("title", "");
     $("#ScopeSel").prop("selectedIndex", 0);
@@ -82,6 +82,7 @@ function uiGetProject() {
     prj.scopeQry = $("#ScopeSel").val().trim();
     //prj.lastTID = $("#LastTID").html().trim();
     prj.TTestNameKeyword = $("#TTestNameKeyword").val();
+    prj.TCweIDSearch = $("#TCweIDSearch").val();
     prj.PciTests = $("#TPCI").prop("checked");
     prj.Top10Tests = $("#TTop10").prop("checked");
     prj.Top25Tests = $("#TTop25").prop("checked");

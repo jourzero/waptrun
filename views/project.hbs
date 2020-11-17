@@ -39,7 +39,8 @@
     <tr>
         <th class="issueTH">Filter</th>
         <td class="issueVals">
-            Keyword: <input type="text" id="TTestNameKeyword" title="Keyword for specific tests to include" value="{{prj.TTestNameKeyword}}" />
+            <input type="text" id="TTestNameKeyword" title="Keyword for specific tests to include" value="{{prj.TTestNameKeyword}}" placeholder="Test Name Keyword" />
+            <input type="text" id="TCweIDSearch"      title="Find a tests matching a CWE ID" value="{{prj.TCweIDSearch}}" placeholder="CWE ID" />
             <input type="checkbox" id="TPCI" class="testKbCB" value="PCI" title="Subset for PCI-DSS Compliance">PCI
             <input type="checkbox" id="TTop10" class="testKbCB" value="Top10" title="Subset to cover OWASP Top 10">T10
             <input type="checkbox" id="TTop25" class="testKbCB" value="Top25"

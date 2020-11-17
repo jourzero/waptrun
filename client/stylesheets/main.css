@@ -262,8 +262,19 @@ tr .ExcludePriority {
 
 img {
     max-width: 100%;
+    max-height: 700px;
+    height: auto;
+    width: auto;
+    border: 1px dashed DarkSlateBlue;
 }
 
 .navbar {
     min-height: 24px;
+}
+
+#TTestNameKeyword {
+    width: 150px;
+}
+#TCweIDSearch {
+    width: 70px;
 }

@@ -242,6 +242,7 @@ function getScopeQuery(prj) {
     let Top25Tests = prj.Top25Tests;
     let StdTests = prj.StdTests;
     let TTestNameKeyword = prj.TTestNameKeyword;
+    let TCweIDSearch = prj.TCweIDSearch;
 
     // Build scope query
     switch (prj.scopeQry) {
@@ -292,16 +293,15 @@ function getScopeQuery(prj) {
     }
     logger.debug(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
 
-    let UseKeyword = false;
-    if (
-        TTestNameKeyword !== undefined &&
-        TTestNameKeyword !== null &&
-        TTestNameKeyword.length > 0
-    ) {
-        UseKeyword = true;
-    }
+    let useTestNameKeyword = false;
+    if (TTestNameKeyword !== undefined && TTestNameKeyword !== null && TTestNameKeyword.length > 0)
+        useTestNameKeyword = true;
 
-    if (PciTests || Top10Tests || Top25Tests || StdTests || UseKeyword) {
+    let useTCweIDSearch = false;
+    if (TCweIDSearch !== undefined && TCweIDSearch !== null && TCweIDSearch.length > 0)
+        useTCweIDSearch = true;
+
+    if (PciTests || Top10Tests || Top25Tests || StdTests || useTestNameKeyword || useTCweIDSearch) {
         let filter = {};
         if (PciTests)
             filter =
@@ -323,11 +323,18 @@ function getScopeQuery(prj) {
                 JSON.stringify(filter).length <= 2
                     ? {TStdTest: StdTests}
                     : {$or: [filter, {TStdTest: StdTests}]};
-        if (UseKeyword)
+        if (useTestNameKeyword)
             filter =
                 JSON.stringify(filter).length <= 2
                     ? {TTestName: {$regex: TTestNameKeyword}}
-                    : {$and: [filter, {TTestName: {$regex: TTestNameKeyword}}]};
+                    : {
+                          $and: [filter, {TTestName: {$regex: TTestNameKeyword}}],
+                      };
+        if (useTCweIDSearch)
+            filter =
+                JSON.stringify(filter).length <= 2
+                    ? {TCweID: TCweIDSearch}
+                    : {$or: [filter, {TCweID: TCweIDSearch}]};
 
         scopeQuery = {$and: [scopeQuery, filter]};
     }

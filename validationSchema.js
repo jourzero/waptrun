@@ -119,6 +119,10 @@ module.exports = {
             matches: { options: vals.TTestNameKeyword.matches },
             errorMessage: vals.TTestNameKeyword.errorMessage,
         },
+        TCweIDSearch: {
+            matches: { options: vals.TCweIDSearch.matches },
+            errorMessage: vals.TCweIDSearch.errorMessage,
+        },
         scope: {
             optional: true,
             matches: { options: vals.scope.matches },
