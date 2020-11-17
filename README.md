@@ -20,7 +20,7 @@
 
 ## Usage Help
 
-Refer to [Help](doc/Help.md) for end-user documentation and to [methodologies supported](doc/Methodologies.md) for additional details.
+Refer to [Help](server/doc/Help.md) for end-user documentation and to [methodologies supported](server/doc/Methodologies.md) for additional details.
 
 ## Running this code within Docker
 
@@ -212,12 +212,12 @@ Welcome to the MongoDB shell.
 
 Resulting page with TestKB, Generic Issue Data, Specific Issue Data and Issue List:
 
-![Compact Test Runner](../screenshots/c1.png)
+![Compact Test Runner](server/doc/screenshots/c1.png)
 
 ## Current Features
 
 -   Multi-project
--   Multiple [methodologies supported](Methodologies.md)
+-   Multiple [methodologies supported](server/doc/Methodologies.md)
 -   Test stepping
 -   Dynamic Test KB updates
 -   Dynamic, color-coded issue list, per project

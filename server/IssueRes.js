@@ -1,6 +1,6 @@
 const issue = require("./IssueModel")();
 const {validationResult, matchedData} = require("express-validator");
-const logger = require("../lib/appLogger.js");
+const logger = require("./lib/appLogger.js");
 
 // Find all issues in all projects (routes: /api/issue, /issues.csv)
 exports.findAll = function (req, res) {

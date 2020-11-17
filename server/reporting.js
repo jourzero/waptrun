@@ -1,7 +1,7 @@
 require("dotenv").config();
 const issue = require("./IssueModel")();
 const marked = require("marked");
-const config = require("../config.js");
+const config = require("./config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
 

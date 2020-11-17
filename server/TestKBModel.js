@@ -1,6 +1,6 @@
 // export this module, so that it is accessible to our application modules
 module.exports = TestKB;
-const config = require("../config.js");
+const config = require("./config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
 
@@ -15,12 +15,12 @@ function TestKB() {
 }
 
 // Retrieve a list of all persisted
-TestKB.prototype.findAll = function(success, error) {
+TestKB.prototype.findAll = function (success, error) {
     this.testkb.find({}, {}, response(success, error));
 };
 
 // Retrieve a document by its id
-TestKB.prototype.findById = function(id, success, error) {
+TestKB.prototype.findById = function (id, success, error) {
     /*
     TODO: CWE-117 Improper Output Neutralization for Logs
     TestKBModel.js: 24
@@ -36,22 +36,22 @@ TestKB.prototype.findById = function(id, success, error) {
 
 // Retrieve a document by its Name
 // TODO: fix the find query to make it work with the name
-TestKB.prototype.findByTID = function(tid, success, error) {
+TestKB.prototype.findByTID = function (tid, success, error) {
     this.testkb.findOne({TID: tid}, response(success, error));
 };
 
 // Persist a new document to mongodb
-TestKB.prototype.create = function(doc, success, error) {
+TestKB.prototype.create = function (doc, success, error) {
     this.testkb.insert(doc, response(success, error));
 };
 
 // Update an existing document by id in mongodb
-TestKB.prototype.update = function(tid, data, success, error) {
+TestKB.prototype.update = function (tid, data, success, error) {
     this.testkb.update({TID: tid}, {$set: data}, response(success, error));
 };
 
 // Remove a document by id from the mongodb
-TestKB.prototype.removeById = function(id, success, error) {
+TestKB.prototype.removeById = function (id, success, error) {
     this.testkb.remove({_id: id}, response(success, error));
 };
 
@@ -59,8 +59,8 @@ TestKB.prototype.removeById = function(id, success, error) {
 // The caller will supply this function. The callers implementation
 // will provide the necessary logic. In the case of the sample app,
 // the caller's implementation will send an appropriate http response.
-let response = function(success, error) {
-    return function(err, doc) {
+let response = function (success, error) {
+    return function (err, doc) {
         if (err) {
             // an error occurred, call the supplied error function
             error(err);

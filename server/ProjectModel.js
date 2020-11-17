@@ -1,9 +1,9 @@
 // export this module, so that it is accessible to our application modules
 module.exports = Projects;
-const config = require("../config.js");
+const config = require("./config.js");
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const db = require("monk")(mongodbUrl);
-const logger = require("../lib/appLogger.js");
+const logger = require("./lib/appLogger.js");
 
 // Projects constructor
 function Projects() {

@@ -99,3 +99,5 @@ dbinit/waptrunner.1/project.metadata.json
 dbinit/waptrunner.1/testkb.bson
 dbinit/waptrunner.1/testkb.metadata.json
 utils/CyberChef_v9.21.0.zip
+server/logs/app.log
+server/logs/access.log

@@ -55,21 +55,21 @@ The tool's design approach considered the Web App Pen Testing Workflow and Secur
 
 Define the test project scope and perform some high-level footprinting and architectural analysis. Fill the first project level (project page). Help put yourself in a test strategy mode.
 
-![Project Details](../screenshots/p1.png)
+![Project Details](screenshots/p1.png)
 
 ### Mapping
 
 Do your natural app mapping/discovery/inspection by using the app and looking at the traffic in Burp. Use some of the first set of listed tests from [supported methodologies](Methodologies.md) to remind yourself of important stuff to avoid closing down your mind on testing options. Get tactical. Understand the technology and design choices that were made while building the AUT:
 
-![Browse for Tests](../screenshots/p2a.png).
+![Browse for Tests](screenshots/p2a.png).
 
 If browsing for a test is too cumbersome, search for it:
 
-![Search for Tests](../screenshots/p2b.png).
+![Search for Tests](screenshots/p2b.png).
 
 If you consider that a test is missing, add it:
 
-![Adding new Tests](../screenshots/p2c.png).
+![Adding new Tests](screenshots/p2c.png).
 
 ### Vuln Discovery
 
@@ -77,7 +77,7 @@ If you consider that a test is missing, add it:
 
 Once you have enough payloads, perform some targeted scanning from interesting requests. Save important scanner issues into the tool as Issues. Use [Burp Clipboarder extension](https://github.com/jourzero/clipboarder) to populate various fields with issue data. These automated test results will help build attack scenarios or think of manual tests to conduct.
 
-![Testing Screen](../screenshots/p3.png).
+![Testing Screen](screenshots/p3.png).
 
 #### Manual Testing
 
@@ -85,17 +85,17 @@ Execute some targeted manual tests. Look at the scanner findings, use your judgm
 
 Capture screen shots and paste them into the Paste Area field.
 
-![Paste Screenshots](../screenshots/p4.png)
+![Paste Screenshots](screenshots/p4.png)
 
 ### Exploitation
 
 Look at all accumulated results and try to build a successful attack that'll compromise the system or provide sufficient worry about the security of the system. Capture payloads and screen shots and explain the risk. Search for the closest CWE that provides background for the issue and add our expert opinions.
 
-![CWE Search](../screenshots/p5.png)
+![CWE Search](screenshots/p5.png)
 
 Add notes by filling the template to explain the issue in details, the risk, the impact, etc.
 
-![Add Notes](../screenshots/p5b.png)
+![Add Notes](screenshots/p5b.png)
 
 ### Reporting
 
@@ -103,10 +103,10 @@ Generate a report and review it. Tweak your findings and regenerate the report. 
 
 Export to a single-file HTML for easy pasting or attachment into emails or ticketing systems:
 
-![HTML Report](../screenshots/p6a.png)
+![HTML Report](screenshots/p6a.png)
 
 Export to CSV to help PMs with remediation tracking:
 
-![CSV Report](../screenshots/p6b.png)
+![CSV Report](screenshots/p6b.png)
 
 </div>
