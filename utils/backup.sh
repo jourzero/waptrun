@@ -63,6 +63,7 @@ echo -e "\n"
 if [ "$REM_BACKUP_DIR" != "" ];then
     echo -e "\n- Pushing ${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz to remote directory ${REM_BACKUP_DIR}..."
     scp -rp "${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$REM_BACKUP_DIR"
+    scp -rp "${HOST_BACKUP_DIR}/${DB}" "$REM_BACKUP_DIR"
 
 else
     echo -e "\nNOTE: Variable REM_BACKUP_DIR is not defined, skipping backup to remote host."

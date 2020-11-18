@@ -2,6 +2,8 @@
  * REST client functions
  */
 
+const {format} = require("morgan");
+
 /**
  * restDeleteIssue
  * @param {string} prjName
@@ -328,6 +330,46 @@ function restAddTodos(prjName) {
             },
             422: function (data) {
                 formatValidationError(data);
+            },
+        },
+    });
+}
+
+/**
+ * restSendTestPayload
+ * @param {string} toolname
+ * @param {string} payload
+ */
+function restRunHackTool(toolname, payload, callback) {
+    // Send post request
+    let url = `/api/${toolname}`;
+    let contentType = "application/json";
+    let dataType = "json";
+    switch (toolname) {
+        case "xmlparser":
+            //contentType = "text/xml";
+            contentType = "text/plain";
+            dataType = "json";
+            break;
+    }
+
+    console.info("Sending POST request to url " + url);
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: contentType,
+        data: payload,
+        dataType: dataType,
+        success: callback,
+        statusCode: {
+            404: function () {
+                warningMessage("HTTP 404: Could not process the request to run the hack tool.");
+            },
+            409: function () {
+                warningMessage("HTTP 409: Could not process the request to run the hack tool.");
+            },
+            500: function () {
+                warningMessage("HTTP 500: Could not process the request to run the hack tool.");
             },
         },
     });

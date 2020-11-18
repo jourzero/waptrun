@@ -1,0 +1,37 @@
+<div id='msg' role='alert'></div>
+
+<table class="issueTab">
+    <tr class="iTR">
+        <th class="issueTH">Input Area</th>
+        <td class="prjLeft"><textarea id="InputArea" rows="10"
+                placeholder="Enter inputs to process here."></textarea></td>
+    </tr>
+    <tr class="iTR">
+        <th class="issueTH">Output Area</th>
+        <td class="prjLeft"><textarea id="OutputArea" rows="10"
+                placeholder="Outputs will be shown here"></textarea> </td>
+    </tr>
+</table>
+<button id="AddXML" class="button black" title="Add XML sample data then click Parse XML">Add XML Sample</button>
+<button id="ParseXML" class="button black"
+    title="Parse the XML data in the Input Area">Parse XML Input</button>
+
+<script src="/js/utils.js"></script>
+<script src="/js/sampledata.js"></script>
+<script src="/js/rest.js"></script>
+<script src="/js/validator.min.js"></script>
+<script>
+    $("#AddXML").click(function () {
+        $("#InputArea").val(sampleXml);
+    });
+    $("#ParseXML").click(function () {
+        $("#OutputArea").val("");
+        let xmlData = $("#InputArea").val();
+        restRunHackTool("xmlparser", xmlData, function (data) {
+            if (data !== null && data !== undefined) 
+                $("#OutputArea").val(JSON.stringify(data, null, 2));
+            else 
+                $("#OutputArea").val(JSON.stringify("ERROR, review logs"));
+        });
+    });
+</script>

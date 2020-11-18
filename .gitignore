@@ -101,3 +101,5 @@ dbinit/waptrunner.1/testkb.metadata.json
 utils/CyberChef_v9.21.0.zip
 server/logs/app.log
 server/logs/access.log
+doc/hacking/sqlite/sqlite3
+utils/sqlite-tools-linux-x86-3330000/sqlite3
