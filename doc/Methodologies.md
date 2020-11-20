@@ -116,8 +116,9 @@ Refer to the [Bug Hunter's Methodology](https://github.com/jhaddix/tbhm#the-bug-
 Refer to the [Web Application Hacker's Handbook](https://portswigger.net/web-security/web-application-hackers-handbook). There's also the related [Burp Documentation](https://portswigger.net/burp/documentation/contents) that provides additional substance and [workflow](https://portswigger.net/burp/documentation/desktop/penetration-testing#testing-workflow) details.
 
 <img src="../screenshots/WAHH.jpg" width="800"/>
-</div>
 
 ### Web Services
 
 > TODO: Add details on this methodology book.
+
+</div>
