@@ -46,7 +46,7 @@
 | SANS        | [SEC542](#sans-sec-542)                                       |                   | SANS Web App Pen Testing Methodology              |
 | SANS        | [SEC642](#sans-sec-642)                                       |                   | SANS Advanced Web App Pen Testing (add-ons)       |
 | De-facto    | **[Web App Hacking Handbook (WAHH)](#wahh)**                  | Vol. 2 (2011)     | Well-respected methodology (de-facto)             |
-| Helpers     | **[Web Services](#web-services)**                             | TBD               | Web Services testing methodology (from a book)    |
+| Helpers     | [Web Services](#web-services)                                 | TBD               | Web Services testing methodology (from a book)    |
 
 ### Filters
 
