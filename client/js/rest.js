@@ -2,8 +2,6 @@
  * REST client functions
  */
 
-const {format} = require("morgan");
-
 /**
  * restDeleteIssue
  * @param {string} prjName
@@ -99,8 +97,8 @@ function restUpdateIssue(issue) {
 // TODO: Save LastTID to Project collection
 function restUpdateLastTID(testId, prjName) {
     console.info("SKIPPED: Updating LastTID for project " + prjName);
-    return;
 
+    /*
     let url = "/api/project/" + prjName;
     console.info("Sending PUT request to url " + url + ": lastTID=" + testId);
     $.ajax({
@@ -110,6 +108,7 @@ function restUpdateLastTID(testId, prjName) {
         data: JSON.stringify({lastTID: testId}),
         dataType: "json",
     });
+    */
 }
 
 /**
@@ -225,8 +224,8 @@ function restUpdateProject(prj) {
         data: data,
         dataType: "json",
         statusCode: {
-            422: function (data) {
-                formatValidationError(data);
+            422: function (rdata) {
+                formatValidationError(rdata);
             },
         },
     });
@@ -250,8 +249,8 @@ function restUpdateTest(testId, data) {
             409: function () {
                 warningMessage("Could not process the request to update test.");
             },
-            422: function (data) {
-                formatValidationError(data);
+            422: function (rdata) {
+                formatValidationError(rdata);
             },
         },
     });
@@ -336,23 +335,14 @@ function restAddTodos(prjName) {
 }
 
 /**
- * restSendTestPayload
+ * restSendTestPayload: Send post request
  * @param {string} toolname
  * @param {string} payload
  */
 function restRunHackTool(toolname, payload, callback) {
-    // Send post request
-    let url = `/api/${toolname}`;
-    let contentType = "application/json";
+    let url = `/api/hacktool/${toolname}`;
+    let contentType = "text/plain";
     let dataType = "json";
-    switch (toolname) {
-        case "xmlparser":
-            //contentType = "text/xml";
-            contentType = "text/plain";
-            dataType = "json";
-            break;
-    }
-
     console.info("Sending POST request to url " + url);
     $.ajax({
         url: url,
@@ -362,14 +352,14 @@ function restRunHackTool(toolname, payload, callback) {
         dataType: dataType,
         success: callback,
         statusCode: {
-            404: function () {
-                warningMessage("HTTP 404: Could not process the request to run the hack tool.");
+            404: function (data) {
+                warningMessage(`HTTP 404: Could not process this hack: ${JSON.stringify(data)}`);
             },
             409: function () {
-                warningMessage("HTTP 409: Could not process the request to run the hack tool.");
+                warningMessage(`HTTP 409: Could not process this hack: ${JSON.stringify(data)}`);
             },
             500: function () {
-                warningMessage("HTTP 500: Could not process the request to run the hack tool.");
+                warningMessage(`HTTP 500: Could not process this hack: ${JSON.stringify(data)}`);
             },
         },
     });

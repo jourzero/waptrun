@@ -2,64 +2,154 @@ const logger = require("./lib/appLogger.js");
 //const xml2js = require("xml2js");
 //const parser = new xml2js.Parser();
 const libxmljs = require("libxmljs");
+const serialize = require("node-serialize");
+const mysql = require("mysql");
+const sqlite3 = require("sqlite3");
+const dbFile = "/app/data/chinook.db";
 
 exports.xmlparser = function (req, res) {
+    let ok = function (doc) {
+        logger.info(`Successful hacktool execution. Doc: ${doc}`);
+        res.json(doc);
+    };
+    let err = function (errMsg) {
+        logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
+        //res.status(404);
+        //res.send(errMsg);
+        res.json({ERROR: errMsg});
+    };
+    logger.info("Running XML parser");
+    parseXML(req.body, ok, err);
+};
+
+function parseXML(body, success, error) {
+    logger.debug(`BODY: ${body}`);
+    try {
+        let xmlDoc = libxmljs.parseXmlString(body, {noent: true, noblanks: true});
+        let elementType = xmlDoc.root().name();
+        let elements = [];
+        let elementsObj = {};
+        xmlDoc
+            .root()
+            .childNodes()
+            .forEach((element) => {
+                let newElement = {};
+                let elementName = element.name();
+                for (let node of element.childNodes()) {
+                    newElement[node.name()] = node.text();
+                }
+                elements.push(newElement);
+            });
+        //success({elements: elements});
+        elementsObj[elementType] = elements;
+        success(elementsObj);
+    } catch (e) {
+        error(`XML parsing error: ${e}`);
+    }
+}
+
+exports.jsonparser = function (req, res) {
     let ok = function (doc) {
         logger.info("Successful hacktool execution");
         res.json(doc);
     };
     let err = function (errMsg) {
         logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
-        res.sendStatus(404);
+        //res.status(404);
+        //res.send(errMsg);
+        res.json({ERROR: errMsg});
     };
-    logger.info("Running XML parser");
-    parseXml(req.body, ok, err);
+    logger.info("Running JSON parser");
+    parseJSON(req.body, ok, err);
 };
 
-function parseXml(body, success, error) {
+function parseJSON(body, success, error) {
     logger.debug(`BODY: ${body}`);
-    //this.testkb.findOne({_id: id}, response(success, error));
-    //var products = libxmljs.parseXmlString(req.files.products.data.toString('utf8'), {noent:true,noblanks:true})
-    let xmlDoc = libxmljs.parseXmlString(body, {noent: true, noblanks: true});
-    let products = [];
-    xmlDoc
-        .root()
-        .childNodes()
-        .forEach((product) => {
-            let newProduct = {};
-            newProduct.name = product.childNodes()[0].text();
-            newProduct.code = product.childNodes()[1].text();
-            newProduct.tags = product.childNodes()[2].text();
-            newProduct.description = product.childNodes()[3].text();
-            products.push(newProduct);
-        });
-    success({products: products});
-    /*
-    parser.parseString(body, function (err, result) {
-        if (err) {
-            error({status: "XML parsing error"});
-        }
-        if (result) {
-            var books = result["bookstore"]["book"];
-            success({books: books});
-        }
-        error({status: "Unknown error in parseXml"});
-    });
-    */
+    let jsonData = {};
+    try {
+        // Keep it insecure ;-) //jsonData = JSON.parse(body);
+        jsonData = serialize.unserialize(body);
+    } catch (e) {
+        error(`JSON parsing error: ${e}`);
+    }
+    success(jsonData);
 }
 
-// Callback to the supplied success and error functions
-// The caller will supply this function. The callers implementation
-// will provide the necessary logic. In the case of the sample app,
-// the caller's implementation will send an appropriate http response.
-let response = function (success, error) {
-    return function (err, doc) {
-        if (err) {
-            // an error occurred, call the supplied error function
-            error(err);
-        } else {
-            // call the supplied success function
-            success(doc);
-        }
+exports.mysql = function (req, res) {
+    let ok = function (doc) {
+        logger.info(`Successful hacktool execution. Doc: ${doc}`);
+        res.json(doc);
     };
+    let err = function (errMsg) {
+        logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
+        res.json({ERROR: errMsg});
+    };
+    logger.info("Running mysql interpreter");
+    mysqlQuery(req.body, ok, err);
 };
+
+function mysqlQuery(body, success, error) {
+    let connection = mysql.createConnection({
+        host: "localhost",
+        user: "tester",
+        database: "mysql",
+        password: "Passw0rd123",
+    });
+
+    try {
+        connection.connect();
+        connection.query(body, function (err, results, fields) {
+            if (err) {
+                error(`MySql query error: ${err}`);
+            } else {
+                success(results);
+            }
+        });
+        logger.debug("Ending connection");
+        connection.end();
+    } catch (e) {
+        error(`MySql client exception: ${e}`);
+    }
+}
+
+exports.sqlite = function (req, res) {
+    let ok = function (doc) {
+        logger.info(`Successful hacktool execution. Doc: ${JSON.stringify(doc)}`);
+        res.json(doc);
+    };
+    let err = function (errMsg) {
+        logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
+        res.json({ERROR: errMsg});
+    };
+    logger.info("Running mysql interpreter");
+    sqliteQuery(req.body, ok, err);
+};
+
+function sqliteQuery(body, success, error) {
+    try {
+        let db = new sqlite3.Database(dbFile);
+        logger.info(`Query to sqlite3 DB: ${body}`);
+        db.serialize(() => {
+            let results = [];
+            db.each(
+                body,
+                (err, row) => {
+                    if (err) {
+                        logger.error(`Error with sqlite3 query: ${err}`);
+                        return;
+                    }
+                    results.push(row);
+                },
+                () => {
+                    success(results);
+                }
+            );
+        });
+        logger.debug("Closing the DB");
+        db.close();
+    } catch (e) {
+        logger.error(`Exception with sqlite3 client: ${e}`);
+        error(`Exception with sqlite3 client: ${e}`);
+        return;
+    }
+}

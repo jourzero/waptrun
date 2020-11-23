@@ -25,7 +25,6 @@ const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
 const hacktool = require("./HackTool.js");
-//const xmlparser = require("express-xml-bodyparser");
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
@@ -345,12 +344,12 @@ function getScopeQuery(prj) {
 // ========================================== EXPRESS ==========================================
 // Configure Express
 let app = express();
+app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
-//app.use(xmlparser());
 app.use(methodOverride());
 app.use(session(config.session));
 app.use(passport.initialize());
@@ -652,7 +651,9 @@ app.get(
 
 // Hack Tool
 app.get("/hacktool", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    res.render("hacktool", {user: req.user});
+    // Get user info
+    let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+    res.render("hacktool", {user: user});
 });
 
 // ========================================== REST ROUTES ==========================================
@@ -794,8 +795,10 @@ app.get(
 );
 
 // Run xml parser hack tool
-//app.post("/api/xmlparser", xmlparser({trim: false, explicitArray: false}), hacktool.xmlparser);
-app.post("/api/xmlparser", hacktool.xmlparser);
+app.post("/api/hacktool/xmlparser", hacktool.xmlparser);
+app.post("/api/hacktool/jsonparser", hacktool.jsonparser);
+app.post("/api/hacktool/mysql", hacktool.mysql);
+app.post("/api/hacktool/sqlite", hacktool.sqlite);
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
 // Check if authenticated/authorized to export data

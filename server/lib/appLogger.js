@@ -1,17 +1,13 @@
-const winston = require("winston");
+const {createLogger, format, transports} = require("winston");
 const config = require("../config.js");
-
-// Requiring `winston-syslog` exposes `winston.transports.Syslog`
-//require("winston-syslog").Syslog;
-
-// define the custom settings for each transport (file, console)
-
-const logger = winston.createLogger({
+const {combine, timestamp, printf} = format;
+//const myFormat = printf(({level, message, timestamp}) => { return `${timestamp} ${level}: ${message}`; });
+const logger = createLogger({
+    //format: combine(format.colorize(), timestamp(), myFormat),
     transports: [
-        //new winston.transports.Syslog(config.logging.syslog),
-        new winston.transports.Console(config.logging.console),
-        new winston.transports.File(config.logging.file)
-    ]
+        new transports.Console(config.logging.console),
+        new transports.File(config.logging.file),
+    ],
 });
 
 module.exports = logger;

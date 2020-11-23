@@ -1,5 +1,6 @@
 const os = require("os");
-const winston = require("winston");
+const {createLogger, format, transports} = require("winston");
+const {combine, timestamp, printf} = format;
 const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
@@ -12,6 +13,9 @@ const LOCAL_USER = {
     displayName: "Anonymous User",
     local: true,
 };
+const myFormat = printf(({level, message, timestamp}) => {
+    return `${timestamp} ${level}: ${message}`;
+});
 
 module.exports = {
     AUTH_MODE_NONE,
@@ -69,7 +73,7 @@ module.exports = {
     // Configure app logging
     logging: {
         file: {
-            format: winston.format.json(), // This format shouldn't cause CRLF issues
+            format: combine(timestamp(), myFormat),
             level: "info",
             handleExceptions: true,
             json: true,
@@ -79,7 +83,7 @@ module.exports = {
             filename: `${appRoot}/logs/app.log`,
         },
         console: {
-            format: winston.format.simple(),
+            format: combine(format.colorize(), timestamp(), myFormat),
             level: "debug",
             handleExceptions: true,
             json: false,
@@ -87,7 +91,7 @@ module.exports = {
         },
         syslog: {
             app_name: appName, // The name of the application (Default: process.title).
-            format: winston.format.json(),
+            format: format.json(),
             level: "info",
             host: "syslog.local", // The host running syslogd, defaults to localhost.
             port: "514", // The port on the host that syslog is running on, defaults to syslogd's default port.
