@@ -1,6 +1,6 @@
 const os = require("os");
 const {createLogger, format, transports} = require("winston");
-const {combine, timestamp, printf} = format;
+const {combine, timestamp, printf, json} = format;
 const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
@@ -73,7 +73,7 @@ module.exports = {
     // Configure app logging
     logging: {
         file: {
-            format: combine(timestamp(), myFormat),
+            format: combine(timestamp(), json()),
             level: "info",
             handleExceptions: true,
             json: true,
