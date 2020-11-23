@@ -7,8 +7,33 @@
 <div id='msg' role='alert'></div>
 {{#if user}}
 
-
 <table class="issueTab">
+    <tr class="htTR">
+        <th class="htTH">Test Selector</th>
+        <td class="prjLeft2">
+            <table><tr><td>
+            <select id="HackToolSel" title="Scope" class="htSelector" onchange="switchTest()">
+                <option disabled selected value="">Choose tool here</option>
+                <option class="scopeOpt" title="XML Injection Testing"          value="xml">XML Parser</option>
+                <option class="scopeOpt" title="JSON Deserialization Testing"   value="json">JSON Deserializer</option>
+                <option class="scopeOpt" title="MySQL Queries"                  value="mysql">MySQL Queries</option>
+                <option class="scopeOpt" title="SqlLite3 Queries"               value="sqlite">SqlLite3 Queries</option>
+            </select></td>
+            <td>&nbsp;</td>
+            <td> <input type="checkbox" id="PrettifyOutput" class="testKbCB" title="Prettify Output?"> Prettify </td> 
+            <td>&nbsp;</td>
+            <td> <button onclick="runTest()"  id="RunHack"  class="button hacktool" title="Run the selected test"           hidden> Run it! </button> </td>
+            <td>&nbsp;</td>
+            <td> <button onclick="showHackHelp()" id="HackHelp" class="button hacktool" title="Show hacking help for the selected test" hidden> Hack Help </button> </td>
+            <td>&nbsp;</td>
+            <td> <button onclick="showDevHelp()" id="DevHelp" class="button hacktool" title="Show developer help for the selected test" hidden> Dev Help </button> </td>
+            <td>&nbsp;</td>
+            <td> <button onclick="showGenHelp()" id="GenHelp" class="button hacktool" title="Show general help for the selected test" hidden> General Help </button> </td>
+            <td>&nbsp;</td>
+            </tr> </table>
+        </td> 
+    </tr>
+
     <tr class="iTR">
         <th class="issueTH">Input Area</th>
         <td class="prjLeft"><textarea id="InputArea" rows="10"
@@ -27,6 +52,7 @@
                 placeholder="Outputs will be shown here"></textarea> </td>
     </tr>
 </table>
+<!--
 <table>
     <tr> <th> Add Sample: </th> 
         <td> <button onclick='addSample("xml")'         class="button black" title="Add sample data">XML</button> </td> 
@@ -47,4 +73,5 @@
         <td> <button onclick='showRef("sqlite")'         class="button black" title="Show Reference">SQLite</button> </td> 
     </tr>
 </table>
+-->
 {{/if}}
