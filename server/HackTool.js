@@ -1,6 +1,4 @@
 const logger = require("./lib/appLogger.js");
-//const xml2js = require("xml2js");
-//const parser = new xml2js.Parser();
 const libxmljs = require("libxmljs");
 const serialize = require("node-serialize");
 const mysql = require("mysql");
@@ -14,8 +12,6 @@ exports.xmlparser = function (req, res) {
     };
     let err = function (errMsg) {
         logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
-        //res.status(404);
-        //res.send(errMsg);
         res.json({ERROR: errMsg});
     };
     logger.info("Running XML parser");
@@ -55,8 +51,6 @@ exports.jsonparser = function (req, res) {
     };
     let err = function (errMsg) {
         logger.warn(`Failed hacktool execution: ${JSON.stringify(errMsg)}`);
-        //res.status(404);
-        //res.send(errMsg);
         res.json({ERROR: errMsg});
     };
     logger.info("Running JSON parser");
