@@ -5,7 +5,7 @@ const libxmljs = require("libxmljs");
 const serialize = require("node-serialize");
 const mysql = require("mysql");
 const sqlite3 = require("sqlite3");
-const dbFile = "/app/data/chinook.db";
+const dbFile = "/app/utils/chinook.db";
 
 exports.xmlparser = function (req, res) {
     let ok = function (doc) {
