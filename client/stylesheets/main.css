@@ -1,6 +1,6 @@
-button .kbBtn {
-    alignment-adjust: auto;
-}
+/*
+button .kbBtn { alignment-adjust: auto; }
+*/
 
 .button {
     text-decoration: none;
@@ -295,6 +295,11 @@ img {
 #TTestNameKeyword {
     width: 150px;
 }
+
+#HackConfig {
+    width: 480px;
+}
+
 #TCweIDSearch {
     width: 70px;
 }

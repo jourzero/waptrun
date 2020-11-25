@@ -339,8 +339,11 @@ function restAddTodos(prjName) {
  * @param {string} toolname
  * @param {string} payload
  */
-function restRunHackTool(toolname, payload, callback) {
+function restRunHackTool(toolname, payload, hackConfig, callback) {
     let url = `/api/hacktool/${toolname}`;
+    if (hackConfig !== "") {
+        url = `${url}?${hackConfig}`;
+    }
     let contentType = "text/plain";
     let dataType = "json";
     console.info("Sending POST request to url " + url);
