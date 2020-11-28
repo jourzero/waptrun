@@ -2,7 +2,7 @@ version: "2"
 services:
     app:
         container_name: waptr
-        restart: always
+        #restart: always
         build: .
         command: /bin/sh -c "npm install && npm install -g nodemon && nodemon --watch server server/server.js"
         volumes:
@@ -14,9 +14,17 @@ services:
 
     waptrdb:
         container_name: waptrdb
-        restart: always
+        #restart: always
         volumes:
             - .:/app
         image: mongo
         ports:
             - "27017:27017"
+
+    hacktools:
+        container_name: hack-tools
+        #volumes:
+        #    - .:/app
+        image: hack-tools
+        ports:
+            - "5001:5001"

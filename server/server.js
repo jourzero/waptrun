@@ -24,7 +24,6 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
-const hacktool = require("./HackTool.js");
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
@@ -649,13 +648,6 @@ app.get(
     }
 );
 
-// Hack Tool
-app.get("/hacktool", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    // Get user info
-    let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-    res.render("hacktool", {user: user});
-});
-
 // ========================================== REST ROUTES ==========================================
 
 // Check if authenticated/authorized to use the REST API
@@ -793,12 +785,6 @@ app.get(
     check("id").isInt(validationValues.CweId.isInt),
     cweRes.findById
 );
-
-// Run xml parser hack tool
-app.post("/api/hacktool/xmlparser", hacktool.xmlparser);
-app.post("/api/hacktool/jsonparser", hacktool.jsonparser);
-app.post("/api/hacktool/mysql", hacktool.mysql);
-app.post("/api/hacktool/sqlite", hacktool.sqlite);
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
 // Check if authenticated/authorized to export data
