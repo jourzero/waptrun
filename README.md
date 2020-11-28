@@ -7,7 +7,7 @@
     -   [Running this code within Docker](#running-this-code-within-docker)
         -   [Get the code](#get-the-code)
         -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
-        -   [At first run, download Mongo client and initialize the database](#at-first-run-download-mongo-client-and-initialize-the-database)
+        -   [At first run, initialize the database](#at-first-run-initialize-the-database)
         -   [When needed backup your database](#when-needed-backup-your-database)
         -   [When needed add TestKB data (e.g. using Excel)](#when-needed-add-testkb-data-eg-using-excel)
         -   [When needed, download new CWE data from Mitre and import it](#when-needed-download-new-cwe-data-from-mitre-and-import-it)
@@ -38,15 +38,10 @@ $ cd waptrun
 $ docker-compose up -d
 ```
 
-### At first run, download Mongo client and initialize the database
+### At first run, initialize the database
 
 ```bash
 $ cd utils/
-
-# Download and unpack Mongo client (from host)
-[utils]$ ./download-mongo-client.sh
-
-[utils]$ tar xvfz mongodb-database-tools-debian92-x86_64-100.2.0.tgz
 
 # Initialize the MongoDB database (from host)
 [utils]$ ./dbinit.sh
