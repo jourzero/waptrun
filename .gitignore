@@ -59,7 +59,6 @@ bower_components
 TODO
 nbproject
 old
-package-lock.json
 /client/css/
 #/client/js/bootstrap-3.3.7-dist/
 #/client/js/jquery-3.2.1.min.js
