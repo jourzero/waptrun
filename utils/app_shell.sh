@@ -1,6 +1,6 @@
 #!/bin/bash
 #========================================================================================
-# waptr_shell.sh: Run shell in the waptr container (where our main app is).
+# app_shell.sh: Run shell in the app container (where our main app is).
 #========================================================================================
 SVC_NAME="app"
 
