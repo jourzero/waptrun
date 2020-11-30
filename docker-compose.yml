@@ -21,7 +21,7 @@ services:
 
     hacktools:
         container_name: hack-tools
-        build: hack-tools
+        build: ./hack-tools
         # volumes:
         #    - ./hack-tools:/app
         ports:
