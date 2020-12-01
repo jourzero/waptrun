@@ -35,7 +35,6 @@
         "passport-google-oauth2": "0.x",
         "q": "1.x",
         "serve-favicon": "^2.1.0",
-        "sqlite3": "^5.0.0",
         "winston": "^3.3.3"
     },
     "devDependencies": {}
