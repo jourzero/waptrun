@@ -1,9 +1,9 @@
 version: "2"
 services:
-    app:
+    waptrun:
         container_name: waptrun
         build: .
-        command: /bin/sh -c "npm install && npm install -g nodemon && nodemon --watch server server/server.js"
+        command: /bin/sh -c "npm install && node_modules/.bin/nodemon --watch server --watch package.json server/server.js"
         volumes:
             - .:/app
         ports:
@@ -20,9 +20,9 @@ services:
             - "27017:27017"
 
     hacktools:
-        container_name: hack-tools
+        container_name: hacktools
         build: ./hack-tools
-        # volumes:
-        #    - ./hack-tools:/app
+        volumes:
+            - ./hack-tools:/app
         ports:
             - "5001:5001"
