@@ -22,9 +22,7 @@ services:
             - "27017:27017"
 
     hacktools:
-        container_name: hack-tools
-        #volumes:
-        #    - .:/app
+        container_name: hacktools
         image: hack-tools
         ports:
             - "5001:5001"
