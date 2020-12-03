@@ -234,7 +234,7 @@ function ensureAuthorized(req, res, next) {
 
 // Build filter for scope query
 function getScopeQuery(prj) {
-    logger.info(`Building scope query from scope query ${prj.scopeQry}`);
+    logger.debug(`Building scope query from scope query ${prj.scopeQry}`);
     let scopeQuery = {};
     let PciTests = prj.PciTests;
     let Top10Tests = prj.Top10Tests;
@@ -403,12 +403,12 @@ app.set("view engine", ".hbs");
 const monk = require("monk");
 const {exit} = require("process");
 const mongoURL = new URL(mongodbUrl);
-logger.debug(`Connecting to MongoDB server at ${mongoURL.host}`);
+logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
 const db = monk(mongodbUrl);
 
 // Check DB connection
 db.then(() => {
-    logger.debug("Connected successfully to mongodb server");
+    logger.info("Connected successfully to mongodb server");
 }).catch((err) => {
     logger.error("Mongodb connection error:", err);
     exit(1);
@@ -616,7 +616,7 @@ app.get(
             let scopeQuery = getScopeQuery(prj);
 
             // Search the Test KB for matching tests
-            logger.info("Searching TestKB with scope query ", scopeQuery);
+            logger.debug("Searching TestKB with scope query ", scopeQuery);
             let testKB = db.get("testkb");
             let issuesColl = db.get("issues");
             let cweColl = db.get("cwe");
