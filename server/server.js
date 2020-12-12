@@ -29,6 +29,7 @@ const reporting = require("./reporting.js");
 const port = process.env.PORT || config.port;
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 let oauthConfig = {};
+let users = [];
 if (config.authMode == config.AUTH_MODE_OAUTH) {
     oauthConfig.github = {};
     oauthConfig.google = {};
@@ -38,19 +39,18 @@ if (config.authMode == config.AUTH_MODE_OAUTH) {
     oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
     oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
     oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
-}
-let usersConfig = process.env.USERLIST;
-let userConfig = usersConfig.split(":");
-let users = [];
-for (let i in userConfig) {
-    let ava = userConfig[i].split(",");
-    let user = {};
-    for (let j in ava) {
-        let [at, val] = ava[j].split("=");
-        user[at] = val;
+    let usersConfig = process.env.USERLIST;
+    let userConfig = usersConfig.split(":");
+    for (let i in userConfig) {
+        let ava = userConfig[i].split(",");
+        let user = {};
+        for (let j in ava) {
+            let [at, val] = ava[j].split("=");
+            user[at] = val;
+        }
+        //user.projects = [".*"];
+        users.push(user);
     }
-    //user.projects = [".*"];
-    users.push(user);
 }
 
 //console.debug("OAuth config:", JSON.stringify(oauthConfig));
