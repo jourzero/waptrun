@@ -19,10 +19,10 @@ services:
         ports:
             - "27017:27017"
 
-    hacktools:
-        container_name: hacktools
+    hack-tools:
+        container_name: hack-tools
         build: ./hack-tools
-        volumes:
-            - ./hack-tools:/app
+        #volumes:
+        #    - ./hack-tools:/app
         ports:
             - "5001:5001"
