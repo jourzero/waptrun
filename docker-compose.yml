@@ -3,11 +3,12 @@ services:
     waptrun:
         container_name: waptrun
         build: .
-        command: /bin/sh -c "npm install && node_modules/.bin/nodemon --watch server --watch package.json server/server.js"
+        command: /bin/sh -c "npm install && node_modules/.bin/nodemon --watch server --watch package.json --inspect=0.0.0.0:9230 server/server.js"
         volumes:
             - .:/app
         ports:
             - "5000:5000"
+            - "9230:9230"
         links:
             - waptrdb
 
@@ -22,7 +23,8 @@ services:
     hack-tools:
         container_name: hack-tools
         build: ./hack-tools
-        #volumes:
-        #    - ./hack-tools:/app
+        volumes:
+            - ./hack-tools:/app
         ports:
             - "5001:5001"
+            - "9229:9229"

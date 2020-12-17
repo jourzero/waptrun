@@ -14,4 +14,5 @@ COPY . .
 RUN npm install
 
 EXPOSE 5000
+EXPOSE 9230
 CMD npm start
