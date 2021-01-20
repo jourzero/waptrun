@@ -16,7 +16,7 @@
         "app-root-path": "3.x",
         "bcryptjs": "2.x",
         "body-parser": "^1.19.0",
-        "bootstrap": "^4.5.3",
+        "bootstrap": "^4.6.0",
         "cookie-parser": "^1.4.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
