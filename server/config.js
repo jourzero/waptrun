@@ -5,7 +5,7 @@ const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
 const AUTH_MODE_OAUTH = 1;
-const AUTH_MODE_LOCAL = 2;
+//const AUTH_MODE_LOCAL = 2; // Not supported
 const LOCAL_USER = {
     id: 0,
     provider: "none",
@@ -20,7 +20,7 @@ const myFormat = printf(({level, message, timestamp}) => {
 module.exports = {
     AUTH_MODE_NONE,
     AUTH_MODE_OAUTH,
-    AUTH_MODE_LOCAL,
+    //AUTH_MODE_LOCAL,
     LOCAL_USER,
     port: 5000,
     appname: "WAPT Runner",
@@ -50,9 +50,7 @@ module.exports = {
     appName: appName,
 
     // Set authentication Mode. Supported: AUTH_MODE_NONE, AUTH_MODE_OAUTH
-    authMode: AUTH_MODE_NONE,
-    //authMode: AUTH_MODE_OAUTH,
-    //authMode: AUTH_MODE_LOCAL, // NOT SUPPORTED!
+    defaultAuthMode: AUTH_MODE_NONE,
 
     // Session secret
     session: {

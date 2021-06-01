@@ -288,6 +288,10 @@ img {
     border: 1px dashed DarkSlateBlue;
 }
 
+.ProfileImg {
+    height: 20px;
+}
+
 .navbar {
     min-height: 24px;
 }

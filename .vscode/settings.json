@@ -1,3 +1,4 @@
 {
-    "unofficialVeracodeExtension.pipelineScanFilepath": "target/waptrun.zip"
+    "unofficialVeracodeExtension.pipelineScanFilepath": "target/waptrun.zip",
+    "appService.deploySubpath": "."
 }

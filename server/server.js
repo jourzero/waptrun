@@ -28,9 +28,10 @@ const reporting = require("./reporting.js");
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
 const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 let oauthConfig = {};
 let users = [];
-if (config.authMode == config.AUTH_MODE_OAUTH) {
+if (authMode == config.AUTH_MODE_OAUTH) {
     oauthConfig.github = {};
     oauthConfig.google = {};
     oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
@@ -60,7 +61,7 @@ if (config.authMode == config.AUTH_MODE_OAUTH) {
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
-if (config.authMode == config.AUTH_MODE_OAUTH) {
+if (authMode == config.AUTH_MODE_OAUTH) {
     passport.serializeUser(function (user, done) {
         logger.debug(`Serializing user ${user.username}`);
         done(null, user);
@@ -109,7 +110,7 @@ if (config.authMode == config.AUTH_MODE_OAUTH) {
 
 // Use the LocalStrategy within Passport to login users.
 /*
-if (config.authMode == config.AUTH_MODE_LOCAL) {
+if (authMode == config.AUTH_MODE_LOCAL) {
     passport.use(
         "local-signin",
         new LocalStrategy(
@@ -142,7 +143,7 @@ if (config.authMode == config.AUTH_MODE_LOCAL) {
 // Use the LocalStrategy within Passport to Register/"signup" users.
 /* TODO: Renable below later (maybe) */
 /*
-if (config.authMode == config.AUTH_MODE_LOCAL) {
+if (authMode == config.AUTH_MODE_LOCAL) {
     passport.use(
         "local-signup",
         new LocalStrategy(
@@ -177,7 +178,7 @@ if (config.authMode == config.AUTH_MODE_LOCAL) {
 
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
-    if (config.authMode == config.AUTH_MODE_NONE) return next();
+    if (authMode == config.AUTH_MODE_NONE) return next();
     if (req.isAuthenticated()) {
         return next();
     }
@@ -188,7 +189,7 @@ function ensureAuthenticated(req, res, next) {
 
 // Test authorization
 function ensureAuthorized(req, res, next) {
-    if (config.authMode == config.AUTH_MODE_NONE) return next();
+    if (authMode == config.AUTH_MODE_NONE) return next();
     let id = req.user.id;
     let provider = req.user.provider;
     let url = req.originalUrl;
@@ -352,7 +353,7 @@ app.use(bodyParser.text());
 app.use(methodOverride());
 app.use(session(config.session));
 app.use(passport.initialize());
-if (config.authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
+if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
 
@@ -458,7 +459,7 @@ app.get('/logout', function(req, res){
 */
 
 // ============================== GOOGLE AUTH ROUTES ==========================================
-if (config.authMode == config.AUTH_MODE_OAUTH) {
+if (authMode == config.AUTH_MODE_OAUTH) {
     app.get(
         "/auth/google",
         passport.authenticate("google", {
@@ -477,7 +478,7 @@ if (config.authMode == config.AUTH_MODE_OAUTH) {
 }
 
 // ============================== GITHUB AUTH ROUTES ==========================================
-if (config.authMode == config.AUTH_MODE_OAUTH) {
+if (authMode == config.AUTH_MODE_OAUTH) {
     app.get("/auth/github", passport.authenticate("github"));
 
     app.get(
@@ -492,7 +493,7 @@ if (config.authMode == config.AUTH_MODE_OAUTH) {
 
 // ========================================== WEB APP ROUTES ==========================================
 // Logout
-if (config.authMode == config.AUTH_MODE_NONE) {
+if (authMode == config.AUTH_MODE_NONE) {
     app.get("/login", function (req, res) {
         res.redirect("/");
     });
@@ -523,8 +524,8 @@ if (config.authMode == config.AUTH_MODE_NONE) {
 // Home
 app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     // Get user info
-    let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-    if (config.authMode == config.AUTH_MODE_OAUTH)
+    let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+    if (authMode == config.AUTH_MODE_OAUTH)
         logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
 
     // Fetch from project collection
@@ -568,7 +569,7 @@ app.get(
         }
 
         // Get user info
-        let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+        let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
 
         // Fetch from project collection
         let prjColl = db.get("project");
@@ -602,7 +603,7 @@ app.get(
         }
 
         // Get user info
-        let user = config.authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+        let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
 
         // Fetch from project collection
         let prjRegex = {$regex: config.PrjSubset};
