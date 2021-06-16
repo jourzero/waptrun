@@ -28,7 +28,7 @@
         "marked": "^1.2.5",
         "method-override": "3.x",
         "mongodb": "^3.6.3",
-        "monk": "^7.3.2",
+        "monk": "^7.3.4",
         "morgan": "^1.10.0",
         "nodemon": "^2.0.6",
         "passport": "^0.4.1",
