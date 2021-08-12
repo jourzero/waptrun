@@ -74,3 +74,6 @@ doc/VSCode_AzureExt_AppService.png
 utils/restore-to-azure.sh
 doc/ConfigDetails.md
 .vscode/settings.json
+Dockerfile.node
+utils/push-to-registry.sh
+utils/mongoinit.sh
