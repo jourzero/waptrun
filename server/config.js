@@ -25,7 +25,8 @@ module.exports = {
     port: 5000,
     appname: "WAPT Runner",
     //'mongodbUrl': 'mongodb://USERNAME:PASSWORD!@HOSTNAME:PORT/DBNAME',
-    mongodbUrl: "mongodb://waptrdb:27017/waptrunner",
+    //mongodbUrl: "mongodb://waptrdb:27017/waptrunner",
+    mongodbUrl: "mongodb://127.0.0.1:27017/waptrunner",
 
     // Base URI and suffix part (to append after the query) for searching CVEs based on a partial software name
     //CveRptBase: "http://www.cvedetails.com/google-search-results.php?q=",
