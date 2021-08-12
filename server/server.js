@@ -1,5 +1,5 @@
 // Load .env file
-require("dotenv").config();
+//require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
@@ -24,6 +24,10 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
+const {execFile} = require("child_process");
+
+// ========================================== CONSTANTS ==========================================
+const dbinit_dir = "/app/dbinit/waptrunner";
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
@@ -410,6 +414,38 @@ const db = monk(mongodbUrl);
 // Check DB connection
 db.then(() => {
     logger.info("Connected successfully to mongodb server");
+
+    // Initialize the database when empty
+    let prjColl = db.get("project");
+    let testkbColl = db.get("testkb");
+    let issuesColl = db.get("issues");
+    let cweColl = db.get("cwe");
+
+    prjColl.count().then((count1) => {
+        testkbColl.count().then((count2) => {
+            issuesColl.count().then((count3) => {
+                cweColl.count().then((count4) => {
+                    let total = count1 + count2 + count3 + count4;
+                    if (total <= 0) {
+                        logger.info(
+                            "Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)"
+                        );
+                        execFile(
+                            "/usr/bin/mongorestore",
+                            ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir],
+                            (error, stdout, stderr) => {
+                                if (error) {
+                                    throw error;
+                                }
+                                logger.debug(`Mongorestore stdout: ${stdout}`);
+                                logger.debug(`Mongorestore stderr: ${stderr}`);
+                            }
+                        );
+                    } else logger.info(`Mongodb contains ${total} records total`);
+                });
+            });
+        });
+    });
 }).catch((err) => {
     logger.error("Mongodb connection error:", err);
     exit(1);
@@ -531,6 +567,8 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     // Fetch from project collection
     let prjColl = db.get("project");
     let testkbColl = db.get("testkb");
+    let issuesColl = db.get("issues");
+    let cweColl = db.get("cwe");
     let sortName = {name: -1};
     let prjRegex = {$regex: config.PrjSubset};
     let prjSubset = {name: prjRegex};
@@ -541,6 +579,12 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     });
     testkbColl.count().then((count) => {
         logger.debug(`Count of documents in collection "testkb": ${count}`);
+    });
+    issuesColl.count().then((count) => {
+        logger.debug(`Count of documents in collection "issues": ${count}`);
+    });
+    cweColl.count().then((count) => {
+        logger.debug(`Count of documents in collection "cwe": ${count}`);
     });
 
     logger.info("Searching for projects");
