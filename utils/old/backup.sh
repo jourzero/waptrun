@@ -1,8 +1,13 @@
 #!/bin/bash
 #========================================================================================
-# backup.sh: Backup the Mongo DB 
+# backup.sh: Backup the Mongo DB in the waptrdb container (mongo image)
+# Prerequisites: 
+# - Set the REM_BACKUP_DIR env. variable if the backup needs to be pushed to a remote host.
 #========================================================================================
+HOST_BACKUP_DIR="$PWD/../backup"
+HOST_DOWNLOADS_DIR="$HOME/Downloads"
 CTR_BACKUP_DIR="/app/backup"
+SVC_NAME="waptrdb"
 NOW="$(date +%Y%m%d-%H%M%S)"
 DB="waptrunner"
 COLLECTIONS[1]="testkb"
@@ -22,7 +27,7 @@ exportAll(){
     for i in $(seq 1 $NUM_COLLS);do
         OUT_FILENAME="$CTR_BACKUP_DIR/${COLLECTIONS[$i]}.csv"
         echo -e "\n-- Exporting data from ${COLLECTIONS[$i]} collection to $OUT_FILENAME..."
-        /usr/bin/mongoexport \
+        docker-compose exec "$SVC_NAME" /usr/bin/mongoexport \
         --db="${DB}" \
         --host 127.0.0.1:27017 \
         --fields="${FIELDS[$i]}" \
@@ -32,17 +37,38 @@ exportAll(){
     done
 }
 
+# Warn on missing REM_BACKUP_DIR config
+if [ "$REM_BACKUP_DIR" = "" ];then
+    echo "WARNING: The environment variable REM_BACKUP_DIR is undefined. Will skip the backup push to a remote server."
+    sleep 5
+fi
+
 # Backup DB using tools in the DB container
 echo -e "\n"
 echo -e "\n- Creating container backup directory ${CTR_BACKUP_DIR}, just in case..."
-mkdir "${CTR_BACKUP_DIR}" 
+docker-compose exec "$SVC_NAME" mkdir "${CTR_BACKUP_DIR}" 
 
 echo -e "\n- Running mongodump and saving ${DB} DB to ${CTR_BACKUP_DIR}..."
-/usr/bin/mongodump --db="${DB}" --host 127.0.0.1:27017 -o "$CTR_BACKUP_DIR"
+docker-compose exec "$SVC_NAME" /usr/bin/mongodump --db="${DB}" --host 127.0.0.1:27017 -o "$CTR_BACKUP_DIR"
 
 echo -e "\n- Running export and saving ${DB} collections to ${CTR_BACKUP_DIR}..."
 exportAll 
 
 echo -e "\n- Compressing to ${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz..."
-tar cvfz "${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$CTR_BACKUP_DIR/${DB}" \
+docker-compose exec "$SVC_NAME" tar cvfz "${CTR_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$CTR_BACKUP_DIR/${DB}" \
     "$CTR_BACKUP_DIR/cwe.csv" "$CTR_BACKUP_DIR/issues.csv" "$CTR_BACKUP_DIR/project.csv" "$CTR_BACKUP_DIR/testkb.csv"
+
+# Push backup to remote host using SSH/SCP
+echo -e "\n"
+if [ "$REM_BACKUP_DIR" != "" ];then
+    echo -e "\n- Pushing ${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz to remote directory ${REM_BACKUP_DIR}..."
+    scp -rp "${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$REM_BACKUP_DIR"
+    scp -rp "${HOST_BACKUP_DIR}/${DB}" "$REM_BACKUP_DIR"
+
+else
+    echo -e "\nNOTE: Variable REM_BACKUP_DIR is not defined, skipping backup to remote host."
+fi
+
+# Move backup under ~/Downloads to avoid project accumulation
+echo -e "\n- Move ${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz to $HOST_DOWNLOADS_DIR..."
+mv "${HOST_BACKUP_DIR}/${DB}.${NOW}.$$.tgz" "$HOST_DOWNLOADS_DIR"

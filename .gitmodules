@@ -1,0 +1,6 @@
+[submodule "waptrun-static"]
+	path = waptrun-static
+	url = git@github.com:jourzero/waptrun-static.git
+[submodule ".github/hack-tools"]
+	path = .github/hack-tools
+	url = git@github.com:jourzero/hack-tools.git
