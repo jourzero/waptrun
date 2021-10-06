@@ -542,7 +542,7 @@ app.get(
                 // Search issues collection for matching issues
                 issuesColl.find(
                     {PrjName: req.params.PrjName},
-                    {sort: {IPriority: -1, TIssueName: 1}},
+                    {sort: {IPriority: -1, TID: 1}},
                     function (__e, issues) {
                         // Get sorted list of CWEs
                         cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
