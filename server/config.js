@@ -51,7 +51,7 @@ module.exports = {
     appName: appName,
 
     // Set authentication Mode. Supported: AUTH_MODE_NONE, AUTH_MODE_OAUTH
-    defaultAuthMode: AUTH_MODE_NONE,
+    defaultAuthMode: AUTH_MODE_OAUTH,
 
     // Session secret
     session: {

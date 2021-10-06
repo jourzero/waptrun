@@ -11,7 +11,9 @@ RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | 
 RUN apt-get -y update
 RUN apt-get install -y mongodb-org
 COPY utils/etc_initd_mongod /etc/init.d/mongod
+COPY utils/etc_mongod.conf /etc/mongod.conf
 RUN chmod 755 /etc/init.d/mongod 
+RUN chmod 644 /etc/mongod.conf
 
 # Initialize Mongodb
 RUN mkdir -p /data/db /data/configdb && chown -R mongodb:mongodb /data/db /data/configdb
@@ -30,10 +32,9 @@ COPY . .
 # Get node modules
 RUN npm install
 
-
 # Expose Node app, Node remote debugging and Mongodb
 EXPOSE 5000
 EXPOSE 9230
 EXPOSE 27017
 #CMD npm start
-CMD utils/entrypoint.sh
+CMD ./entrypoint.sh

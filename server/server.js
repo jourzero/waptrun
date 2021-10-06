@@ -1,10 +1,9 @@
 // Load .env file
-//require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
 const passport = require("passport");
-//const LocalStrategy = require("passport-local");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("./lib/appLogger.js");
@@ -15,7 +14,6 @@ const cookieParser = require("cookie-parser");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
-//const mongoAuth = require('mongoAuth.js');
 const {check, checkSchema, validationResult} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
@@ -36,6 +34,7 @@ const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 let oauthConfig = {};
 let users = [];
 if (authMode == config.AUTH_MODE_OAUTH) {
+    logger.info("Configuring app with OAuth");
     oauthConfig.github = {};
     oauthConfig.google = {};
     oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
@@ -56,10 +55,10 @@ if (authMode == config.AUTH_MODE_OAUTH) {
         //user.projects = [".*"];
         users.push(user);
     }
+} else {
+    logger.info("App starting without authentication for dev/testing purposes");
 }
 
-//console.debug("OAuth config:", JSON.stringify(oauthConfig));
-//console.debug("Users:", JSON.stringify(users));
 //logger.debug(`Validation Schema: ${JSON.stringify(validationSchema)}`);
 //logger.debug(`Validation Values: ${JSON.stringify(validationValues)}`);
 
@@ -112,82 +111,14 @@ if (authMode == config.AUTH_MODE_OAUTH) {
     );
 }
 
-// Use the LocalStrategy within Passport to login users.
-/*
-if (authMode == config.AUTH_MODE_LOCAL) {
-    passport.use(
-        "local-signin",
-        new LocalStrategy(
-            {passReqToCallback: true}, //allows us to pass back the request to the callback
-            function (req, username, password, done) {
-                mongoAuth
-                    .localAuth(username, password)
-                    .then(function (user) {
-                        if (user) {
-                            console.log("LOGGED IN AS: " + user.username);
-                            req.session.success =
-                                "You are successfully logged in " + user.username + "!";
-                            done(null, user);
-                        }
-                        if (!user) {
-                            console.log("COULD NOT LOG IN");
-                            req.session.error = "Could not log user in. Please try again."; //inform user could not log them in
-                            done(null, user);
-                        }
-                    })
-                    .fail(function (err) {
-                        console.log(err.body);
-                    });
-            }
-        )
-    );
-}
-*/
-
-// Use the LocalStrategy within Passport to Register/"signup" users.
-/* TODO: Renable below later (maybe) */
-/*
-if (authMode == config.AUTH_MODE_LOCAL) {
-    passport.use(
-        "local-signup",
-        new LocalStrategy(
-            {passReqToCallback: true}, //allows us to pass back the request to the callback
-            function (req, username, password, done) {
-                mongoAuth
-                    .localReg(username, password)
-                    .then(function (user) {
-                        if (user) {
-                            console.log("REGISTERED: " + user.username);
-                            req.session.success =
-                                "You are successfully registered and logged in " +
-                                user.username +
-                                "!";
-                            done(null, user);
-                        }
-                        if (!user) {
-                            console.log("COULD NOT REGISTER");
-                            req.session.error =
-                                "That username is already in use, please try a different one."; //inform user could not log them in
-                            done(null, user);
-                        }
-                    })
-                    .fail(function (err) {
-                        console.log(err.body);
-                    });
-            }
-        )
-    );
-}
-*/
-
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
     if (authMode == config.AUTH_MODE_NONE) return next();
     if (req.isAuthenticated()) {
         return next();
     }
+    logger.info(`User is not authenticated (authMode=${authMode}), redirecting to login`);
     req.session.error = "Please sign in!";
-    //res.redirect('/signin');
     res.redirect("/login");
 }
 
@@ -213,28 +144,6 @@ function ensureAuthorized(req, res, next) {
         logger.info(`User ${id} is authorized`);
         return next();
     }
-    /*
-    else {
-        let appAllowed = false;
-        let appName = req.path.split("/")[2];
-        if (appName !== undefined) {
-            user.projects.forEach(prj => {
-                if (appName.match(prj)) appAllowed = true;
-            });
-            if (appAllowed) {
-                console.log("User", id, "is authorized to use app", appName);
-                return next();
-            } else {
-                console.log("User", id, "is NOT authorized to use app", appName);
-                req.session.error = "User " + id + " is not authorized to use app " + appName;
-                res.redirect("/login");
-            }
-        } else {
-            console.log("User", id, "is authorized");
-            return next();
-        }
-    }
-    */
 }
 
 // Build filter for scope query
@@ -374,7 +283,8 @@ app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jqu
 app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
 
 // Serve private static content
-app.use("/static", express.static(path.join(__dirname, "../static/")));
+app.use("/static", express.static(path.join(__dirname, "../waptrun-static/")));
+//app.use("/doc", express.static(path.join(__dirname, "../doc/")));
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -407,6 +317,7 @@ app.set("view engine", ".hbs");
 // Test 3
 const monk = require("monk");
 const {exit} = require("process");
+const {logging} = require("./config.js");
 const mongoURL = new URL(mongodbUrl);
 logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
 const db = monk(mongodbUrl);
@@ -455,44 +366,6 @@ app.use(function (req, res, next) {
     req.db = db;
     next();
 });
-
-// ============================== LOCAL AUTH. ROUTES ==========================================
-
-/*
-//displays our signup page
-app.get("/signin", function(req, res) {
-  res.render("signin");
-});
-*/
-
-//sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
-/*
-app.post('/local-reg', passport.authenticate('local-signup', {
-  successRedirect: '/',
-  failureRedirect: '/signin'
-  })
-);
-*/
-
-//sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
-/*
-app.post('/login', passport.authenticate('local-signin', { 
-  successRedirect: '/',
-  failureRedirect: '/signin'
-  })
-);
-*/
-
-//logs user out of site, deleting them from the session, and returns to homepage
-/*
-app.get('/logout', function(req, res){
-  let name = req.user.username;
-  console.log("LOGGIN OUT " + req.user.username);
-  req.logout();
-  res.redirect("/");
-  req.session.notice = "You have successfully been logged out " + name + "!";
-});
-*/
 
 // ============================== GOOGLE AUTH ROUTES ==========================================
 if (authMode == config.AUTH_MODE_OAUTH) {
