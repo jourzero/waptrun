@@ -288,10 +288,10 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
 
     // Colorize the cells based on their Priority
     output +=
-        ".HighP{background-color:red;}.MediumP{background-color:orange;}.LowP{background-color:cyan;}";
+        ".HighP{background-color:#C00;color:white;}.MediumP{background-color:orange;color:black;}.LowP{background-color:cyan;color:black;}";
     output +=
-        ".TestedP{background-color:lightgreen;}.FixedP{background-color:lightgreen;}.TODOP{background-color:lightcyan;}";
-    output += ".InfoP{background-color:lightgray;}";
+        ".TestedP{background-color:lightgreen;color:black;}.FixedP{background-color:lightgreen;color:black;}.TODOP{background-color:lightcyan;color:black;}";
+    output += ".InfoP{background-color:lightgray;color:black;}";
 
     // Evidence text processing:
     // - Grey-out carriage-return/linefeed
@@ -433,7 +433,7 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     // Add project scope
     let scope = marked(prj.notes);
     output += '<h2 class="content-subhead">Scope</h2>\n\n';
-    output += "<p>" + htmlEncode(scope, true, 4, true) + "</p>";
+    output += "<p>" + htmlEncode(scope, false, 4, true) + "</p>";
 
     // Print detailed findings
     output += '<h2 class="content-subhead">Findings</h2>\n';
@@ -454,20 +454,26 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
         // Add a row for each priority (for jumping from menu)
         if (priority !== undefined && priority !== "" && priority !== prevPrio) {
             output +=
-                "<tr><th>&nbsp;</th><th id='" +
+                "<tr><th>&nbsp;</th>" +
+                "<th id='" +
                 priority +
-                "'>PRIORITY: " +
+                "'>" +
+                //"<th id='" + priority + "' class='" + priority + "P' >"
+                "PRIORITY: " +
                 priority +
-                "</th></tr>\n";
+                "</th>" +
+                "</tr>\n";
         }
 
         // Print each issue with the issue as the header and the details as part of a table.
         output +=
-            "<tr><td></td><th><h3 class='" +
+            "<tr><td>&nbsp;</td>" +
+            "<th><h3 class='" +
             priority +
             "P' id='" +
             htmlEncode(obj.TID, true, 4, false) +
             "'>" +
+            //"<th><h3 id='" + htmlEncode(obj.TID, true, 4, false) + "'>" +
             obj.TIssueName +
             "</h3></th></tr>\n";
 
@@ -565,6 +571,10 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     output += "</div>\n"; // Content div (level 3)
     output += "</div>\n"; // Main div (level 2)
     output += "</div>\n"; // Layout div (level 1)
+    // Add extra blank lines at the bottom of the report to allow menu jumping to the last issue
+    output += "<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>";
+    output += "<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>";
+    output += "<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>";
     output +=
         '<script>let links = document.getElementsByClassName("pure-menu-link"); let items = document.getElementsByClassName("pure-menu-item"); function clearItem(item) { item.classList.remove("pure-menu-selected"); }; function clearMenuSelections(){ for (let i = 0; i < items.length; i++) { clearItem(items[i]); } }; function refreshMenu(e){ clearMenuSelections(); e.target.parentElement.className; if (!e.target.parentElement.classList.contains("pure-menu-selected")){ e.target.parentElement.classList.add("pure-menu-selected"); } }; for (let i = 0; i < items.length; i++) { links[i].onclick = refreshMenu; };</script>\n';
     output += "</body>\n</html>\n";
@@ -622,7 +632,8 @@ let htmlEncode = function (source, display, tabs, linkify) {
     };
 
     let toLink = function () {
-        let replacePattern = /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        let replacePattern =
+            /^- (\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         source = source.replace(replacePattern, '- <a href="$1" target="refWin">$1</a>');
     };
 
