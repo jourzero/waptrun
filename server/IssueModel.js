@@ -77,7 +77,7 @@ Issue.prototype.createTodos = function (PrjName, tests, success, error) {
         data.INotes =
             "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";
         if (data.TIssueName === undefined || data.TIssueName === "") {
-            data.TIssueName = `TODO: ${data.TTestName}`;
+            data.TIssueName = `${data.TTestName}`;
         }
 
         // Add issue
