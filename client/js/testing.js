@@ -434,14 +434,14 @@ function uiGetIssue() {
     issue.TIssueName = $("#TIssueName").val();
     issue.TIssueBackground = $("#TIssueBackground").val();
     issue.TRemediationBackground = $("#TRemediationBackground").val();
-    issue.TSeverity = $("#TSeverity").val();
+    issue.TSeverity = Number($("#TSeverity").val());
     issue.TRef1 = $("#TRef1").val();
     issue.TRef2 = $("#TRef2").val();
     issue.TSeverityText = $("#TSeverity option:selected").text();
     issue.IURIs = $("#IURIs").val();
     issue.IEvidence = $("#IEvidence").val();
     issue.IScreenshots = $("#IScreenshots").val();
-    issue.IPriority = $("#IPriority").val();
+    issue.IPriority = Number($("#IPriority").val());
     issue.IPriorityText = $("#IPriority option:selected").text();
     issue.INotes = $("#INotes").val();
     issue.PrjName = prjName;
