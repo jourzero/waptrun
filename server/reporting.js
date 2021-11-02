@@ -390,9 +390,9 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
                 output +=
                     '<li class="pure-menu-item menu-item-divided"><a href="#' +
                     priority +
-                    '" class="pure-menu-link">' +
+                    'Priority" class="pure-menu-link">' +
                     priority +
-                    "</a></li>\n";
+                    " Priority</a></li>\n";
             }
 
             // Add list item for issue
@@ -436,7 +436,7 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     output += "<p>" + htmlEncode(scope, false, 4, true) + "</p>";
 
     // Print detailed findings
-    output += '<h2 class="content-subhead">Findings</h2>\n';
+    //output += '<h2 class="content-subhead">Findings</h2>\n';
     output += '<table class="pure-table-bordered">\n';
     for (let i = 0; i < objArray.length; i++) {
         obj = objArray[i];
@@ -454,17 +454,15 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
         // Add a row for each priority (for jumping from menu)
         if (priority !== undefined && priority !== "" && priority !== prevPrio) {
             output +=
-                "<tr><th>&nbsp;</th>" +
-                "<th id='" +
+                "<tr><th id='" +
                 priority +
-                "'>" +
-                //"<th id='" + priority + "' class='" + priority + "P' >"
-                "PRIORITY: " +
+                "Priority'>&nbsp;</th>" +
+                "<th><h2>" +
                 priority +
-                "</th>" +
+                " Priority Findings" +
+                "</h2></th>" +
                 "</tr>\n";
         }
-
         // Print each issue with the issue as the header and the details as part of a table.
         output +=
             "<tr><td>&nbsp;</td>" +
@@ -473,7 +471,6 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
             "P' id='" +
             htmlEncode(obj.TID, true, 4, false) +
             "'>" +
-            //"<th><h3 id='" + htmlEncode(obj.TID, true, 4, false) + "'>" +
             obj.TIssueName +
             "</h3></th></tr>\n";
 
