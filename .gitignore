@@ -78,8 +78,6 @@ Dockerfile.node
 utils/push-to-registry.sh
 utils/mongoinit.sh
 utils/config-acr.sh
-docker-restart.sh
-docker-run.sh
 waptrun-static
 utils/azcli.sh
 waptrun-static
