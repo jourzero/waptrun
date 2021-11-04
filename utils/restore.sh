@@ -1,23 +1,13 @@
 #!/bin/bash
 #========================================================================================
-# mongorestore.sh: Run mongorestore in the waptrdb (mongodb) container
-# Prerequisites: 
-# - Set the REM_BACKUP_DIR env. variable if the backup needs to be pulled from a remote host.
+# restore.sh: Run mongorestore in the waptrun container
+#
+# Prereq.: PATH variable should include path for mongorestore
 #========================================================================================
-LOC_BACKUP_DIR="$PWD/../backup"
-CTR_BACKUP_DIR="/app/backup"
-SVC_NAME="waptrdb"
-
-# Pull a remote backup
-if [ "$REM_BACKUP_DIR" != "" ];then
-    read -p "Pull backup data from remote host? [n] " answer
-    if [ "$answer" = y ];then
-        scp -rp "$REM_BACKUP_DIR/app/backup/waptrunner" "$LOC_BACKUP_DIR"
-    fi
-fi
+BACKUP_DIR="/app/backup"
 
 # Restore to local DB
-read -p "Restore MongoDB to local directory ${BACKUP_DIR} in $SVC_NAME container? [n] " answer
+read -p "Restore MongoDB from directory ${BACKUP_DIR}? [n] " answer
 if [ "$answer" = y ];then
-    docker-compose exec "$SVC_NAME" /usr/bin/mongorestore --drop --db=waptrunner --host 127.0.0.1:27017 "$CTR_BACKUP_DIR/waptrunner"
+    mongorestore --drop --db=waptrunner --host 127.0.0.1:27017 "$BACKUP_DIR/waptrunner" 
 fi

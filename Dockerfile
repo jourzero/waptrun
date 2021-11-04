@@ -5,7 +5,7 @@ RUN apt-get -y update && apt-get -y upgrade
 
 ### Install MongoDB Community Edition ###
 # Ref.: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
-RUN apt-get -y install wget gnupg lsof curl procps iproute2
+RUN apt-get -y install wget gnupg lsof curl procps iproute2 zip xsltproc
 RUN wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
 RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list
 RUN apt-get -y update
