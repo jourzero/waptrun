@@ -271,7 +271,8 @@ if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 app.disable("etag");
 
 // !!!IMPORTANT: place this before static or similar middleware
-app.use(require("express-markdown")({directory: path.join(__dirname, "../doc")}));
+// directory is where markdown files are stored
+app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve favicon and static content
 app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
@@ -284,7 +285,6 @@ app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/
 
 // Serve private static content
 app.use("/static", express.static(path.join(__dirname, "../waptrun-static/")));
-//app.use("/doc", express.static(path.join(__dirname, "../doc/")));
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
