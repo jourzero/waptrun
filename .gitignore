@@ -80,5 +80,6 @@ utils/mongoinit.sh
 utils/config-acr.sh
 waptrun-static
 utils/azcli.sh
-waptrun-static
 dbinit/OWASP-ASVS-4.0.3.csv
+wapt-configs
+package-lock.json

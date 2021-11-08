@@ -5,6 +5,7 @@
 # Prereq.: PATH variable should include path for mongorestore
 #========================================================================================
 BACKUP_DIR="/app/backup"
+BACKUP_DIR="/app/wapt-configs/db/app/backup"
 
 # Restore to local DB
 read -p "Restore MongoDB from directory ${BACKUP_DIR}? [n] " answer
