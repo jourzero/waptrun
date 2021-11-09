@@ -128,10 +128,10 @@ function genFindingsReportHtml(req, res, showAllIssues) {
     let issueColl = db.get("issues");
 
     prjColl
-        .findOne({name: prjName})
+        .findOne({ name: prjName })
         .then((prj) => {
             issueColl
-                .find({PrjName: prjName}, {sort: {IPriority: -1, TIssueName: 1}})
+                .find({ PrjName: prjName }, { sort: { IPriority: -1, TIssueName: 1 } })
                 .then((records) => {
                     /* 
                     TODO: CWE-117   Improper Output Neutralization for Logs
@@ -431,7 +431,7 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     output += "   Those findings should be combined with the results from automated scanning.";
 
     // Add project scope
-    let scope = marked(prj.notes);
+    let scope = marked.parse(prj.notes);
     output += '<h2 class="content-subhead">Scope</h2>\n\n';
     output += "<p>" + htmlEncode(scope, false, 4, true) + "</p>";
 
