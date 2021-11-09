@@ -127,32 +127,35 @@ function evtAddIssueTemplateText(event) {
         let iNotes = event.target.value;
         if (iNotes === undefined || iNotes.length === 0) {
             console.info("Adding template text to Notes field");
-            iNotes = `#### Issue Details\n
-The NAME feature is vulnerable to ISSUETYPE due to REASON. 
+            iNotes = `\
+#### Issue Details 
+ONE_LINER_SUMMARY
 
-ADD THREAT DETAILS AS NEEDED:
-- Spoofing - attacker can impersonate another user
-- Tampering - affecting the integrity of the data
-- Repudiation - the system doesn't properly track and log user actions, the data stored in log files can be considered invalid or misleading.
-- Information disclosure - the confidentiality can be abused
-- Denial of Service - cause a system failure causing unavailability
-- Elevation of Privilege - having unauthorized access 
-\n`;
-            iNotes += `#### Risk\n
-The perceived risk for this issue is RATING, considering its likelihood (reproducibility, exploitability, discoverability)
-and its impact (damage, number of users affected).
+The NAME feature is vulnerable to ISSUETYPE due to REASON. This could result in IMPACT_DESCRIPTION.
 
-ADD RISK DETAILS AS NEEDED:
-- Damage – how bad would an attack be?
-- Reproducibility – how easy is it to reproduce the attack?
-- Exploitability – how much work is it to launch the attack?
-- Affected users – how many people will be impacted?
-- Discoverability – how easy is it to discover the threat?
-\n`;
-            iNotes += "#### To Reproduce\n  1. Browse to URI\n  2. ACTION1\n  3. ACTION2\n\n";
-            iNotes +=
-                "#### To Mitigate\n- TODO\n- See also the _Potential Mitigations_ section of CWE (link above).\n\n";
-            iNotes += "#### References\n- [Ref1](URL1)\n- [Ref2](URL2)\n- [Ref3](URL3)\n";
+#### Priority
+The priority was established arbitrarily based on our current SDLC phase. 
+The priority was established from quantitative risk calculation (CVSS score): RISK_RATING (CVSS_SCORE) [AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H](https://nvd.nist.go/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
+The priority was established from qualitative risk: LOW_MED_HIGH = f(Likelihood, Impact) = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL).
+The priority was established from the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
+
+#### To Reproduce
+- Browse to URI
+- ACTION1
+- ACTION2
+
+The Evidence section shows the payload that resulted from executing the above steps.
+
+#### Recommendations
+- To remediate this issue, REMEDIATION_DETAILS
+- To mitigate this issue, MITIGATION_DETAILS
+- See also the _Potential Mitigations_ section of CWE (link above).
+
+#### References
+- [Ref1](URL1)
+- [Ref2](URL2)
+- [Ref3](URL3)
+`;
             $("#INotes").val(iNotes);
             //$("#INotes").attr("title", iNotes);
         }
