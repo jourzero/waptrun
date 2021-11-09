@@ -535,7 +535,7 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
                 "</a></td></tr>\n";
         if (obj.INotes !== undefined && obj.INotes !== "")
             //output += "<tr><th class='thID'>Notes: </th><td class='tdID'>" + marked(obj.INotes) + //htmlEncode(obj.INotes, true, 4, true) + "</td></tr>\n";
-            output += "<tr><td>Notes:</td><td>" + marked(obj.INotes) + "</td></tr>\n";
+            output += "<tr><td>Notes:</td><td>" + marked.parse(obj.INotes) + "</td></tr>\n";
         if (obj.IEvidence !== undefined && obj.IEvidence !== "") {
             let evidence = htmlEncode(obj.IEvidence, true, 4, false);
 
