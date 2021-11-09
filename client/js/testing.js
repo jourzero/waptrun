@@ -134,10 +134,11 @@ ONE_LINER_SUMMARY
 The NAME feature is vulnerable to ISSUETYPE due to REASON. This could result in IMPACT_DESCRIPTION.
 
 #### Priority
-The priority was established arbitrarily based on our current SDLC phase. 
-The priority was established from quantitative risk calculation (CVSS score): RISK_RATING (CVSS_SCORE) [AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H](https://nvd.nist.go/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
-The priority was established from qualitative risk: LOW_MED_HIGH = f(Likelihood, Impact) = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL).
-The priority was established from the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
+The priority was established: 
+- Arbitrarily estimate due to our current SDLC phase 
+- By using the CVSS calculator: [RISK_RATING (CVSS_SCORE)](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
+- From a qualitative risk (Likelihood and Impact): LOW_MED_HIGH = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL)
+- By leveraging the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
 
 #### To Reproduce
 - Browse to URI
