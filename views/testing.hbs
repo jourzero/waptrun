@@ -159,15 +159,15 @@
             <td class="issueDetails">
                 <select id="IPriority" title="Priority" class="prioSelector">
                     <option disabled selected value="">Priority</option>
-                    <option class="prioOpt" value="1">Critical (P1)</option>
-                    <option class="prioOpt" value="2">High (P2)</option>
-                    <option class="prioOpt" value="3">Medium (P3)</option>
-                    <option class="prioOpt" value="4">Low (P4)</option>
-                    <option class="prioOpt" value="5">Info (P5)</option>
-                    <option class="prioOpt" value="6">TODO</option>
-                    <option class="prioOpt" value="7">Fixed</option>
-                    <option class="prioOpt" value="8">Tested</option>
-                    <option class="prioOpt" value="9">Exclude</option>
+                    <option class="prioOpt" value="1" title="PrivEsc, RCE, financial theft, auth bypass...">Critical (P1)</option>
+                    <option class="prioOpt" value="2" title="Stored XSS, High-impact CSRF, Lat. move..."   >High (P2)</option>
+                    <option class="prioOpt" value="3" title="Reflective XSS, IDOR, URL Redirect, etc."     >Medium (P3)</option>
+                    <option class="prioOpt" value="4" title="Affect one user, significant prereq., etc."   >Low (P4)</option>
+                    <option class="prioOpt" value="5" title="Not exploitable, won't fix, bad practice"     >Info (P5)</option>
+                    <option class="prioOpt" value="6" title="Keep this item as a future TODO item"         >TODO</option>
+                    <option class="prioOpt" value="7" title="Fixed issue or not reproducable anymore"      >Fixed</option>
+                    <option class="prioOpt" value="8" title="Tested but not found to be vulnerable (yet)"  >Tested</option>
+                    <option class="prioOpt" value="9" title="Exclude from report (keep for later)"         >Exclude</option>
                     <!-- Old priority values
                     <option class="prioOpt" value="0">Info</option>
                     <option class="prioOpt" value="1">Low</option>
@@ -180,8 +180,9 @@
                     <option class="prioOpt" value="-4">Exclude</option>
                     -->
                 </select>
-                <a href="https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1">CVSS Calculator</a>
-                <a href="https://bugcrowd.com/vulnerability-rating-taxonomy">BugCrowd VRT</a>
+                Tools: 
+                <a href="https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1">CVSS Calculator</a> | 
+                <a href="https://bugcrowd.com/vulnerability-rating-taxonomy">BugCrowd VRT</a> | 
                 <a href="https://bugcrowd.com/vulnerability-rating-taxonomy">Qualitative Risk</a>
             </td>
         </tr>
