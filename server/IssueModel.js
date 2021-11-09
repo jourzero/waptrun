@@ -22,7 +22,7 @@ Issue.prototype.findAll = function (success, error) {
 
 // Retrieve a document by its id
 Issue.prototype.findById = function (id, success, error) {
-    this.issue.findOne({_id: id}, response(success, error));
+    this.issue.findOne({ _id: id }, response(success, error));
 };
 
 // Retrieve a document by its Name
@@ -41,8 +41,8 @@ Issue.prototype.findIssue = function (PrjName, TID, success, error) {
 // Retrieve a document by its Name
 Issue.prototype.findProjectIssues = function (PrjName, success, error) {
     this.issue.find(
-        {PrjName: PrjName},
-        {sort: {IPriority: -1, TIssueName: 1}},
+        { PrjName: PrjName },
+        { sort: { IPriority: 1, TIssueName: 1 } },
         response(success, error)
     );
 };
@@ -50,7 +50,7 @@ Issue.prototype.findProjectIssues = function (PrjName, success, error) {
 // Update an existing document by id in mongodb
 Issue.prototype.upsert = function (PrjName, TID, data, success, error) {
     // Build search criteria
-    const options = {upsert: true};
+    const options = { upsert: true };
     let op = {},
         crit = {},
         kvp1 = {},
@@ -72,7 +72,7 @@ Issue.prototype.createTodos = function (PrjName, tests, success, error) {
         delete data._id;
         data.PrjName = PrjName;
         data.CweId = data.TCweID;
-        data.IPriority = -3;
+        data.IPriority = 6;
         data.IPriorityText = "TODO";
         data.INotes =
             "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";

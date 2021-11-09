@@ -131,7 +131,7 @@ function genFindingsReportHtml(req, res, showAllIssues) {
         .findOne({ name: prjName })
         .then((prj) => {
             issueColl
-                .find({ PrjName: prjName }, { sort: { IPriority: -1, TIssueName: 1 } })
+                .find({ PrjName: prjName }, { sort: { IPriority: 1, TIssueName: 1 } })
                 .then((records) => {
                     /* 
                     TODO: CWE-117   Improper Output Neutralization for Logs
@@ -288,7 +288,7 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
 
     // Colorize the cells based on their Priority
     output +=
-        ".HighP{background-color:#C00;color:white;}.MediumP{background-color:orange;color:black;}.LowP{background-color:cyan;color:black;}";
+        ".CriticalP{background-color:#C00;color:white;}.HighP{background-color:orange;color:white;}.MediumP{background-color:yellow;color:black;}.LowP{background-color:cyan;color:black;}";
     output +=
         ".TestedP{background-color:lightgreen;color:black;}.FixedP{background-color:lightgreen;color:black;}.TODOP{background-color:lightcyan;color:black;}";
     output += ".InfoP{background-color:lightgray;color:black;}";
@@ -374,11 +374,11 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
             prio = parseInt(obj.IPriority);
 
             // Decide which priorities to keep in the report
-            // Priority values: 0:Info, 1:Low, 2:Medium, 3:High, -1:Tested, -2:Fixed, -3:TODO,  -4:Exclude
+            // Priority values: 1:Critical, 2:High, 3:Medium, 4:Low, 5:Info, 6:TODO, 7:Fixed, 8:Tested, 9:Exclude
             // If all issues logged need to be printed (for compliance reports), only skip the ones marked as "Exclude"
-            if (showAllIssues && prio !== undefined && prio < -3) continue;
+            if (showAllIssues && prio !== undefined && prio > 8) continue;
             // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
-            if (!showAllIssues && prio !== undefined && prio < 0) continue;
+            if (!showAllIssues && prio !== undefined && prio > 5) continue;
 
             // Count the number of URIs
             //let count = 0;
@@ -445,11 +445,11 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
         prio = parseInt(obj.IPriority);
 
         // Decide which priorities to keep in the report
-        // Priority values: 0:Info, 1:Low, 2:Medium, 3:High, -1:Tested, -2:Fixed, -3:TODO,  -4:Exclude
+        // Priority values: 1:Critical, 2:High, 3:Medium, 4:Low, 5:Info, 6:TODO, 7:Fixed, 8:Tested, 9:Exclude
         // If all issues logged need to be printed (for compliance reports), only skip the ones marked as "Exclude"
-        if (showAllIssues && prio !== undefined && prio < -3) continue;
+        if (showAllIssues && prio !== undefined && prio > 8) continue;
         // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
-        if (!showAllIssues && prio !== undefined && prio < 0) continue;
+        if (!showAllIssues && prio !== undefined && prio > 5) continue;
 
         // Add a row for each priority (for jumping from menu)
         if (priority !== undefined && priority !== "" && priority !== prevPrio) {

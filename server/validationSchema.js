@@ -80,15 +80,15 @@ module.exports = {
         },
         IPriority: {
             optional: true,
-            isInt: { options: { min: -4, max: 3 } },
-            errorMessage: "Expected: integer in the range from -4 to 3]",
+            isInt: { options: { min: 1, max: 9 } },
+            errorMessage: "Expected: integer in the range from 1 to 9]",
         },
         IPriorityText: {
             optional: true,
             isAlpha: { locale: "en-US" },
             isLength: { options: { min: 0, max: 10 } },
             errorMessage:
-                "Expected: priority text: Info , Low, Medium, High, Tested, Fixed, TODO, Exclude",
+                "Expected priority text: Info, Low, Medium, High, Critical, Tested, Fixed, TODO, Exclude",
             trim: true,
         },
         INotes: {

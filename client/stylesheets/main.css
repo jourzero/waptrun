@@ -252,12 +252,16 @@ textarea {
     vertical-align: top;
 }
 
-tr .HighPriority {
+tr .CriticalPriority {
     background-color: red;
 }
 
-tr .MediumPriority {
+tr .HighPriority {
     background-color: orange;
+}
+
+tr .MediumPriority {
+    background-color: yellow;
 }
 
 tr .LowPriority {

@@ -94,14 +94,15 @@
         </tr>
 
         <tr class="iTR">
-            <th class="issueTH">Severity</th>
+            <th class="issueTH" title="Generic Severity">Severity</th>
             <td class="issueVals">
-                <select id="TSeverity" title="Priority" class="sevSelector">
+                <select id="TSeverity" title="Severity" class="sevSelector">
                     <option disabled selected value="">Severity</option>
                     <option class="selOpt" value="0">Info</option>
                     <option class="selOpt" value="1">Low</option>
                     <option class="selOpt" value="2">Medium</option>
                     <option class="selOpt" value="3">High</option>
+                    <option class="selOpt" value="4">Critical</option>
                 </select> &nbsp;&nbsp;
                 <strong>Standard</strong>
                 <input type="checkbox" id="TPCI" class="testKbCB" value="PCI" title="PCI-DSS Compliance Test">PCI
@@ -158,15 +159,30 @@
             <td class="issueDetails">
                 <select id="IPriority" title="Priority" class="prioSelector">
                     <option disabled selected value="">Priority</option>
+                    <option class="prioOpt" value="1">Critical (P1)</option>
+                    <option class="prioOpt" value="2">High (P2)</option>
+                    <option class="prioOpt" value="3">Medium (P3)</option>
+                    <option class="prioOpt" value="4">Low (P4)</option>
+                    <option class="prioOpt" value="5">Info (P5)</option>
+                    <option class="prioOpt" value="6">TODO</option>
+                    <option class="prioOpt" value="7">Fixed</option>
+                    <option class="prioOpt" value="8">Tested</option>
+                    <option class="prioOpt" value="9">Exclude</option>
+                    <!-- Old priority values
                     <option class="prioOpt" value="0">Info</option>
                     <option class="prioOpt" value="1">Low</option>
                     <option class="prioOpt" value="2">Medium</option>
                     <option class="prioOpt" value="3">High</option>
+                    <option class="prioOpt" value="4">Critical</option>
                     <option class="prioOpt" value="-1">Tested</option>
                     <option class="prioOpt" value="-2">Fixed</option>
                     <option class="prioOpt" value="-3">TODO</option>
                     <option class="prioOpt" value="-4">Exclude</option>
+                    -->
                 </select>
+                <a href="https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1">CVSS Calculator</a>
+                <a href="https://bugcrowd.com/vulnerability-rating-taxonomy">BugCrowd VRT</a>
+                <a href="https://bugcrowd.com/vulnerability-rating-taxonomy">Qualitative Risk</a>
             </td>
         </tr>
     </table>
