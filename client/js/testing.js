@@ -148,7 +148,7 @@ The Evidence section shows the payload that resulted from executing the above st
 
 #### Recommendations
 - To remediate this issue, REMEDIATION_DETAILS
-- To mitigate this issue, MITIGATION_DETAILS
+- To [mitigate](https://cwe.mitre.org/top25/mitigations.html) this issue, MITIGATION_DETAILS
 - See also the _Potential Mitigations_ section of CWE (link above).
 
 #### References
