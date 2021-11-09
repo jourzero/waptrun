@@ -133,9 +133,10 @@ function evtAddIssueTemplateText(event) {
 - Description: The NAME feature is vulnerable to ISSUETYPE due to REASON. This could result in IMPACT_DESCRIPTION.
 
 #### Priority
-The priority was established based on risk as follows: 
-- Score from CVSS Calculator: [CVSS_SCORE](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
-- From Likelihood and Impact: LOW_MED_HIGH = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL)
+The priority was established based on: 
+- Defect severity (Critical/Showstopper, High/Major or Medium/Minor loss of _key functionality_, Low Impact, Informational/Cosmetic)
+- Qualitative risk rating from Likelihood and Impact: LOW_MED_HIGH = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL)
+- Severity score from CVSS Calculator: [CVSS_SCORE](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1) (C:9,H:7,M:4,L>0)
 - Using the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
 
 #### To Reproduce
