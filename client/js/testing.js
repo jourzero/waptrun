@@ -129,33 +129,33 @@ function evtAddIssueTemplateText(event) {
             console.info("Adding template text to Notes field");
             iNotes = `\
 #### Issue Details 
-ONE_LINER_SUMMARY
-
-The NAME feature is vulnerable to ISSUETYPE due to REASON. This could result in IMPACT_DESCRIPTION.
+- Summary: ONE_LINER_SUMMARY
+- Description: The NAME feature is vulnerable to ISSUETYPE due to REASON. This could result in IMPACT_DESCRIPTION.
 
 #### Priority
-The priority was established as follows: 
-- An estimate was made due to our current SDLC phase 
-- Using the CVSS calculator: [RISK_RATING (CVSS_SCORE)](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
-- Qualitative risk (Likelihood and Impact): LOW_MED_HIGH = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL)
-- Leveraging the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
+The priority was established based on risk as follows: 
+- Score from CVSS Calculator: [CVSS_SCORE](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1)
+- From Likelihood and Impact: LOW_MED_HIGH = AVG(Reproducibility=VAL, Exploitability=VAL, DamagePotential=VAL, AffectedUsers=VAL)
+- Using the [Bugcrowd VRT](https://bugcrowd.com/vulnerability-rating-taxonomy): PRIORITY_RATING - VRT_CATEGORY - VULN_NAME - VARIANT_NAME
 
 #### To Reproduce
 - Browse to URI
 - ACTION1
 - ACTION2
 
-The Evidence section shows the payload that resulted from executing the above steps.
+Refer to the Evidence section for additional details (if included).
 
 #### Recommendations
 - To remediate this issue, REMEDIATION_DETAILS
-- To [mitigate](https://cwe.mitre.org/top25/mitigations.html) this issue, MITIGATION_DETAILS
+- To mitigate this issue, MITIGATION_DETAILS
 - See also the _Potential Mitigations_ section of CWE (link above).
 
 #### References
-- [Ref1](URL1)
-- [Ref2](URL2)
-- [Ref3](URL3)
+- [OWASP Proactive Controls](https://owasp.org/www-project-proactive-controls/)
+- [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org)
+- [Mitigations for CWE Top 25](https://cwe.mitre.org/top25/mitigations.html)
+- [Mitigations for Azure solutions](https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-mitigations)
+- [OTHER_REF](OTHER_URL)
 `;
             $("#INotes").val(iNotes);
             //$("#INotes").attr("title", iNotes);
