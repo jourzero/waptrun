@@ -10,13 +10,12 @@
     <table class="projectList">
     {{#if projects}}
         {{#projects}}
-        <tr>
+        <tr class="iTR">
             <!-- Commented-out, we're preffering that the user types the project name to avoid accidental removal
                 <td class="issueDeleteTD" width="20px">
                     <button class="delete" title="Delete this project" action="delete" prjName='{{name}}'>&times;</button></td> -->
             <td class="projectEntry"><a href="/project/{{name}}">{{name}}</a></td>
             <td class="projectEntry"><a href="/testing/{{name}}">Start Testing</td>
-            <td> </td>
         </tr>
         {{/projects}}
     {{else}}
