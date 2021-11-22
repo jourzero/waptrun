@@ -1,60 +1,64 @@
 //============== UI EVENT HANDLING ==============
 // When values change, persist the values
-$("#PrjName").on("change", function () {
-    let prj = uiGetProject();
-    if (prj !== undefined) {
-        restUpdateProject(prj);
-        let url = "/project/" + $("#PrjName").val();
+
+function registerEventHandlers() {
+    //Below doesn't work, changing the project name is not possible with the current API
+    // $("#PrjName").on("change", function () {
+    //     let prj = uiGetProject();
+    //     if (prj !== undefined) {
+    //         restUpdateProject(prj);
+    //         let url = "/project/" + $("#PrjName").val();
+    //         window.open(url, "_self");
+    //     }
+    // });
+
+    $(
+        "#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest,#TTestNameKeyword,#TCweIDSearch"
+    ).on("change", function () {
+        let prj = uiGetProject();
+        if (prj !== undefined) restUpdateProject(prj);
+    });
+
+    $("#PrjSoftware").on("change", function () {
+        uiUpdateCveLinks();
+        let prj = uiGetProject();
+        if (prj !== undefined) restUpdateProject(prj);
+    });
+
+    $("#StartTesting").click(function () {
+        let url = "/testing/" + $("#PrjName").val();
         window.open(url, "_self");
-    }
-});
+    });
 
-$(
-    "#PrjNotes, #ScopeSel, #TPCI, #TTop10, #TTop25, #TStdTest,#TTestNameKeyword,#TCweIDSearch"
-).on("change", function () {
-    let prj = uiGetProject();
-    if (prj !== undefined) restUpdateProject(prj);
-});
+    $("#btnFindingsHtmlReport").click(function () {
+        let url = "/export/html/findings/" + $("#PrjName").val();
+        window.open(url, "reportWin");
+    });
 
-$("#PrjSoftware").on("change", function () {
-    uiUpdateCveLinks();
-    let prj = uiGetProject();
-    if (prj !== undefined) restUpdateProject(prj);
-});
+    $("#btnFullHtmlReport").click(function () {
+        let url = "/export/html/full/" + $("#PrjName").val();
+        window.open(url, "reportWin");
+    });
 
-$("#StartTesting").click(function () {
-    let url = "/testing/" + $("#PrjName").val();
-    window.open(url, "_self");
-});
+    $("#btnCsvReport").click(function () {
+        let url = "/export/csv/" + $("#PrjName").val();
+        window.open(url, "reportWin");
+    });
 
-$("#btnFindingsHtmlReport").click(function () {
-    let url = "/export/html/findings/" + $("#PrjName").val();
-    window.open(url, "reportWin");
-});
+    $("#btnJsonExport").click(function () {
+        let url = "/export/json/" + $("#PrjName").val();
+        window.open(url, "reportWin");
+    });
 
-$("#btnFullHtmlReport").click(function () {
-    let url = "/export/html/full/" + $("#PrjName").val();
-    window.open(url, "reportWin");
-});
-
-$("#btnCsvReport").click(function () {
-    let url = "/export/csv/" + $("#PrjName").val();
-    window.open(url, "reportWin");
-});
-
-$("#btnJsonExport").click(function () {
-    let url = "/export/json/" + $("#PrjName").val();
-    window.open(url, "reportWin");
-});
-
-//============== UI TWEAKS ==============
-// Dynamically adjust height of textarea
-$("textarea").click(function () {
-    $(this).height(200);
-});
-$("textarea").blur(function () {
-    $(this).height(15);
-});
+    //============== UI TWEAKS ==============
+    // Dynamically adjust height of textarea
+    $("textarea").click(function () {
+        $(this).height(200);
+    });
+    $("textarea").blur(function () {
+        $(this).height(50);
+    });
+}
 
 //============== FUNCTIONS ==============
 // Clear Project Information (may be needed later when we support adding a new project)
@@ -104,4 +108,8 @@ function uiUpdateCveLinks() {
             "</a>&nbsp;&nbsp;";
     }
     $("#CveRptLinks").html(swLinksHtml);
+    console.debug(`CVE links updated for software ${prjSoftware}`);
 }
+
+registerEventHandlers();
+console.debug("Loaded project.js");
