@@ -14,7 +14,7 @@ const cookieParser = require("cookie-parser");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
-const { check, checkSchema, validationResult } = require("express-validator");
+const {check, checkSchema, validationResult} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
 const prjRes = require("./ProjectRes.js");
@@ -22,7 +22,7 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
-const { execFile } = require("child_process");
+const {execFile} = require("child_process");
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -165,27 +165,27 @@ function getScopeQuery(prj) {
         case "API":
             scopeQuery = {
                 $or: [
-                    { TTestName: { $regex: "^API" } },
-                    { TTestName: { $regex: " API" } },
-                    { TTestName: { $regex: "REST" } },
-                    { TTestName: { $regex: "SOAP" } },
-                    { TTestName: { $regex: "AJAX" } },
-                    { TTestName: { $regex: "RPC" } },
-                    { TType: { $regex: "^API" } },
-                    { TIssueName: { $regex: "^API" } },
-                    { TIssueName: { $regex: " API" } },
-                    { TSource: { $regex: "API" } },
-                    { TSection: { $regex: "^API" } },
+                    {TTestName: {$regex: "^API"}},
+                    {TTestName: {$regex: " API"}},
+                    {TTestName: {$regex: "REST"}},
+                    {TTestName: {$regex: "SOAP"}},
+                    {TTestName: {$regex: "AJAX"}},
+                    {TTestName: {$regex: "RPC"}},
+                    {TType: {$regex: "^API"}},
+                    {TIssueName: {$regex: "^API"}},
+                    {TIssueName: {$regex: " API"}},
+                    {TSource: {$regex: "API"}},
+                    {TSection: {$regex: "^API"}},
                 ],
             };
             break;
         case "Default":
             scopeQuery = {
                 $or: [
-                    { TSource: "OWASP-WSTG" },
-                    { TSource: "WAHH2" },
-                    { TSource: "TBHM2015" },
-                    { TSource: "Extras" },
+                    {TSource: "OWASP-WSTG"},
+                    {TSource: "WAHH2"},
+                    {TSource: "TBHM2015"},
+                    {TSource: "Extras"},
                 ],
             };
             break;
@@ -201,7 +201,7 @@ function getScopeQuery(prj) {
         case "WAHH2":
         case "WebSvc":
         case "CWE-Top-25":
-            scopeQuery = { TSource: prj.scopeQry };
+            scopeQuery = {TSource: prj.scopeQry};
         //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
     }
     logger.debug(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
@@ -219,37 +219,37 @@ function getScopeQuery(prj) {
         if (PciTests)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TPCI: PciTests }
-                    : { $or: [filter, { TPCI: PciTests }] };
+                    ? {TPCI: PciTests}
+                    : {$or: [filter, {TPCI: PciTests}]};
         if (Top10Tests)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TTop10: Top10Tests }
-                    : { $or: [filter, { TTop10: Top10Tests }] };
+                    ? {TTop10: Top10Tests}
+                    : {$or: [filter, {TTop10: Top10Tests}]};
         if (Top25Tests)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TTop25: Top25Tests }
-                    : { $or: [filter, { TTop25: Top25Tests }] };
+                    ? {TTop25: Top25Tests}
+                    : {$or: [filter, {TTop25: Top25Tests}]};
         if (StdTests)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TStdTest: StdTests }
-                    : { $or: [filter, { TStdTest: StdTests }] };
+                    ? {TStdTest: StdTests}
+                    : {$or: [filter, {TStdTest: StdTests}]};
         if (useTestNameKeyword)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TTestName: { $regex: TTestNameKeyword } }
+                    ? {TTestName: {$regex: TTestNameKeyword}}
                     : {
-                        $and: [filter, { TTestName: { $regex: TTestNameKeyword } }],
-                    };
+                          $and: [filter, {TTestName: {$regex: TTestNameKeyword}}],
+                      };
         if (useTCweIDSearch)
             filter =
                 JSON.stringify(filter).length <= 2
-                    ? { TCweID: TCweIDSearch }
-                    : { $or: [filter, { TCweID: TCweIDSearch }] };
+                    ? {TCweID: TCweIDSearch}
+                    : {$or: [filter, {TCweID: TCweIDSearch}]};
 
-        scopeQuery = { $and: [scopeQuery, filter] };
+        scopeQuery = {$and: [scopeQuery, filter]};
     }
     return scopeQuery;
 }
@@ -260,8 +260,8 @@ let app = express();
 app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
-app.use(bodyParser.json({ limit: "5mb" }));
-app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
+app.use(bodyParser.json({limit: "5mb"}));
+app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
 app.use(methodOverride());
 app.use(session(config.session));
@@ -272,16 +272,36 @@ app.disable("etag");
 
 // !!!IMPORTANT: place this before static or similar middleware
 // directory is where markdown files are stored
-app.use(require("./lib/express-markdown")({ directory: path.join(__dirname, "../doc") }));
+app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve favicon and static content
+let staticOptions = {
+    //dotfiles: 'ignore',
+    // etag: false,
+    extensions: ["htm", "html"],
+    index: false,
+    maxAge: "1d",
+    redirect: false,
+    setHeaders: function (res, path, stat) {
+        res.set("x-timestamp", Date.now());
+    },
+};
 app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
-app.use(express.static(path.join(__dirname, "../client")));
+app.use(express.static(path.join(__dirname, "../client"), staticOptions));
 app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/")));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
+//app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
 app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/")));
-app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
+app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/")));
+app.use(
+    "/dist/handlebars",
+    express.static(path.join(__dirname, "../node_modules/handlebars/dist/"))
+);
+app.use(
+    "/dist/reactive-handlebars",
+    express.static(path.join(__dirname, "../reactive-handlebars/src/"))
+);
 
 // Serve private static content
 app.use("/static", express.static(path.join(__dirname, "../waptrun-static/")));
@@ -316,8 +336,8 @@ app.set("view engine", ".hbs");
 // Make our db accessible to our router
 // Test 3
 const monk = require("monk");
-const { exit } = require("process");
-const { logging } = require("./config.js");
+const {exit} = require("process");
+const {logging} = require("./config.js");
 const mongoURL = new URL(mongodbUrl);
 logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
 const db = monk(mongodbUrl);
@@ -378,7 +398,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
     app.get(
         "/auth/google/callback",
-        passport.authenticate("google", { failureRedirect: "/login" }),
+        passport.authenticate("google", {failureRedirect: "/login"}),
         function (req, res) {
             // Successful authentication, redirect home.
             res.redirect("/");
@@ -392,7 +412,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
     app.get(
         "/auth/github/callback",
-        passport.authenticate("github", { failureRedirect: "/login" }),
+        passport.authenticate("github", {failureRedirect: "/login"}),
         function (req, res) {
             // Successful authentication, redirect home.
             res.redirect("/");
@@ -426,7 +446,7 @@ if (authMode == config.AUTH_MODE_NONE) {
 
     // Show account information
     app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
-        res.render("account", { user: req.user });
+        res.render("account", {user: req.user});
     });
 }
 
@@ -442,9 +462,9 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     let testkbColl = db.get("testkb");
     let issuesColl = db.get("issues");
     let cweColl = db.get("cwe");
-    let sortName = { name: -1 };
-    let prjRegex = { $regex: config.PrjSubset };
-    let prjSubset = { name: prjRegex };
+    let sortName = {name: -1};
+    let prjRegex = {$regex: config.PrjSubset};
+    let prjSubset = {name: prjRegex};
 
     // Print the count of records
     prjColl.count().then((count) => {
@@ -461,7 +481,7 @@ app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     });
 
     logger.info("Searching for projects");
-    prjColl.find(prjSubset, { sort: sortName }).then((projects) => {
+    prjColl.find(prjSubset, {sort: sortName}).then((projects) => {
         logger.info("Rendering home page");
         res.render("home", {
             user: user,
@@ -482,7 +502,7 @@ app.get(
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+            return res.status(422).json({errors: errors.array()});
         }
 
         // Get user info
@@ -490,10 +510,10 @@ app.get(
 
         // Fetch from project collection
         let prjColl = db.get("project");
-        let prjRegex = { $regex: config.PrjSubset };
-        let prjSubset = { name: prjRegex };
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
         logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({ $and: [{ name: req.params.PrjName }, prjSubset] }, function (e, prj) {
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             logger.info(`Rendering project page for user ${user}`);
             res.render("project", {
                 user: user,
@@ -516,18 +536,18 @@ app.get(
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+            return res.status(422).json({errors: errors.array()});
         }
 
         // Get user info
         let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
 
         // Fetch from project collection
-        let prjRegex = { $regex: config.PrjSubset };
-        let prjSubset = { name: prjRegex };
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
         let prjColl = db.get("project");
         logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({ $and: [{ name: req.params.PrjName }, prjSubset] }, function (e, prj) {
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             if (prj === null) return;
 
             // Get scope query
@@ -538,14 +558,14 @@ app.get(
             let testKB = db.get("testkb");
             let issuesColl = db.get("issues");
             let cweColl = db.get("cwe");
-            testKB.find(scopeQuery, { sort: { TID: 1 } }, function (_e, tests) {
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
                 // Search issues collection for matching issues
                 issuesColl.find(
-                    { PrjName: req.params.PrjName },
-                    { sort: { IPriority: 1, TID: 1 } },
+                    {PrjName: req.params.PrjName},
+                    {sort: {IPriority: 1, TID: 1}},
                     function (__e, issues) {
                         // Get sorted list of CWEs
-                        cweColl.find({}, { sort: { ID: 1 } }, function (___e, cwes) {
+                        cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
                             res.render("testing", {
                                 user: user,
                                 prj: prj,
@@ -650,15 +670,15 @@ app.post(
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+            return res.status(422).json({errors: errors.array()});
         }
 
         // Fetch from project collection
-        let prjRegex = { $regex: config.PrjSubset };
-        let prjSubset = { name: prjRegex };
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
         let prjColl = db.get("project");
         logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({ $and: [{ name: req.params.PrjName }, prjSubset] }, function (e, prj) {
+        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
             if (prj === null) return;
 
             // Get scope query
@@ -667,7 +687,7 @@ app.post(
             // Search the Test KB for matching tests
             logger.info("Searching TestKB with scope query ", scopeQuery);
             let testKB = db.get("testkb");
-            testKB.find(scopeQuery, { sort: { TID: 1 } }, function (_e, tests) {
+            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
                 issueRes.createTodos(req, res, tests);
             });
         });
@@ -764,7 +784,7 @@ app.use(function (err, req, res, next) {
     // whatever you want here, feel free to populate
     // properties on `err` to treat it differently in here.
     res.status(err.status || 500);
-    res.send({ error: err.message });
+    res.send({error: err.message});
 });
 
 // our custom JSON 404 middleware. Since it's placed last
@@ -772,7 +792,7 @@ app.use(function (err, req, res, next) {
 // invoke next() and do not respond.
 app.use(function (req, res) {
     res.status(404);
-    res.send({ Error: "This request is unsupported!" });
+    res.send({Error: "This request is unsupported!"});
 });
 
 // ========================================== START LISTENER ==========================================
