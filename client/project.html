@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="User Authentication" />
+        <meta name="author" content="" />
+
+        <title>WAPT Runner</title>
+    </head>
+    <script src="/dist/jquery/jquery.min.js"></script>
+    <script src="/dist/lodash/lodash.min.js"></script>
+    <script src="/dist/handlebars/handlebars.min.js"></script>
+    <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
+    <script src="/js/project.js"></script>
+    <!--
+    <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css" />
+    <script src="/dist/bootstrap/js/bootstrap.min.js"></script>
+    -->
+    <link rel="stylesheet" href="/stylesheets/main.css" />
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default" role="navigation">
+                <div>
+                    <strong> WAPT Runner </strong>
+                    &nbsp; &nbsp; &nbsp; &nbsp;
+                    <a href="/">Home</a>
+                </div>
+            </nav>
+            <div id="msg" role="alert"></div>
+            <div class="project_mount"></div>
+        </div>
+        <div class="mount"></div>
+
+        <script id="project_template" type="text/x-handlebars-template">
+                <table class="issueTab">
+                    <tr class="iTR">
+                        <th class="issueTH">Project</th>
+                        <td class="prjLeft">
+                            <input
+                                type="text"
+                                id="PrjName"
+                                field="name"
+                                class="prjIn"
+                                placeholder="YYYYMM-APP-ENV"
+                                value="{{name}}"
+                                disabled
+                            />
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">Methodology</th>
+                        <td class="prjRight">
+                            <select id="ScopeSel" title="Scope" class="scopeSelector">
+                                <option disabled selected>Test Subset</option>
+                                <option class="scopeOpt" title="ALL" value="All">All Tests</option>
+                                <option class="scopeOpt" title="API" value="API">API Tests</option>
+                                <option class="scopeOpt" title="VRT" value="BCVRT">
+                                    BugCrowd Vuln Rating Taxonomy (VRT)
+                                </option>
+                                <option class="scopeOpt" title="BHM" value="TBHM2015">
+                                    Bug Hunter (TBHM) [*]
+                                </option>
+                                <option class="scopeOpt" title="T25" value="CWE-Top-25">CWE Top 25</option>
+                                <option class="scopeOpt" title="DEF" value="Default">
+                                    Default (all stars)
+                                </option>
+                                <option class="scopeOpt" title="EXT" value="Extras">Extras [*]</option>
+                                <option class="scopeOpt" title="A10" value="OWASP-API-T10">
+                                    OWASP API Top 10
+                                </option>
+                                <option class="scopeOpt" title="ASV" value="OWASP-ASVS">OWASP ASVS</option>
+                                <option class="scopeOpt" title="TG4" value="OWASP-TG4">OWASP TG4</option>
+                                <option class="scopeOpt" title="TG4" value="OWASP-WSTG">
+                                    OWASP WSTG [*]
+                                </option>
+                                <option class="scopeOpt" title="542" value="SEC542">SEC542</option>
+                                <option class="scopeOpt" title="642" value="SEC642">SEC642</option>
+                                <option class="scopeOpt" title="WAH" value="WAHH2">
+                                    Web App Hacker's Handbook [*]
+                                </option>
+                                <option class="scopeOpt" title="WSV" value="WebSvc">Web Services</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="issueTH">Filter</th>
+                        <td class="issueVals">
+                            <input
+                                type="text"
+                                id="TTestNameKeyword"
+                                field="TTestNameKeyword"
+                                title="Keyword for specific tests to include"
+                                value="{{TTestNameKeyword}}"
+                                placeholder="Test Name Keyword"
+                            />
+                            <input
+                                type="text"
+                                id="TCweIDSearch"
+                                field="TCweIDSearch"
+                                title="Find a tests matching a CWE ID"
+                                value="{{TCweIDSearch}}"
+                                placeholder="CWE ID"
+                            />
+                            <input
+                                type="checkbox"
+                                id="TPCI"
+                                field="PciTests"
+                                class="testKbCB"
+                                value="PCI"
+                                title="Subset for PCI-DSS Compliance"
+                                {{#if PciTests }}
+                                    checked
+                                {{/if}}
+                            />PCI
+                            <input
+                                type="checkbox"
+                                id="TTop10"
+                                field="Top10Tests"
+                                class="testKbCB"
+                                value="Top10"
+                                title="Subset to cover OWASP Top 10"
+                                {{#if Top10Tests }}
+                                    checked
+                                {{/if}}
+                            />T10
+                            <input
+                                type="checkbox"
+                                id="TTop25"
+                                field="Top25Tests"
+                                class="testKbCB"
+                                value="Top25"
+                                title="Subset to cover SANS/CWE Top 25"
+                                {{#if Top25Tests }}
+                                    checked
+                                {{/if}}
+                            />T25
+                            <input
+                                type="checkbox"
+                                id="TStdTest"
+                                field="StdTests"
+                                class="testKbCB"
+                                value="StdTest"
+                                title="Targeted subset of tests"
+                                {{#if StdTests }}
+                                    checked
+                                {{/if}}
+                            />Std
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">Scope</th>
+                        <td class="prjLeft">
+                            <textarea
+                                id="PrjNotes"
+                                field="notes"
+                                rows="2"
+                                placeholder="Take project notes here."
+                            >{{notes}}</textarea>
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">Software</th>
+                        <td class="prjLeft">
+                            <textarea
+                                id="PrjSoftware"
+                                field="software"
+                                class="testKbIn"
+                                placeholder="List of software components used by app (comma-separated)"
+                            >{{software}}</textarea>
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">CVE Lookup</th>
+                        <td class="prjRight" id="CveRptLinks"></td>
+                    </tr>
+                </table>
+            <button id="StartTesting" class="button black" title="Start the test runner.">
+                Start Testing
+            </button>
+            <button
+                id="btnFindingsHtmlReport"
+                class="button black"
+                title="Generate an findings report for this project in HTML and download it."
+            >
+                Findings Report
+            </button>
+            <button
+                id="btnFullHtmlReport"
+                class="button black"
+                title="Generate an full report (all issues except exclusions) for this project in HTML and download it."
+            >
+                Full Report
+            </button>
+            <button
+                id="btnCsvReport"
+                class="button black"
+                title="Generate an issue report for all issues in this project in CSV and download it."
+            >
+                CSV Report
+            </button>
+            <button
+                id="btnJsonExport"
+                class="button black"
+                title="Generate an issue export for all issues in this project in JSON and download it."
+            >
+                JSON Export
+            </button>
+            <button
+                id="btnViewReadme"
+                class="button black"
+                title="View this apps's documentation."
+                onclick="window.open('/Help.md', 'HelpWin')"
+            >
+                Help
+            </button>
+        </script>
+
+        <script src="/js/utils.js"></script>
+        <script src="/js/rest.js"></script>
+        <script src="/js/validator.min.js"></script>
+        <script>
+            // Globals
+            const cveRptBase =
+                "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
+            const cveRptSuffix = "";
+            let uri = new URL(window.location);
+            let prjName = uri.searchParams.get("name");
+
+            // Populate DOM by rending Handlebar template
+            function renderHandlebarTemplate(projectName) {
+                // Render template with blank project data
+                const blankProjectData = {
+                    name: projectName,
+                    TTestNameKeyword: "",
+                    scope: "",
+                    scopeQry: "",
+                    PciTests: false,
+                    Top10Tests: false,
+                    Top25Tests: false,
+                    StdTests: false,
+                    notes: "No note.",
+                    software: "TBD",
+                    TCweIDSearch: "",
+                };
+                console.debug(`Mounting project with data: ${JSON.stringify(blankProjectData)}`);
+                const fieldList = [
+                    "name",
+                    "TTestNameKeyword",
+                    "scope",
+                    "scopeQry",
+                    "PciTests",
+                    "Top10Tests",
+                    "Top25Tests",
+                    "StdTests",
+                    "notes",
+                    "software",
+                    "TCweIDSearch",
+                ];
+
+                project = new ReactiveHbs({
+                    container: ".project_mount",
+                    template: "#project_template",
+                    data: {
+                        //prj: blankProjectData,
+                        name: projectName,
+                        TTestNameKeyword: "",
+                        scope: "",
+                        scopeQry: "",
+                        PciTests: false,
+                        Top10Tests: false,
+                        Top25Tests: false,
+                        StdTests: false,
+                        notes: "No note.",
+                        software: "TBD",
+                        TCweIDSearch: "",
+                    },
+                });
+                project.onRendered(function () {
+                    console.log("onRendered: Registering event handler");
+                    registerEventHandlers();
+                });
+                project.events({
+                    'click [id="btnViewReadme"]'(e, elm, tpl) {
+                        //tpl.set("count", tpl.get("count") + 1);
+                        const name = tpl.get("name");
+                        console.debug(`You clicked Help in ${name} project, didn't you? :-)`);
+                    },
+
+                    // Workaround to react to changes
+                    // TODO: find a better way?
+                    "change textarea,input,select"(e, elm, tpl) {
+                        const field = elm.getAttribute("field");
+                        console.debug(
+                            `Change event on ${elm.type} element: ${field} = ${elm.value}`
+                        );
+                        project.set(field, elm.value);
+
+                        // Make UI adjustments - TODO: templatize?
+                        console.debug("Tweaking UI (moved to template later?)");
+                        $("#ScopeSel").val(project.get("scopeQry"));
+                        uiUpdateCveLinks();
+                    },
+                });
+                project.reactOnChange("software", {throttle: 100}, (tpl) => {
+                    console.info(
+                        "reactOnChange: Project template data has been changed ",
+                        JSON.stringify(tpl.get("software"))
+                    );
+                    //updateProjectData(prjName);
+                });
+                console.debug("Rendering project template");
+                project.render();
+
+                // Workaround to react to changes
+                // TODO: find a better way?
+                /*
+                $("textarea,input,select").change((el) => {
+                    const field = el.target.getAttribute("field");
+                    const value = el.target.value;
+                    console.debug(
+                        `UI reactivity workaround after element change: ${field} = ${value}`
+                    );
+                    project.set(field, value);
+                });
+                */
+
+                // Populate UI from DB
+                function getProjectData(prjName) {
+                    console.debug(`Getting project data for ${prjName} project`);
+                    restGetProject(prjName, function (prj) {
+                        if (prj !== null) {
+                            console.info(`Project Data: ${JSON.stringify(prj)}`);
+                            // TODO: reinsert/refactor next statement?
+                            for (let f of fieldList) {
+                                console.debug(`Setting value for field ${f} = ${prj[f]}`);
+                                project.set(f, prj[f]);
+                            }
+
+                            // Make UI adjustments - TODO: templatize?
+                            console.debug("Tweaking UI (moved to template later?)");
+                            $("#ScopeSel").val(prj.scopeQry);
+                            uiUpdateCveLinks();
+                        }
+                    });
+                }
+                getProjectData(prjName);
+            }
+
+            // Call the above function to populate the DOM
+            if (prjName === null)
+                alert("Missing name parameter in URI, please add '?name=<NAME>'.");
+            else renderHandlebarTemplate(prjName);
+        </script>
+    </body>
+</html>
