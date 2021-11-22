@@ -1,12 +1,32 @@
 /*
 button .kbBtn { alignment-adjust: auto; }
 */
+body {
+    /*
+    font: normal 14px/14px Helvetica, Arial, sans-serif;
+    */
+    font: normal 14px/14px sans-serif;
+}
+h4 {
+    margin: 5px;
+}
+th {
+    padding: 5px;
+}
+a {
+    font-weight: bold;
+}
+a:link {
+    text-decoration: none;
+}
 
 .button {
     text-decoration: none;
     border-radius: 5px;
     padding: 3px 5px;
+    /*
     font: normal 12px/12px Helvetica, Arial, sans-serif;
+    */
 }
 
 .button.black {
@@ -18,7 +38,9 @@ button .kbBtn { alignment-adjust: auto; }
     display: inline-block;
     padding: 3px 5px;
     -webkit-border-radius: 5px;
+    /*
     font: normal 12px/12px Helvetica, Arial, sans-serif;
+    */
 }
 
 .button.hacktool {
@@ -63,7 +85,9 @@ button .kbBtn { alignment-adjust: auto; }
 }
 
 .issueTH {
+    /*
     padding-top: 5px;
+    */
     padding-right: 10px;
     width: 100px;
     text-align: right;
@@ -90,7 +114,12 @@ button .kbBtn { alignment-adjust: auto; }
 }
 
 .issueVals {
+    /*
     padding: 3px 1px;
+    */
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding: 0px;
     border: 0px;
 }
 
@@ -126,19 +155,20 @@ th {
     border: 1px solid #ccc;
     border: 1px solid rgba(0, 0, 0, 0.2);
     -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
+    /* -moz-border-radius: 8px; */
     border-radius: 8px;
     -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    /* -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); */
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .projectList {
     width: 80%;
+    border: 2px;
 }
 
 .projectEntry {
-    width: 300px;
+    width: 200px;
 }
 
 .prjMeta {
@@ -152,16 +182,20 @@ th {
 
 #PrjSoftware,
 #PrjNotes {
-    height: 15px;
+    height: 50px;
 }
 
 .prjLeft {
+    /*
     padding: 3px 1px;
+    */
     border: 0px;
 }
 
 .prjRight {
+    /*
     padding: 3px 1px;
+    */
     border: 0px;
 }
 
@@ -174,7 +208,9 @@ th {
     color: black;
     visibility: visible;
     font-size: 14px;
+    /*
     font-family: sans-serif;
+    */
     width: 80%;
 }
 
@@ -193,21 +229,24 @@ th {
 .testSection {
     background-color: #87ceeb;
     font-weight: bold;
+    padding: 5px;
 }
 
 /* textarea, .issueTA, .testKbTA { */
 textarea {
-    max-height: 1000000px; /* Disable font boosting in Chrome for Android */
-    box-sizing: border-box;
-    padding: 0px 0;
     background: transparent;
-    border: 1px;
-    width: 98%;
-    padding-right: 20px;
-    vertical-align: top;
-    font-family: sans-serif;
+    box-sizing: border-box;
+    font: normal 14px/14px sans-serif;
     height: 100%;
-    /* font-size: 14px; */
+    max-height: 1000000px; /* Disable font boosting in Chrome for Android */
+    vertical-align: top;
+    width: 98%;
+    /* 
+    border: 1px;
+    font-size: 14px; 
+    padding: 0px 0;
+    padding-right: 0px;
+    */
 }
 
 .tselTD {
@@ -225,20 +264,6 @@ textarea {
 
 .testSelector {
     width: 168px;
-}
-
-textarea {
-    /* Disable font boosting in Chrome for Android */
-    max-height: 1000000px;
-    box-sizing: border-box;
-    padding: 0px 0;
-    background: transparent;
-    border: 1px;
-    width: 98%;
-    padding-right: 20px;
-    vertical-align: top;
-    font-family: sans-serif;
-    height: 100%;
 }
 
 .tinyTH {
