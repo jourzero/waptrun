@@ -39,8 +39,15 @@ function restGetCwe(cweId, callback) {
     $.get(url, callback);
 }
 
-// Get Issue data for a specific test/project
+// Get project data for a specific project
+function restGetProject(prjName, callback) {
+    // Send REST call for project data
+    let url = "/api/project/" + prjName;
+    console.info("Sending GET request to " + url);
+    $.get(url, callback);
+}
 
+// Get Issue data for a specific test/project
 function restGetIssue(testId, prjName, callback) {
     // Send REST call for issue data
     let url = "/api/issue/" + prjName + "/" + testId;
@@ -211,6 +218,7 @@ function restDeletePrjIssues(prjName) {
 
 // Save all values to Project Collection
 function restUpdateProject(prj) {
+    let prjName = prj.name;
     console.info("Updating project " + prjName);
 
     let data = JSON.stringify(prj);
