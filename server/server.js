@@ -596,7 +596,7 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
 // Show all projects
 app.get("/api/project", prjRes.findAll);
 
-// Show project data
+// Get project data
 app.get(
     "/api/project/:name",
     // check for pattern YYYYMM[DD]-PrjName-EnvName
@@ -722,6 +722,105 @@ app.get(
     // check CWE ID
     check("id").isInt(validationValues.CweId.isInt),
     cweRes.findById
+);
+
+// Get testing data for a project
+app.get(
+    "/api/testing/:PrjName",
+    // Check for pattern YYYYMM[DD]-PrjName-EnvName
+    check("PrjName").matches(validationValues.PrjName.matches),
+    function (req, res) {
+        // Check for input validation errors in the request
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            logger.warn("Input validation failed for project name");
+            return res.status(422).json({errors: errors.array()});
+        }
+
+        // Get user info
+        //let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+
+        // Fetch from project collection
+        let prjRegex = {$regex: config.PrjSubset};
+        let prjSubset = {name: prjRegex};
+        let prjColl = db.get("project");
+        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
+        prjColl
+            .findOne({$and: [{name: req.params.PrjName}, prjSubset]})
+            .then((prj) => {
+                //if (prj === null) return;
+
+                // Get scope query
+                let scopeQuery = getScopeQuery(prj);
+
+                // Search the Test KB for matching tests
+                logger.debug("Searching TestKB with scope query ", scopeQuery);
+                let testKB = db.get("testkb");
+                let testKbFields = {TID: 1, _id: 1, TSource: 1, TTestName: 1};
+                let issuesColl = db.get("issues");
+                let cweColl = db.get("cwe");
+                testKB
+                    .find(scopeQuery, {sort: {TID: 1}, projection: testKbFields})
+                    .then((tests) => {
+                        // Search issues collection for matching issues
+                        issuesColl
+                            .find({PrjName: req.params.PrjName}, {sort: {IPriority: 1, TID: 1}})
+                            .then((issues) => {
+                                // Get sorted list of CWEs
+                                cweColl
+                                    .find({}, {sort: {ID: 1}})
+                                    .then((cwes) => {
+                                        const testingPageData = {
+                                            //user: user,
+                                            prj: prj,
+                                            tests: tests,
+                                            issues: issues,
+                                            cwes: cwes,
+                                            CweUriBase: config.CweUriBase,
+                                            CveRptBase: config.CveRptBase,
+                                            CveRptSuffix: config.CveRptSuffix,
+                                            TestRefBase: config.TestRefBase,
+                                            ScopeQuery: JSON.stringify(scopeQuery),
+                                        };
+                                        logger.info(
+                                            `Returning testing page data for project ${req.params.PrjName}`
+                                        );
+                                        res.json(testingPageData);
+                                    })
+                                    .catch((err) => {
+                                        logger.warn(
+                                            `Failed getting testing page data (in CWE search): ${JSON.stringify(
+                                                err
+                                            )}`
+                                        );
+                                        res.status(404).json({error: JSON.stringify(err)});
+                                    });
+                            })
+                            .catch((err) => {
+                                logger.warn(
+                                    `Failed getting testing page data (in issue search): ${JSON.stringify(
+                                        err
+                                    )}`
+                                );
+                                res.status(404).json({error: JSON.stringify(err)});
+                            });
+                    })
+                    .catch((err) => {
+                        logger.warn(
+                            `Failed getting testing page data (in tests search): ${JSON.stringify(
+                                err
+                            )}`
+                        );
+                        res.status(404).json({error: JSON.stringify(err)});
+                    });
+            })
+            .catch((err) => {
+                logger.warn(
+                    `Failed getting testing page data (in project search): ${JSON.stringify(err)}`
+                );
+                res.status(404).json({error: JSON.stringify(err)});
+            });
+    }
 );
 
 // ======================================= EXPORT/REPORT ROUTES =======================================

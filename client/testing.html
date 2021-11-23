@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="User Authentication" />
+        <meta name="author" content="" />
+        <title>WAPT Runner</title>
+    </head>
+    <script src="/dist/jquery/jquery.min.js"></script>
+    <script src="/dist/lodash/lodash.min.js"></script>
+    <script src="/dist/handlebars/handlebars.min.js"></script>
+    <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
+    <link rel="stylesheet" href="/stylesheets/main.css" />
+    <link rel="stylesheet" href="/stylesheets/alert.css" />
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default" role="navigation">
+                <div>
+                    <strong> WAPT Runner </strong>
+                    &nbsp; &nbsp; &nbsp; &nbsp;
+                    <a href="/">Home</a>
+                </div>
+            </nav>
+
+            <div id="msg" role="alert"></div>
+            <div class="mount_point"></div>
+            <hr />
+            <button
+                id="btnViewReadme"
+                class="button black"
+                title="View this apps's documentation."
+                onclick="window.open('/Help.md', 'HelpWin')"
+            >
+                Help
+            </button>
+            <button
+                id="btnOpenCyberchef"
+                class="button black"
+                title="Open Cyberchef Tool"
+                onclick="window.open('/static/cyberchef/index.html', 'CyberChefWin')"
+            >
+                CyberChef
+            </button>
+            <button
+                id="btnOpenHackTool"
+                class="button black"
+                title="Open Hack Tool"
+                onclick="window.open('/hacktool', 'HackToolWin')"
+            >
+                HackTool
+            </button>
+            <hr />
+        </div>
+
+        <script id="testing_template" type="text/x-handlebars-template">
+                <h4>Project: <a href="/project?name={{prj.name}}">{{prj.name}}</a> ({{prj.scope}})</h4>
+                <div class="testingDiv">
+                    <div class="testSection">Testing Information (KB)</div>
+                    <table class="issueTab">
+                        <tr class="iTR">
+                            <th class="issueTH">Test</th>
+                            <td class="issueVals">
+                                <button id="btnBack" class="button black">&lt; Back</button>
+                                <input
+                                    id="testIn"
+                                    value=""
+                                    name="TestInput"
+                                    list="testList"
+                                    placeholder="Select Test"
+                                />
+                                <button id="btnNext" class="button black">Next &gt;</button>
+                                <span id="TPhase" class="tinyText" title="Phase"></span>;
+                                <span id="TSection" class="tinyText" title="Section"></span>
+                            </td>
+                        </tr>
+                        <tr class="iTR">
+                            <th class="issueTH">Test Name</th>
+                            <td class="issueVals">
+                                <input
+                                    id="TTestName"
+                                    class="testKbInMedium"
+                                    type="text"
+                                    placeholder="Short name for test"
+                                />
+                                <button id="kbBtnNew" class="kbBtn">New</button>
+                            </td>
+                        </tr>
+
+                        <tr class="iTR">
+                            <th class="issueTH">Help</th>
+                            <td class="issueVals">
+                                <textarea
+                                    id="TTesterSupport"
+                                    class="testKbTA"
+                                    rows="1"
+                                    placeholder="Support text for tester"
+                                ></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="iTR">
+                            <th class="issueTH">
+                                Ref
+                                <a href="#" id="TTRefA" target="TRWin">&gt;</a>
+                            </th>
+                            <td class="issueVals">
+                                <input
+                                    id="TTRef"
+                                    class="testKbIn"
+                                    type="text"
+                                    placeholder="URI reference for tester"
+                                />
+                            </td>
+                        </tr>
+                    </table>
+                <datalist id="testList">
+                    {{#tests}}
+                        <option class="testOpt" value="{{TID}}" oid="{{_id}}" tSource="{{TSource}}">
+                            {{TTestName}}
+                        </option>
+                    {{/tests}}
+                </datalist>
+
+            <!--
+            <script id="generic_issue_data_template" type="text/x-handlebars-template">
+            -->
+                <datalist id="cweDL">
+                    {{#cwes}}
+                        <option value="{{ID}}">{{Name}}</option>
+                    {{/cwes}}
+                </datalist>
+
+                <div class="testSection">Generic Issue Data (KB)</div>
+                <table class="issueTab">
+                    <tr class="iTR">
+                        <th class="issueTH">
+                            CWE
+                            <a
+                                href="#"
+                                id="cweref"
+                                target="cweTab"
+                                title="Click here to view CWE data when ID is non-empty"
+                            >&gt;</a>
+                        </th>
+                        <td class="issueVals" id="cweTD">
+                            <input id="cweIn" type="text" list="cweDL" field="ID" placeholder="Search" />
+                            <button
+                                id="useCweIssueDataBtn"
+                                class="kbBtn"
+                                title="Click this button if you want to enrich the issue with CWE data. Only fills empty Background/Remediation fields."
+                            >
+                                Use CWE
+                            </button>
+                            <button
+                                id="updateIssueListBtn"
+                                class="kbBtn"
+                                title="Click this button when KB data is changed and the project issue data needs to be updated."
+                            >
+                                Update Issue
+                            </button>
+                            <button
+                                id="refreshBtn"
+                                class="kbBtn"
+                                title="Click this button when Test KB or Issue Data has changed and page needs to be refreshed."
+                            >
+                                Reload Page
+                            </button>
+                            <button
+                                id="todosBtn"
+                                class="kbBtn"
+                                title="Click this button to add TODO items in the issue list."
+                            >
+                                Add TODOs
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">Issue Name</th>
+                        <td class="issueVals">
+                            <input
+                                id="TIssueName"
+                                class="testKbIn"
+                                type="text"
+                                placeholder="Short issue name"
+                            />
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH" title="Issue Background">Background</th>
+                        <td class="issueVals">
+                            <textarea
+                                id="TIssueBackground"
+                                class="issueTA"
+                                rows="1"
+                                placeholder="Provide some background for the issue."
+                            ></textarea>
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH" title="Remediation Background">Remediation</th>
+                        <td class="issueVals">
+                            <textarea
+                                id="TRemediationBackground"
+                                class="issueTA"
+                                rows="1"
+                                placeholder="Explain how this issue can generally be remediated."
+                            ></textarea>
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH" title="Generic Severity">Severity</th>
+                        <td class="issueVals">
+                            <select id="TSeverity" title="Severity" class="sevSelector">
+                                <option disabled selected value="">Severity</option>
+                                <option class="selOpt" value="0">Info</option>
+                                <option class="selOpt" value="1">Low</option>
+                                <option class="selOpt" value="2">Medium</option>
+                                <option class="selOpt" value="3">High</option>
+                                <option class="selOpt" value="4">Critical</option>
+                            </select>
+                            &nbsp;&nbsp;
+                            <strong>Standard</strong>
+                            <input
+                                type="checkbox"
+                                id="TPCI"
+                                class="testKbCB"
+                                value="PCI"
+                                title="PCI-DSS Compliance Test"
+                            />PCI
+                            <input
+                                type="checkbox"
+                                id="TTop10"
+                                class="testKbCB"
+                                value="Top10"
+                                title="OWASP Top 10 Test"
+                            />T10
+                            <input
+                                type="checkbox"
+                                id="TTop25"
+                                class="testKbCB"
+                                value="Top25"
+                                title="SANS Top 25 Most Dangerous Software Errors Tests"
+                            />T25
+                            <input
+                                type="checkbox"
+                                id="TStdTest"
+                                class="testKbCB"
+                                value="StdTest"
+                                title="My own list of Standard Tests"
+                            />Std
+                        </td>
+                    </tr>
+
+                    <tr class="iTR">
+                        <th class="issueTH">Issue Ref</th>
+                        <td class="issueVals">
+                            <a href="#" id="TRef1A" target="TRWin">&gt;</a>
+                            <input id="TRef1" class="testKbInShort" type="text" placeholder="Ref 1" />
+                            <a href="#" id="TRef2A" target="TRWin">&gt;</a>
+                            <input id="TRef2" class="testKbInShort" type="text" placeholder="Ref 2" />
+                        </td>
+                    </tr>
+                </table>
+        </script>
+
+        <script id="specific_issue_data_template" type="text/x-handlebars-template">
+
+                <div class="testSection">Specific Issue Data</div>
+                <table class="issueTab">
+                    <tr class="iTR">
+                        <th class="issueTH">URIs</th>
+                        <td class="issueDetails">
+                            <textarea
+                                id="IURIs"
+                                class="issueTA"
+                                rows="1"
+                                placeholder="URI list, one per line"
+                            ></textarea>
+                        </td>
+                    </tr>
+                    <tr class="iTR">
+                        <th class="issueTH">Evidence</th>
+                        <td class="issueDetails">
+                            <textarea
+                                id="IEvidence"
+                                class="issueTA"
+                                rows="1"
+                                placeholder="Output from commands, HTTP payloads or exploit code with results. To prefill this field with boilerplate text, make sure the field value is empty and double-click in it."
+                            ></textarea>
+                        </td>
+                    </tr>
+                    <tr class="iTR">
+                        <th class="issueTH">Paste Area</th>
+                        <td class="issueDetails">
+                            <textarea
+                                id="IScreenshots"
+                                class="screenshotTA"
+                                rows="1"
+                                placeholder="Paste screenshots in this field. They will be appended as HTML5 images (Base64)."
+                            ></textarea>
+                        </td>
+                    </tr>
+                    <tr class="iTR">
+                        <th class="issueTH">Notes</th>
+                        <td class="issueDetails">
+                            <textarea
+                                id="INotes"
+                                class="issueTA"
+                                rows="1"
+                                placeholder="Notes explaining the issue or testing done. To prefill this field with boilerplate text, make sure the field value is empty and double-click in it."
+                            ></textarea>
+                        </td>
+                    </tr>
+                    <tr class="iTR">
+                        <th class="issueTH">Priority</th>
+                        <td class="issueDetails">
+                            <select id="IPriority" title="Priority" class="prioSelector">
+                                <option disabled selected value="">Priority</option>
+                                <option
+                                    class="prioOpt"
+                                    value="1"
+                                    title="P1: PrivEsc, RCE, financial theft, auth bypass..."
+                                >
+                                    Critical
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="2"
+                                    title="P2: Stored XSS, High-impact CSRF, Lat. move..."
+                                >
+                                    High
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="3"
+                                    title="P3: Reflective XSS, IDOR, URL Redirect, etc."
+                                >
+                                    Medium
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="4"
+                                    title="P4: Affect one user, significant prereq., etc."
+                                >
+                                    Low
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="5"
+                                    title="P5: Not exploitable, won't fix, bad practice"
+                                >
+                                    Info
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="6"
+                                    title="Keep this item as a future TODO item"
+                                >
+                                    TODO
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="7"
+                                    title="Fixed issue (or could not reproduce)"
+                                >
+                                    Fixed
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="8"
+                                    title="Tested but not found to be vulnerable (yet)"
+                                >
+                                    Tested
+                                </option>
+                                <option
+                                    class="prioOpt"
+                                    value="9"
+                                    title="Exclude from report (keep for later)"
+                                >
+                                    Exclude
+                                </option>
+                            </select>
+                            Helpers:
+                            <a
+                                target="helperWin"
+                                href="https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H&version=3.1"
+                            >CVSS Calculator</a>
+                            |
+                            <a
+                                target="helperWin"
+                                href="https://bugcrowd.com/vulnerability-rating-taxonomy"
+                            >BugCrowd VRT</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </script>
+
+        <script id="testing_template" type="text/x-handlebars-template">
+            {{> findings}}
+        </script>
+
+        <script id="project_info_template" type="text/x-handlebars-template">
+            <div class="prjMeta">Project Information:</div>
+            <ul>
+                <li class="prjMeta">Status: <span class="prjMeta" id="StatusMsg"></span></li>
+                <li class="prjMeta">
+                    PrjName:
+                    <span class="prjMeta" id="PrjName">{{prj.name}}</span>
+                </li>
+                <li class="prjMeta">
+                    Scope:
+                    <span class="prjMeta" id="PrjNotes">{{prj.notes}}</span>
+                </li>
+                <li class="prjMeta">
+                    ScopeQuery:
+                    <span class="prjMeta" id="ScopeQuery">{{ScopeQuery}}</span>
+                </li>
+                <li class="prjMeta">
+                    Software:
+                    <span class="prjMeta" id="PrjSoftware">{{prj.software}}</span>
+                </li>
+                <li class="prjMeta">
+                    Browser Config:
+                    <span class="prjMeta" id="PrjSoftware"><a
+                            href="{{TestRefBase}}/proxy.pac"
+                        >proxy.pac</a></span>
+                </li>
+            </ul>
+        </script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/rest.js"></script>
+        <script src="/js/testing_ui.js"></script>
+    </body>
+</html>
