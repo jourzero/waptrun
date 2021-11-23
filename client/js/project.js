@@ -2,7 +2,7 @@
 // When values change, persist the values
 
 function registerEventHandlers() {
-    //Below doesn't work, changing the project name is not possible with the current API
+    // Below doesn't work, changing the project name is not possible with the current API
     // $("#PrjName").on("change", function () {
     //     let prj = uiGetProject();
     //     if (prj !== undefined) {
