@@ -36,7 +36,9 @@ function restGetCwe(cweId, callback) {
     // Send REST call for issue data
     let url = "/api/cwe/" + cweId;
     console.info("Sending GET request to " + url);
-    $.get(url, callback);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for CWE data failed");
+    });
 }
 
 // Get project data for a specific project
@@ -44,7 +46,9 @@ function restGetProject(prjName, callback) {
     // Send REST call for project data
     let url = "/api/project/" + prjName;
     console.info("Sending GET request to " + url);
-    $.get(url, callback);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for project data failed");
+    });
 }
 
 // Get Issue data for a specific test/project
@@ -52,14 +56,39 @@ function restGetIssue(testId, prjName, callback) {
     // Send REST call for issue data
     let url = "/api/issue/" + prjName + "/" + testId;
     console.info("Sending GET request to " + url);
-    $.get(url, callback);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for issue data failed");
+    });
 }
 
-// Get test data from test KB
+// Get specific test data from test KB
 function restGetTest(testId, callback) {
+    // Send REST call for testkb data
     let url = "/api/testkb/" + testId;
     console.info("Sending GET request to " + url);
-    $.get(url, callback);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for testkb data failed");
+    });
+}
+
+// Get all test data from test KB
+function restGetAllTests(callback) {
+    // Send REST call for testkb data
+    let url = "/api/testkb";
+    console.info("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for all testkb data failed");
+    });
+}
+
+// Get testing data for a specific project
+function restGetTestingData(prjName, callback) {
+    // Send REST call for testing data
+    let url = "/api/testing/" + prjName;
+    console.info("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for testing data failed");
+    });
 }
 
 // Update/insert issue data from UI to the issue collection
@@ -232,6 +261,9 @@ function restUpdateProject(prj) {
         data: data,
         dataType: "json",
         statusCode: {
+            200: function () {
+                successMessage(`Project updated successfully.`);
+            },
             422: function (rdata) {
                 formatValidationError(rdata);
             },
@@ -415,7 +447,7 @@ function successMessage(msg) {
         clearMsg();
         $("#msg").addClass("alert alert-success");
         $("#msg").html(msg);
-        setTimeout(clearMsg, 5000);
+        setTimeout(clearMsg, 1000);
     }
 }
 
