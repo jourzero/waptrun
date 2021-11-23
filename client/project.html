@@ -6,19 +6,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="User Authentication" />
         <meta name="author" content="" />
-
         <title>WAPT Runner</title>
     </head>
     <script src="/dist/jquery/jquery.min.js"></script>
     <script src="/dist/lodash/lodash.min.js"></script>
     <script src="/dist/handlebars/handlebars.min.js"></script>
     <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
-    <script src="/js/project.js"></script>
-    <!--
-    <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.min.css" />
-    <script src="/dist/bootstrap/js/bootstrap.min.js"></script>
-    -->
     <link rel="stylesheet" href="/stylesheets/main.css" />
+    <link rel="stylesheet" href="/stylesheets/alert.css" />
     <body>
         <div class="container">
             <nav class="navbar navbar-default" role="navigation">
@@ -29,11 +24,11 @@
                 </div>
             </nav>
             <div id="msg" role="alert"></div>
-            <div class="project_mount"></div>
+            <div class="mount_point"></div>
         </div>
         <div class="mount"></div>
 
-        <script id="project_template" type="text/x-handlebars-template">
+        <script id="page_template" type="text/x-handlebars-template">
                 <table class="issueTab">
                     <tr class="iTR">
                         <th class="issueTH">Project</th>
@@ -47,13 +42,14 @@
                                 value="{{name}}"
                                 disabled
                             />
+                            <br/>
                         </td>
                     </tr>
 
                     <tr class="iTR">
-                        <th class="issueTH">Methodology</th>
+                        <th class="issueTH">Filter</th>
                         <td class="prjRight">
-                            <select id="ScopeSel" title="Scope" class="scopeSelector">
+                            <select id="ScopeSel" field="scopeQry" title="Scope" class="scopeSelector">
                                 <option disabled selected>Test Subset</option>
                                 <option class="scopeOpt" title="ALL" value="All">All Tests</option>
                                 <option class="scopeOpt" title="API" value="API">API Tests</option>
@@ -83,11 +79,13 @@
                                 </option>
                                 <option class="scopeOpt" title="WSV" value="WebSvc">Web Services</option>
                             </select>
+                            <!--
                         </td>
                     </tr>
                     <tr>
                         <th class="issueTH">Filter</th>
                         <td class="issueVals">
+                            -->
                             <input
                                 type="text"
                                 id="TTestNameKeyword"
@@ -103,7 +101,7 @@
                                 title="Find a tests matching a CWE ID"
                                 value="{{TCweIDSearch}}"
                                 placeholder="CWE ID"
-                            />
+                            /><br/>
                             <input
                                 type="checkbox"
                                 id="TPCI"
@@ -220,142 +218,9 @@
                 Help
             </button>
         </script>
-
         <script src="/js/utils.js"></script>
         <script src="/js/rest.js"></script>
         <script src="/js/validator.min.js"></script>
-        <script>
-            // Globals
-            const cveRptBase =
-                "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
-            const cveRptSuffix = "";
-            let uri = new URL(window.location);
-            let prjName = uri.searchParams.get("name");
-
-            // Populate DOM by rending Handlebar template
-            function renderHandlebarTemplate(projectName) {
-                // Render template with blank project data
-                const blankProjectData = {
-                    name: projectName,
-                    TTestNameKeyword: "",
-                    scope: "",
-                    scopeQry: "",
-                    PciTests: false,
-                    Top10Tests: false,
-                    Top25Tests: false,
-                    StdTests: false,
-                    notes: "No note.",
-                    software: "TBD",
-                    TCweIDSearch: "",
-                };
-                console.debug(`Mounting project with data: ${JSON.stringify(blankProjectData)}`);
-                const fieldList = [
-                    "name",
-                    "TTestNameKeyword",
-                    "scope",
-                    "scopeQry",
-                    "PciTests",
-                    "Top10Tests",
-                    "Top25Tests",
-                    "StdTests",
-                    "notes",
-                    "software",
-                    "TCweIDSearch",
-                ];
-
-                project = new ReactiveHbs({
-                    container: ".project_mount",
-                    template: "#project_template",
-                    data: {
-                        //prj: blankProjectData,
-                        name: projectName,
-                        TTestNameKeyword: "",
-                        scope: "",
-                        scopeQry: "",
-                        PciTests: false,
-                        Top10Tests: false,
-                        Top25Tests: false,
-                        StdTests: false,
-                        notes: "No note.",
-                        software: "TBD",
-                        TCweIDSearch: "",
-                    },
-                });
-                project.onRendered(function () {
-                    console.log("onRendered: Registering event handler");
-                    registerEventHandlers();
-                });
-                project.events({
-                    'click [id="btnViewReadme"]'(e, elm, tpl) {
-                        //tpl.set("count", tpl.get("count") + 1);
-                        const name = tpl.get("name");
-                        console.debug(`You clicked Help in ${name} project, didn't you? :-)`);
-                    },
-
-                    // Workaround to react to changes
-                    // TODO: find a better way?
-                    "change textarea,input,select"(e, elm, tpl) {
-                        const field = elm.getAttribute("field");
-                        console.debug(
-                            `Change event on ${elm.type} element: ${field} = ${elm.value}`
-                        );
-                        project.set(field, elm.value);
-
-                        // Make UI adjustments - TODO: templatize?
-                        console.debug("Tweaking UI (moved to template later?)");
-                        $("#ScopeSel").val(project.get("scopeQry"));
-                        uiUpdateCveLinks();
-                    },
-                });
-                project.reactOnChange("software", {throttle: 100}, (tpl) => {
-                    console.info(
-                        "reactOnChange: Project template data has been changed ",
-                        JSON.stringify(tpl.get("software"))
-                    );
-                    //updateProjectData(prjName);
-                });
-                console.debug("Rendering project template");
-                project.render();
-
-                // Workaround to react to changes
-                // TODO: find a better way?
-                /*
-                $("textarea,input,select").change((el) => {
-                    const field = el.target.getAttribute("field");
-                    const value = el.target.value;
-                    console.debug(
-                        `UI reactivity workaround after element change: ${field} = ${value}`
-                    );
-                    project.set(field, value);
-                });
-                */
-
-                // Populate UI from DB
-                function getProjectData(prjName) {
-                    console.debug(`Getting project data for ${prjName} project`);
-                    restGetProject(prjName, function (prj) {
-                        if (prj !== null) {
-                            console.info(`Project Data: ${JSON.stringify(prj)}`);
-                            // TODO: reinsert/refactor next statement?
-                            for (let f of fieldList) {
-                                console.debug(`Setting value for field ${f} = ${prj[f]}`);
-                                project.set(f, prj[f]);
-                            }
-
-                            // Make UI adjustments - TODO: templatize?
-                            console.debug("Tweaking UI (moved to template later?)");
-                            $("#ScopeSel").val(prj.scopeQry);
-                            uiUpdateCveLinks();
-                        }
-                    });
-                }
-                getProjectData(prjName);
-            }
-
-            // Call the above function to populate the DOM
-            if (prjName === null)
-                alert("Missing name parameter in URI, please add '?name=<NAME>'.");
-            else renderHandlebarTemplate(prjName);
-        </script>
+        <script src="/js/project_ui.js"></script>
     </body>
 </html>
