@@ -1,200 +1,57 @@
 //==============================================================================
 //                               GLOBALS
 //==============================================================================
-const cveRptBase =
-    "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
+const cveRptBase = "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
 const cveRptSuffix = "";
 const thisURL = new URL(window.location);
-const nameParm = thisURL.searchParams.get("name");
+const prjName = thisURL.searchParams.get("name");
 const gCweUriBase = "https://cwe.mitre.org/data/definitions/";
+const gTestRefBase = "/static";
+const defaultLayout = "landscape";
 
-/*
-var prjName = "{{prj.name}}";
-var gTestRefBase = "{{TestRefBase}}";
-var softwareLinks = getSoftwareLinks("{{prj.software}}");
+//let testCount = $("#testList").prop("options").length;
+//let statusMsg = "Loaded " + testCount + " tests";
 
-$(document).ready(function () {
-    let testCount = $("#testList").prop("options").length;
-    let statusMsg = "Loaded " + testCount + " tests";
-    uiUpdateStatus(statusMsg);
-    //uiChangeTest("{{prj.lastTID}}");
-});
-*/
+// Call the above functions to populate the DOM
+if (prjName === null) alert("Missing name parameter in URI, please add '?name=<NAME>'.");
 
 //==============================================================================
 //                               UI RENDERING
 //==============================================================================
 //----------------------------------------------
-//  Populate DOM by rending Handlebar template
+//  PROJECT TEMPLATE
 //----------------------------------------------
-function renderHandlebarTemplate(name) {
-    //const fieldList = [ "name", "TTestNameKeyword", "scope", "scopeQry",
-    //                  "PciTests", "Top10Tests", "Top25Tests", "StdTests",
-    //                  "notes", "software", "TCweIDSearch", ];
-
-    ui = new ReactiveHbs({
-        container: ".mount_point",
-        template: "#testing_template",
-        data: {
-            prj: {
+let uiProject = new ReactiveHbs({
+    container: ".project_mount_point",
+    template: "#project_template",
+    data: {
+        prj: {
+            _id: "",
+            name: prjName,
+            TTestNameKeyword: "",
+            scope: "",
+            scopeQry: "",
+            PciTests: false,
+            StdTests: false,
+            Top10Tests: false,
+            Top25Tests: false,
+            notes: "",
+            software: "",
+            TCweIDSearch: "",
+        },
+        tests: [
+            {
                 _id: "",
-                name: "",
-                TTestNameKeyword: "",
-                scope: "ALL",
-                scopeQry: "All",
-                PciTests: false,
-                StdTests: false,
-                Top10Tests: false,
-                Top25Tests: false,
-                notes: "",
-                software: "",
-                TCweIDSearch: "",
+                TID: "",
+                TSource: "",
+                TTestName: "",
             },
-            tests: [
-                {
-                    _id: "",
-                    TID: "TBD",
-                    TSource: "TBD",
-                    TTestName: "TBD",
-                    //TType: "TBD", TDescription: "TBD", TIssueName: "TBD", TSeverity: 0, TStep: "", TRef1: "TBD", TRef2: "TBD", TCweID: "0",
-                },
-            ],
-            //prj: {},
-            issues: [
-                {
-                    _id: "",
-                    TID: "",
-                    TSource: "",
-                    TTestName: "",
-                    TType: "",
-                    TDescription: "",
-                    TIssueType: "",
-                    TSeverity: 0,
-                    TTesterSupport: "",
-                    TPhase: "",
-                    TSection: "",
-                    TStep: "",
-                    TTRef: "",
-                    TCweID: "0",
-                    TPCI: false,
-                    TTop10: false,
-                    TTop25: false,
-                    TStdTest: true,
-                    PrjName: "",
-                    CweId: "0",
-                    IPriority: 6,
-                    IPriorityText: "TODO",
-                    INotes: "",
-                    TIssueName: "",
-                },
-            ],
-            cwes: [
-                {
-                    _id: "",
-                    ID: [0],
-                    Name: "",
-                    Weakness_Abstraction: "",
-                    Status: "",
-                    Description_Summary: "",
-                },
-            ],
-            CweUriBase: "",
-            CveRptBase: "",
-            CveRptSuffix: "",
-            TestRefBase: "",
-            ScopeQuery: "",
-        },
-    });
-    ui.onRendered(function () {
-        console.log("onRendered: Registering UI event handlers");
-        registerEventHandlers();
-    });
-    ui.events({
-        // 'click [id="btnViewReadme"]'(e, elm, tpl) {
-        //     //tpl.set("count", tpl.get("count") + 1);
-        //     const name = tpl.get("name");
-        //     console.debug(`You clicked Help in ${name} project, didn't you? :-)`);
-        // },
+        ],
+    },
+});
+uiProject.onRendered(function () {
+    console.debug("onRendered: Registering UI event handlers for test runner");
 
-        // React to UI changes to text inputs
-        "change textarea,input"(e, elm, tpl) {
-            // Get UI value that was changed
-            const field = elm.getAttribute("field");
-            let value = elm.value;
-            if (elm.type === "checkbox") value = elm.checked;
-            console.debug(
-                `UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`
-            );
-
-            // Use set() to update model and re-render
-            ui.set(field, value);
-
-            // Make UI adjustments - TODO: templatize
-            //uiUpdateCveLinks();
-
-            // Update project data in backend
-            //restUpdateProject(ui.getData());
-        },
-
-        // React to UI changes for scope selector/filter
-        'change [id="ScopeSel"]'(e, elm, tpl) {
-            // If it's the scope selector, also get the
-            let scope = $("#ScopeSel option:selected").attr("title").trim();
-            let scopeQry = $("#ScopeSel").val().trim();
-
-            // Use set() to update model and re-render
-            ui.set("scope", scope);
-            ui.set("scopeQry", scopeQry);
-
-            // Make UI adjustments - TODO: templatize?
-            console.debug("Placing scope selector back in place");
-            $("#ScopeSel").val(scopeQry);
-
-            // Update project data in backend
-            //restUpdateProject(ui.getData());
-        },
-    });
-    /*
-    ui.reactOnChange("software", {throttle: 100}, (tpl) => {
-        console.info(
-            "reactOnChange: template data has been changed ",
-            JSON.stringify(tpl.get("software"))
-        );
-        //updateProjectData(name);
-    });
-    */
-    console.debug("Rendering template");
-    ui.render();
-
-    //----------------------------------------------
-    // Populate UI from DB
-    //----------------------------------------------
-    function updateFromDB(name) {
-        console.debug(`Getting data for ${name}`);
-        restGetTestingData(name, function (data) {
-            if (data !== null) {
-                successMessage("Test data extraction succeeded");
-                console.debug(`prj[0]: ${JSON.stringify(data.prj[0], null, 4)}`);
-                console.debug(`tests[0]: ${JSON.stringify(data.tests[0], null, 4)}`);
-                console.debug(`issues[0]: ${JSON.stringify(data.issues[0], null, 4)}`);
-                console.debug(`cwes[0]: ${JSON.stringify(data.cwes[0], null, 4)}`);
-
-                // Update model
-                ui.setData(data);
-
-                // Make UI adjustments - TODO: templatize?
-                //console.debug("Tweaking UI (moved to template later?)");
-                //$("#ScopeSel").val(prj.scopeQry);
-            }
-        });
-    }
-    updateFromDB(name);
-}
-
-//==============================================================================
-//                               UI EVENTS
-//==============================================================================
-function registerEventHandlers() {
     // Clear test input upon double-clicking it
     $("#testIn").on("dblclick", function () {
         $("#testIn").val("");
@@ -209,22 +66,208 @@ function registerEventHandlers() {
     // When a test player button is changed, update the Testing and Generic Issue sections
     $("#btnNext").on("click", evtToNextTest);
 
+    // Show project details on mouseover
+    //$(".MouseOverRow").mouseover(() => {
+    //    $("#projectDetailsRow").show();
+    //});
+    //$(".MouseOutRow").mouseout(() => {
+    //    $("#projectDetailsRow").hide();
+    //});
+});
+uiProject.events({
+    // React to UI changes to text inputs
+    "change textarea,input"(e, elm, tpl) {
+        // Get UI value that was changed
+        let field = elm.getAttribute("field");
+        if (field === null) field = elm.id;
+        let value = elm.value;
+        if (elm.type === "checkbox") value = elm.checked;
+        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+
+        // Skip set to avoid re-rendering the test runner for no good reason
+        //uiProject.set(field, value);
+    },
+});
+console.debug("Rendering template");
+uiProject.render();
+
+// Populate UI from DB
+function updateProjectFromDB(name) {
+    console.debug(`Getting data for project ${name}`);
+    restGetProjectTestingData(name, function (data) {
+        if (data !== null) {
+            successMessage("Project testing data extraction succeeded");
+            console.debug(`prj: ${JSON.stringify(data.prj, null, 4)}`);
+            console.debug(`tests[0]: ${JSON.stringify(data.tests[0], null, 4)}`);
+
+            // Update model
+            uiProject.setData(data);
+
+            // Make UI adjustments - TODO: templatize?
+            //console.debug("Tweaking UI (moved to template later?)");
+            //$("#ScopeSel").val(prj.scopeQry);
+        }
+    });
+}
+updateProjectFromDB(prjName);
+
+//----------------------------------------------
+// CWE DATALIST TEMPLATE
+//----------------------------------------------
+let uiCWE = new ReactiveHbs({
+    container: ".cwes_mount_point",
+    template: "#cwes_template",
+    data: {
+        cwes: [
+            {
+                _id: "",
+                ID: 0,
+                Name: "",
+                Weakness_Abstraction: "",
+                Status: "",
+                Description_Summary: "",
+            },
+        ],
+    },
+});
+uiCWE.onRendered(function () {
+    console.debug("onRendered: Registering UI event handlers for CWE input");
     // Update UI when the user changes the CWE input or double-clicks on the value
     $("#cweIn").on("blur", evtCweInputChanged);
+});
+console.debug("Rendering template");
+uiCWE.render();
+
+// Populate UI from DB
+function updateCwesFromDB() {
+    console.debug(`Getting all CWE data`);
+    restGetAllCWEs(function (data) {
+        if (data !== null) {
+            const cwes = {cwes: data};
+            successMessage("CWE data extraction succeeded");
+            // Update model
+            uiCWE.setData(cwes);
+        }
+    });
+}
+updateCwesFromDB();
+
+//----------------------------------------------
+//  TESTKB TEMPLATE
+//----------------------------------------------
+let uiTestKB = new ReactiveHbs({
+    container: ".testkb_mount_point",
+    template: "#testkb_template",
+    data: {
+        _id: "",
+        TID: "",
+        TSource: "",
+        TTestName: "",
+        TType: "",
+        TDescription: "",
+        TIssueType: "",
+        TSeverity: 0,
+        TTesterSupport: "",
+        TPhase: "",
+        TSection: "",
+        TStep: "",
+        TTRef: "",
+        TCweID: 0,
+        TPCI: false,
+        TTop10: false,
+        TTop25: false,
+        TStdTest: true,
+        PrjName: "",
+        CweId: 0,
+        IPriority: 6,
+        IPriorityText: "",
+        INotes: "",
+        TIssueName: "",
+    },
+});
+uiTestKB.onRendered(function () {
+    console.log("onRendered: Registering UI event handlers for TestKB");
 
     // When the New Test button is pressed, clear the UI and create another test
     $("#kbBtnNew").on("click", evtNewTest);
 
+    // Show remediation and background on mouseover
+    $("#issueNameRow, #issueBgRow, #remedBgRow").mouseover(() => {
+        $("#issueBgRow").show();
+        $("#remedBgRow").show();
+    });
+    $("#cweRow, #issueRefRow, #issueSevRow, #projectNameRow").mouseout(() => {
+        $("#issueBgRow").hide();
+        $("#remedBgRow").hide();
+    });
+
     // When the test fields values change, update the Test KB
-    $("#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground").on(
-        "change",
-        evtTestKBDataChanged
-    );
-    $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on(
-        "change",
-        evtTestKBDataChanged
-    );
+    $("#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground").on("change", evtTestKBDataChanged);
+    $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on("change", evtTestKBDataChanged);
     $("#TPCI, #TTop10, #TTop25, #TStdTest").on("change", evtTestKBDataChanged);
+
+    // Reset all textarea heights back to 2 rows
+    $("th").click(function () {
+        $(":input").attr("rows", 2);
+    });
+    // Set all textarea heights to 2 rows from the start
+    $(":input").attr("rows", 2);
+
+    // Increase the height of textarea during edits
+    $("textarea").on("click", function (event) {
+        event.target.rows = 20;
+    });
+});
+uiTestKB.events({
+    // React to UI changes to text inputs
+    "change textarea,input"(e, elm, tpl) {
+        // Get UI value that was changed
+        let field = elm.getAttribute("field");
+        if (field === null) field = elm.id;
+        let value = elm.value;
+        if (elm.type === "checkbox") value = elm.checked;
+        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+
+        // Use set() to update model and re-render
+        uiTestKB.set(field, value);
+    },
+    "click textarea"(e, elm, tpl) {
+        console.info("Text area clicked, adjusting height");
+    },
+});
+console.debug("Rendering template");
+uiTestKB.render();
+
+//----------------------------------------------
+//  ISSUE DETAILS TEMPLATE
+//----------------------------------------------
+let uiIssue = new ReactiveHbs({
+    container: ".issue_mount_point",
+    template: "#issue_template",
+    data: {
+        _id: "",
+        PrjName: "",
+        TID: "",
+        CweId: 0,
+        IEvidence: "",
+        INotes: "",
+        IPriority: 6,
+        IPriorityText: "",
+        IScreenshots: "",
+        IURIs: "",
+        TIssueName: "",
+        TRef1: "",
+        TRef2: "",
+        /*
+        TIssueBackground: "",
+        TRemediationBackground: "",
+        */
+        TSeverity: 0,
+        TSeverityText: "",
+    },
+});
+uiIssue.onRendered(function () {
+    console.log("onRendered: Registering UI event handlers for issue details");
 
     // When the Specific Issue Data changes, save it to the Issue collection
     $("#IURIs, #IEvidence, #IScreenshots, #IPriority").on("change", evtIssueDataChanged);
@@ -234,12 +277,6 @@ function registerEventHandlers() {
 
     // When pasting images in Evidence, add a Base64 representation
     $("#IScreenshots").on("paste", evtPasteScreenshot);
-
-    // Delete Issue
-    $(".delete").on("click", evtDeleteIssue);
-
-    // Show the issue details when clicking in the list
-    $(".issueTD").on("click", evtShowIssue);
 
     // When the evidence field changes, try to parse it as raw HTTP data that comes from Burp Clipboarder.
     $("#IEvidence").on("blur", function (event) {
@@ -254,6 +291,7 @@ function registerEventHandlers() {
     });
 
     // When the notes field changes, try to parse it as an issue that comes from Burp Clipboarder.
+    // TODO: replace below
     $("#INotes").on("blur", function (event) {
         uiParseBurpIssue();
         //$("#" + event.target.id).height(20);
@@ -262,6 +300,7 @@ function registerEventHandlers() {
     });
 
     // Save Issue when KB data has changed
+    // TODO: replace below
     $("#updateIssueListBtn").on("click", evtIssueDataChanged);
 
     // Override Generic Issue data from CWE data
@@ -272,33 +311,119 @@ function registerEventHandlers() {
 
     // TODOs button
     $("#todosBtn").on("click", evtAddTodos);
+
+    // Reset all textarea heights back to 2 rows
+    $("th").click(function () {
+        $(":input").attr("rows", 2);
+    });
+    // Set all textarea heights to 2 rows from the start
+    $(":input").attr("rows", 2);
+
+    // Increase the height of textarea during edits
+    $("textarea").on("click", function (event) {
+        event.target.rows = 20;
+    });
+});
+uiIssue.events({
+    // React to UI changes to text inputs
+    "change textarea,input"(e, elm, tpl) {
+        // Get UI value that was changed
+        let field = elm.getAttribute("field");
+        if (field === null) field = elm.id;
+        let value = elm.value;
+        if (elm.type === "checkbox") value = elm.checked;
+        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+
+        // Use set() to update model and re-render
+        uiIssue.set(field, value);
+    },
+});
+console.debug("Rendering template");
+uiIssue.render();
+
+//----------------------------------------------
+//  ISSUE LIST TEMPLATE
+//----------------------------------------------
+let uiIssueList = new ReactiveHbs({
+    container: ".issuelist_mount_point",
+    template: "#issuelist_template",
+    data: {
+        issues: [
+            {
+                _id: "",
+                TID: "",
+                TSource: "",
+                TTestName: "",
+                TType: "",
+                TDescription: "",
+                TIssueType: "",
+                TSeverity: 0,
+                TTesterSupport: "",
+                TPhase: "",
+                TSection: "",
+                TStep: "",
+                TTRef: "",
+                TCweID: "0",
+                TPCI: false,
+                TTop10: false,
+                TTop25: false,
+                TStdTest: true,
+                PrjName: "",
+                CweId: "0",
+                IPriority: 6,
+                IPriorityText: "",
+                INotes: "",
+                TIssueName: "",
+            },
+        ],
+    },
+});
+uiIssueList.onRendered(function () {
+    console.log("onRendered: Registering UI event handlers");
+
+    // Delete Issue
+    // TODO: replace below
+    $(".delete").on("click", evtDeleteIssue);
+
+    // Show the issue details when clicking in the list
+    // TODO: replace below
+    $(".issueTD").on("click", evtShowIssue);
+});
+uiIssueList.events({
+    // React to UI changes to text inputs
+    "change textarea,input"(e, elm, tpl) {
+        // Get UI value that was changed
+        let field = elm.getAttribute("field");
+        if (field === null) field = elm.id;
+        let value = elm.value;
+        if (elm.type === "checkbox") value = elm.checked;
+        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+
+        // Use set() to update model and re-render
+        uiIssueList.set(field, value);
+    },
+});
+console.debug("Rendering template");
+uiIssueList.render();
+
+// Populate UI from DB
+function updateIssueListFromDB(name) {
+    console.debug(`Getting issue list for project ${name}`);
+    restGetIssueList(name, function (data) {
+        if (data !== null) {
+            const issues = {issues: data};
+            successMessage("Issue list for project was extracted successfully");
+            // Update model
+            uiIssueList.setData(issues);
+        }
+    });
 }
-
-//==============================================================================
-//                               UI TWEAK EVENTS
-//==============================================================================
-$(".issueTH").click(function () {
-    console.log("Clicked one of the issueTH fields, collapsing all text fields.");
-    $("#TTesterSupport").height(20);
-    $("#TIssueBackground").height(20);
-    $("#TRemediationBackground").height(20);
-    $("#IURIs").height(20);
-    $("#IEvidence").height(20);
-    $("#IScreenshots").height(20);
-    $("#INotes").height(20);
-});
-
-// When some fields are clicked, increase the text box size
-$(
-    "#IURIs, #IEvidence, #IScreenshots, #INotes, #TTesterSupport, #TIssueBackground, #TRemediationBackground"
-).on("click", function (event) {
-    $("#" + event.target.id).height(500);
-});
+updateIssueListFromDB(name);
 
 //==============================================================================
 //                                FUNCTIONS
 //==============================================================================
-//
+
 // Create template text into finding sections
 function evtAddIssueTemplateText(event) {
     console.info("UI add issue template template text event");
@@ -309,8 +434,7 @@ function evtAddIssueTemplateText(event) {
         let iEvidence = event.target.value;
         if (iEvidence === undefined || iEvidence.length === 0) {
             console.info("Adding template text to Evidence field");
-            iEvidence =
-                "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
+            iEvidence = "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
             $("#IEvidence").val(iEvidence);
             //$("#IEvidence").attr("title", iEvidence);
         }
@@ -487,8 +611,7 @@ function evtPasteScreenshot(event) {
             let reader = new FileReader();
             reader.onload = function (event) {
                 let dataUrl = event.target.result;
-                let imgTag =
-                    "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
+                let imgTag = "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
                 // Append the data URL to the Evidence field.
                 let iScreenshots = $("#IScreenshots").val();
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
@@ -508,7 +631,7 @@ function evtPasteScreenshot(event) {
 
 // When the test selector is changed, update the Testing and Generic Issue sections
 function evtTestInputChanged() {
-    console.info("Test input change event");
+    console.debug("Test input change event");
 
     // Get the testId and the index in the datalist
     let testId = $("#testIn").val();
@@ -527,8 +650,7 @@ function evtTestKBDataChanged(event) {
     let testId = $("#testIn").val();
 
     // Tweak the new value if it comes from one of the checkboxes
-    if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest")
-        value = $("#" + field).prop("checked");
+    if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest") value = $("#" + field).prop("checked");
 
     console.info("Updating Test " + testId + " with " + field + "=" + value);
 
@@ -863,17 +985,14 @@ function uiUpdateFromTestKB(testId) {
             //$("#TTesterSupport").attr("title", rec.TTesterSupport);
             $("#TTRef").val(rec.TTRef);
             let testRef = rec.TTRef;
-            if (testRef !== undefined && !testRef.startsWith("http"))
-                testRef = gTestRefBase + "/" + testRef;
+            if (testRef !== undefined && !testRef.startsWith("http")) testRef = gTestRefBase + "/" + testRef;
             $("#TTRefA").attr("href", testRef);
 
-            /*
-            $("#TTRef2").val(rec.TTRef2);
-            let testRef2 = rec.TTRef2;
-            if ((testRef2 !== undefined)&&(!testRef2.startsWith("http")))
-                testRef2 = gTestRefBase + testRef2;
-            $("#TTRef2A").attr('href', testRef2);
-            */
+            //$("#TTRef2").val(rec.TTRef2);
+            //let testRef2 = rec.TTRef2;
+            //if ((testRef2 !== undefined)&&(!testRef2.startsWith("http")))
+            //    testRef2 = gTestRefBase + testRef2;
+            //$("#TTRef2A").attr('href', testRef2);
 
             if (rec.TCweID !== undefined) {
                 $("#cweIn").val(rec.TCweID);
@@ -902,15 +1021,10 @@ function uiUpdateFromTestKB(testId) {
             $("#TRef2").val(rec.TRef2);
             $("#TRef2A").attr("href", rec.TRef2);
 
-            /*
-            $("#TType").val(rec.TType);
-            $("#TDescr").val(rec.TDescr);
-            */
+            //$("#TType").val(rec.TType);
+            //$("#TDescr").val(rec.TDescr);
         } else {
-            let msg =
-                "WARNING: Cannot update UI from TestKB. Record not found for testId '" +
-                testId +
-                "'.";
+            let msg = "WARNING: Cannot update UI from TestKB. Record not found for testId '" + testId + "'.";
             console.warn(msg);
             uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
         }
@@ -972,8 +1086,7 @@ function uiUpdateFromIssueColl(testID) {
             $("#IPriority").val(i.IPriority);
             uiUpdateScreenshots();
         } else {
-            let msg =
-                "NOTE: Could not find an issue for Test ID " + testID + " in project " + prjName;
+            let msg = "NOTE: Could not find an issue for Test ID " + testID + " in project " + prjName;
             console.info(msg);
             uiUpdateStatus(msg);
         }
@@ -983,6 +1096,7 @@ function uiUpdateFromIssueColl(testID) {
 // Update status message in UI
 function uiUpdateStatus(msg) {
     $("#StatusMsg").html(msg);
+    console.info(`UI status update: ${msg}`);
 }
 
 // Update the CVE links in the UI
@@ -990,14 +1104,7 @@ function getSoftwareLinks(software) {
     var swList = software.trim().split(",");
     var swLinksHtml = "";
     for (i = 0; i < swList.length; i++) {
-        swLinksHtml +=
-            "<a class='smallLink' href='" +
-            cveRptBase +
-            swList[i].trim() +
-            cveRptSuffix +
-            "'target='cveRptUI'>" +
-            swList[i].trim() +
-            "</a>&nbsp;&nbsp;";
+        swLinksHtml += "<a class='smallLink' href='" + cveRptBase + swList[i].trim() + cveRptSuffix + "'target='cveRptUI'>" + swList[i].trim() + "</a>&nbsp;&nbsp;";
     }
     $("#PrjSoftware").html(swLinksHtml);
 }
@@ -1009,11 +1116,8 @@ function reloadPage() {
 
 // Inform user about the need to refresh the page after updates
 function alertOnUpdate() {
-    // Update LastTID
+    successMessage("Press Refresh Page button as needed");
     let testId = $("#testIn").val();
-    //$("#LastTID").html(testId);
-    //restUpdateLastTID(testId, prjName);
-    //alert("Press Refresh Page button as needed");
 }
 
 // If session gets expired, redirect to login page to avoid wasting time (possibly losing more work)
@@ -1029,10 +1133,7 @@ function checkSession() {
             if (xhr.responseURL === url) {
                 console.info("checkSession(): Last page refresh", refreshCounter++, "min. ago.");
             } else {
-                alert(
-                    "Session is not active, you will be redirected to the login page.",
-                    xhr.responseURL
-                );
+                alert("Session is not active, you will be redirected to the login page.", xhr.responseURL);
                 window.location = "/";
             }
         }
@@ -1061,8 +1162,168 @@ function extractURIs(evidence, uri_list) {
     return uri_list;
 }
 
-setInterval(checkSession, sessionCheckInterval);
+// Set UI layout
+function setLayout(newLayout) {
+    layout = newLayout;
+    let oldLayout = "portrait";
+    let oldIssueListLayout = "portraitIssueList";
+    let newIssueListLayout = "landscapeIssueList";
+    if (newLayout === "portrait") {
+        oldLayout = "landscape";
+        oldIssueListLayout = "landscapeIssueList";
+        newIssueListLayout = "portaitIssueList";
+    }
 
-// Call the above function to populate the DOM
-if (nameParm === null) alert("Missing name parameter in URI, please add '?name=<NAME>'.");
-else renderHandlebarTemplate(nameParm);
+    $("div[id^='Section']").removeClass(oldLayout);
+    $("div[id^='Section']").addClass(newLayout);
+    $("#SectionIssueList").removeClass(oldIssueListLayout);
+    $("#SectionIssueList").addClass(newIssueListLayout);
+    localStorage.setItem("layout", layout);
+    console.debug(`Saved layout ${layout}`);
+}
+
+function testUI() {
+    let uiProjectData = {
+        prj: {
+            _id: "__id_",
+            name: "_name_",
+            TTestNameKeyword: "_TTestNameKeyword_",
+            scope: "_scope_",
+            scopeQry: "_scopeQry_",
+            PciTests: true,
+            StdTests: true,
+            Top10Tests: true,
+            Top25Tests: true,
+            notes: "_notes_",
+            software: "_software_",
+            TCweIDSearch: "_TCweIDSearch_",
+        },
+        tests: [
+            {
+                _id: "__id_",
+                TID: "_TID_",
+                TSource: "_TSource_",
+                TTestName: "_TTestName_",
+            },
+        ],
+    };
+    uiProject.setData(uiProjectData);
+
+    let uiCweData = {
+        cwes: [
+            {
+                _id: "__id_",
+                ID: 0,
+                Name: "_Name_",
+                Weakness_Abstraction: "_Weakness_Abstraction_",
+                Status: "_Status_",
+                Description_Summary: "_Description_Summary_",
+            },
+        ],
+    };
+    uiCWE.setData(uiCweData);
+
+    let uiTestKbData = {
+        _id: "__id_",
+        TID: "_TID_",
+        TSource: "_TSource_",
+        TTestName: "_TTestName_",
+        TType: "_TType_",
+        TDescription: "_TDescription_",
+        TIssueType: "_TIssueType_",
+        TSeverity: 1,
+        TTesterSupport: "_TTesterSupport_",
+        TPhase: "_TPhase_",
+        TSection: "_TSection_",
+        TStep: "_TStep_",
+        TTRef: "_TTRef_",
+        TCweID: 1,
+        TPCI: true,
+        TTop10: true,
+        TTop25: true,
+        TStdTest: true,
+        PrjName: "_PrjName_",
+        CweId: 1,
+        IPriority: 6,
+        IPriorityText: "_TODO_",
+        INotes: "_INotes_",
+        TIssueName: "_TIssueName_",
+    };
+    uiTestKB.setData(uiTestKbData);
+
+    let uiIssueData = {
+        _id: "__id_",
+        PrjName: "_PrjName_",
+        TID: "_TID_",
+        CweId: 1,
+        IEvidence: "_IEvidence_",
+        INotes: "_INotes_",
+        IPriority: 6,
+        IPriorityText: "TODO",
+        IScreenshots: "_IScreenshots_",
+        IURIs: "_IURIs_",
+        TIssueName: "_TIssueName_",
+        TRef1: "_TRef1_",
+        TRef2: "_TRef2_",
+        /*
+        TIssueBackground: "_TIssueBackground_",
+        TRemediationBackground: "_TRemediationBackground_",
+        */
+        TSeverity: 0,
+        TSeverityText: "Info",
+    };
+    uiIssue.setData(uiIssueData);
+
+    let uiIssueListData = {
+        issues: [
+            {
+                _id: "__id_",
+                TID: "_TID_",
+                TSource: "_TSource_",
+                TTestName: "_TTestName_",
+                TType: "_TType_",
+                TDescription: "_TDescription_",
+                TIssueType: "_TIssueType_",
+                TSeverity: 1,
+                TTesterSupport: "_TTesterSupport_",
+                TPhase: "_TPhase_",
+                TSection: "_TSection_",
+                TStep: "_TStep_",
+                TTRef: "_TTRef_",
+                TCweID: 1,
+                TPCI: true,
+                TTop10: true,
+                TTop25: true,
+                TStdTest: true,
+                PrjName: "_PrjName_",
+                CweId: 1,
+                IPriority: 6,
+                IPriorityText: "TODO",
+                INotes: "_INotes_",
+                TIssueName: "_TIssueName_",
+            },
+        ],
+    };
+    uiIssueList.setData(uiIssueListData);
+}
+
+// Print URL data
+console.debug(`URL data: ${JSON.stringify(thisURL, null, 4)}`);
+
+// Adjust screen layout
+let layout = thisURL.searchParams.get("layout");
+if (layout === "landscape" || layout === "portrait") {
+    console.debug(`Using layout from URL parameter: ${layout}`);
+} else {
+    let storedLayout = localStorage.getItem("layout");
+    if (storedLayout !== undefined && (storedLayout === "landscape" || storedLayout === "portrait")) {
+        layout = storedLayout;
+        console.debug(`Using saved layout from localstorage: ${layout}`);
+    } else {
+        layout = defaultLayout;
+        console.debug(`Using default layout: ${layout}`);
+    }
+}
+setLayout(layout);
+
+//setInterval(checkSession, sessionCheckInterval);
