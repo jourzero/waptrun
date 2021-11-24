@@ -57,7 +57,7 @@ exports.findProjectIssues = function (req, res) {
         logger.warn(`Failed search for project issues: ${JSON.stringify(_err)}`);
         res.sendStatus(404);
     };
-    issue.findIssue(req.params.PrjName, ok, err);
+    issue.findProjectIssues(req.params.PrjName, ok, err);
 };
 
 // Upsert an issue (route: /api/issue/:PrjName/:TID)
