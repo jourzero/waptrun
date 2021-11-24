@@ -737,9 +737,6 @@ app.get(
             return res.status(422).json({errors: errors.array()});
         }
 
-        // Get user info
-        //let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-
         // Fetch from project collection
         let prjRegex = {$regex: config.PrjSubset};
         let prjSubset = {name: prjRegex};
@@ -762,48 +759,19 @@ app.get(
                 testKB
                     .find(scopeQuery, {sort: {TID: 1}, projection: testKbFields})
                     .then((tests) => {
-                        // Search issues collection for matching issues
-                        issuesColl
-                            .find({PrjName: req.params.PrjName}, {sort: {IPriority: 1, TID: 1}})
-                            .then((issues) => {
-                                // Get sorted list of CWEs
-                                cweColl
-                                    .find({}, {sort: {ID: 1}})
-                                    .then((cwes) => {
-                                        const testingPageData = {
-                                            //user: user,
-                                            prj: prj,
-                                            tests: tests,
-                                            issues: issues,
-                                            cwes: cwes,
-                                            CweUriBase: config.CweUriBase,
-                                            CveRptBase: config.CveRptBase,
-                                            CveRptSuffix: config.CveRptSuffix,
-                                            TestRefBase: config.TestRefBase,
-                                            ScopeQuery: JSON.stringify(scopeQuery),
-                                        };
-                                        logger.info(
-                                            `Returning testing page data for project ${req.params.PrjName}`
-                                        );
-                                        res.json(testingPageData);
-                                    })
-                                    .catch((err) => {
-                                        logger.warn(
-                                            `Failed getting testing page data (in CWE search): ${JSON.stringify(
-                                                err
-                                            )}`
-                                        );
-                                        res.status(404).json({error: JSON.stringify(err)});
-                                    });
-                            })
-                            .catch((err) => {
-                                logger.warn(
-                                    `Failed getting testing page data (in issue search): ${JSON.stringify(
-                                        err
-                                    )}`
-                                );
-                                res.status(404).json({error: JSON.stringify(err)});
-                            });
+                        const testingPageData = {
+                            prj: prj,
+                            tests: tests,
+                            CweUriBase: config.CweUriBase,
+                            CveRptBase: config.CveRptBase,
+                            CveRptSuffix: config.CveRptSuffix,
+                            TestRefBase: config.TestRefBase,
+                            ScopeQuery: JSON.stringify(scopeQuery),
+                        };
+                        logger.info(
+                            `Returning testing page data for project ${req.params.PrjName}`
+                        );
+                        res.json(testingPageData);
                     })
                     .catch((err) => {
                         logger.warn(
