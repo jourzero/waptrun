@@ -33,11 +33,21 @@ function restDeleteIssue(prjName, testId) {
 
 // Get CWE data for a CWE ID
 function restGetCwe(cweId, callback) {
-    // Send REST call for issue data
+    // Send REST call for CWE data
     let url = "/api/cwe/" + cweId;
     console.info("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
         warningMessage("GET request for CWE data failed");
+    });
+}
+
+// Get all CWE data
+function restGetAllCWEs(callback) {
+    // Send REST call for all CWE data
+    let url = "/api/cwe";
+    console.info("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for all CWE data failed");
     });
 }
 
@@ -58,6 +68,15 @@ function restGetIssue(testId, prjName, callback) {
     console.info("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
         warningMessage("GET request for issue data failed");
+    });
+}
+// Get Issue data for a specific project
+function restGetIssueList(prjName, callback) {
+    // Send REST call for issue data
+    let url = "/api/issue/" + prjName;
+    console.info("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        warningMessage("GET request for project issue data failed");
     });
 }
 
@@ -82,12 +101,12 @@ function restGetAllTests(callback) {
 }
 
 // Get testing data for a specific project
-function restGetTestingData(prjName, callback) {
+function restGetProjectTestingData(prjName, callback) {
     // Send REST call for testing data
     let url = "/api/testing/" + prjName;
     console.info("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
-        warningMessage("GET request for testing data failed");
+        warningMessage("GET request for project testing data failed");
     });
 }
 
@@ -304,8 +323,7 @@ function restCreateTest(tid) {
     kvp.TPhase = "Extras";
     kvp.TSection = "Extras";
     kvp.TTestName = "TODO:RENAME TEST " + tid;
-    kvp.TTesterSupport =
-        "TODO:Test for ... issue by performing these steps:\n- STEP1\n- STEP2\n- STEP3\n";
+    kvp.TTesterSupport = "TODO:Test for ... issue by performing these steps:\n- STEP1\n- STEP2\n- STEP3\n";
     kvp.TCweID = "0";
     kvp.TIssueName = "TODO:Search for CWE and click 'Use CWE Data'.";
     kvp.TIssueBackground = "For background on this issue, please refer to the CWE.";
@@ -331,9 +349,7 @@ function restCreateTest(tid) {
         dataType: "json",
         statusCode: {
             201: function () {
-                successMessage(
-                    `Test created successfully: ${kvp.TID}. Reload page to add details to it.`
-                );
+                successMessage(`Test created successfully: ${kvp.TID}. Reload page to add details to it.`);
             },
             409: function () {
                 warningMessage("Could not process the request to create a new test.");
@@ -419,11 +435,7 @@ function formatValidationError(data) {
     let errMsg = "Input Validation Error: ";
     let msg = "";
     if (data !== undefined && data.responseText !== undefined) {
-        if (
-            data.responseText !== undefined &&
-            data.responseText.length !== undefined &&
-            typeof data.responseText === "string"
-        ) {
+        if (data.responseText !== undefined && data.responseText.length !== undefined && typeof data.responseText === "string") {
             let body = JSON.parse(data.responseText);
 
             if (body !== undefined && body.errors !== undefined) {
@@ -439,24 +451,4 @@ function formatValidationError(data) {
     $("#msg").addClass("alert alert-danger");
     $("#msg").html(errMsg);
     setTimeout(clearMsg, 8000);
-}
-
-// Show success message message
-function successMessage(msg) {
-    if (msg !== undefined) {
-        clearMsg();
-        $("#msg").addClass("alert alert-success");
-        $("#msg").html(msg);
-        setTimeout(clearMsg, 1000);
-    }
-}
-
-// Show warning message message
-function warningMessage(msg) {
-    if (msg !== undefined) {
-        clearMsg();
-        $("#msg").addClass("alert alert-warning");
-        $("#msg").html(msg);
-        setTimeout(clearMsg, 8000);
-    }
 }
