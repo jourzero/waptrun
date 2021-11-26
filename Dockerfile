@@ -24,11 +24,15 @@ RUN mkdir -p /data/db /data/configdb && chown -R mongodb:mongodb /data/db /data/
 #RUN /usr/bin/mongorestore --db=waptrunner --drop --host 127.0.0.1:27017 /app/dbinit/waptrunner
 #RUN /usr/bin/mongorestore --db=waptrunner --drop /app/dbinit/waptrunner
 
-# Create app directory
+# Copy project files to /app
 WORKDIR /app
-
-# Copy local source to /app
 COPY . .
+
+# Set perms to allow npm install from lower-privileged user
+RUN chown -R node /app
+
+# Set active user
+USER node
 
 # Get node modules
 RUN npm install
