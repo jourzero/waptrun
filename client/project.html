@@ -16,16 +16,12 @@
     <link rel="stylesheet" href="/stylesheets/alert.css" />
     <body>
         <div class="container">
-            <nav class="navbar navbar-default" role="navigation">
-                <div>
-                    <table width="100%">
-                        <tr>
-                            <th align="left"><a href="/home">WAPT Runner</a></th>
-                            <td align="right"><a href="/logout">Logout</a></td>
-                        </tr>
-                    </table>
-                </div>
-            </nav>
+            <table width="100%">
+                <tr>
+                    <th align="left"><a href="/home">WAPT Runner</a></th>
+                    <td align="right"><a href="/account">Profile</a> | <a href="/logout">Logout</a></td>
+                </tr>
+            </table>
             <div id="msg" role="alert"></div>
             <div class="mount_point"></div>
         </div>
@@ -191,7 +187,6 @@
             <button id="btnCsvReport" class="button black" title="Generate an issue report for all issues in this project in CSV and download it." > CSV Report </button>
             <button id="btnJsonExport" class="button black" title="Generate an issue export for all issues in this project in JSON and download it." > JSON Export </button>
             <button id="btnViewReadme" class="button black" title="View this apps's documentation." onclick="window.open('/Help.md', 'HelpWin')" > Help </button>
-            <button id="btnAccountInfo" class="button black" title="View user account details." onclick="window.open('/account', 'HelpWin')">Account Info</button>
         </script>
         <script src="/js/utils.js"></script>
         <script src="/js/rest.js"></script>
