@@ -1,0 +1,8 @@
+#Ignoring git and cache folders
+.git
+.cache
+backup
+datadoc
+logs
+wapt-configs
+waptrun-static
