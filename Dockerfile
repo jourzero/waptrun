@@ -31,11 +31,14 @@ COPY . .
 # Set perms to allow npm install from lower-privileged user
 RUN chown -R node /app
 
-# Set active user
-USER node
-
-# Get node modules
-RUN npm install
+# TODO: Reinsert following steps (moved to entrypoint.sh)
+# # Start Mongodb
+# RUN service mongod start
+# # Set active user
+# USER node
+#
+# # Get node modules
+# RUN npm install
 
 # Expose Node app, Node remote debugging and Mongodb
 EXPOSE 5000

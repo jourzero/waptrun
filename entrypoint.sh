@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# Start Mongo DB
+echo -e "\n\n-- Starting Mongo DB..."
 service mongod start
-#npm start
-npm run dev
+
+# Get app dependencies
+echo -e "\n\n-- Installing node modules"
+su node -c "npm install"
+
+# Run app as lower privileged user
+echo -e "\n\n-- Starting app"
+su node -c "npm install && npm run dev"
