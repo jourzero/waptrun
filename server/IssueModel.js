@@ -22,7 +22,7 @@ Issue.prototype.findAll = function (success, error) {
 
 // Retrieve a document by its id
 Issue.prototype.findById = function (id, success, error) {
-    this.issue.findOne({ _id: id }, response(success, error));
+    this.issue.findOne({_id: id}, response(success, error));
 };
 
 // Retrieve a document by its Name
@@ -40,17 +40,13 @@ Issue.prototype.findIssue = function (PrjName, TID, success, error) {
 
 // Retrieve a document by its Name
 Issue.prototype.findProjectIssues = function (PrjName, success, error) {
-    this.issue.find(
-        { PrjName: PrjName },
-        { sort: { IPriority: 1, TIssueName: 1 } },
-        response(success, error)
-    );
+    this.issue.find({PrjName: PrjName}, {sort: {IPriority: 1, TIssueName: 1}}, response(success, error));
 };
 
 // Update an existing document by id in mongodb
 Issue.prototype.upsert = function (PrjName, TID, data, success, error) {
     // Build search criteria
-    const options = { upsert: true };
+    const options = {upsert: true};
     let op = {},
         crit = {},
         kvp1 = {},
@@ -65,19 +61,16 @@ Issue.prototype.upsert = function (PrjName, TID, data, success, error) {
 
 // Create TODO items for a given project, only if it doesn't exist (insert only)
 Issue.prototype.createTodos = function (PrjName, tests, success, error) {
-    for (let data of tests) {
-        logger.info(`Creating TODO for TID ${data.TID}`);
-
-        // Add all TestKB data to issue (except for _id)
-        delete data._id;
+    for (let test of tests) {
+        let data = {};
+        logger.info(`Creating TODO for TID ${test.TID}`);
+        data.TID = test.TID;
         data.PrjName = PrjName;
-        data.CweId = data.TCweID;
+        data.CweId = test.TCweID;
         data.IPriority = 6;
         data.IPriorityText = "TODO";
-        data.INotes =
-            "TODO test to be completed soon.\n\nIf already completed, please change _Priority_ to **Tested** or another appropriate value.";
         if (data.TIssueName === undefined || data.TIssueName === "") {
-            data.TIssueName = `${data.TTestName}`;
+            data.TIssueName = `${test.TTestName}`;
         }
 
         // Add issue

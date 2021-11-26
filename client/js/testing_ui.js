@@ -1,19 +1,22 @@
 //==============================================================================
 //                               GLOBALS
 //==============================================================================
-const cveRptBase = "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
-const cveRptSuffix = "";
 const thisURL = new URL(window.location);
-const prjName = thisURL.searchParams.get("name");
-const gCweUriBase = "https://cwe.mitre.org/data/definitions/";
-const gTestRefBase = "/static";
+const gPrjName = thisURL.searchParams.get("name");
 const defaultLayout = "landscape";
+const gTextAreaRows = 1;
+const gTextAreaRowsExpanded = 15;
+const gBlankPageImgTag = '<img src="/images/blankpage.png" />';
+let gCveRptBase = "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
+let gCveRptSuffix = "";
+let gCweUriBase = "https://cwe.mitre.org/data/definitions/";
+let gTestRefBase = "/static";
 
 //let testCount = $("#testList").prop("options").length;
 //let statusMsg = "Loaded " + testCount + " tests";
 
 // Call the above functions to populate the DOM
-if (prjName === null) alert("Missing name parameter in URI, please add '?name=<NAME>'.");
+if (gPrjName === null) alert("Missing name parameter in URI, please add '?name=<NAME>'.");
 
 //==============================================================================
 //                               UI RENDERING
@@ -25,28 +28,20 @@ let uiProject = new ReactiveHbs({
     container: ".project_mount_point",
     template: "#project_template",
     data: {
-        prj: {
-            _id: "",
-            name: prjName,
-            TTestNameKeyword: "",
-            scope: "",
-            scopeQry: "",
-            PciTests: false,
-            StdTests: false,
-            Top10Tests: false,
-            Top25Tests: false,
-            notes: "",
-            software: "",
-            TCweIDSearch: "",
-        },
-        tests: [
-            {
-                _id: "",
-                TID: "",
-                TSource: "",
-                TTestName: "",
-            },
-        ],
+        _id: "",
+        name: gPrjName,
+        notes: "",
+        scope: "",
+        scopeQry: "",
+        software: "",
+        ScopeQuery: "",
+        CweUriBase: "",
+        CveRptBase: "",
+        CveRptSuffix: "",
+        TestRefBase: "",
+        //prj: { _id: "", name: prjName, notes: "", scope: "", scopeQry: "", software: "", ScopeQuery: JSON.stringify(scopeQuery),
+        //      PciTests: false, StdTests: false, Top10Tests: false, Top25Tests: false, TCweIDSearch: "", TTestNameKeyword: "",},
+        //tests: [ { _id: "", TID: "", TSource: "", TTestName: "", }, ],
     },
 });
 uiProject.onRendered(function () {
@@ -67,49 +62,47 @@ uiProject.onRendered(function () {
     $("#btnNext").on("click", evtToNextTest);
 
     // Show project details on mouseover
-    //$(".MouseOverRow").mouseover(() => {
-    //    $("#projectDetailsRow").show();
-    //});
-    //$(".MouseOutRow").mouseout(() => {
-    //    $("#projectDetailsRow").hide();
-    //});
+    // $(".MouseOverRow").mouseover(() => {
+    //     $("#projectDetailsRow").show();
+    // });
+    // $(".MouseOutRow").mouseout(() => {
+    //     $("#projectDetailsRow").hide();
+    // });
 });
-uiProject.events({
-    // React to UI changes to text inputs
-    "change textarea,input"(e, elm, tpl) {
-        // Get UI value that was changed
-        let field = elm.getAttribute("field");
-        if (field === null) field = elm.id;
-        let value = elm.value;
-        if (elm.type === "checkbox") value = elm.checked;
-        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+// uiProject.events({
+//     // React to UI changes to text inputs
+//     "change textarea,input"(e, elm, tpl) {
+//         // Get UI value that was changed
+//         let field = elm.getAttribute("field");
+//         if (field === null) field = elm.id;
+//         let value = elm.value;
+//         if (elm.type === "checkbox") value = elm.checked;
+//         console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
-        // Skip set to avoid re-rendering the test runner for no good reason
-        //uiProject.set(field, value);
-    },
-});
-console.debug("Rendering template");
-uiProject.render();
+//         // Skip set to avoid re-rendering the test runner for no good reason (it also breaks it)
+//         //uiProject.set(field, value);
+//     },
+// });
 
-// Populate UI from DB
-function updateProjectFromDB(name) {
+// Populate project UI from DB data
+function uiProjectPopulate(name) {
     console.debug(`Getting data for project ${name}`);
     restGetProjectTestingData(name, function (data) {
         if (data !== null) {
             successMessage("Project testing data extraction succeeded");
-            console.debug(`prj: ${JSON.stringify(data.prj, null, 4)}`);
-            console.debug(`tests[0]: ${JSON.stringify(data.tests[0], null, 4)}`);
+            //console.debug(`prj: ${JSON.stringify(data.prj, null, 4)}`);
+            //console.debug(`tests[0]: ${JSON.stringify(data.tests[0], null, 4)}`);
 
-            // Update model
-            uiProject.setData(data);
-
-            // Make UI adjustments - TODO: templatize?
-            //console.debug("Tweaking UI (moved to template later?)");
-            //$("#ScopeSel").val(prj.scopeQry);
+            // Update model (combine config data with flattened project data)
+            let prjData = _.assign(data, data.prj);
+            uiProject.setData(prjData);
         }
     });
 }
-updateProjectFromDB(prjName);
+
+// Render and populate
+uiProject.render();
+uiProjectPopulate(gPrjName);
 
 //----------------------------------------------
 // CWE DATALIST TEMPLATE
@@ -135,11 +128,9 @@ uiCWE.onRendered(function () {
     // Update UI when the user changes the CWE input or double-clicks on the value
     $("#cweIn").on("blur", evtCweInputChanged);
 });
-console.debug("Rendering template");
-uiCWE.render();
 
 // Populate UI from DB
-function updateCwesFromDB() {
+function uiCwePopulate() {
     console.debug(`Getting all CWE data`);
     restGetAllCWEs(function (data) {
         if (data !== null) {
@@ -150,12 +141,15 @@ function updateCwesFromDB() {
         }
     });
 }
-updateCwesFromDB();
+
+// Render and populate UI
+uiCWE.render();
+uiCwePopulate();
 
 //----------------------------------------------
 //  TESTKB TEMPLATE
 //----------------------------------------------
-let uiTestKB = new ReactiveHbs({
+let uiTest = new ReactiveHbs({
     container: ".testkb_mount_point",
     template: "#testkb_template",
     data: {
@@ -165,60 +159,73 @@ let uiTestKB = new ReactiveHbs({
         TTestName: "",
         TType: "",
         TDescription: "",
+        TIssueName: "",
         TIssueType: "",
-        TSeverity: 0,
+        TSeverity: -1,
+        TSeverityText: "",
         TTesterSupport: "",
-        TPhase: "",
-        TSection: "",
-        TStep: "",
+        //TPhase: "",
+        //TSection: "",
+        //TStep: "",
         TTRef: "",
         TCweID: 0,
         TPCI: false,
         TTop10: false,
         TTop25: false,
-        TStdTest: true,
-        PrjName: "",
-        CweId: 0,
-        IPriority: 6,
-        IPriorityText: "",
-        INotes: "",
-        TIssueName: "",
+        TStdTest: false,
     },
 });
-uiTestKB.onRendered(function () {
-    console.log("onRendered: Registering UI event handlers for TestKB");
+uiTest.onRendered(function () {
+    console.log("onRendered: Registering UI event handlers for TestKB fields");
 
     // When the New Test button is pressed, clear the UI and create another test
     $("#kbBtnNew").on("click", evtNewTest);
 
-    // Show remediation and background on mouseover
-    $("#issueNameRow, #issueBgRow, #remedBgRow").mouseover(() => {
+    // Save Issue when KB data has changed
+    $("#updateIssueFromTestBtn").on("click", evtUpdateIssueFromTest);
+
+    // Override Generic Issue data from CWE data
+    $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
+
+    // Refresh Page button
+    $("#refreshBtn").on("click", evtRefreshPage);
+
+    // Add TODOs button
+    $("#todosBtn").on("click", evtAddTodos);
+
+    // Show remediation and background
+    //$("#issueNameRow, #issueBgRow, #remedBgRow").mouseover(() => {
+    $("#issueNameRow").dblclick(() => {
         $("#issueBgRow").show();
         $("#remedBgRow").show();
     });
-    $("#cweRow, #issueRefRow, #issueSevRow, #projectNameRow").mouseout(() => {
+    // $("#cweRow, #issueRefRow, #issueSevRow, #projectNameRow").mouseout(() => {
+    $("#issueBgRow, #remedBgRow").dblclick(() => {
         $("#issueBgRow").hide();
         $("#remedBgRow").hide();
     });
 
     // When the test fields values change, update the Test KB
+    /*
     $("#TTestName, #TTesterSupport, #TTRef, #cwename, #cweid, #TIssueName, #TIssueBackground").on("change", evtTestKBDataChanged);
     $("#TRemediationBackground, .testKbCB, #TSeverity, #TRef1, #TRef2").on("change", evtTestKBDataChanged);
     $("#TPCI, #TTop10, #TTop25, #TStdTest").on("change", evtTestKBDataChanged);
+    */
 
     // Reset all textarea heights back to 2 rows
     $("th").click(function () {
         $(":input").attr("rows", 2);
     });
+
     // Set all textarea heights to 2 rows from the start
     $(":input").attr("rows", 2);
 
     // Increase the height of textarea during edits
     $("textarea").on("click", function (event) {
-        event.target.rows = 20;
+        event.target.rows = gTextAreaRowsExpanded;
     });
 });
-uiTestKB.events({
+uiTest.events({
     // React to UI changes to text inputs
     "change textarea,input"(e, elm, tpl) {
         // Get UI value that was changed
@@ -229,48 +236,94 @@ uiTestKB.events({
         console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
         // Use set() to update model and re-render
-        uiTestKB.set(field, value);
+        //console.debug(`Data before: ${JSON.stringify(uiTest.getData())}`);
+        uiTest.set(field, value);
+        //console.debug(`Data after: ${JSON.stringify(uiTest.getData())}`);
     },
-    "click textarea"(e, elm, tpl) {
-        console.info("Text area clicked, adjusting height");
+    "change select"(e, elm, tpl) {
+        let value = Number(elm.value);
+        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${elm.id} VALUE=${value}`);
+        uiTest.set(elm.id, value);
+
+        // If it's a severity value change, adjust the severity text
+        if (elm.id === "TSeverity") uiTest.set("TSeverityText", getSevText(Number(value)));
     },
 });
-console.debug("Rendering template");
-uiTestKB.render();
+uiTest.helpers({
+    isSev(sev) {
+        if (uiTest.get("TSeverity") == sev) {
+            console.debug(`Adjusting severity selector to ${sev}`);
+            return true;
+        }
+        return false;
+    },
+    TCweUrl() {
+        return gCweUriBase + String(uiTest.get("TCweID"));
+    },
+});
+
+// Populate UI from DB
+function uiTestPopulate(testId) {
+    console.debug(`Getting data for Test ID ${testId}`);
+    restGetTest(testId, function (data) {
+        if (data !== null) {
+            successMessage(`Data for Test ID ${testId} was extracted successfully`);
+            // Update model
+            uiTest.setData(data);
+            //$("#TSeverity").val(data.TSeverity);
+            /*
+            $("#TPCI").prop("checked", data.TPCI);
+            $("#TTop10").prop("checked", data.TTop10);
+            $("#TTop25").prop("checked", data.TTop25);
+            $("#TStdTest").prop("checked", data.TStdTest);
+            $("#cweIn").val(data.TCweID);
+            $("#cweref").attr("href", gCweUriBase + data.TCweID + ".html");
+            */
+        }
+    });
+}
+
+// Render (skip populate, waiting for UI events)
+uiTest.render();
 
 //----------------------------------------------
 //  ISSUE DETAILS TEMPLATE
 //----------------------------------------------
+const emptyIssue = {
+    _id: "",
+    PrjName: "",
+    TID: "",
+    CweId: 0,
+    IEvidence: "",
+    INotes: "",
+    IPriority: 0,
+    IPriorityText: "",
+    IScreenshots: "",
+    IURIs: "",
+    TIssueName: "",
+};
 let uiIssue = new ReactiveHbs({
     container: ".issue_mount_point",
     template: "#issue_template",
-    data: {
-        _id: "",
-        PrjName: "",
-        TID: "",
-        CweId: 0,
-        IEvidence: "",
-        INotes: "",
-        IPriority: 6,
-        IPriorityText: "",
-        IScreenshots: "",
-        IURIs: "",
-        TIssueName: "",
-        TRef1: "",
-        TRef2: "",
-        /*
-        TIssueBackground: "",
-        TRemediationBackground: "",
-        */
-        TSeverity: 0,
-        TSeverityText: "",
+    data: Object.assign({}, emptyIssue),
+});
+uiIssue.helpers({
+    isPrio(prio) {
+        if (uiIssue.get("IPriority") == prio) {
+            console.debug(`Adjusting priority selector to ${prio}`);
+            return true;
+        }
+        return false;
+    },
+    ICweUrl() {
+        return gCweUriBase + String(uiTest.get("CweId"));
     },
 });
 uiIssue.onRendered(function () {
     console.log("onRendered: Registering UI event handlers for issue details");
 
     // When the Specific Issue Data changes, save it to the Issue collection
-    $("#IURIs, #IEvidence, #IScreenshots, #IPriority").on("change", evtIssueDataChanged);
+    //$("#IURIs, #IEvidence, #IScreenshots, #IPriority").on("change", evtIssueDataChanged);
 
     // When Evidence and Notes fields are double-clicked, prefill them with template text.
     $("#IEvidence, #INotes").on("dblclick", evtAddIssueTemplateText);
@@ -279,45 +332,36 @@ uiIssue.onRendered(function () {
     $("#IScreenshots").on("paste", evtPasteScreenshot);
 
     // When the evidence field changes, try to parse it as raw HTTP data that comes from Burp Clipboarder.
+    /*
     $("#IEvidence").on("blur", function (event) {
-        let issue = uiGetIssue();
+        //let issue = uiGetIssue();
+        let issue = uiIssue.getData();
         if (issue !== undefined) {
-            let evidence = $("#IEvidence").val();
-            let uri_list = $("#IURIs").val();
-            uri_list = extractURIs(evidence, uri_list);
-            $("#IURIs").val(uri_list);
-            restUpdateIssue(issue);
+            //let evidence = $("#IEvidence").val();
+            //let uri_list = $("#IURIs").val();
+            uri_list = extractURIs(issue.IEvidence, issue.IURIs);
+            //$("#IURIs").val(uri_list);
+            uiIssue.set("IURIs", uri_list);
         }
     });
+    */
 
     // When the notes field changes, try to parse it as an issue that comes from Burp Clipboarder.
-    // TODO: replace below
+    /*
     $("#INotes").on("blur", function (event) {
         uiParseBurpIssue();
-        //$("#" + event.target.id).height(20);
-        let issue = uiGetIssue();
+        //let issue = uiGetIssue();
+        let issue = uiIssue.getData();
         if (issue !== undefined) restUpdateIssue(issue);
     });
-
-    // Save Issue when KB data has changed
-    // TODO: replace below
-    $("#updateIssueListBtn").on("click", evtIssueDataChanged);
-
-    // Override Generic Issue data from CWE data
-    $("#useCweIssueDataBtn").on("click", evtUseCweIssueData);
-
-    // Refresh Page button
-    $("#refreshBtn").on("click", evtRefreshPage);
-
-    // TODOs button
-    $("#todosBtn").on("click", evtAddTodos);
+    */
 
     // Reset all textarea heights back to 2 rows
     $("th").click(function () {
-        $(":input").attr("rows", 2);
+        $(":input").attr("rows", gTextAreaRows);
     });
     // Set all textarea heights to 2 rows from the start
-    $(":input").attr("rows", 2);
+    $(":input").attr("rows", gTextAreaRows);
 
     // Increase the height of textarea during edits
     $("textarea").on("click", function (event) {
@@ -332,13 +376,57 @@ uiIssue.events({
         if (field === null) field = elm.id;
         let value = elm.value;
         if (elm.type === "checkbox") value = elm.checked;
-        console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
+        console.debug(`UI text changed in issue details: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
-        // Use set() to update model and re-render
-        uiIssue.set(field, value);
+        // Handle changes to special fields
+        switch (field) {
+            case "INotes":
+                // Parse Burp issue and set multiple fields
+                uiParseBurpIssue();
+                break;
+            case "IEvidence":
+                // Parse evidence field to extract URIs
+                uri_list = extractURIs(issue.IEvidence, issue.IURIs);
+                uiIssue.set("IURIs", uri_list);
+                break;
+            default:
+                // Default processing: just update the modified field
+                uiIssue.set(field, value);
+        }
+        // Update the DB
+        updateIssue();
+    },
+    "change select"(e, elm, tpl) {
+        let value = Number(elm.value);
+        console.debug(`UI selector changed in issue details: ID=${elm.id} TYPE=${elm.type} FIELD=${elm.id} VALUE=${value}`);
+        uiIssue.set(elm.id, value);
+
+        // If it's a priority value change, adjust the priority text
+        if (elm.id === "IPriority") uiIssue.set("IPriorityText", getPriorityText(Number(value)));
+
+        // Update DB
+        updateIssue();
     },
 });
-console.debug("Rendering template");
+
+// Populate UI from DB
+function uiIssuePopulate(testId, prjName) {
+    console.debug(`Getting issue data for Test ID ${testId} in project ${prjName}`);
+    restGetIssue(testId, prjName, function (data) {
+        if (data !== null) {
+            successMessage(`Issue for Test ID ${testId} was extracted successfully`);
+            // Update model
+            uiIssue.setData(Object.assign({}, emptyIssue));
+            uiIssue.setData(data);
+            uiUpdateScreenshots();
+        } else {
+            successMessage(`No issue found for Test ID ${testId}`);
+            uiIssue.setData(Object.assign({}, emptyIssue));
+        }
+    });
+}
+
+// Render but don't populate UI (wait for UI events)
 uiIssue.render();
 
 //----------------------------------------------
@@ -348,47 +436,23 @@ let uiIssueList = new ReactiveHbs({
     container: ".issuelist_mount_point",
     template: "#issuelist_template",
     data: {
-        issues: [
-            {
-                _id: "",
-                TID: "",
-                TSource: "",
-                TTestName: "",
-                TType: "",
-                TDescription: "",
-                TIssueType: "",
-                TSeverity: 0,
-                TTesterSupport: "",
-                TPhase: "",
-                TSection: "",
-                TStep: "",
-                TTRef: "",
-                TCweID: "0",
-                TPCI: false,
-                TTop10: false,
-                TTop25: false,
-                TStdTest: true,
-                PrjName: "",
-                CweId: "0",
-                IPriority: 6,
-                IPriorityText: "",
-                INotes: "",
-                TIssueName: "",
-            },
-        ],
+        issues: [Object.assign({}, emptyIssue)],
     },
 });
+
 uiIssueList.onRendered(function () {
-    console.log("onRendered: Registering UI event handlers");
+    console.log("onRendered: Registering UI event handlers for issue list");
 
     // Delete Issue
-    // TODO: replace below
     $(".delete").on("click", evtDeleteIssue);
 
     // Show the issue details when clicking in the list
-    // TODO: replace below
     $(".issueTD").on("click", evtShowIssue);
+
+    // Add blank page icon
+    uiUpdateScreenshots();
 });
+/*
 uiIssueList.events({
     // React to UI changes to text inputs
     "change textarea,input"(e, elm, tpl) {
@@ -399,30 +463,38 @@ uiIssueList.events({
         if (elm.type === "checkbox") value = elm.checked;
         console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
+        // Skip below, the issue list is only used to change the issue details
         // Use set() to update model and re-render
-        uiIssueList.set(field, value);
+        //uiIssueList.set(field, value);
     },
 });
-console.debug("Rendering template");
+*/
 uiIssueList.render();
 
 // Populate UI from DB
-function updateIssueListFromDB(name) {
+function uiIssueListPopulate(name) {
     console.debug(`Getting issue list for project ${name}`);
     restGetIssueList(name, function (data) {
         if (data !== null) {
             const issues = {issues: data};
             successMessage("Issue list for project was extracted successfully");
+            //console.debug(`Issue list ${JSON.stringify(issues, null, 4)}`);
             // Update model
             uiIssueList.setData(issues);
         }
     });
 }
-updateIssueListFromDB(name);
+uiIssueListPopulate(gPrjName);
 
 //==============================================================================
 //                                FUNCTIONS
 //==============================================================================
+
+// Update issue and issue list
+function updateIssue() {
+    restUpdateIssue(uiIssue.getData());
+    uiIssueListPopulate(gPrjName);
+}
 
 // Create template text into finding sections
 function evtAddIssueTemplateText(event) {
@@ -435,8 +507,8 @@ function evtAddIssueTemplateText(event) {
         if (iEvidence === undefined || iEvidence.length === 0) {
             console.info("Adding template text to Evidence field");
             iEvidence = "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
-            $("#IEvidence").val(iEvidence);
-            //$("#IEvidence").attr("title", iEvidence);
+            //$("#IEvidence").val(iEvidence);
+            uiIssue.IEvidence = iEvidence;
         }
     }
 
@@ -478,8 +550,14 @@ Refer to the Evidence section for additional details (if included).
 - [Mitigations for Azure solutions](https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-mitigations)
 - [OTHER_REF](OTHER_URL)
 `;
-            $("#INotes").val(iNotes);
-            //$("#INotes").attr("title", iNotes);
+            let issueData = uiIssue.getData();
+            if (issueData.TIssueBackground) {
+                iNotes += "\n\n#### CWE Issue Background\n" + issueData.TIssueBackground;
+            }
+            if (issueData.TRemediationBackground) {
+                iNotes += "\n\n#### CWE Remediation\n" + issueData.TRemediationBackground;
+            }
+            uiIssue.set("INotes", iNotes);
         }
     }
 }
@@ -497,10 +575,11 @@ function evtDeleteIssue(event) {
     let action = $(this).attr("action");
     if (action === "delete") {
         console.info("Deleting issue for " + testId);
-        restDeleteIssue(prjName, testId);
+        restDeleteIssue(gPrjName, testId);
     }
     //reloadPage("Reloading page to refresh the issue list");
     alertOnUpdate();
+    uiIssueListPopulate(gPrjName);
 }
 
 // Go to next test in the list
@@ -543,12 +622,35 @@ function evtToPreviousTest() {
     uiChangeTest(testId);
 }
 
+// Overwrite issue data from TestKB
+function evtUpdateIssueFromTest() {
+    console.info("Overwriting issue data from Test KB");
+    let issue = uiIssue.getData();
+    let testData = uiTest.getData();
+
+    // Get data from UI
+    issue.CweId = testData.TCweID;
+    issue.TID = testData.TID;
+    issue.PrjName = gPrjName;
+    issue.TIssueName = testData.TIssueName;
+    issue.IPriorityText = getSevText(Number(testData.TSeverity));
+    issue.IPriority = getPriorityVal(issue.IPriorityText);
+    //issue.TRef1 = testData.TRef1;
+    //issue.TRef2 = testData.TRef2;
+    //issue.TSeverity = testData.TSeverity;
+    //issue.TSeverityText = testData.TSeverityText;
+
+    // Update model and DB
+    uiIssue.setData(issue);
+    updateIssue();
+}
+
+/*
 // Save issue data in UI to issue collection
 function evtIssueDataChanged() {
     console.info("Issue data changed event");
-    //let attrib = event.target.id;
-    //let value  = event.target.value;
-    issue = uiGetIssue();
+    //issue = uiGetIssue();
+    let issue = uiIssue.getData();
     if (issue !== undefined) {
         restUpdateIssue(issue);
 
@@ -558,13 +660,14 @@ function evtIssueDataChanged() {
         //$("#INotes").attr("title", issue.INotes);
     }
     uiUpdateScreenshots();
-    //reloadPage("Reloading page to refresh the issue list");
     alertOnUpdate();
 }
+*/
 
 // Create a new test
 function evtNewTest() {
-    let tid = new Date().toISOString().split(".")[0].replace(/[-:]/g, "");
+    //let tid = new Date().toISOString().split(".")[0].replace(/[-:]/g, "");
+    let tid = Date.now().toString();
     console.info("New test event, creating a new empty test", tid);
     restCreateTest(tid);
 }
@@ -573,11 +676,16 @@ function evtNewTest() {
 function evtShowIssue() {
     let testId = $(this).attr("tid");
     console.info("Show issue event for TID " + testId);
-    uiUpdateFromTestKB(testId);
-    uiUpdateFromIssueColl(testId);
+    //uiUpdateFromTestKB(testId);
+    //uiClearTestingFields();
+    $("#testIn").val(testId);
+    uiTestPopulate(testId);
+    //uiUpdateFromIssueColl(testId);
+    //uiClearIssueFields();
+    uiIssuePopulate(testId, gPrjName);
 }
 
-// Save issue data in UI to issue collection
+// Fill empty generic issue fields in UI from CWE data
 function evtUseCweIssueData() {
     console.info("Overriding generic issue data from CWE data");
     let cweId = $("#cweIn").val();
@@ -592,10 +700,8 @@ function evtRefreshPage() {
 
 // Add TODOs event
 function evtAddTodos() {
-    //let scopeQuery = $("#ScopeQuery").html();
-    //console.info(`Adding TODO items in ${prjName} with scope: ${scopeQuery}`);
-    console.info(`Adding TODO items in ${prjName}`);
-    restAddTodos(prjName);
+    console.info(`Adding TODO items in ${gPrjName}`);
+    restAddTodos(gPrjName);
 }
 
 // When pasting images in Evidence, add a Base64 representation
@@ -613,15 +719,17 @@ function evtPasteScreenshot(event) {
                 let dataUrl = event.target.result;
                 let imgTag = "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
                 // Append the data URL to the Evidence field.
-                let iScreenshots = $("#IScreenshots").val();
+                //let iScreenshots = $("#IScreenshots").val();
+                let iScreenshots = uiIssue.get("IScreenshots");
                 if (iScreenshots === undefined || iScreenshots.length === 0) {
                     iScreenshots = imgTag;
                 } else {
                     iScreenshots = imgTag + "<br/><br/>\n\n" + iScreenshots;
                 }
-                $("#IScreenshots").val(iScreenshots);
-                issue = uiGetIssue();
-                if (issue !== undefined) restUpdateIssue(issue);
+                //$("#IScreenshots").val(iScreenshots);
+                uiIssue.set("IScreenshots", iScreenshots);
+                //issue = uiGetIssue();
+                updateIssue();
                 uiUpdateScreenshots();
             };
             reader.readAsDataURL(blob);
@@ -652,12 +760,13 @@ function evtTestKBDataChanged(event) {
     // Tweak the new value if it comes from one of the checkboxes
     if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest") value = $("#" + field).prop("checked");
 
-    console.info("Updating Test " + testId + " with " + field + "=" + value);
-
     // Update the DB
+    console.warn("TODO: check refactoring in evtTestKBDataChanged");
+    console.info("Updating Test " + testId + " with " + field + "=" + value);
     let data = {};
     data[field] = value;
     restUpdateTest(testId, data);
+    //uiTest.set(field, value);
 }
 
 // Change UI when test is changed
@@ -665,12 +774,14 @@ function uiChangeTest(testId) {
     console.info("Test selected: " + testId);
 
     // Update UI
-    uiUpdateFromTestKB(testId);
-    uiUpdateFromIssueColl(testId);
-
-    // Update LastTID
-    //$("#LastTID").html(testId);
-    //restUpdateLastTID(testId, prjName);
+    console.warn("TODO: check refactoring in uiChangeTest");
+    //uiUpdateFromTestKB(testId);
+    //uiClearTestingFields();
+    $("#testIn").val(testId);
+    uiTestPopulate(testId);
+    //uiUpdateFromIssueColl(testId);
+    //uiClearIssueFields();
+    uiIssuePopulate(testId, gPrjName);
 }
 
 // Clear Issue Information
@@ -684,14 +795,14 @@ function uiClearCweFields() {
 // Clear Issue Information
 function uiClearIssueFields() {
     console.info("Clearing Issue fields");
-    var empty = "";
+    let empty = "";
     $("#IURIs").val(empty);
-    //$("#IURIs").attr("title", empty);
+    $("#IURIs").attr("title", empty);
     $("#IEvidence").val(empty);
-    //$("#IEvidence").attr("title", empty);
+    $("#IEvidence").attr("title", empty);
     $("#IScreenshots").val(empty);
     $("#INotes").val(empty);
-    //$("#INotes").attr("title", empty);
+    $("#INotes").attr("title", empty);
     $("#IPriority").val(empty);
     $("#IScreenshotsArea").html("");
     $("#IPriority").prop("selectedIndex", 0);
@@ -750,6 +861,7 @@ function uiGetDatalistInputIndex(testId) {
 }
 
 // Get issue data from the UI
+/* NOT NEEDED ANYMORE
 function uiGetIssue() {
     let issue = {};
     issue.CweId = $("#cweIn").val();
@@ -770,38 +882,36 @@ function uiGetIssue() {
     issue.PrjName = prjName;
     return issue;
 }
+*/
 
-// When the Specific Issue Data changes, parse it if it's formatted as a Burp issue)
-// and save the results to the DB.
+// When the issue notes comes from pasting text from the Burp Extender's Clipboarder extension, process it
 function uiParseBurpIssue() {
-    console.info("Parsing Burp Issue data");
+    console.info("Trying to extract Burp Issue data from Notes");
 
-    // If the note is Burp-formatted, parse it
-    let notes = $("#INotes").val();
-    let lines = notes.split("\n");
-    let issueName = "",
-        evidence = "",
-        urls = "",
-        newNotes = "",
-        sev = -1,
-        sevText = "",
-        issueBG = "",
-        remedBG = "";
-    let urlSection = false;
-    let remedBGSection = false;
-    let issueBGSection = false;
+    // Get Issue and TestKB data to overwrite
+    let data = uiIssue.getData();
+    let testkb = uiTest.getData();
+
+    // If the note is Burp-formatted, perform multi-line processing
+    let newNotes = "",
+        urlSection = false,
+        issueBGSection = false,
+        remedBGSection = false,
+        notes = $("#INotes").val(),
+        lines = notes.split("\n");
     for (let i in lines) {
-        let t = lines[i].split(":");
-
         // Capture the Issue Name
+        let t = lines[i].split(":");
         if (lines[i].startsWith("Issue:")) {
-            issueName = t[1].trim();
+            data.TIssueName = t[1].trim();
         }
 
-        // Capture the Issue Name
+        // Convert the severity text to a numeric value
         if (lines[i].startsWith("Severity:")) {
-            sevText = t[1].trim();
-            sev = getSevVal(sevText);
+            //data.TSeverityText = t[1].trim();
+            //data.TSeverity = getSevVal(data.TSeverityText);
+            data.IPriorityText = t[1].trim();
+            data.IPriority = getPriorityVal(data.IPriorityText);
         }
 
         // Capture the URL list
@@ -811,7 +921,7 @@ function uiParseBurpIssue() {
             let url = lines[i];
             if (url !== undefined && url.length > 0) {
                 url = url.replace(/^ - /, "");
-                urls += url + "\n";
+                data.IURIs += url + "\n";
             } else urlSection = false;
         }
 
@@ -821,7 +931,7 @@ function uiParseBurpIssue() {
         } else if (issueBGSection) {
             let ibg = lines[i];
             if (ibg !== undefined && ibg !== "~") {
-                issueBG += ibg + "\n";
+                testui.TIssueBackground += ibg + "\n";
             } else issueBGSection = false;
         }
 
@@ -831,13 +941,13 @@ function uiParseBurpIssue() {
         } else if (remedBGSection) {
             let rbg = lines[i];
             if (rbg !== undefined && rbg !== "~") {
-                remedBG += rbg + "\n";
+                testui.TRemediationBackground += rbg + "\n";
             } else remedBGSection = false;
         }
 
         // Capture the evidence
         else if (lines[i].startsWith("Evidence:")) {
-            evidence = t[1].trim();
+            data.IEvidence = t[1].trim();
         }
 
         // Remove the empty lines with "~" from Burp Clipboarder and
@@ -847,96 +957,101 @@ function uiParseBurpIssue() {
         }
     }
 
-    // Push the captured data to the UI and DB
-    if (issueName !== undefined && issueName.length > 0) {
-        $("#TIssueName").val(issueName);
+    // Post-processing
+
+    // Make sure we have a TID and PrjName
+    if (!data.TID || data.TID.length <= 1) {
+        data.TID = $("#testIn").val();
     }
-    if (issueBG !== undefined && issueBG.length > 0) {
-        issueBG = stripHtmlTags(issueBG).replace(/ +/g, " ").trim();
-        $("#TIssueBackground").val(issueBG);
+    if (!data.PrjName || data.PrjName.length <= 1) {
+        data.PrjName = gPrjName;
+    }
+
+    // Make sure we have an issue name
+    if (data.TIssueName !== undefined && data.TIssueName.length > 0) {
+        data.TIssueName = $("#TIssueName").val();
+    }
+    // Strip HTML tags from issue and remediation background text
+    if (testkb.TIssueBackground !== undefined && testkb.TIssueBackground.length > 0) {
+        testkb.TIssueBackground = stripHtmlTags(testkb.TIssueBackground).replace(/ +/g, " ").trim();
+        //$("#TIssueBackground").val(issueBG);
         //$("#TIssueBackground").attr("title", issueBG);
     }
-    if (remedBG !== undefined && remedBG.length > 0) {
-        remedBG = stripHtmlTags(remedBG).replace(/ +/g, " ").trim();
-        $("#TRemediationBackground").val(remedBG);
+    if (testkb.TRemediationBackground !== undefined && testkb.TRemediationBackground.length > 0) {
+        testkb.TRemediationBackground = stripHtmlTags(testkb.TRemediationBackground).replace(/ +/g, " ").trim();
+        //$("#TRemediationBackground").val(remedBG);
         //$("#TRemediationBackground").attr("title", remedBG);
     }
-    if (evidence !== undefined && evidence.length > 0) {
+    // Convert the Base-64 encoded evidence data
+    if (data.IEvidence !== undefined && data.IEvidence.length > 0) {
         // Decode the Base64 value
-        evidence = decodeURIComponent(
+        data.IEvidence = decodeURIComponent(
             Array.prototype.map
-                .call(atob(evidence), function (c) {
+                .call(atob(data.IEvidence), function (c) {
                     return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
                 })
                 .join("")
         ).trim();
-        $("#IEvidence").val(evidence);
+        //$("#IEvidence").val(evidence);
         //$("#IEvidence").attr("title", evidence);
-    }
-    if (urls !== undefined && urls.length > 0) {
-        $("#IURIs").val(urls);
-        //$("#IURIs").attr("title", urls);
-    }
-    if (sev >= 0) {
-        $("#IPriority").val(sev);
-        $("#TSeverity").val(sev);
     }
 
     // Save the note after removing "~", stripping HTML tags and collapsing
     // multiple spaces (from Burp Clipboarder extension).
     if (newNotes.length > 0) {
         newNotes = stripHtmlTags(newNotes).replace(/ +/g, " ").trim();
-        $("#INotes").val(newNotes);
+        //$("#INotes").val(newNotes);
         //$("#INotes").attr("title", newNotes);
+        data.INotes = newNotes;
     }
+    console.warn("TODO: check refactoring of uiParseBurpIssue");
+    uiIssue.setData(data);
+    uiTest.setData(testkb);
+    restUpdateTest(testkb.TID, testkb);
 }
 
 // Update screenshots from the Images field
 function uiUpdateScreenshots() {
     console.info("Updating screenshots area");
     let imgTags = $("#IScreenshots").val();
+    if (imgTags === null || imgTags === undefined || imgTags === "") {
+        imgTags = gBlankPageImgTag;
+    }
     $("#IScreenshotsArea").html(imgTags);
 }
 
-// Update UI with CWE data
+// Update generic issue data in UI from CWE data
 function uiUpdateCwe(cweId, forceUpdate) {
     console.info("Updating UI with CWE data");
 
     let rec = {};
     if (cweId !== undefined && cweId !== "") {
         console.info("Updating UI for CWE-" + cweId);
-        $("#cweIn").val(cweId);
-        $("#cweref").attr("href", gCweUriBase + cweId + ".html");
-
         restGetCwe(cweId, function (cwe) {
             if (cwe !== null) {
-                let data = {};
+                let uiData = uiTest.getData();
                 uiUpdateStatus("Received REST response for CWE ID " + cweId);
 
-                // Update the description in the title (visible via hovering)
-                let title = "Click here for more details on CWE-" + cweId;
-                $("#cweref").attr("title", title);
-
                 // If the issue name is empty, use the CWE name.
-                let issueName = $("#TIssueName").val();
-                if (issueName.length <= 0 || forceUpdate) {
-                    $("#TIssueName").val(cwe.Name);
-                    data["TIssueName"] = cwe.Name;
+                //let issueName = $("#TIssueName").val();
+                if (!uiData.TIssueName || uiData.TIssueName.length <= 0 || forceUpdate) {
+                    //$("#TIssueName").val(cwe.Name);
+                    uiData.TIssueName = cwe.Name;
                 }
 
                 // If the issue background is empty, use the CWE description.
-                let issueBG = $("#TIssueBackground").val();
-                if (issueBG.length <= 0 || forceUpdate) {
+                //let issueBG = $("#TIssueBackground").val();
+                if (!uiData.TIssueBackground || uiData.TIssueBackground.length <= 0 || forceUpdate) {
                     let description = cwe.Description_Summary;
                     let extendedDescr = cwe.Extended_Description;
                     if (description.length && extendedDescr) description += "\n\n" + extendedDescr;
-                    $("#TIssueBackground").val(description);
-                    data["TIssueBackground"] = description;
+                    //$("#TIssueBackground").val(description);
+                    uiData.TIssueBackground = description;
                 }
 
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
-                let issueRemediation = $("#TRemediationBackground").val();
-                if (issueRemediation.length <= 0 || forceUpdate) {
+                //let issueRemediation = $("#TRemediationBackground").val();
+                if (!uiData.TRemediationBackground || uiData.TRemediationBackground.length <= 0 || forceUpdate) {
                     let cweMitig = cwe.Potential_Mitigations;
                     if (cweMitig !== undefined) {
                         cweMitig = cweMitig.replace(/^::PHASE/g, "PHASE");
@@ -947,25 +1062,30 @@ function uiUpdateCwe(cweId, forceUpdate) {
                         cweMitig = cweMitig.replace(/:EFFECTIVENESS/g, "\nEFFECTIVENESS");
                         cweMitig = cweMitig.replace(/:DESCRIPTION/g, "\nDESCRIPTION");
                         cweMitig = cweMitig.replace(/::/g, "");
-                        $("#TRemediationBackground").val(cweMitig);
-                        data["TRemediationBackground"] = cweMitig;
+                        //$("#TRemediationBackground").val(cweMitig);
+                        uiData.TRemediationBackground = cweMitig;
                     }
                 }
 
                 // Update test data from UI changes related to changing the CWE
                 let testId = $("#testIn").val();
-                data["TCweID"] = cweId;
-                restUpdateTest(testId, data);
+                uiData["TCweID"] = cweId;
+                uiTest.setData(uiData);
+                restUpdateTest(testId, uiData);
             } else {
                 msg = "WARNING: Did not receive REST response for CWE " + cweId;
-                uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+                warningMessage(msg);
             }
         });
-    } else {
+    }
+    /*
+    else {
         uiClearCweFields();
     }
+    */
 }
 
+/* NOT NEEDED ANYMORE (kept for future tweaks)
 // Update all UI fields from the Test KB
 function uiUpdateFromTestKB(testId) {
     console.info("Updating UI with test KB data");
@@ -974,6 +1094,8 @@ function uiUpdateFromTestKB(testId) {
     uiClearTestingFields();
     $("#testIn").val(testId);
 
+    // TODO: refactor below
+    console.warn("Not refactored yet!");
     restGetTest(testId, function (rec) {
         if (rec !== null) {
             //uiUpdateStatus("Received REST response for Test ID " + testId);
@@ -1030,7 +1152,9 @@ function uiUpdateFromTestKB(testId) {
         }
     });
 }
+*/
 
+/* NOT NEEDED ANYMORE (kept for future tweaks)
 // Get Test KB data from UI
 function uiGetTestKB() {
     let test = {};
@@ -1059,7 +1183,9 @@ function uiGetTestKB() {
     test.TRef2 = $("#TRef2").val();
     return test;
 }
+*/
 
+/* NOT NEEDED ANYMORE 
 // Update all UI fields from the Issue Collection
 function uiUpdateFromIssueColl(testID) {
     console.info("Updating UI with issue data");
@@ -1072,6 +1198,8 @@ function uiUpdateFromIssueColl(testID) {
         return;
     }
 
+    // TODO: refactor below
+    console.warn("Not refactored yet!");
     restGetIssue(testID, prjName, function (i) {
         if (i !== null) {
             //uiUpdateStatus("Received REST response for issue with Test ID " + testID);
@@ -1092,13 +1220,15 @@ function uiUpdateFromIssueColl(testID) {
         }
     });
 }
+*/
 
 // Update status message in UI
 function uiUpdateStatus(msg) {
-    $("#StatusMsg").html(msg);
+    //$("#StatusMsg").html(msg);
     console.info(`UI status update: ${msg}`);
 }
 
+/*
 // Update the CVE links in the UI
 function getSoftwareLinks(software) {
     var swList = software.trim().split(",");
@@ -1108,6 +1238,7 @@ function getSoftwareLinks(software) {
     }
     $("#PrjSoftware").html(swLinksHtml);
 }
+*/
 
 // Reload page (refreshes the displayed test KB entries and issue list)
 function reloadPage() {
@@ -1117,7 +1248,6 @@ function reloadPage() {
 // Inform user about the need to refresh the page after updates
 function alertOnUpdate() {
     successMessage("Press Refresh Page button as needed");
-    let testId = $("#testIn").val();
 }
 
 // If session gets expired, redirect to login page to avoid wasting time (possibly losing more work)
@@ -1179,7 +1309,7 @@ function setLayout(newLayout) {
     $("#SectionIssueList").removeClass(oldIssueListLayout);
     $("#SectionIssueList").addClass(newIssueListLayout);
     localStorage.setItem("layout", layout);
-    console.debug(`Saved layout ${layout}`);
+    console.debug(`Saved layout=${layout} to localstorage`);
 }
 
 function testUI() {
@@ -1223,7 +1353,7 @@ function testUI() {
     };
     uiCWE.setData(uiCweData);
 
-    let uiTestKbData = {
+    let uiTestData = {
         _id: "__id_",
         TID: "_TID_",
         TSource: "_TSource_",
@@ -1243,13 +1373,10 @@ function testUI() {
         TTop25: true,
         TStdTest: true,
         PrjName: "_PrjName_",
-        CweId: 1,
-        IPriority: 6,
-        IPriorityText: "_TODO_",
         INotes: "_INotes_",
         TIssueName: "_TIssueName_",
     };
-    uiTestKB.setData(uiTestKbData);
+    uiTest.setData(uiTestData);
 
     let uiIssueData = {
         _id: "__id_",
@@ -1263,14 +1390,6 @@ function testUI() {
         IScreenshots: "_IScreenshots_",
         IURIs: "_IURIs_",
         TIssueName: "_TIssueName_",
-        TRef1: "_TRef1_",
-        TRef2: "_TRef2_",
-        /*
-        TIssueBackground: "_TIssueBackground_",
-        TRemediationBackground: "_TRemediationBackground_",
-        */
-        TSeverity: 0,
-        TSeverityText: "Info",
     };
     uiIssue.setData(uiIssueData);
 
@@ -1279,22 +1398,8 @@ function testUI() {
             {
                 _id: "__id_",
                 TID: "_TID_",
-                TSource: "_TSource_",
-                TTestName: "_TTestName_",
-                TType: "_TType_",
-                TDescription: "_TDescription_",
                 TIssueType: "_TIssueType_",
-                TSeverity: 1,
-                TTesterSupport: "_TTesterSupport_",
-                TPhase: "_TPhase_",
-                TSection: "_TSection_",
-                TStep: "_TStep_",
-                TTRef: "_TTRef_",
-                TCweID: 1,
                 TPCI: true,
-                TTop10: true,
-                TTop25: true,
-                TStdTest: true,
                 PrjName: "_PrjName_",
                 CweId: 1,
                 IPriority: 6,
@@ -1306,9 +1411,6 @@ function testUI() {
     };
     uiIssueList.setData(uiIssueListData);
 }
-
-// Print URL data
-console.debug(`URL data: ${JSON.stringify(thisURL, null, 4)}`);
 
 // Adjust screen layout
 let layout = thisURL.searchParams.get("layout");

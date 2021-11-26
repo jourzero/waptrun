@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="User Authentication" />
+        <meta name="author" content="" />
+        <title>WAPT Runner</title>
+    </head>
+    <script src="/dist/jquery/jquery.min.js"></script>
+    <script src="/dist/lodash/lodash.min.js"></script>
+    <script src="/dist/handlebars/handlebars.min.js"></script>
+    <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
+    <link rel="stylesheet" href="/stylesheets/main.css" />
+    <link rel="stylesheet" href="/stylesheets/alert.css" />
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default" role="navigation">
+                <div>
+                    <table width="100%">
+                        <tr>
+                            <th align="left"><a href="/home">WAPT Runner</a></th>
+                            <td align="right"><a href="/logout">Logout</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </nav>
+            <div id="msg" role="alert"></div>
+            <div class="panel panel-default">
+                <div class="testSection">Projects</div>
+                <div class="homepage_mount_point portrait" id="SectionProject"></div>
+                <div>
+                    <button id="btnNewPrj" class="button black" title="Create a new project." onclick="showCreateNewProjectBtn();">Create Project</button>
+                    <button id="btnDelPrj" class="button black" title="Remove a project." onclick="showRemoveProjectBtn();">Remove Project</button>
+                    <button id="btnCsvExport" class="button black" title="Export all issue data from all projects as CSV and download." onclick="window.open('/export/issues.csv', 'DownloadWin')">Export all</button>
+                    <button id="btnBackupDB" class="button black" title="Backup DB to file" onclick="restBackupDB();">Backup DB</button>
+                    <button id="btnViewDocs" class="button black" title="View this apps's documentation." onclick="window.open('Help.md', 'HelpWin')">Help</button>
+                    <button id="btnViewReadme" class="button black" title="View this apps's README on Github." onclick="window.open('https://github.com/jourzero/waptrun/blob/master/README.md', 'HelpWin')">README</button>
+                    <button id="btnAccountInfo" class="button black" title="View user account details." onclick="window.open('/account', 'HelpWin')">Account Info</button>
+                    <!--
+                    <button id="btnOpenCyberchef" class="button black" title="Open Cyberchef Tool" onclick="window.open('/static/cyberchef/index.html', 'CyberChefWin')">CyberChef</button>
+                    -->
+                </div>
+                <div id="newProjectDiv" hidden="true">
+                    <br />
+                    Enter new project name: <input type="text" id="newProjectInput" placeholder="YYYYMM-PRJNAME-ENV" />
+                </div>
+                <div id="delProjectDiv" hidden="true">
+                    <br />
+                    Enter project name to delete: <input type="text" id="delProjectInput"" />
+                </div>
+            </div>
+            <hr />
+        </div>
+
+        <!-- HOME PAGE TEMPLATE -->
+        <script id="homepage_template" type="text/x-handlebars-template">
+            <table class="projectList">
+            {{#if projects}}
+                {{#projects}}
+                <tr class="iTR">
+                    <td class="projectEntry"><a href="/project?name={{name}}">{{name}}</a></td>
+                    <td class="projectEntry"><a href="/testing?name={{name}}">Start Testing</td>
+                </tr>
+                {{/projects}}
+            {{else}}
+                <div class="jumbotron">
+                    NO PROJECT! Make sure that your MongoDB has been prepared properly! Refer to the <a href='https://github.com/jourzero/waptrun/blob/master/README.md#at-first-run-initialize-the-database'>README</a> for details.
+                    If you're ready, click <strong>Create Project</strong> below</div>
+            {{/if}}
+            </table>
+        </script>
+
+        <script src="/js/utils.js"></script>
+        <script src="/js/rest.js"></script>
+        <script src="/js/home_ui.js"></script>
+    </body>
+</html>

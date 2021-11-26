@@ -12,19 +12,19 @@ function restDeleteIssue(prjName, testId) {
     if (testId === undefined || testId === "") {
         let msg = "WARNING: Cannot delete issue data: Missing Test ID";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
     if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete issue data: Missing Project Name";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
 
     // Send REST call for issue data
     let url = "/api/issue/" + prjName + "/" + testId;
-    console.info("Sending DELETE request to " + url);
+    console.debug("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
         type: "DELETE",
@@ -35,9 +35,22 @@ function restDeleteIssue(prjName, testId) {
 function restGetCwe(cweId, callback) {
     // Send REST call for CWE data
     let url = "/api/cwe/" + cweId;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
-        warningMessage("GET request for CWE data failed");
+        msg = "GET request for CWE data failed";
+        console.warn(msg);
+        warningMessage(msg);
+    });
+}
+
+// Get account data
+function restGetAccount(callback) {
+    // Send REST call for account data
+    let url = "/api/account";
+    console.debug("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        console.warn("GET request for account data failed");
+        warningMessage("GET request for account data failed");
     });
 }
 
@@ -45,8 +58,9 @@ function restGetCwe(cweId, callback) {
 function restGetAllCWEs(callback) {
     // Send REST call for all CWE data
     let url = "/api/cwe";
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for all CWE data failed");
         warningMessage("GET request for all CWE data failed");
     });
 }
@@ -55,8 +69,20 @@ function restGetAllCWEs(callback) {
 function restGetProject(prjName, callback) {
     // Send REST call for project data
     let url = "/api/project/" + prjName;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for project data failed");
+        warningMessage("GET request for project data failed");
+    });
+}
+
+// Get all projects
+function restGetProjects(callback) {
+    // Send REST call for project data
+    let url = "/api/project";
+    console.debug("Sending GET request to " + url);
+    $.get(url, callback).fail(() => {
+        console.warn("GET request for project data failed");
         warningMessage("GET request for project data failed");
     });
 }
@@ -65,8 +91,9 @@ function restGetProject(prjName, callback) {
 function restGetIssue(testId, prjName, callback) {
     // Send REST call for issue data
     let url = "/api/issue/" + prjName + "/" + testId;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for issue data failed");
         warningMessage("GET request for issue data failed");
     });
 }
@@ -74,8 +101,9 @@ function restGetIssue(testId, prjName, callback) {
 function restGetIssueList(prjName, callback) {
     // Send REST call for issue data
     let url = "/api/issue/" + prjName;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for project issue data failed");
         warningMessage("GET request for project issue data failed");
     });
 }
@@ -84,8 +112,9 @@ function restGetIssueList(prjName, callback) {
 function restGetTest(testId, callback) {
     // Send REST call for testkb data
     let url = "/api/testkb/" + testId;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for testkb data failed");
         warningMessage("GET request for testkb data failed");
     });
 }
@@ -94,8 +123,9 @@ function restGetTest(testId, callback) {
 function restGetAllTests(callback) {
     // Send REST call for testkb data
     let url = "/api/testkb";
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for all testkb data failed");
         warningMessage("GET request for all testkb data failed");
     });
 }
@@ -104,8 +134,9 @@ function restGetAllTests(callback) {
 function restGetProjectTestingData(prjName, callback) {
     // Send REST call for testing data
     let url = "/api/testing/" + prjName;
-    console.info("Sending GET request to " + url);
+    console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
+        console.warn("GET request for project testing data failed");
         warningMessage("GET request for project testing data failed");
     });
 }
@@ -116,18 +147,18 @@ function restUpdateIssue(issue) {
     if (issue.TID === undefined || issue.TID === "") {
         let msg = "WARNING: Cannot save issue data: Missing Test ID";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
     if (issue.PrjName === undefined || issue.PrjName === "") {
         let msg = "WARNING: Cannot save issue data: Missing Project Name";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
 
     let url = "/api/issue/" + issue.PrjName + "/" + issue.TID;
-    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(issue));
+    console.debug("Sending PUT request to url " + url);
 
     $.ajax({
         url: url,
@@ -140,6 +171,7 @@ function restUpdateIssue(issue) {
                 successMessage("Issue updated successfully.");
             },
             409: function () {
+                console.warn("Could not process the request to update issue.");
                 warningMessage("Could not process the request to update issue.");
             },
             422: function (data) {
@@ -151,8 +183,6 @@ function restUpdateIssue(issue) {
 
 // TODO: Save LastTID to Project collection
 function restUpdateLastTID(testId, prjName) {
-    console.info("SKIPPED: Updating LastTID for project " + prjName);
-
     /*
     let url = "/api/project/" + prjName;
     console.info("Sending PUT request to url " + url + ": lastTID=" + testId);
@@ -178,7 +208,7 @@ function restCreatePrj(prjName) {
 
     // Send post request
     let url = "/api/project";
-    console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
+    console.debug("Sending POST request to url " + url);
     $.ajax({
         url: url,
         type: "POST",
@@ -191,6 +221,7 @@ function restCreatePrj(prjName) {
                 setTimeout(() => location.reload(), 2000);
             },
             409: function () {
+                console.warn("Could not process the request to create project.");
                 warningMessage("Could not process the request to create project.");
             },
             422: function (data) {
@@ -208,14 +239,13 @@ function restDeletePrj(prjName) {
     if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete project data: Missing Project Name";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
 
     // Send REST call for project data
-    console.info("Removing project " + prjName);
     let url = "/api/project/" + prjName;
-    console.info("Sending DELETE request to " + url);
+    console.debug("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
         type: "DELETE",
@@ -225,6 +255,7 @@ function restDeletePrj(prjName) {
                 setTimeout(() => location.reload(), 2000);
             },
             409: function () {
+                console.warn("Could not process the request to delete project.");
                 warningMessage("Could not process the request to delete project.");
             },
             422: function (data) {
@@ -242,19 +273,19 @@ function restDeletePrjIssues(prjName) {
     if (prjName === undefined || prjName === "") {
         let msg = "WARNING: Cannot delete project data: Missing Project Name";
         console.warn(msg);
-        uiUpdateStatus("<span class='statusHighlight'>" + msg + "</span>");
+        warningMessage(msg);
         return;
     }
 
     // Send REST call for issue data
-    console.info("Removing all issues for project " + prjName);
     let url = "/api/issue/" + prjName;
-    console.info("Sending DELETE request to " + url);
+    console.debug("Sending DELETE request to " + url);
     return $.ajax({
         url: url,
         type: "DELETE",
         statusCode: {
             409: function () {
+                console.warn("Could not process the request to delete project issues.");
                 warningMessage("Could not process the request to delete project issues.");
             },
             422: function (data) {
@@ -267,12 +298,12 @@ function restDeletePrjIssues(prjName) {
 // Save all values to Project Collection
 function restUpdateProject(prj) {
     let prjName = prj.name;
-    console.info("Updating project " + prjName);
+    console.debug("Updating project " + prjName);
 
     let data = JSON.stringify(prj);
     let url = "/api/project/" + prjName;
 
-    console.info("Sending PUT request to url " + url + " with data " + data);
+    console.debug("Sending PUT request to url " + url);
     $.ajax({
         url: url,
         type: "PUT",
@@ -294,7 +325,7 @@ function restUpdateProject(prj) {
 function restUpdateTest(testId, data) {
     // Send put request
     let url = "/api/testkb/" + testId;
-    console.info("Sending PUT request to url " + url + " with data " + JSON.stringify(data));
+    console.debug("Sending PUT request to url " + url);
     $.ajax({
         url: url,
         type: "PUT",
@@ -306,6 +337,7 @@ function restUpdateTest(testId, data) {
                 successMessage(`Test updated successfully.`);
             },
             409: function () {
+                console.warn("Could not process the request to update test.");
                 warningMessage("Could not process the request to update test.");
             },
             422: function (rdata) {
@@ -324,11 +356,11 @@ function restCreateTest(tid) {
     kvp.TSection = "Extras";
     kvp.TTestName = "TODO:RENAME TEST " + tid;
     kvp.TTesterSupport = "TODO:Test for ... issue by performing these steps:\n- STEP1\n- STEP2\n- STEP3\n";
-    kvp.TCweID = "0";
+    kvp.TCweID = 0;
     kvp.TIssueName = "TODO:Search for CWE and click 'Use CWE Data'.";
     kvp.TIssueBackground = "For background on this issue, please refer to the CWE.";
     kvp.TRemediationBackground = "See 'Potential Mitigations' section of the referenced CWE.";
-    kvp.TSeverity = "0";
+    kvp.TSeverity = 0;
     kvp.TIssueType = "Extra Test";
     kvp.TPCI = false;
     kvp.TTop10 = false;
@@ -340,7 +372,7 @@ function restCreateTest(tid) {
 
     // Send post request
     let url = "/api/testkb";
-    console.info("Sending POST request to url " + url + " with data " + JSON.stringify(kvp));
+    console.debug("Sending POST request to url " + url);
     $.ajax({
         url: url,
         type: "POST",
@@ -352,6 +384,7 @@ function restCreateTest(tid) {
                 successMessage(`Test created successfully: ${kvp.TID}. Reload page to add details to it.`);
             },
             409: function () {
+                console.warn("Could not process the request to create a new test.");
                 warningMessage("Could not process the request to create a new test.");
             },
             422: function (data) {
@@ -368,7 +401,7 @@ function restCreateTest(tid) {
 function restAddTodos(prjName) {
     // Send post request
     let url = `/api/issue/${prjName}/todos`;
-    console.info("Sending POST request to url " + url);
+    console.debug("Sending POST request to url " + url);
     $.ajax({
         url: url,
         type: "POST",
@@ -378,9 +411,11 @@ function restAddTodos(prjName) {
         statusCode: {
             201: function () {
                 successMessage(`Project issue TODOs created successfully. Reloading page...`);
-                setTimeout(() => location.reload(), 2000);
+                setTimeout(() => location.reload(), 5000);
+                //uiIssueListPopulate(gPrjName);
             },
             409: function () {
+                console.warn("Could not process the request to create TODO issues.");
                 warningMessage("Could not process the request to create TODO issues.");
             },
             422: function (data) {
@@ -402,7 +437,7 @@ function restRunHackTool(toolname, payload, hackConfig, callback) {
     }
     let contentType = "text/plain";
     let dataType = "json";
-    console.info("Sending POST request to url " + url);
+    console.debug("Sending POST request to url " + url);
     $.ajax({
         url: url,
         type: "POST",
@@ -412,12 +447,15 @@ function restRunHackTool(toolname, payload, hackConfig, callback) {
         success: callback,
         statusCode: {
             404: function (data) {
+                console.warn(`HTTP 404: Could not process this hack: ${JSON.stringify(data)}`);
                 warningMessage(`HTTP 404: Could not process this hack: ${JSON.stringify(data)}`);
             },
             409: function () {
+                console.warn(`HTTP 409: Could not process this hack: ${JSON.stringify(data)}`);
                 warningMessage(`HTTP 409: Could not process this hack: ${JSON.stringify(data)}`);
             },
             500: function () {
+                console.warn(`HTTP 500: Could not process this hack: ${JSON.stringify(data)}`);
                 warningMessage(`HTTP 500: Could not process this hack: ${JSON.stringify(data)}`);
             },
         },
@@ -452,3 +490,42 @@ function formatValidationError(data) {
     $("#msg").html(errMsg);
     setTimeout(clearMsg, 8000);
 }
+
+/**
+ * restBackupDB
+ */
+function restBackupDB() {
+    // Send post request
+    let url = "/api/db/backup";
+    let data = {};
+    console.debug("Sending POST request to url " + url);
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        dataType: "json",
+        statusCode: {
+            201: function () {
+                successMessage(`Backup created successfully. Reloading page...`);
+                setTimeout(() => location.reload(), 2000);
+            },
+            409: function () {
+                msg = "Could not process the request to create a backup.";
+                console.warn(msg);
+                warningMessage(msg);
+            },
+            422: function (data) {
+                formatValidationError(data);
+            },
+        },
+    });
+}
+
+$.ajaxSetup({
+    statusCode: {
+        401: function () {
+            window.location.href = "/login";
+        },
+    },
+});

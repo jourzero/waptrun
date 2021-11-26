@@ -18,9 +18,12 @@
         <div class="container">
             <nav class="navbar navbar-default" role="navigation">
                 <div>
-                    <strong> WAPT Runner </strong>
-                    &nbsp; &nbsp; &nbsp; &nbsp;
-                    <a href="/">Home</a>
+                    <table width="100%">
+                        <tr>
+                            <th align="left"><a href="/home">WAPT Runner</a></th>
+                            <td align="right"><a href="/logout">Logout</a></td>
+                        </tr>
+                    </table>
                 </div>
             </nav>
             <div id="msg" role="alert"></div>
@@ -29,6 +32,7 @@
         <div class="mount"></div>
 
         <script id="page_template" type="text/x-handlebars-template">
+                <div class="testSection">Project Filter</div>
                 <table class="issueTab">
                     <tr class="iTR">
                         <th class="issueTH">Project</th>
@@ -148,6 +152,9 @@
                             />Std
                         </td>
                     </tr>
+                </table>
+                <div class="testSection">Details</div>
+                <table class="issueTab">
 
                     <tr class="iTR">
                         <th class="issueTH">Scope</th>
@@ -178,45 +185,13 @@
                         <td class="prjRight" id="CveRptLinks"></td>
                     </tr>
                 </table>
-            <button id="StartTesting" class="button black" title="Start the test runner.">
-                Start Testing
-            </button>
-            <button
-                id="btnFindingsHtmlReport"
-                class="button black"
-                title="Generate an findings report for this project in HTML and download it."
-            >
-                Findings Report
-            </button>
-            <button
-                id="btnFullHtmlReport"
-                class="button black"
-                title="Generate an full report (all issues except exclusions) for this project in HTML and download it."
-            >
-                Full Report
-            </button>
-            <button
-                id="btnCsvReport"
-                class="button black"
-                title="Generate an issue report for all issues in this project in CSV and download it."
-            >
-                CSV Report
-            </button>
-            <button
-                id="btnJsonExport"
-                class="button black"
-                title="Generate an issue export for all issues in this project in JSON and download it."
-            >
-                JSON Export
-            </button>
-            <button
-                id="btnViewReadme"
-                class="button black"
-                title="View this apps's documentation."
-                onclick="window.open('/Help.md', 'HelpWin')"
-            >
-                Help
-            </button>
+            <button id="StartTesting" class="button black" title="Start the test runner."> Start Testing </button>
+            <button id="btnFindingsHtmlReport" class="button black" title="Generate an findings report for this project in HTML and download it." > Findings Report </button>
+            <button id="btnFullHtmlReport" class="button black" title="Generate an full report (all issues except exclusions) for this project in HTML and download it." > Full Report </button>
+            <button id="btnCsvReport" class="button black" title="Generate an issue report for all issues in this project in CSV and download it." > CSV Report </button>
+            <button id="btnJsonExport" class="button black" title="Generate an issue export for all issues in this project in JSON and download it." > JSON Export </button>
+            <button id="btnViewReadme" class="button black" title="View this apps's documentation." onclick="window.open('/Help.md', 'HelpWin')" > Help </button>
+            <button id="btnAccountInfo" class="button black" title="View user account details." onclick="window.open('/account', 'HelpWin')">Account Info</button>
         </script>
         <script src="/js/utils.js"></script>
         <script src="/js/rest.js"></script>

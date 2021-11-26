@@ -2,7 +2,7 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
-const exphbs = require("express-handlebars");
+//const exphbs = require("express-handlebars");
 const passport = require("passport");
 const path = require("path");
 const favicon = require("serve-favicon");
@@ -22,7 +22,7 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
-const {execFile} = require("child_process");
+const {exec, execFile} = require("child_process");
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -117,9 +117,11 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    logger.info(`User is not authenticated (authMode=${authMode}), redirecting to login`);
-    req.session.error = "Please sign in!";
-    res.redirect("/login");
+    // logger.info(`User is not authenticated (authMode=${authMode}), redirecting to login`);
+    //req.session.error = "Please sign in!";
+    //res.redirect("/login");
+    logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
+    res.status(401).send("Not Authenticated.");
 }
 
 // Test authorization
@@ -128,18 +130,16 @@ function ensureAuthorized(req, res, next) {
     let id = req.user.id;
     let provider = req.user.provider;
     let url = req.originalUrl;
-    logger.silly(
-        `Ensuring that user ${id} from provider ${provider} is authorized for ${url}. User data = ${JSON.stringify(
-            req.user
-        )}`
-    );
+    logger.silly(`Ensuring that user ${id} from provider ${provider} is authorized for ${url}. User data = ${JSON.stringify(req.user)}`);
     let user = users.find((usr) => {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
-        logger.warn(`User ${id} is NOT authorized.`);
-        req.session.error = "User ID " + id + " is not Authorized!";
-        res.redirect("/login");
+        //logger.warn(`User ${id} is NOT authorized.`);
+        //req.session.error = "User ID " + id + " is not Authorized!";
+        //res.redirect("/login");
+        logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
+        res.status(401).send("Not Authorized.");
     } else {
         logger.info(`User ${id} is authorized`);
         return next();
@@ -181,12 +181,7 @@ function getScopeQuery(prj) {
             break;
         case "Default":
             scopeQuery = {
-                $or: [
-                    {TSource: "OWASP-WSTG"},
-                    {TSource: "WAHH2"},
-                    {TSource: "TBHM2015"},
-                    {TSource: "Extras"},
-                ],
+                $or: [{TSource: "OWASP-WSTG"}, {TSource: "WAHH2"}, {TSource: "TBHM2015"}, {TSource: "Extras"}],
             };
             break;
         case "BCVRT":
@@ -207,35 +202,17 @@ function getScopeQuery(prj) {
     logger.debug(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
 
     let useTestNameKeyword = false;
-    if (TTestNameKeyword !== undefined && TTestNameKeyword !== null && TTestNameKeyword.length > 0)
-        useTestNameKeyword = true;
+    if (TTestNameKeyword !== undefined && TTestNameKeyword !== null && TTestNameKeyword.length > 0) useTestNameKeyword = true;
 
     let useTCweIDSearch = false;
-    if (TCweIDSearch !== undefined && TCweIDSearch !== null && TCweIDSearch.length > 0)
-        useTCweIDSearch = true;
+    if (TCweIDSearch !== undefined && TCweIDSearch !== null && TCweIDSearch.length > 0) useTCweIDSearch = true;
 
     if (PciTests || Top10Tests || Top25Tests || StdTests || useTestNameKeyword || useTCweIDSearch) {
         let filter = {};
-        if (PciTests)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TPCI: PciTests}
-                    : {$or: [filter, {TPCI: PciTests}]};
-        if (Top10Tests)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TTop10: Top10Tests}
-                    : {$or: [filter, {TTop10: Top10Tests}]};
-        if (Top25Tests)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TTop25: Top25Tests}
-                    : {$or: [filter, {TTop25: Top25Tests}]};
-        if (StdTests)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TStdTest: StdTests}
-                    : {$or: [filter, {TStdTest: StdTests}]};
+        if (PciTests) filter = JSON.stringify(filter).length <= 2 ? {TPCI: PciTests} : {$or: [filter, {TPCI: PciTests}]};
+        if (Top10Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop10: Top10Tests} : {$or: [filter, {TTop10: Top10Tests}]};
+        if (Top25Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop25: Top25Tests} : {$or: [filter, {TTop25: Top25Tests}]};
+        if (StdTests) filter = JSON.stringify(filter).length <= 2 ? {TStdTest: StdTests} : {$or: [filter, {TStdTest: StdTests}]};
         if (useTestNameKeyword)
             filter =
                 JSON.stringify(filter).length <= 2
@@ -243,11 +220,7 @@ function getScopeQuery(prj) {
                     : {
                           $and: [filter, {TTestName: {$regex: TTestNameKeyword}}],
                       };
-        if (useTCweIDSearch)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TCweID: TCweIDSearch}
-                    : {$or: [filter, {TCweID: TCweIDSearch}]};
+        if (useTCweIDSearch) filter = JSON.stringify(filter).length <= 2 ? {TCweID: TCweIDSearch} : {$or: [filter, {TCweID: TCweIDSearch}]};
 
         scopeQuery = {$and: [scopeQuery, filter]};
     }
@@ -291,17 +264,11 @@ app.use(express.static(path.join(__dirname, "../client"), staticOptions));
 app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/")));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
-//app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
+app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
 app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/")));
 app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/")));
-app.use(
-    "/dist/handlebars",
-    express.static(path.join(__dirname, "../node_modules/handlebars/dist/"))
-);
-app.use(
-    "/dist/reactive-handlebars",
-    express.static(path.join(__dirname, "../reactive-handlebars/src/"))
-);
+app.use("/dist/handlebars", express.static(path.join(__dirname, "../node_modules/handlebars/dist/")));
+app.use("/dist/reactive-handlebars", express.static(path.join(__dirname, "../reactive-handlebars/src/")));
 
 // Serve private static content
 app.use("/static", express.static(path.join(__dirname, "../waptrun-static/")));
@@ -325,16 +292,17 @@ app.use(function (req, res, next) {
 
 // ========================================== HANDLEBARS ==========================================
 // Configure express to use handlebars templates
+/*
 let hbs = exphbs.create({
     defaultLayout: "main",
     extname: ".hbs",
 });
 app.engine(".hbs", hbs.engine);
 app.set("view engine", ".hbs");
+*/
 
 // ========================================== DATABASE ==========================================
 // Make our db accessible to our router
-// Test 3
 const monk = require("monk");
 const {exit} = require("process");
 const {logging} = require("./config.js");
@@ -358,20 +326,14 @@ db.then(() => {
                 cweColl.count().then((count4) => {
                     let total = count1 + count2 + count3 + count4;
                     if (total <= 0) {
-                        logger.info(
-                            "Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)"
-                        );
-                        execFile(
-                            "/usr/bin/mongorestore",
-                            ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir],
-                            (error, stdout, stderr) => {
-                                if (error) {
-                                    throw error;
-                                }
-                                logger.debug(`Mongorestore stdout: ${stdout}`);
-                                logger.debug(`Mongorestore stderr: ${stderr}`);
+                        logger.info("Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)");
+                        execFile("/usr/bin/mongorestore", ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir], (error, stdout, stderr) => {
+                            if (error) {
+                                throw error;
                             }
-                        );
+                            logger.debug(`Mongorestore stdout: ${stdout}`);
+                            logger.debug(`Mongorestore stderr: ${stderr}`);
+                        });
                     } else logger.info(`Mongodb contains ${total} records total`);
                 });
             });
@@ -396,49 +358,51 @@ if (authMode == config.AUTH_MODE_OAUTH) {
         })
     );
 
-    app.get(
-        "/auth/google/callback",
-        passport.authenticate("google", {failureRedirect: "/login"}),
-        function (req, res) {
-            // Successful authentication, redirect home.
-            res.redirect("/");
-        }
-    );
+    app.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "/login"}), function (req, res) {
+        // Successful authentication, redirect home.
+        //res.redirect("/");
+        res.redirect("/home");
+    });
 }
 
 // ============================== GITHUB AUTH ROUTES ==========================================
 if (authMode == config.AUTH_MODE_OAUTH) {
     app.get("/auth/github", passport.authenticate("github"));
 
-    app.get(
-        "/auth/github/callback",
-        passport.authenticate("github", {failureRedirect: "/login"}),
-        function (req, res) {
-            // Successful authentication, redirect home.
-            res.redirect("/");
-        }
-    );
+    app.get("/auth/github/callback", passport.authenticate("github", {failureRedirect: "/login"}), function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect("/home");
+    });
 }
 
 // ========================================== WEB APP ROUTES ==========================================
 // Logout
 if (authMode == config.AUTH_MODE_NONE) {
+    app.get("/", function (req, res) {
+        res.redirect("/home");
+    });
     app.get("/login", function (req, res) {
-        res.redirect("/");
+        res.redirect("/home");
     });
     app.get("/logout", function (req, res) {
-        res.redirect("/");
+        res.redirect("/home");
     });
+    /*
     app.get("/account", function (req, res) {
         res.redirect("/");
     });
+    */
 } else {
+    app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
+        res.redirect("/home");
+    });
     app.get("/logout", function (req, res) {
         req.logout();
-        res.redirect("/");
+        res.redirect("/login");
         //req.session.notice = "You have successfully been logged out " + name + "!";
     });
 
+    /*
     // Display login page
     app.get("/login", function (req, res) {
         res.render("login");
@@ -448,14 +412,15 @@ if (authMode == config.AUTH_MODE_NONE) {
     app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
         res.render("account", {user: req.user});
     });
+    */
 }
 
 // Home
+/*
 app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
     // Get user info
     let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-    if (authMode == config.AUTH_MODE_OAUTH)
-        logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
+    if (authMode == config.AUTH_MODE_OAUTH) logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
 
     // Fetch from project collection
     let prjColl = db.get("project");
@@ -560,37 +525,72 @@ app.get(
             let cweColl = db.get("cwe");
             testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
                 // Search issues collection for matching issues
-                issuesColl.find(
-                    {PrjName: req.params.PrjName},
-                    {sort: {IPriority: 1, TID: 1}},
-                    function (__e, issues) {
-                        // Get sorted list of CWEs
-                        cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
-                            res.render("testing", {
-                                user: user,
-                                prj: prj,
-                                tests: tests,
-                                issues: issues,
-                                cwes: cwes,
-                                CweUriBase: config.CweUriBase,
-                                CveRptBase: config.CveRptBase,
-                                CveRptSuffix: config.CveRptSuffix,
-                                TestRefBase: config.TestRefBase,
-                                ScopeQuery: JSON.stringify(scopeQuery),
-                            });
+                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: 1, TID: 1}}, function (__e, issues) {
+                    // Get sorted list of CWEs
+                    cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
+                        res.render("testing", {
+                            user: user,
+                            prj: prj,
+                            tests: tests,
+                            issues: issues,
+                            cwes: cwes,
+                            CweUriBase: config.CweUriBase,
+                            CveRptBase: config.CveRptBase,
+                            CveRptSuffix: config.CveRptSuffix,
+                            TestRefBase: config.TestRefBase,
+                            ScopeQuery: JSON.stringify(scopeQuery),
                         });
-                    }
-                );
+                    });
+                });
             });
         });
     }
 );
+*/
 
 // ========================================== REST ROUTES ==========================================
 
 // Check if authenticated/authorized to use the REST API
 app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
+});
+
+// Backup DB
+app.post("/api/db/backup", (req, res, next) => {
+    logger.info(`Backing-up database...`);
+    exec("/app/utils/backup.sh", (error, stdout, stderr) => {
+        if (error) {
+            msg = `Error when backing-up DB: ${error}`;
+            console.error(msg);
+            res.status(404).json({error: JSON.stringify(msg)});
+        }
+        let msg = {stdout: stdout, stderr: stderr};
+        logger.info(`Backup result: ${JSON.stringify(msg)}`);
+        res.json(msg);
+    });
+});
+
+// Show account info
+app.get("/api/account", function (req, res) {
+    let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
+    if (authMode == config.AUTH_MODE_OAUTH) {
+        logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
+        res.json(req.user);
+    } else {
+        let data = {
+            provider: "None",
+            sub: "None",
+            id: "anon",
+            displayName: "Anonymous",
+            name: {givenName: "", familyName: ""},
+            given_name: "",
+            family_name: "",
+            language: "en",
+            photos: [{value: "", type: ""}],
+            picture: "",
+        };
+        res.json(data);
+    }
 });
 
 // Show all projects
@@ -768,24 +768,16 @@ app.get(
                             TestRefBase: config.TestRefBase,
                             ScopeQuery: JSON.stringify(scopeQuery),
                         };
-                        logger.info(
-                            `Returning testing page data for project ${req.params.PrjName}`
-                        );
+                        logger.info(`Returning testing page data for project ${req.params.PrjName}`);
                         res.json(testingPageData);
                     })
                     .catch((err) => {
-                        logger.warn(
-                            `Failed getting testing page data (in tests search): ${JSON.stringify(
-                                err
-                            )}`
-                        );
+                        logger.warn(`Failed getting testing page data (in tests search): ${JSON.stringify(err)}`);
                         res.status(404).json({error: JSON.stringify(err)});
                     });
             })
             .catch((err) => {
-                logger.warn(
-                    `Failed getting testing page data (in project search): ${JSON.stringify(err)}`
-                );
+                logger.warn(`Failed getting testing page data (in project search): ${JSON.stringify(err)}`);
                 res.status(404).json({error: JSON.stringify(err)});
             });
     }

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="User Authentication" />
+        <meta name="author" content="" />
+        <title>WAPT Runner</title>
+    </head>
+    <script src="/dist/jquery/jquery.min.js"></script>
+    <script src="/dist/lodash/lodash.min.js"></script>
+    <script src="/dist/handlebars/handlebars.min.js"></script>
+    <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/rest.js"></script>
+    <link rel="stylesheet" href="/stylesheets/main.css" />
+    <link rel="stylesheet" href="/stylesheets/alert.css" />
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default" role="navigation">
+                <div>
+                    <table width="100%">
+                        <tr>
+                            <th align="left"><a href="/home">WAPT Runner</a></th>
+                            <td align="right"><a href="/logout">Logout</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </nav>
+            <div id="msg" role="alert"></div>
+            <div class="account_mount_point portrait" id="SectionProject"></div>
+            <hr />
+        </div>
+
+        <script id="account_template" type="text/x-handlebars-template">
+            <table border="1">
+                <tr>
+                    <th>ID </th>
+                    <td> {{user.id}}</td>
+                </tr>
+                <tr>
+                    <th>Name </th>
+                    <td> {{user.displayName}}</td>
+                </tr>
+                <tr>
+                    <th>Provider </th>
+                    <td> {{user.provider}}</td>
+                </tr>
+                {{#if user.email}}
+                    <tr>
+                        <th>Email </th>
+                        <td> {{user.email}}</td>
+                    </tr>
+                {{/if}}
+                {{#each user.photos}}
+                    <tr>
+                        <th>Profile Photo </th>
+                        <td> <img src="{{this.value}}" /></td>
+                    </tr>
+                {{/each}}
+
+            </table>
+        </script>
+        <script>
+            //----------------------------------------------
+            //  HOME PAGE TEMPLATE
+            //----------------------------------------------
+            let ui = new ReactiveHbs({
+                container: ".account_mount_point",
+                template: "#account_template",
+                data: {
+                    user: {
+                        provider: "",
+                        sub: "",
+                        id: "",
+                        displayName: "",
+                        name: {givenName: "", familyName: ""},
+                        given_name: "",
+                        family_name: "",
+                        language: "",
+                        photos: [{value: "", type: ""}],
+                        picture: "",
+                    },
+                    //user: { id: "__id__", displayName: "__display_name__", provider: "__provider__", email: "__email__", photos: [{value: "__photo__"}], },
+                },
+            });
+            /*
+            ui.onRendered(function () {
+                console.debug("onRendered: Registering UI event handlers for account page");
+            });
+            */
+
+            // Populate UI from DB data
+            function uiPopulate() {
+                console.debug(`Getting project list`);
+                restGetAccount(function (data) {
+                    if (data !== null) {
+                        successMessage("Account data extraction succeeded");
+                        ui.setData({user: data});
+                    } else {
+                        console.warn("No account data");
+                    }
+                });
+            }
+
+            // Render and populate
+            ui.render();
+            uiPopulate();
+        </script>
+    </body>
+</html>

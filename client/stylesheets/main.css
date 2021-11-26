@@ -1,5 +1,9 @@
 body {
     font: normal 14px/14px sans-serif;
+    background-color: #eee;
+}
+.container {
+    background-color: #fff;
 }
 h4 {
     margin: 5px;
@@ -62,8 +66,9 @@ a:link {
 #msg {
     position: absolute;
     top: 10px;
-    width: 600px;
-    left: 10px;
+    width: 400px;
+    left: 200px;
+    z-index: auto;
 }
 
 .issueTab {
@@ -104,7 +109,7 @@ a:link {
 
 /* Landscape layout */
 .landscape {
-    width: 50%;
+    width: 49%;
 }
 
 .landscapeIssueList {
@@ -202,9 +207,22 @@ th {
     width: 80%;
 }
 
+.testKbInShort {
+    width: 245px;
+}
+
+.testKbInSmall {
+    width: 400px;
+}
+
+.cweID {
+    width: 40px;
+}
+
 .testSection {
-    background-color: #87ceeb;
+    background-color: #008;
     font-weight: bold;
+    color: white;
     padding: 5px;
 }
 
