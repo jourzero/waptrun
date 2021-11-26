@@ -1,39 +1,24 @@
 #!/bin/bash
-APP_IMG_NAME="waptr"
-DB_IMG_NAME="waptrdb"
 
-echo -e "\n"
-read -p "Build image? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker-compose build
-fi
+# Configure shares between host and container
+SHARE_LIST="backup client server"
+HOST_BASE="$PWD"
+CTR_BASE="/app"
+MOUNTS=""
+MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
 
-echo -e "\n"
-read -p "Start app with docker-compose? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker-compose up -d 
-fi
+# Publish specific ports
+PUB=""
+PUB="${PUB} -p 127.0.0.1:5000:5000"
+PUB="${PUB} -p 127.0.0.1:9230:9230"
+PUB="${PUB} -p 127.0.0.1:27017:27017"
 
-echo -e "\n"
-read -p "List running containers? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker container ls
-fi
+# Configure run options
+#RUN_OPTS="-it"
+RUN_OPTS="-d"
 
-echo -e "\n"
-read -p "View logs from running container for $APP_IMG_NAME? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker logs -f "$APP_IMG_NAME"
-fi
-
-echo -e "\n"
-read -p "Open shell in running container for $APP_IMG_NAME? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker exec -it "$APP_IMG_NAME" /bin/sh
-fi
-
-echo -e "\n"
-read -p "Open shell in database container? [y] " answer
-if [ "$answer" = y -o "$answer" = "" ];then
-  docker exec -it "$DB_IMG_NAME" /bin/sh
-fi
+# Run container, mount local dir to /app, name it with the directory name
+set -x
+docker run ${RUN_OPTS} ${PUB} ${MOUNTS} --name ${PWD##*/} ${PWD##*/} 2>&1
