@@ -1,8 +1,8 @@
 //==============================================================================
 //                               GLOBALS
 //==============================================================================
-const cveRptBase =
-    "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
+//const cveRptBase = "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=";
+const cveRptBase = "https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&isCpeNameSearch=true&seach_type=all&query=";
 const cveRptSuffix = "";
 const thisURL = new URL(window.location);
 const nameParm = thisURL.searchParams.get("name");
@@ -54,9 +54,7 @@ function renderHandlebarTemplate(name) {
             const field = elm.getAttribute("field");
             let value = elm.value;
             if (elm.type === "checkbox") value = elm.checked;
-            console.debug(
-                `UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`
-            );
+            console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
             // Use set() to update model and re-render
             ui.set(field, value);
@@ -87,10 +85,7 @@ function renderHandlebarTemplate(name) {
         },
     });
     ui.reactOnChange("software", {throttle: 100}, (tpl) => {
-        console.info(
-            "reactOnChange: template data has been changed ",
-            JSON.stringify(tpl.get("software"))
-        );
+        console.info("reactOnChange: template data has been changed ", JSON.stringify(tpl.get("software")));
         //updateProjectData(name);
     });
     console.debug("Rendering template");
@@ -122,12 +117,7 @@ function renderHandlebarTemplate(name) {
         let swList = prjSoftware.split(",");
         let swLinksHtml = "";
         for (let i = 0; i < swList.length; i++) {
-            swLinksHtml +=
-                "<a class='smallLink' href='" +
-                encodeURI(cveRptBase + swList[i].trim() + cveRptSuffix) +
-                "'target='cveRptUI'>" +
-                validator.escape(swList[i].trim()) +
-                "</a>&nbsp;&nbsp;";
+            swLinksHtml += "<a class='smallLink' href='" + encodeURI(cveRptBase + swList[i].trim() + cveRptSuffix) + "'target='cveRptUI'>" + validator.escape(swList[i].trim()) + "</a>&nbsp;&nbsp;";
         }
         $("#CveRptLinks").html(swLinksHtml);
         console.debug(`CVE Lookup links updated for software ${prjSoftware}`);

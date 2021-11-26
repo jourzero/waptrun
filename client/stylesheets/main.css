@@ -63,6 +63,10 @@ a:link {
     visibility: hidden;
 }
 
+#homeProjectList {
+    width: 200px;
+}
+
 #msg {
     position: absolute;
     top: 30px;
@@ -158,6 +162,7 @@ th {
 }
 
 .projectList {
+    max-width: 600px;
     width: 80%;
     border: 2px;
 }
