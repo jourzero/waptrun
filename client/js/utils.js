@@ -138,7 +138,18 @@ function successMessage(msg) {
         clearMsg();
         $("#msg").addClass("alert alert-success");
         $("#msg").html(msg);
-        setTimeout(clearMsg, 1000);
+        setTimeout(clearMsg, 2000);
+    }
+}
+
+// Show warning message message
+function errorMessage(msg) {
+    if (msg !== undefined) {
+        clearMsg();
+        $("#msg").addClass("alert alert-danger");
+        $("#msg").html(errMsg);
+        setTimeout(clearMsg, 8000);
+        alert(msg);
     }
 }
 
@@ -149,5 +160,12 @@ function warningMessage(msg) {
         $("#msg").addClass("alert alert-warning");
         $("#msg").html(msg);
         setTimeout(clearMsg, 8000);
+        alert(msg);
     }
+}
+
+// Clear status message popup
+function clearMsg() {
+    $("#msg").html("");
+    $("#msg").removeClass("alert-success alert-warning alert-danger ");
 }
