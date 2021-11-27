@@ -10,3 +10,4 @@ docker-build.sh
 
 # Start container
 ./start.sh
+./tail.sh

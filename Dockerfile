@@ -24,6 +24,9 @@ RUN mkdir -p /data/db /data/configdb && chown -R mongodb:mongodb /data/db /data/
 #RUN /usr/bin/mongorestore --db=waptrunner --drop --host 127.0.0.1:27017 /app/dbinit/waptrunner
 #RUN /usr/bin/mongorestore --db=waptrunner --drop /app/dbinit/waptrunner
 
+# Upgrade NPM
+RUN npm install -g npm@8.1.4
+
 # Copy project files to /app
 WORKDIR /app
 COPY . .

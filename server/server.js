@@ -11,6 +11,8 @@ const reqLogger = require("./lib/reqLogger.js");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
+const fs = require("fs");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const config = require("./config.js");
@@ -22,6 +24,7 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
+const spdy = require("spdy");
 const {exec, execFile} = require("child_process");
 
 // ========================================== CONSTANTS ==========================================
@@ -61,6 +64,21 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
 //logger.debug(`Validation Schema: ${JSON.stringify(validationSchema)}`);
 //logger.debug(`Validation Values: ${JSON.stringify(validationValues)}`);
+
+// ========================================== SETUP HTTP2 ==========================================
+// Get key and cert to support HTTP/2
+const options = {
+    key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "../data/cert3.pem")),
+};
+const shouldCompress = (req, res) => {
+    // don't compress responses asking explicitly not
+    if (req.headers["x-no-compression"]) {
+        return false;
+    }
+    // use compression filter function
+    return compression.filter(req, res);
+};
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
@@ -242,6 +260,8 @@ app.use(passport.initialize());
 if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
+// set up compression in express
+//app.use(compression({filter: shouldCompress}));
 
 // !!!IMPORTANT: place this before static or similar middleware
 // directory is where markdown files are stored
@@ -855,7 +875,16 @@ app.use(function (req, res) {
 });
 
 // ========================================== START LISTENER ==========================================
-app.listen(port);
+//app.listen(port);
 /* eslint-disable */
 logger.info(`Listening on port ${port}`);
 /* eslint-enable */
+
+spdy.createServer(options, app).listen(port, (error) => {
+    if (error) {
+        logger.error(error);
+        return process.exit(1);
+    } else {
+        logger.info(`HTTP/2 server listening on port: ${port}`);
+    }
+});

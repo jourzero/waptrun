@@ -82,3 +82,4 @@ waptrun-static
 utils/azcli.sh
 dbinit/OWASP-ASVS-4.0.3.csv
 wapt-configs
+VeracodeIgnored.json

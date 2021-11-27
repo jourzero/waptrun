@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Configure shares between host and container
-SHARE_LIST="backup client server"
 HOST_BASE="$PWD"
 CTR_BASE="/app"
 MOUNTS=""
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
 
 # Publish specific ports
