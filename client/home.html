@@ -30,22 +30,6 @@
             <div class="panel panel-default">
                 <div id="HomeProjectSection" class="testSection homeProjectList">Projects</div>
                 <div class="homepage_mount_point portrait" id="SectionProject"></div>
-                <div>
-                    <button id="btnNewPrj" class="button black" title="Create a new project." onclick="showCreateNewProjectBtn();">Create Project</button>
-                    <button id="btnDelPrj" class="button black" title="Remove a project." onclick="showRemoveProjectBtn();">Remove Project</button>
-                    <button id="btnCsvExport" class="button black" title="Export all issue data from all projects as CSV and download." onclick="window.open('/export/issues.csv', 'DownloadWin')">Export all</button>
-                    <button id="btnBackupDB" class="button black" title="Backup DB to file" onclick="restBackupDB();">Backup DB</button>
-                    <button id="btnViewDocs" class="button black" title="View this apps's documentation." onclick="window.open('Help.md', 'HelpWin')">Help</button>
-                    <button id="btnViewReadme" class="button black" title="View this apps's README on Github." onclick="window.open('https://github.com/jourzero/waptrun/blob/master/README.md', 'HelpWin')">README</button>
-                </div>
-                <div id="newProjectDiv" hidden="true">
-                    <br />
-                    Enter new project name: <input type="text" id="newProjectInput" placeholder="YYYYMM-PRJNAME-ENV" />
-                </div>
-                <div id="delProjectDiv" hidden="true">
-                    <br />
-                    Enter project name to delete: <input type="text" id="delProjectInput"" />
-                </div>
             </div>
             <hr />
         </div>
@@ -66,8 +50,23 @@
                     If you're ready, click <strong>Create Project</strong> below</div>
             {{/if}}
             </table>
+            <div>
+                <button id="btnNewPrj" class="button black" title="Create a new project." onclick="showCreateNewProjectBtn();">Create Project</button>
+                <button id="btnDelPrj" class="button black" title="Remove a project." onclick="showRemoveProjectBtn();">Remove Project</button>
+                <button id="btnCsvExport" class="button black" title="Export all issue data from all projects as CSV and download." onclick="window.open('/export/issues.csv', 'DownloadWin')">Export all</button>
+                <button id="btnBackupDB" class="button black" title="Backup DB to file" onclick="restBackupDB();">Backup DB</button>
+                <button id="btnViewDocs" class="button black" title="View this apps's documentation." onclick="window.open('Help.md', 'HelpWin')">Help</button>
+                <button id="btnViewReadme" class="button black" title="View this apps's README on Github." onclick="window.open('https://github.com/jourzero/waptrun/blob/master/README.md', 'HelpWin')">README</button>
+            </div>
+            <div id="newProjectDiv" hidden="true">
+                <br />
+                Enter new project name: <input type="text" id="newProjectInput" placeholder="YYYYMM-PRJNAME-ENV" />
+            </div>
+            <div id="delProjectDiv" hidden="true">
+                <br />
+                Enter project name to delete: <input type="text" id="delProjectInput"" />
+            </div>
         </script>
-
         <script src="/js/utils.js"></script>
         <script src="/js/rest.js"></script>
         <script src="/js/home_ui.js"></script>
