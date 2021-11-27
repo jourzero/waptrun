@@ -94,8 +94,9 @@ exports.update = function (req, res) {
     };
     logger.debug(`Updating TestKB with: ${JSON.stringify(bodyData)}`);
     /* 
-    TODO: CWE-943 Improper Neutralization of Special Elements in Data Query Logic
-    TestKBRes.js: 97
+    False positive from Veracode: (already validated above)
+    CWE-943 Improper Neutralization of Special Elements in Data Query Logic
+    TestKBRes.js: (below line)
     Severity: High
     Attack Vector: mongodb.Collection.update
     Number of Modules Affected: 1
