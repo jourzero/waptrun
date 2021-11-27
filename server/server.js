@@ -26,6 +26,7 @@ const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
 const spdy = require("spdy");
 const {exec, execFile} = require("child_process");
+const useHttp2 = false;
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -64,21 +65,6 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
 //logger.debug(`Validation Schema: ${JSON.stringify(validationSchema)}`);
 //logger.debug(`Validation Values: ${JSON.stringify(validationValues)}`);
-
-// ========================================== SETUP HTTP2 ==========================================
-// Get key and cert to support HTTP/2
-const options = {
-    key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "../data/cert3.pem")),
-};
-const shouldCompress = (req, res) => {
-    // don't compress responses asking explicitly not
-    if (req.headers["x-no-compression"]) {
-        return false;
-    }
-    // use compression filter function
-    return compression.filter(req, res);
-};
 
 // ========================================== PASSPORT ==========================================
 // Passport session setup.
@@ -260,8 +246,6 @@ app.use(passport.initialize());
 if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
-// set up compression in express
-//app.use(compression({filter: shouldCompress}));
 
 // !!!IMPORTANT: place this before static or similar middleware
 // directory is where markdown files are stored
@@ -875,16 +859,37 @@ app.use(function (req, res) {
 });
 
 // ========================================== START LISTENER ==========================================
-//app.listen(port);
-/* eslint-disable */
-logger.info(`Listening on port ${port}`);
-/* eslint-enable */
+if (useHttp2) {
+    // Get key and cert to support HTTP/2
+    const options = {
+        key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
+        cert: fs.readFileSync(path.join(__dirname, "../data/cert3.pem")),
+    };
 
-spdy.createServer(options, app).listen(port, (error) => {
-    if (error) {
-        logger.error(error);
-        return process.exit(1);
-    } else {
-        logger.info(`HTTP/2 server listening on port: ${port}`);
-    }
-});
+    // Configure compression
+    const shouldCompress = (req, res) => {
+        // don't compress responses asking explicitly not
+        if (req.headers["x-no-compression"]) {
+            return false;
+        }
+        // use compression filter function
+        return compression.filter(req, res);
+    };
+    // set up compression in express
+    app.use(compression({filter: shouldCompress}));
+
+    // Start HTTP/2 listener
+    spdy.createServer(options, app).listen(port, (error) => {
+        if (error) {
+            logger.error(error);
+            return process.exit(1);
+        } else {
+            logger.info(`Listening on port ${port} serving HTTP/2`);
+        }
+    });
+} else {
+    app.listen(port);
+    /* eslint-disable */
+    logger.info(`Listening on port ${port} serving HTTP/1.1`);
+    /* eslint-enable */
+}
