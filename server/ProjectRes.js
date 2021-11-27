@@ -16,8 +16,9 @@ exports.findAll = function (req, res) {
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed project search: ${JSON.stringify(err)}`);
-        res.sendStatus(404);
+        let msg = `Failed project search: ${JSON.stringify(err)}`;
+        logger.warn(msg);
+        res.status(404).send(msg);
     };
     logger.info("Searching for all projects");
     projects.findAll(ok, err);
@@ -35,8 +36,9 @@ exports.findByName = function (req, res) {
         res.json(doc);
     };
     let err = function (err) {
-        logger.warn(`Failed project search by name: ${JSON.stringify(err)}`);
-        res.sendStatus(404);
+        let msg = `Failed project search by name: ${JSON.stringify(err)}`;
+        logger.warn(msg);
+        res.status(404).send(msg);
     };
     logger.info(`Searching for project name ${req.params.name}`);
     projects.findByName(req.params.name, ok, err);
@@ -63,8 +65,9 @@ exports.create = function (req, res) {
         res.sendStatus(201);
     };
     let err = function (err) {
-        logger.warn(`Failed project creation: ${JSON.stringify(err)}`);
-        res.sendStatus(409);
+        let msg = `Failed project creation: ${JSON.stringify(err)}`;
+        logger.warn(msg);
+        res.send(409);
     };
     logger.info(`Creating project: ${JSON.stringify(bodyData)}`);
     projects.create(bodyData, ok, err);
@@ -89,8 +92,9 @@ exports.update = function (req, res) {
         res.sendStatus(200);
     };
     let err = function (err) {
-        logger.warn(`Failed project update: ${JSON.stringify(err)}`);
-        res.sendStatus(409);
+        let msg = `Failed project update: ${JSON.stringify(err)}`;
+        logger.warn(msg);
+        res.status(409).send(msg);
     };
     logger.info(`Updating project ${req.params.name} with: ${JSON.stringify(bodyData)}`);
     projects.update(req.params.name, bodyData, ok, err);
@@ -108,8 +112,9 @@ exports.removeByName = function (req, res) {
         res.sendStatus(200);
     };
     let err = function (err) {
-        logger.warn(`Failed project removal by name: ${JSON.stringify(err)}`);
-        res.send(409, "Failed to remove object");
+        let msg = `Failed project removal by name: ${JSON.stringify(err)}`;
+        logger.warn(msg);
+        res.status(409).send(msg);
     };
     logger.info("Removing project req.params.name");
     projects.removeByName(req.params.name, ok, err);
