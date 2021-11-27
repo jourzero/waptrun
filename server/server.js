@@ -26,7 +26,6 @@ const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
-const useHttp2 = true;
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -247,6 +246,28 @@ app.use(passport.initialize());
 if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
+
+/* 
+Patch from https://github.com/nanoexpress/nanoexpress/issues/251
+  Fixes below issue:
+     2021-11-27T10:49:16.687Z error: uncaughtException: res._implicitHeader is not a function
+       TypeError: res._implicitHeader is not a function
+         at writetop (/app/node_modules/express-session/index.js:276:15)
+         at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16) [...]
+*/
+if (config.useHttp2) {
+    logger.info("Using HTTP/2, applying patch in express-session when res._implicitHeader()");
+    app.use(function async(req, res, next) {
+        if (!res._implicitHeader) {
+            res._implicitHeader = function () {
+                if (!res._header && !res.headersSent) {
+                    res.writeHead(res.statusCode);
+                }
+            };
+        }
+        next();
+    });
+}
 
 // !!!IMPORTANT: place this before static or similar middleware
 // directory is where markdown files are stored
@@ -863,27 +884,7 @@ app.use(function (req, res) {
 
 // ========================================== START LISTENER ==========================================
 
-if (useHttp2) {
-    /* Patch from https://github.com/nanoexpress/nanoexpress/issues/251
-    Fixes below issue:
-    2021-11-27T10:49:16.687Z error: uncaughtException: res._implicitHeader is not a function
-    TypeError: res._implicitHeader is not a function
-    at writetop (/app/node_modules/express-session/index.js:276:15)
-    at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16)
-    [...]
-    */
-    app.use(function async(req, res, next) {
-        if (!res._implicitHeader) {
-            res._implicitHeader = function () {
-                log.info("Applied http2 fix for express-session _implicitHeader");
-                if (!res._header && !res.headersSent) {
-                    res.writeHead(res.statusCode);
-                }
-            };
-        }
-        next();
-    });
-
+if (config.useHttp2) {
     // Get key and cert to support HTTP/2
     const options = {
         key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
