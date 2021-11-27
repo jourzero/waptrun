@@ -89,7 +89,7 @@ function uiProjectPopulate(name) {
     console.debug(`Getting data for project ${name}`);
     restGetProjectTestingData(name, function (data) {
         if (data !== null) {
-            successMessage("Project testing data extraction succeeded");
+            //successMessage("Project testing data extraction succeeded");
             //console.debug(`prj: ${JSON.stringify(data.prj, null, 4)}`);
             //console.debug(`tests[0]: ${JSON.stringify(data.tests[0], null, 4)}`);
 
@@ -135,7 +135,7 @@ function uiCwePopulate() {
     restGetAllCWEs(function (data) {
         if (data !== null) {
             const cwes = {cwes: data};
-            successMessage("CWE data extraction succeeded");
+            //successMessage("CWE data extraction succeeded");
             // Update model
             uiCWE.setData(cwes);
         }
@@ -267,7 +267,7 @@ function uiTestPopulate(testId) {
     console.debug(`Getting data for Test ID ${testId}`);
     restGetTest(testId, function (data) {
         if (data !== null) {
-            successMessage(`Data for Test ID ${testId} was extracted successfully`);
+            //successMessage(`Data for Test ID ${testId} was extracted successfully`);
             // Update model
             uiTest.setData(data);
             //$("#TSeverity").val(data.TSeverity);
@@ -414,7 +414,7 @@ function uiIssuePopulate(testId, prjName) {
     console.debug(`Getting issue data for Test ID ${testId} in project ${prjName}`);
     restGetIssue(testId, prjName, function (data) {
         if (data !== null) {
-            successMessage(`Issue for Test ID ${testId} was extracted successfully`);
+            //successMessage(`Issue for Test ID ${testId} was extracted successfully`);
             // Update model
             uiIssue.setData(Object.assign({}, emptyIssue));
             uiIssue.setData(data);
@@ -475,13 +475,13 @@ uiIssueList.render();
 function uiIssueListPopulate(name) {
     console.debug(`Getting issue list for project ${name}`);
     restGetIssueList(name, function (data) {
-        if (data !== null) {
+        if (data && data.length) {
             const issues = {issues: data};
-            successMessage("Issue list for project was extracted successfully");
+            //successMessage("Issue list for project was extracted successfully");
             //console.debug(`Issue list ${JSON.stringify(issues, null, 4)}`);
             // Update model
             uiIssueList.setData(issues);
-        }
+        } else successMessage(`No issue in project ${name}`);
     });
 }
 uiIssueListPopulate(gPrjName);
@@ -578,7 +578,7 @@ function evtDeleteIssue(event) {
         restDeleteIssue(gPrjName, testId);
     }
     //reloadPage("Reloading page to refresh the issue list");
-    alertOnUpdate();
+    //alertOnUpdate();
     uiIssueListPopulate(gPrjName);
 }
 
@@ -1245,10 +1245,12 @@ function reloadPage() {
     location.reload();
 }
 
+/*
 // Inform user about the need to refresh the page after updates
 function alertOnUpdate() {
     successMessage("Press Refresh Page button as needed");
 }
+*/
 
 // If session gets expired, redirect to login page to avoid wasting time (possibly losing more work)
 // This code should actually prevent the session expiry due to the request sent.
