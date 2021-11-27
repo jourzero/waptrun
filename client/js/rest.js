@@ -136,8 +136,9 @@ function restGetProjectTestingData(prjName, callback) {
     let url = "/api/testing/" + prjName;
     console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
-        console.warn("GET request for project testing data failed");
-        warningMessage("GET request for project testing data failed");
+        let msg = "GET request for project testing data failed.";
+        console.warn(msg);
+        warningMessage(msg);
     });
 }
 
@@ -145,7 +146,7 @@ function restGetProjectTestingData(prjName, callback) {
 function restUpdateIssue(issue) {
     // Check that the UI has the mandatory data we need
     if (issue.TID === undefined || issue.TID === "") {
-        let msg = "WARNING: Cannot save issue data: Missing Test ID";
+        let msg = "WARNING: Cannot save issue data: Missing Test ID.";
         console.warn(msg);
         warningMessage(msg);
         return;
@@ -168,11 +169,12 @@ function restUpdateIssue(issue) {
         dataType: "json",
         statusCode: {
             200: function () {
-                successMessage("Issue updated successfully.");
+                console.info("Issue updated successfully.");
             },
             409: function () {
-                console.warn("Could not process the request to update issue.");
-                warningMessage("Could not process the request to update issue.");
+                let msg = `Could not process the request to update issue.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -217,12 +219,12 @@ function restCreatePrj(prjName) {
         dataType: "json",
         statusCode: {
             201: function () {
-                successMessage(`Project created successfully. Reloading page...`);
-                setTimeout(() => location.reload(), 2000);
+                successMessage(`Project created successfully.`);
             },
             409: function () {
-                console.warn("Could not process the request to create project.");
-                warningMessage("Could not process the request to create project.");
+                let msg = `Could not process the request to create project.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -251,12 +253,12 @@ function restDeletePrj(prjName) {
         type: "DELETE",
         statusCode: {
             200: function () {
-                successMessage(`Project deleted successfully. Reloading page...`);
-                setTimeout(() => location.reload(), 2000);
+                successMessage(`Project deleted successfully.`);
             },
             409: function () {
-                console.warn("Could not process the request to delete project.");
-                warningMessage("Could not process the request to delete project.");
+                let msg = `Could not process the request to delete project.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -285,8 +287,9 @@ function restDeletePrjIssues(prjName) {
         type: "DELETE",
         statusCode: {
             409: function () {
-                console.warn("Could not process the request to delete project issues.");
-                warningMessage("Could not process the request to delete project issues.");
+                let msg = `Could not process the request to delete project issues.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -334,11 +337,12 @@ function restUpdateTest(testId, data) {
         dataType: "json",
         statusCode: {
             200: function () {
-                successMessage(`Test updated successfully.`);
+                console.info(`Test updated successfully.`);
             },
             409: function () {
-                console.warn("Could not process the request to update test.");
-                warningMessage("Could not process the request to update test.");
+                let msg = `Could not process the request to update test.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (rdata) {
                 formatValidationError(rdata);
@@ -381,11 +385,13 @@ function restCreateTest(tid) {
         dataType: "json",
         statusCode: {
             201: function () {
-                successMessage(`Test created successfully: ${kvp.TID}. Reload page to add details to it.`);
+                alert(`Test created successfully: ${kvp.TID}. Page will be reloaded.`);
+                location.reload();
             },
             409: function () {
-                console.warn("Could not process the request to create a new test.");
-                warningMessage("Could not process the request to create a new test.");
+                let msg = `Could not process the request to create a new test.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -410,13 +416,13 @@ function restAddTodos(prjName) {
         dataType: "json",
         statusCode: {
             201: function () {
-                successMessage(`Project issue TODOs created successfully. Reloading page...`);
-                setTimeout(() => location.reload(), 5000);
-                //uiIssueListPopulate(gPrjName);
+                successMessage(`TODOs created successfully.`);
+                uiIssueListPopulate(gPrjName);
             },
             409: function () {
-                console.warn("Could not process the request to create TODO issues.");
-                warningMessage("Could not process the request to create TODO issues.");
+                let msg = `Could not process the request to create TODO issues.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             422: function (data) {
                 formatValidationError(data);
@@ -447,25 +453,22 @@ function restRunHackTool(toolname, payload, hackConfig, callback) {
         success: callback,
         statusCode: {
             404: function (data) {
-                console.warn(`HTTP 404: Could not process this hack: ${JSON.stringify(data)}`);
-                warningMessage(`HTTP 404: Could not process this hack: ${JSON.stringify(data)}`);
+                let msg = `HTTP 404: Could not process this hack: ${JSON.stringify(data)}`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             409: function () {
-                console.warn(`HTTP 409: Could not process this hack: ${JSON.stringify(data)}`);
-                warningMessage(`HTTP 409: Could not process this hack: ${JSON.stringify(data)}`);
+                let msg = `HTTP 409: Could not process this hack: ${JSON.stringify(data)}`;
+                console.warn(msg);
+                warningMessage(msg);
             },
             500: function () {
-                console.warn(`HTTP 500: Could not process this hack: ${JSON.stringify(data)}`);
-                warningMessage(`HTTP 500: Could not process this hack: ${JSON.stringify(data)}`);
+                let msg = `HTTP 500: Could not process this hack: ${JSON.stringify(data)}`;
+                console.warn(msg);
+                warningMessage(msg);
             },
         },
     });
-}
-
-// Clear status message popup
-function clearMsg() {
-    $("#msg").html("");
-    $("#msg").removeClass("alert-success alert-warning alert-danger ");
 }
 
 // Extract validation error and format it nicely for UI output
@@ -485,10 +488,7 @@ function formatValidationError(data) {
         }
     }
     errMsg += msg;
-    clearMsg();
-    $("#msg").addClass("alert alert-danger");
-    $("#msg").html(errMsg);
-    setTimeout(clearMsg, 8000);
+    errorMessage(msg);
 }
 
 /**
@@ -507,8 +507,7 @@ function restBackupDB() {
         dataType: "json",
         statusCode: {
             201: function () {
-                successMessage(`Backup created successfully. Reloading page...`);
-                setTimeout(() => location.reload(), 2000);
+                successMessage(`Backup created successfully.`);
             },
             409: function () {
                 msg = "Could not process the request to create a backup.";
