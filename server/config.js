@@ -31,8 +31,7 @@ module.exports = {
     // Base URI and suffix part (to append after the query) for searching CVEs based on a partial software name
     //CveRptBase: "http://www.cvedetails.com/google-search-results.php?q=",
     //CveRptBase: "https://web.nvd.nist.gov/view/vuln/search-results?query=",
-    CveRptBase:
-        "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=",
+    CveRptBase: "https://nvd.nist.gov/products/cpe/search/results?status=FINAL&orderBy=CPEURI&namingFormat=2.3&keyword=",
     CveRptSuffix: "",
 
     // Base URI for getting CWE details
@@ -52,6 +51,9 @@ module.exports = {
 
     // Set authentication Mode. Supported: AUTH_MODE_NONE, AUTH_MODE_OAUTH
     defaultAuthMode: AUTH_MODE_OAUTH,
+
+    // Configure HTTP/2 support
+    useHttp2: true,
 
     // Session secret
     session: {
