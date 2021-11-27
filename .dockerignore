@@ -1,8 +1,25 @@
 #Ignoring git and cache folders
+.DS_Store
+.dockerignore
+.dockerignore.swp
 .git
-.cache
+.github
+.gitignore
+.gitmodules
+.vscode
 backup
-datadoc
+data
+doc
+docker-compose.yml
 logs
+rebuild-restart.sh
+restart.sh
+start.sh
+tail.sh
 wapt-configs
 waptrun-static
+CodingStandard.md
+Dockerfile
+LICENSE
+README.md
+VeracodeIgnored.json
