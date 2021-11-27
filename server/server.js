@@ -5,16 +5,17 @@ const session = require("express-session");
 //const exphbs = require("express-handlebars");
 const passport = require("passport");
 const path = require("path");
-const favicon = require("serve-favicon");
+//const favicon = require("serve-favicon");
 const logger = require("./lib/appLogger.js");
 const reqLogger = require("./lib/reqLogger.js");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const compression = require("compression");
 const fs = require("fs");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
+const http2Express = require("http2-express-bridge");
+const http2 = require("http2");
 const config = require("./config.js");
 const {check, checkSchema, validationResult} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
@@ -24,9 +25,8 @@ const testkbRes = require("./TestKBRes.js");
 const issueRes = require("./IssueRes.js");
 const cweRes = require("./CweRes.js");
 const reporting = require("./reporting.js");
-const spdy = require("spdy");
 const {exec, execFile} = require("child_process");
-const useHttp2 = false;
+const useHttp2 = true;
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -233,7 +233,8 @@ function getScopeQuery(prj) {
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
-let app = express();
+//let app = express();
+let app = http2Express(express);
 app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
@@ -263,7 +264,7 @@ let staticOptions = {
         res.set("x-timestamp", Date.now());
     },
 };
-app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
+//app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "../client"), staticOptions));
 app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/")));
 
@@ -832,11 +833,13 @@ app.get(
 // create an error with .status. we
 // can then use the property in our
 // custom error handler (Connect repects this prop as well)
+/*
 function error(status, msg) {
     var err = new Error(msg);
     err.status = status;
     return err;
 }
+*/
 
 // middleware with an arity of 4 are considered
 // error handling middleware. When you next(err)
@@ -859,27 +862,37 @@ app.use(function (req, res) {
 });
 
 // ========================================== START LISTENER ==========================================
+
 if (useHttp2) {
+    /* Patch from https://github.com/nanoexpress/nanoexpress/issues/251
+    Fixes below issue:
+    2021-11-27T10:49:16.687Z error: uncaughtException: res._implicitHeader is not a function
+    TypeError: res._implicitHeader is not a function
+    at writetop (/app/node_modules/express-session/index.js:276:15)
+    at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16)
+    [...]
+    */
+    app.use(function async(req, res, next) {
+        if (!res._implicitHeader) {
+            res._implicitHeader = function () {
+                log.info("Applied http2 fix for express-session _implicitHeader");
+                if (!res._header && !res.headersSent) {
+                    res.writeHead(res.statusCode);
+                }
+            };
+        }
+        next();
+    });
+
     // Get key and cert to support HTTP/2
     const options = {
         key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
         cert: fs.readFileSync(path.join(__dirname, "../data/cert3.pem")),
+        allowHTTP1: true,
     };
 
-    // Configure compression
-    const shouldCompress = (req, res) => {
-        // don't compress responses asking explicitly not
-        if (req.headers["x-no-compression"]) {
-            return false;
-        }
-        // use compression filter function
-        return compression.filter(req, res);
-    };
-    // set up compression in express
-    app.use(compression({filter: shouldCompress}));
-
-    // Start HTTP/2 listener
-    spdy.createServer(options, app).listen(port, (error) => {
+    let server = http2.createSecureServer(options, app);
+    server.listen(port, (error) => {
         if (error) {
             logger.error(error);
             return process.exit(1);

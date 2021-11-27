@@ -10,4 +10,4 @@ su node -c "npm install"
 
 # Run app as lower privileged user
 echo -e "\n\n-- Starting app"
-su node -c "npm install && npm run dev"
+su node -c "npm run dev"
