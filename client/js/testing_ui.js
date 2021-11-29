@@ -890,7 +890,6 @@ function uiUpdateCwe(cweId, forceUpdate) {
 
 // Update status message in UI
 function uiUpdateStatus(msg) {
-    //$("#StatusMsg").html(msg);
     console.info(`UI status update: ${msg}`);
 }
 
