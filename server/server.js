@@ -2,10 +2,8 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
-//const exphbs = require("express-handlebars");
 const passport = require("passport");
 const path = require("path");
-//const favicon = require("serve-favicon");
 const logger = require("./lib/appLogger.js");
 const reqLogger = require("./lib/reqLogger.js");
 const methodOverride = require("method-override");
@@ -120,9 +118,6 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    // logger.info(`User is not authenticated (authMode=${authMode}), redirecting to login`);
-    //req.session.error = "Please sign in!";
-    //res.redirect("/login");
     logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
     res.status(401).send("Not Authenticated.");
 }
@@ -138,9 +133,6 @@ function ensureAuthorized(req, res, next) {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
-        //logger.warn(`User ${id} is NOT authorized.`);
-        //req.session.error = "User ID " + id + " is not Authorized!";
-        //res.redirect("/login");
         logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
         res.status(401).send("Not Authorized.");
     } else {
@@ -247,14 +239,12 @@ if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
 // Disable caching during some testing
 app.disable("etag");
 
-/* 
-Patch from https://github.com/nanoexpress/nanoexpress/issues/251
-  Fixes below issue:
-     2021-11-27T10:49:16.687Z error: uncaughtException: res._implicitHeader is not a function
-       TypeError: res._implicitHeader is not a function
-         at writetop (/app/node_modules/express-session/index.js:276:15)
-         at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16) [...]
-*/
+// Patch from https://github.com/nanoexpress/nanoexpress/issues/251
+//  Fixes below issue:
+//     2021-11-27T10:49:16.687Z error: uncaughtException: res._implicitHeader is not a function
+//       TypeError: res._implicitHeader is not a function
+//         at writetop (/app/node_modules/express-session/index.js:276:15)
+//         at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16) [...]
 if (config.useHttp2) {
     logger.info("Using HTTP/2, applying patch in express-session when res._implicitHeader()");
     app.use(function async(req, res, next) {
@@ -269,8 +259,7 @@ if (config.useHttp2) {
     });
 }
 
-// !!!IMPORTANT: place this before static or similar middleware
-// directory is where markdown files are stored
+// IMPORTANT: place this before static or similar middleware directory is where markdown files are stored
 app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve favicon and static content
@@ -315,17 +304,6 @@ app.use(function (req, res, next) {
 
     next();
 });
-
-// ========================================== HANDLEBARS ==========================================
-// Configure express to use handlebars templates
-/*
-let hbs = exphbs.create({
-    defaultLayout: "main",
-    extname: ".hbs",
-});
-app.engine(".hbs", hbs.engine);
-app.set("view engine", ".hbs");
-*/
 
 // ========================================== DATABASE ==========================================
 // Make our db accessible to our router
@@ -386,7 +364,6 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
     app.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "/login"}), function (req, res) {
         // Successful authentication, redirect home.
-        //res.redirect("/");
         res.redirect("/home");
     });
 }
@@ -400,179 +377,6 @@ if (authMode == config.AUTH_MODE_OAUTH) {
         res.redirect("/home");
     });
 }
-
-// ========================================== WEB APP ROUTES ==========================================
-// Logout
-if (authMode == config.AUTH_MODE_NONE) {
-    app.get("/", function (req, res) {
-        res.redirect("/home");
-    });
-    app.get("/login", function (req, res) {
-        res.redirect("/home");
-    });
-    app.get("/logout", function (req, res) {
-        res.redirect("/home");
-    });
-    /*
-    app.get("/account", function (req, res) {
-        res.redirect("/");
-    });
-    */
-} else {
-    app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
-        res.redirect("/home");
-    });
-    app.get("/logout", function (req, res) {
-        req.logout();
-        res.redirect("/login");
-        //req.session.notice = "You have successfully been logged out " + name + "!";
-    });
-
-    /*
-    // Display login page
-    app.get("/login", function (req, res) {
-        res.render("login");
-    });
-
-    // Show account information
-    app.get("/account", ensureAuthenticated, ensureAuthorized, function (req, res) {
-        res.render("account", {user: req.user});
-    });
-    */
-}
-
-// Home
-/*
-app.get("/", ensureAuthenticated, ensureAuthorized, function (req, res) {
-    // Get user info
-    let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-    if (authMode == config.AUTH_MODE_OAUTH) logger.debug(`Logged in. User ID ${req.user.id} from provider ${req.user.provider}`);
-
-    // Fetch from project collection
-    let prjColl = db.get("project");
-    let testkbColl = db.get("testkb");
-    let issuesColl = db.get("issues");
-    let cweColl = db.get("cwe");
-    let sortName = {name: -1};
-    let prjRegex = {$regex: config.PrjSubset};
-    let prjSubset = {name: prjRegex};
-
-    // Print the count of records
-    prjColl.count().then((count) => {
-        logger.debug(`Count of documents in collection "project": ${count}`);
-    });
-    testkbColl.count().then((count) => {
-        logger.debug(`Count of documents in collection "testkb": ${count}`);
-    });
-    issuesColl.count().then((count) => {
-        logger.debug(`Count of documents in collection "issues": ${count}`);
-    });
-    cweColl.count().then((count) => {
-        logger.debug(`Count of documents in collection "cwe": ${count}`);
-    });
-
-    logger.info("Searching for projects");
-    prjColl.find(prjSubset, {sort: sortName}).then((projects) => {
-        logger.info("Rendering home page");
-        res.render("home", {
-            user: user,
-            TestRefBase: config.TestRefBase,
-            projects: projects,
-        });
-    });
-});
-
-// Show Project page
-app.get(
-    "/project/:PrjName",
-    ensureAuthenticated,
-    ensureAuthorized,
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    function (req, res) {
-        // Check for input validation errors in the request
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.array()});
-        }
-
-        // Get user info
-        let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-
-        // Fetch from project collection
-        let prjColl = db.get("project");
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
-        logger.info(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
-            logger.info(`Rendering project page for user ${user}`);
-            res.render("project", {
-                user: user,
-                CveRptBase: config.CveRptBase,
-                CveRptSuffix: config.CveRptSuffix,
-                prj: prj,
-            });
-        });
-    }
-);
-
-// Show Testing Runner page
-app.get(
-    "/testing/:PrjName",
-    ensureAuthenticated,
-    ensureAuthorized,
-    // Check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    function (req, res) {
-        // Check for input validation errors in the request
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({errors: errors.array()});
-        }
-
-        // Get user info
-        let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
-
-        // Fetch from project collection
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
-        let prjColl = db.get("project");
-        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
-            if (prj === null) return;
-
-            // Get scope query
-            let scopeQuery = getScopeQuery(prj);
-
-            // Search the Test KB for matching tests
-            logger.debug("Searching TestKB with scope query ", scopeQuery);
-            let testKB = db.get("testkb");
-            let issuesColl = db.get("issues");
-            let cweColl = db.get("cwe");
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
-                // Search issues collection for matching issues
-                issuesColl.find({PrjName: req.params.PrjName}, {sort: {IPriority: 1, TID: 1}}, function (__e, issues) {
-                    // Get sorted list of CWEs
-                    cweColl.find({}, {sort: {ID: 1}}, function (___e, cwes) {
-                        res.render("testing", {
-                            user: user,
-                            prj: prj,
-                            tests: tests,
-                            issues: issues,
-                            cwes: cwes,
-                            CweUriBase: config.CweUriBase,
-                            CveRptBase: config.CveRptBase,
-                            CveRptSuffix: config.CveRptSuffix,
-                            TestRefBase: config.TestRefBase,
-                            ScopeQuery: JSON.stringify(scopeQuery),
-                        });
-                    });
-                });
-            });
-        });
-    }
-);
-*/
 
 // ========================================== REST ROUTES ==========================================
 
