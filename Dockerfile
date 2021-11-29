@@ -34,6 +34,9 @@ COPY . .
 # Set perms to allow npm install from lower-privileged user
 RUN chown -R node /app
 
+# Add dependencies for sqlite3
+RUN apt-get -y install build-essential python sqlite3
+
 # TODO: Reinsert following steps (moved to entrypoint.sh)
 # # Start Mongodb
 # RUN service mongod start

@@ -36,7 +36,12 @@
         "passport-github": "^1.0.0",
         "passport-google-oauth2": "0.x",
         "q": "^1.0.0",
+        "sequelize": "^6.0.0",
         "serve-favicon": "^2.0.0",
+        "sqlite3": "^5.0.2",
         "winston": "^3.0.0"
+    },
+    "devDependencies": {
+        "sequelize-cli": "^6.3.0"
     }
 }
