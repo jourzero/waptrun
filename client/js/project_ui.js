@@ -98,8 +98,12 @@ function renderHandlebarTemplate(name) {
         console.debug(`Getting data for ${name}`);
         restGetProject(name, function (prj) {
             if (prj !== null) {
-                console.info(`Data: ${JSON.stringify(prj)}`);
                 // Update model
+                if (!prj.PciTests) prj.PciTests = false;
+                if (!prj.Top10Tests) prj.Top10Tests = false;
+                if (!prj.Top25Tests) prj.Top25Tests = false;
+                if (!prj.StdTests) prj.StdTests = false;
+                console.info(`Data: ${JSON.stringify(prj)}`);
                 ui.setData(prj);
 
                 // Make UI adjustments - TODO: templatize?
