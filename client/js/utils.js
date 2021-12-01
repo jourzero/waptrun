@@ -147,7 +147,7 @@ function errorMessage(msg) {
     if (msg !== undefined) {
         clearMsg();
         $("#msg").addClass("alert alert-danger");
-        $("#msg").html(errMsg);
+        $("#msg").html(msg);
         setTimeout(clearMsg, 8000);
         alert(msg);
     }
@@ -160,7 +160,6 @@ function warningMessage(msg) {
         $("#msg").addClass("alert alert-warning");
         $("#msg").html(msg);
         setTimeout(clearMsg, 8000);
-        alert(msg);
     }
 }
 
