@@ -35,7 +35,8 @@ COPY . .
 RUN chown -R node /app
 
 # Add dependencies for sqlite3
-RUN apt-get -y install build-essential python sqlite3
+RUN apt-get -y install build-essential python3 sqlite3
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 
 # TODO: Reinsert following steps (moved to entrypoint.sh)
 # # Start Mongodb
