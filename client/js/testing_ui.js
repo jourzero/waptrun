@@ -25,7 +25,7 @@ let uiProject = new ReactiveHbs({
     container: ".project_mount_point",
     template: "#project_template",
     data: {
-        _id: "",
+        //_id: "",
         name: gPrjName,
         notes: "",
         scope: "",
@@ -81,8 +81,8 @@ let uiCWE = new ReactiveHbs({
     data: {
         cwes: [
             {
-                _id: "",
-                ID: 0,
+                // _id: "",
+                CweId: 0,
                 Name: "",
                 Weakness_Abstraction: "",
                 Status: "",
@@ -120,7 +120,7 @@ let uiTest = new ReactiveHbs({
     container: ".testkb_mount_point",
     template: "#testkb_template",
     data: {
-        _id: "",
+        //_id: "",
         TID: "",
         TSource: "",
         TTestName: "",
@@ -234,7 +234,7 @@ uiTest.render();
 //  ISSUE DETAILS TEMPLATE
 //----------------------------------------------
 const emptyIssue = {
-    _id: "",
+    //_id: "",
     PrjName: "",
     TID: "",
     CweId: 0,
@@ -610,29 +610,11 @@ function evtTestInputChanged() {
     uiChangeTest(testId);
 }
 
-// Update TestDB from UI data
-function evtTestKBDataChanged(event) {
-    let field = event.target.id;
-    let value = event.target.value;
-    let testId = $("#testIn").val();
-
-    // Tweak the new value if it comes from one of the checkboxes
-    if (field === "TPCI" || field === "TTop10" || field === "TTop25" || field === "TStdTest") value = $("#" + field).prop("checked");
-
-    // Update the DB
-    console.warn("TODO: check refactoring in evtTestKBDataChanged");
-    console.info("Updating Test " + testId + " with " + field + "=" + value);
-    let data = {};
-    data[field] = value;
-    restUpdateTest(testId, data);
-}
-
 // Change UI when test is changed
 function uiChangeTest(testId) {
     console.info("Test selected: " + testId);
 
     // Update UI
-    console.warn("TODO: check refactoring in uiChangeTest");
     $("#testIn").val(testId);
     uiTestPopulate(testId);
     uiIssuePopulate(testId, gPrjName);
@@ -818,7 +800,6 @@ function uiParseBurpIssue() {
         newNotes = stripHtmlTags(newNotes).replace(/ +/g, " ").trim();
         data.INotes = newNotes;
     }
-    console.warn("TODO: check refactoring of uiParseBurpIssue");
     uiIssue.setData(data);
     uiTest.setData(testkb);
     restUpdateTest(testkb.TID, testkb);
