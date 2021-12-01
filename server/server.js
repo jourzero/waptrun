@@ -19,10 +19,6 @@ const config = require("./config.js");
 const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
-//const prjRes = require("./ProjectRes.js");
-//const testkbRes = require("./TestKBRes.js");
-//const issueRes = require("./IssueRes.js");
-//const cweRes = require("./CweRes.js");
 const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
@@ -32,7 +28,6 @@ const dbinit_dir = "/app/dbinit/waptrunner";
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
-//const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 let oauthConfig = {};
 let users = [];
@@ -88,10 +83,6 @@ if (authMode == config.AUTH_MODE_OAUTH) {
             },
             function (request, accessToken, refreshToken, profile, cb) {
                 return cb(null, profile);
-                /*
-                User.findOrCreate({ googleId: profile.id }, function (err, user) {
-                return done(err, user);
-                }); */
             }
         )
     );
@@ -105,10 +96,6 @@ if (authMode == config.AUTH_MODE_OAUTH) {
             },
             function (accessToken, refreshToken, profile, cb) {
                 return cb(null, profile);
-                /*
-                User.findOrCreate({ githubId: profile.id }, function (err, user) {
-                return cb(err, user); });
-                */
             }
         )
     );
@@ -586,15 +573,14 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
         .then((prj) => {
             // Get scope query
             let scopeQuery = utils.getSequelizeScopeQuery(prj);
+
             // Search the Test KB for matching tests
             logger.info("Searching TestKB with scope");
-            //let testKB = mongodb.get("testkb");
-            //testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
             db.test
                 .findAll({where: scopeQuery})
                 .then((tests) => {
                     logger.info(`Applicable tests: ${JSON.stringify(tests)}`);
-                    //issueRes.createTodos(req, res, tests);
+
                     // Check for input validation errors in the request
                     const errors = validationResult(req);
                     if (!errors.isEmpty()) {
@@ -603,8 +589,6 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                     }
 
                     logger.info(`Creating TODOs for ${req.params.PrjName}`);
-                    //issue.createTodos(req.params.PrjName, tests, ok, err);
-                    //TODO expand if needed
                     for (let test of tests) {
                         let data = {};
                         logger.info(`Creating TODO for TID ${test.TID}`);
@@ -617,11 +601,9 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                         if (!data.TIssueName) data.TIssueName = test.TTestName;
 
                         // Add issue
-                        //this.issue.insert(data).then(() => {logger.info(`Insert success for ${data.TID}`);}).catch((err) => {logger.warn(`Insert failed for ${data.TID}: ${err}`);});
                         // prettier-ignore
-                        db.issue.create(data)
-                            .then((d) => {logger.debug(`TODO created: ${JSON.stringify(data)}`);})
-                            .catch((e) => {failure("issue-create", res, e); return;});
+                        db.issue.create(data).then((d) => {logger.debug(`TODO created: ${JSON.stringify(data)}`);})
+                                            .catch((e) => {failure("issue-create", res, e); return;});
                     }
                     created(res, {});
                 })
@@ -635,14 +617,12 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
 });
 
 // Delete an issue. Check for pattern YYYYMM[DD]-PrjName-EnvName.
-// TODO
 app.delete(
     "/api/issue/:PrjName/:TID",
     check("PrjName").matches(validationValues.PrjName.matches),
     // check for allowable TID chars (letters, numbers, dash, dots)
     check("TID").matches(validationValues.TID.matches),
     (req, res) => {
-        //issueRes.removeByName
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -650,29 +630,17 @@ app.delete(
             return res.status(422).json({errors: errors.array()});
         }
 
-        //let ok = function (doc) { logger.info("Successful issue delete"); res.sendStatus(200); };
-        //let err = function (_err) { logger.warn(`Issue deletion failed: ${JSON.stringify(_err)}`); res.send(409, "Failed to remove issue"); };
-        //issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
-        let crit = {},
-            kvp1 = {},
-            kvp2 = {};
+        // prettier-ignore
+        let crit = {}, kvp1 = {}, kvp2 = {};
         kvp1.TID = req.params.TID;
         kvp2.PrjName = req.params.PrjName;
         crit["[Op.and]"] = [kvp1, kvp2];
-        //this.issue.remove(crit, response(success, error));
-        db.ssue
-            .destroy({where: crit})
-            .then((d) => {
-                ok(res, d);
-            })
-            .catch((e) => {
-                notFound("destroy-prj-issue", res, e);
-            });
+        // prettier-ignore
+        db.issue.destroy({where: crit}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-prj-issue", res, e);});
     }
 );
 
 // Get data for an issue. Check for allowable TID chars (letters, numbers, dash, dots)
-//app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches),issueRes.findIssue
 app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -680,52 +648,29 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
         return res.status(422).json({errors: errors.array()});
     }
-    //let ok = function (doc) { logger.info("Succeeded search for issue"); res.json(doc); };
-    //let err = function (_err) { logger.warn(`Failed issue search: ${JSON.stringify(_err)}`); res.sendStatus(404); };
-    //issue.findIssue(req.params.PrjName, req.params.TID, ok, err);
+
     // Build search criteria
-    let crit = {},
-        kvp1 = {},
-        kvp2 = {};
+    // prettier-ignore
+    let crit = {}, kvp1 = {}, kvp2 = {};
     kvp1.TID = req.params.TID;
     kvp2.PrjName = req.params.PrjName;
     crit["[Op.and]"] = [kvp1, kvp2];
-    //this.issue.findOne(crit, response(success, error));
     let op = "findone-prj-issue";
-    db.issue
-        .findOne({where: crit})
-        .then((d) => {
-            ok(res, d);
-        })
-        .catch((e) => {
-            notFound(op, res, e);
-        });
+    // prettier-ignore
+    db.issue.findOne({where: crit}).then((d) => {ok(res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get list of CWEs
-//app.get("/api/cwe", cweRes.findAll);
 app.get("/api/cwe", (req, res) => {
-    db.cwe
-        .findAll()
-        .then((d) => {
-            ok(res, d);
-        })
-        .catch((e) => {
-            notFound("find-all-cwes", res, e);
-        });
+    // prettier-ignore
+    db.cwe.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-cwes", res, e);});
 });
 
 // Get data for a CWE. Check CWE ID.
-//app.get("/api/cwe/:id", check("id").isInt(validationValues.CweId.isInt), cweRes.findById);
 app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (req, res) => {
-    db.cwe
-        .findOne({where: {CweId: req.params.CweId}})
-        .then((d) => {
-            ok(res, d);
-        })
-        .catch((e) => {
-            notFound("find-one-cwe", res, e);
-        });
+    // prettier-ignore
+    db.cwe.findOne({where: {CweId: req.params.CweId}}).then((d) => {ok(res, d);})
+        .catch((e) => {notFound("find-one-cwe", res, e);});
 });
 
 // Get testing data for a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
@@ -739,11 +684,7 @@ app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjNa
     }
 
     // Get project
-    //let prjRegex = {$regex: config.PrjSubset};
-    //let prjSubset = {name: prjRegex};
-    //let prjColl = mongodb.get("project");
     logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-    //prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}).then((prj) => {
     // prettier-ignore
     db.project.findOne({where: {name: req.params.PrjName}})
             .then((prj) => {
@@ -752,13 +693,7 @@ app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjNa
 
                 // Search the Test KB for matching tests
                 logger.debug("Searching TestKB with scope query ", scopeQuery);
-                //let testKB = mongodb.get("testkb");
-                //let testKbFields = {TID: 1, _id: 1, TSource: 1, TTestName: 1};
                 let testKbFields = ["TID", "TSource", "TTestName"];
-                //let issuesColl = mongodb.get("issues");
-                //let cweColl = mongodb.get("cwe");
-                //testKB.find(scopeQuery, {sort: {TID: 1}, projection: testKbFields}).then((tests) => {
-                // prettier-ignore
                 db.test.findAll({where: scopeQuery, order: [["TID", "ASC"]], attributes: testKbFields})
                     .then((tests) => {
                         const testingPageData = {prj: prj, tests: tests, CweUriBase: config.CweUriBase, CveRptBase: config.CveRptBase, CveRptSuffix: config.CveRptSuffix, TestRefBase: config.TestRefBase, ScopeQuery: JSON.stringify(scopeQuery)};
