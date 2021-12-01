@@ -93,8 +93,7 @@ function restGetIssue(testId, prjName, callback) {
     let url = "/api/issue/" + prjName + "/" + testId;
     console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
-        console.warn("GET request for issue data failed");
-        warningMessage("GET request for issue data failed");
+        console.info("GET request for issue data failed (likely no data)");
     });
 }
 // Get Issue data for a specific project
