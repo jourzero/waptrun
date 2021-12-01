@@ -69,7 +69,6 @@ utils/hacking/sqlite/sqlite3
 ql
 veracode-pipeline-scan-results.json
 target/
-config
 doc/VSCode_AzureExt_AppService.png
 utils/restore-to-azure.sh
 doc/ConfigDetails.md
