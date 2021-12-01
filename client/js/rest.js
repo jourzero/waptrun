@@ -170,13 +170,13 @@ function restUpdateIssue(issue) {
             200: function () {
                 console.info("Issue updated successfully.");
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to update issue.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -220,13 +220,13 @@ function restCreatePrj(prjName) {
             201: function () {
                 successMessage(`Project created successfully.`);
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to create project.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -254,13 +254,13 @@ function restDeletePrj(prjName) {
             200: function () {
                 successMessage(`Project deleted successfully.`);
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to delete project.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -285,13 +285,13 @@ function restDeletePrjIssues(prjName) {
         url: url,
         type: "DELETE",
         statusCode: {
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to delete project issues.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -316,8 +316,13 @@ function restUpdateProject(prj) {
             200: function () {
                 successMessage(`Project updated successfully.`);
             },
-            422: function (rdata) {
+            400: function (rdata) {
                 formatValidationError(rdata);
+            },
+            404: function () {
+                let msg = `Could not process this request to update project.`;
+                console.warn(msg);
+                warningMessage(msg);
             },
         },
     });
@@ -338,13 +343,13 @@ function restUpdateTest(testId, data) {
             200: function () {
                 console.info(`Test updated successfully.`);
             },
-            409: function () {
+            400: function (rdata) {
+                formatValidationError(rdata);
+            },
+            404: function () {
                 let msg = `Could not process the request to update test.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (rdata) {
-                formatValidationError(rdata);
             },
         },
     });
@@ -387,13 +392,13 @@ function restCreateTest(tid) {
                 alert(`Test created successfully: ${kvp.TID}. Page will be reloaded.`);
                 location.reload();
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to create a new test.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -418,13 +423,13 @@ function restAddTodos(prjName) {
                 successMessage(`TODOs created successfully.`);
                 uiIssueListPopulate(gPrjName);
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 let msg = `Could not process the request to create TODO issues.`;
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
@@ -508,13 +513,13 @@ function restBackupDB() {
             201: function () {
                 successMessage(`Backup created successfully.`);
             },
-            409: function () {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
                 msg = "Could not process the request to create a backup.";
                 console.warn(msg);
                 warningMessage(msg);
-            },
-            422: function (data) {
-                formatValidationError(data);
             },
         },
     });
