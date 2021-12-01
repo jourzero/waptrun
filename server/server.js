@@ -7,6 +7,7 @@ const path = require("path");
 const logger = require("./lib/appLogger.js");
 const reqLogger = require("./lib/reqLogger.js");
 const methodOverride = require("method-override");
+const db = require("./models");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
@@ -15,13 +16,14 @@ const GitHubStrategy = require("passport-github").Strategy;
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
 const config = require("./config.js");
-const {check, checkSchema, validationResult} = require("express-validator");
+const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
-const prjRes = require("./ProjectRes.js");
-const testkbRes = require("./TestKBRes.js");
-const issueRes = require("./IssueRes.js");
-const cweRes = require("./CweRes.js");
+//const prjRes = require("./ProjectRes.js");
+//const testkbRes = require("./TestKBRes.js");
+//const issueRes = require("./IssueRes.js");
+//const cweRes = require("./CweRes.js");
+const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
 
@@ -30,7 +32,7 @@ const dbinit_dir = "/app/dbinit/waptrunner";
 
 // ========================================== GET CONFIG ==========================================
 const port = process.env.PORT || config.port;
-const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
+//const mongodbUrl = process.env.MONGODB_URL || config.mongodbUrl;
 const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 let oauthConfig = {};
 let users = [];
@@ -137,89 +139,8 @@ function ensureAuthorized(req, res, next) {
         res.status(401).send("Not Authorized.");
     } else {
         logger.info(`User ${id} is authorized`);
-        return next();
+        next();
     }
-}
-
-// Build filter for scope query
-function getScopeQuery(prj) {
-    logger.debug(`Building scope query from scope query ${prj.scopeQry}`);
-    let scopeQuery = {};
-    let PciTests = prj.PciTests;
-    let Top10Tests = prj.Top10Tests;
-    let Top25Tests = prj.Top25Tests;
-    let StdTests = prj.StdTests;
-    let TTestNameKeyword = prj.TTestNameKeyword;
-    let TCweIDSearch = prj.TCweIDSearch;
-
-    // Build scope query
-    switch (prj.scopeQry) {
-        case "All":
-            scopeQuery = {};
-            break;
-        case "API":
-            scopeQuery = {
-                $or: [
-                    {TTestName: {$regex: "^API"}},
-                    {TTestName: {$regex: " API"}},
-                    {TTestName: {$regex: "REST"}},
-                    {TTestName: {$regex: "SOAP"}},
-                    {TTestName: {$regex: "AJAX"}},
-                    {TTestName: {$regex: "RPC"}},
-                    {TType: {$regex: "^API"}},
-                    {TIssueName: {$regex: "^API"}},
-                    {TIssueName: {$regex: " API"}},
-                    {TSource: {$regex: "API"}},
-                    {TSection: {$regex: "^API"}},
-                ],
-            };
-            break;
-        case "Default":
-            scopeQuery = {
-                $or: [{TSource: "OWASP-WSTG"}, {TSource: "WAHH2"}, {TSource: "TBHM2015"}, {TSource: "Extras"}],
-            };
-            break;
-        case "BCVRT":
-        case "Extras":
-        case "TBHM2015":
-        case "OWASP-API-T10":
-        case "OWASP-ASVS":
-        case "OWASP-TG4":
-        case "OWASP-WSTG":
-        case "SEC542":
-        case "SEC642":
-        case "WAHH2":
-        case "WebSvc":
-        case "CWE-Top-25":
-            scopeQuery = {TSource: prj.scopeQry};
-        //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
-    }
-    logger.debug(`Scope without filtering: ${JSON.stringify(scopeQuery)}`);
-
-    let useTestNameKeyword = false;
-    if (TTestNameKeyword !== undefined && TTestNameKeyword !== null && TTestNameKeyword.length > 0) useTestNameKeyword = true;
-
-    let useTCweIDSearch = false;
-    if (TCweIDSearch !== undefined && TCweIDSearch !== null && TCweIDSearch.length > 0) useTCweIDSearch = true;
-
-    if (PciTests || Top10Tests || Top25Tests || StdTests || useTestNameKeyword || useTCweIDSearch) {
-        let filter = {};
-        if (PciTests) filter = JSON.stringify(filter).length <= 2 ? {TPCI: PciTests} : {$or: [filter, {TPCI: PciTests}]};
-        if (Top10Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop10: Top10Tests} : {$or: [filter, {TTop10: Top10Tests}]};
-        if (Top25Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop25: Top25Tests} : {$or: [filter, {TTop25: Top25Tests}]};
-        if (StdTests) filter = JSON.stringify(filter).length <= 2 ? {TStdTest: StdTests} : {$or: [filter, {TStdTest: StdTests}]};
-        if (useTestNameKeyword)
-            filter =
-                JSON.stringify(filter).length <= 2
-                    ? {TTestName: {$regex: TTestNameKeyword}}
-                    : {
-                          $and: [filter, {TTestName: {$regex: TTestNameKeyword}}],
-                      };
-        if (useTCweIDSearch) filter = JSON.stringify(filter).length <= 2 ? {TCweID: TCweIDSearch} : {$or: [filter, {TCweID: TCweIDSearch}]};
-
-        scopeQuery = {$and: [scopeQuery, filter]};
-    }
-    return scopeQuery;
 }
 
 // ========================================== EXPRESS ==========================================
@@ -307,46 +228,51 @@ app.use(function (req, res, next) {
 
 // ========================================== DATABASE ==========================================
 // Make our db accessible to our router
-const monk = require("monk");
+//const monk = require("monk");
 const {exit} = require("process");
 const {logging} = require("./config.js");
-const mongoURL = new URL(mongodbUrl);
-logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
-const db = monk(mongodbUrl);
+//const {issue} = require("./validationSchema.js");
+//const mongoURL = new URL(mongodbUrl);
+//logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
+//const mongodb = monk(mongodbUrl);
 
 // Check DB connection
-db.then(() => {
-    logger.info("Connected successfully to mongodb server");
+/*
+mongodb
+    .then(() => {
+        logger.info("Connected successfully to mongodb server");
 
-    // Initialize the database when empty
-    let prjColl = db.get("project");
-    let testkbColl = db.get("testkb");
-    let issuesColl = db.get("issues");
-    let cweColl = db.get("cwe");
+        // Initialize the database when empty
+        let prjColl = mongodb.get("project");
+        let testkbColl = mongodb.get("testkb");
+        let issuesColl = mongodb.get("issues");
+        let cweColl = mongodb.get("cwe");
 
-    prjColl.count().then((count1) => {
-        testkbColl.count().then((count2) => {
-            issuesColl.count().then((count3) => {
-                cweColl.count().then((count4) => {
-                    let total = count1 + count2 + count3 + count4;
-                    if (total <= 0) {
-                        logger.info("Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)");
-                        execFile("/usr/bin/mongorestore", ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir], (error, stdout, stderr) => {
-                            if (error) {
-                                throw error;
-                            }
-                            logger.debug(`Mongorestore stdout: ${stdout}`);
-                            logger.debug(`Mongorestore stderr: ${stderr}`);
-                        });
-                    } else logger.info(`Mongodb contains ${total} records total`);
+        prjColl.count().then((count1) => {
+            testkbColl.count().then((count2) => {
+                issuesColl.count().then((count3) => {
+                    cweColl.count().then((count4) => {
+                        let total = count1 + count2 + count3 + count4;
+                        if (total <= 0) {
+                            logger.info("Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)");
+                            execFile("/usr/bin/mongorestore", ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir], (error, stdout, stderr) => {
+                                if (error) {
+                                    throw error;
+                                }
+                                logger.debug(`Mongorestore stdout: ${stdout}`);
+                                logger.debug(`Mongorestore stderr: ${stderr}`);
+                            });
+                        } else logger.info(`Mongodb contains ${total} records total`);
+                    });
                 });
             });
         });
+    })
+    .catch((err) => {
+        logger.error("Mongodb connection error:", err);
+        exit(1);
     });
-}).catch((err) => {
-    logger.error("Mongodb connection error:", err);
-    exit(1);
-});
+*/
 
 app.use(function (req, res, next) {
     req.db = db;
@@ -392,7 +318,7 @@ app.post("/api/db/backup", (req, res, next) => {
         if (error) {
             msg = `Error when backing-up DB: ${error}`;
             console.error(msg);
-            res.status(404).json({error: JSON.stringify(msg)});
+            return res.status(500).json({error: JSON.stringify(msg)});
         }
         let msg = {stdout: stdout, stderr: stderr};
         logger.info(`Backup result: ${JSON.stringify(msg)}`);
@@ -424,194 +350,431 @@ app.get("/api/account", function (req, res) {
 });
 
 // Show all projects
-app.get("/api/project", prjRes.findAll);
+//app.get("/api/project", prjRes.findAll);
+app.get("/api/project", (req, res) => {
+    // prettier-ignore
+    db.project.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-projects", res, e);});
+});
 
-// Get project data
-app.get(
-    "/api/project/:name",
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("name").matches(validationValues.PrjName.matches),
-    prjRes.findByName
-);
+// Get project data, check for pattern YYYYMM[DD]-PrjName-EnvName
+//app.get("/api/project/:name", check("name").matches(validationValues.PrjName.matches), prjRes.findByName);
+app.get("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "find-one-project";
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+    // prettier-ignore
+    db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound(op, res, e);});
+});
 
 // Create project
-app.post("/api/project", checkSchema(validationSchema.project), prjRes.create);
+//app.post("/api/project", checkSchema(validationSchema.project), prjRes.create);
+app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+
+    // Use the filter API of express-validator to only include the fields included in the schema
+    const bodyData = matchedData(req, {
+        includeOptionals: false,
+        onlyValidData: true,
+        locations: ["body"],
+    });
+    // prettier-ignore
+    db.project.create(bodyData).then((d) => {created(res, d);}).catch((e) => {notFound("create-project", res, e);});
+});
 
 // Update project
-app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.update);
+//app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.update);
+app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
 
-// Delete project
-app.delete(
-    "/api/project/:name",
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("name").matches(validationValues.PrjName.matches),
-    prjRes.removeByName
-);
+    const bodyData = matchedData(req, {
+        includeOptionals: false,
+        onlyValidData: true,
+        locations: ["body"],
+    });
+
+    // pprettier-ignore
+    logger.info(`Updating ${req.params.name}`);
+    db.project
+        .update(bodyData, {where: {name: req.params.name}})
+        .then((d) => {
+            ok(res, d);
+        })
+        .catch((e) => {
+            notFound("update-project", res, e);
+        });
+});
+
+// Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+//app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), prjRes.removeByName);
+app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+
+    // prettier-ignore
+    db.project.destroy({where: {name: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-project", res, e);});
+});
 
 // Get data for all tests
-app.get("/api/testkb", testkbRes.findAll);
+//app.get("/api/testkb", testkbRes.findAll);
+app.get("/api/testkb", (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
 
-// Get data for a specific Test ID
-app.get(
-    "/api/testkb/:TID",
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("TID").matches(validationValues.TID.matches),
-    testkbRes.findByTID
-);
+    // prettier-ignore
+    db.test.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-tests", res, e);});
+});
+
+// Get data for a specific Test ID. Check for allowable TID chars (letters, numbers, dash, dots).
+//app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), testkbRes.findByTID);
+app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+    // prettier-ignore
+    db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("find-one-test", res, e);});
+});
 
 // Create a new test
-app.post(
-    "/api/testkb",
-    checkSchema(validationSchema.testKB),
-    testkbRes.create // filtering out additional fields that aren't in the schema happens here
-);
+//app.post( "/api/testkb", checkSchema(validationSchema.testKB), testkbRes.create );
+app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        return res.status(422).json({errors: errors.array()});
+    }
+
+    // Use the filter API of express-validator to only include the fields included in the schema
+    const bodyData = matchedData(req, {
+        includeOptionals: false,
+        onlyValidData: true,
+        locations: ["body"],
+    });
+
+    // prettier-ignore
+    db.test.create(bodyData).then((d) => {created(res, d);}).catch((e) => {notFound("create-test", res, e);});
+});
 
 // Update an existing test
-app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), testkbRes.update);
+//app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), testkbRes.update);
+app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        return res.status(422).json({errors: errors.array()});
+    }
+
+    // Use the filter API of express-validator to only include the fields included in the schema
+    const bodyData = matchedData(req, {
+        includeOptionals: false,
+        onlyValidData: true,
+        locations: ["body"],
+    });
+
+    // prettier-ignore
+    db.test.update(bodyData, {where: {name: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("update-test", res, e);});
+});
 
 // Get all issues for all projects
-app.get("/api/issue", issueRes.findAll);
+//app.get("/api/issue", issueRes.findAll);
+app.get("/api/issue", (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
 
-// Get all issues for a specific project
-app.get(
-    "/api/issue/:PrjName",
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    issueRes.findProjectIssues
-);
+    // prettier-ignore
+    db.issue.findAll().then((d)=>{ok(res, d);}).catch((e)=>{notFound("find-all-issues", res, e);});
+});
 
-// Delete all issues in a project
-app.delete(
-    "/api/issue/:PrjName",
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    issueRes.removeAllForPrj
-);
+// Get all issues for a specific project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+//app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), issueRes.findProjectIssues);
+app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+    // prettier-ignore
+    db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "DESC"],["TID", "ASC"]]}).then((d)=>{ok(res,d);}).catch((e)=>{notFound("find-all-prj-issues", res,e);});
+});
+
+// Delete all issues in a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+//app.delete("/api/issue/:PrjName",check("PrjName").matches(validationValues.PrjName.matches),issueRes.removeAllForPrj);
+app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
+
+    // prettier-ignore
+    db.issue.destroy({where: {PrjName: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-prj-issue", res, e);});
+});
 
 // Create/update an issue
-app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
+//app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
+app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        return res.status(422).json({errors: errors.array()});
+    }
 
-// Create issue TODOs for a given project
-app.post(
-    "/api/issue/:PrjName/todos",
-    // Check for pattern YYYYMM[DD]-PrjName-EnvName
+    // Use the filter API of express-validator to only include the fields included in the schema
+    const bodyData = matchedData(req, {
+        includeOptionals: false,
+        onlyValidData: true,
+        locations: ["body"],
+    });
+
+    // prettier-ignore
+    db.issue.upsert(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("upsert-issue", res, e);});
+});
+
+// Create issue TODOs for a given project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    // prettier-ignore
+    if (!errors.isEmpty()) { logger.warn("Input validation failed for project name"); failure("validate-req", res, {errors: errors.array()}); return; }
+
+    // Get project
+    logger.debug(`Creating TODO tests for project ${req.params.PrjName}`);
+    db.project
+        .findOne({where: {name: req.params.PrjName}})
+        .then((prj) => {
+            // Get scope query
+            let scopeQuery = utils.getSequelizeScopeQuery(prj);
+            // Search the Test KB for matching tests
+            logger.info("Searching TestKB with scope");
+            //let testKB = mongodb.get("testkb");
+            //testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
+            db.test
+                .findAll({where: scopeQuery})
+                .then((tests) => {
+                    logger.info(`Applicable tests: ${JSON.stringify(tests)}`);
+                    //issueRes.createTodos(req, res, tests);
+                    // Check for input validation errors in the request
+                    const errors = validationResult(req);
+                    if (!errors.isEmpty()) {
+                        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+                        return res.status(422).json({errors: errors.array()});
+                    }
+
+                    logger.info(`Creating TODOs for ${req.params.PrjName}`);
+                    //issue.createTodos(req.params.PrjName, tests, ok, err);
+                    //TODO expand if needed
+                    for (let test of tests) {
+                        let data = {};
+                        logger.info(`Creating TODO for TID ${test.TID}`);
+                        data.TID = test.TID;
+                        data.PrjName = req.params.PrjName;
+                        data.CweId = test.TCweID;
+                        data.IPriority = 6;
+                        data.IPriorityText = "TODO";
+                        data.TIssueName = test.TIssueName;
+                        if (!data.TIssueName) data.TIssueName = test.TTestName;
+
+                        // Add issue
+                        //this.issue.insert(data).then(() => {logger.info(`Insert success for ${data.TID}`);}).catch((err) => {logger.warn(`Insert failed for ${data.TID}: ${err}`);});
+                        // prettier-ignore
+                        db.issue.create(data)
+                            .then((d) => {logger.debug(`TODO created: ${JSON.stringify(data)}`);})
+                            .catch((e) => {failure("issue-create", res, e); return;});
+                    }
+                    created(res, {});
+                })
+                .catch((e) => {
+                    notFound("find-all-prj-tests", res, e);
+                });
+        })
+        .catch((e) => {
+            notFound("find-one-project", res, e);
+        });
+});
+
+// Delete an issue. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+// TODO
+app.delete(
+    "/api/issue/:PrjName/:TID",
     check("PrjName").matches(validationValues.PrjName.matches),
-    function (req, res) {
+    // check for allowable TID chars (letters, numbers, dash, dots)
+    check("TID").matches(validationValues.TID.matches),
+    (req, res) => {
+        //issueRes.removeByName
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
             return res.status(422).json({errors: errors.array()});
         }
 
-        // Fetch from project collection
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
-        let prjColl = db.get("project");
-        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}, function (e, prj) {
-            if (prj === null) return;
-
-            // Get scope query
-            let scopeQuery = getScopeQuery(prj);
-
-            // Search the Test KB for matching tests
-            logger.info("Searching TestKB with scope query ", scopeQuery);
-            let testKB = db.get("testkb");
-            testKB.find(scopeQuery, {sort: {TID: 1}}, function (_e, tests) {
-                issueRes.createTodos(req, res, tests);
+        //let ok = function (doc) { logger.info("Successful issue delete"); res.sendStatus(200); };
+        //let err = function (_err) { logger.warn(`Issue deletion failed: ${JSON.stringify(_err)}`); res.send(409, "Failed to remove issue"); };
+        //issue.removeByName(req.params.PrjName, req.params.TID, ok, err);
+        let crit = {},
+            kvp1 = {},
+            kvp2 = {};
+        kvp1.TID = req.params.TID;
+        kvp2.PrjName = req.params.PrjName;
+        crit["[Op.and]"] = [kvp1, kvp2];
+        //this.issue.remove(crit, response(success, error));
+        db.ssue
+            .destroy({where: crit})
+            .then((d) => {
+                ok(res, d);
+            })
+            .catch((e) => {
+                notFound("destroy-prj-issue", res, e);
             });
-        });
     }
 );
 
-// Delete an issue
-app.delete(
-    "/api/issue/:PrjName/:TID",
-    // check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("TID").matches(validationValues.TID.matches),
-    issueRes.removeByName
-);
-
-// Get data for an issue
-app.get(
-    "/api/issue/:PrjName/:TID",
-    // check for allowable TID chars (letters, numbers, dash, dots)
-    check("PrjName").matches(validationValues.PrjName.matches),
-    check("TID").matches(validationValues.TID.matches),
-    issueRes.findIssue
-);
+// Get data for an issue. Check for allowable TID chars (letters, numbers, dash, dots)
+//app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches),issueRes.findIssue
+app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+        return res.status(422).json({errors: errors.array()});
+    }
+    //let ok = function (doc) { logger.info("Succeeded search for issue"); res.json(doc); };
+    //let err = function (_err) { logger.warn(`Failed issue search: ${JSON.stringify(_err)}`); res.sendStatus(404); };
+    //issue.findIssue(req.params.PrjName, req.params.TID, ok, err);
+    // Build search criteria
+    let crit = {},
+        kvp1 = {},
+        kvp2 = {};
+    kvp1.TID = req.params.TID;
+    kvp2.PrjName = req.params.PrjName;
+    crit["[Op.and]"] = [kvp1, kvp2];
+    //this.issue.findOne(crit, response(success, error));
+    let op = "findone-prj-issue";
+    db.issue
+        .findOne({where: crit})
+        .then((d) => {
+            ok(res, d);
+        })
+        .catch((e) => {
+            notFound(op, res, e);
+        });
+});
 
 // Get list of CWEs
-app.get("/api/cwe", cweRes.findAll);
+//app.get("/api/cwe", cweRes.findAll);
+app.get("/api/cwe", (req, res) => {
+    db.cwe
+        .findAll()
+        .then((d) => {
+            ok(res, d);
+        })
+        .catch((e) => {
+            notFound("find-all-cwes", res, e);
+        });
+});
 
-// Get data for a CWE
-app.get(
-    "/api/cwe/:id",
-    // check CWE ID
-    check("id").isInt(validationValues.CweId.isInt),
-    cweRes.findById
-);
+// Get data for a CWE. Check CWE ID.
+//app.get("/api/cwe/:id", check("id").isInt(validationValues.CweId.isInt), cweRes.findById);
+app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (req, res) => {
+    db.cwe
+        .findOne({where: {CweId: req.params.CweId}})
+        .then((d) => {
+            ok(res, d);
+        })
+        .catch((e) => {
+            notFound("find-one-cwe", res, e);
+        });
+});
 
-// Get testing data for a project
-app.get(
-    "/api/testing/:PrjName",
-    // Check for pattern YYYYMM[DD]-PrjName-EnvName
-    check("PrjName").matches(validationValues.PrjName.matches),
-    function (req, res) {
-        // Check for input validation errors in the request
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            logger.warn("Input validation failed for project name");
-            return res.status(422).json({errors: errors.array()});
-        }
+// Get testing data for a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn("Input validation failed for project name");
+        failure("validate-req", res, {errors: errors.array()});
+        return;
+    }
 
-        // Fetch from project collection
-        let prjRegex = {$regex: config.PrjSubset};
-        let prjSubset = {name: prjRegex};
-        let prjColl = db.get("project");
-        logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
-        prjColl
-            .findOne({$and: [{name: req.params.PrjName}, prjSubset]})
+    // Get project
+    //let prjRegex = {$regex: config.PrjSubset};
+    //let prjSubset = {name: prjRegex};
+    //let prjColl = mongodb.get("project");
+    logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
+    //prjColl.findOne({$and: [{name: req.params.PrjName}, prjSubset]}).then((prj) => {
+    // prettier-ignore
+    db.project.findOne({where: {name: req.params.PrjName}})
             .then((prj) => {
-                //if (prj === null) return;
-
                 // Get scope query
-                let scopeQuery = getScopeQuery(prj);
+                let scopeQuery = utils.getSequelizeScopeQuery(prj);
 
                 // Search the Test KB for matching tests
                 logger.debug("Searching TestKB with scope query ", scopeQuery);
-                let testKB = db.get("testkb");
-                let testKbFields = {TID: 1, _id: 1, TSource: 1, TTestName: 1};
-                let issuesColl = db.get("issues");
-                let cweColl = db.get("cwe");
-                testKB
-                    .find(scopeQuery, {sort: {TID: 1}, projection: testKbFields})
+                //let testKB = mongodb.get("testkb");
+                //let testKbFields = {TID: 1, _id: 1, TSource: 1, TTestName: 1};
+                let testKbFields = ["TID", "TSource", "TTestName"];
+                //let issuesColl = mongodb.get("issues");
+                //let cweColl = mongodb.get("cwe");
+                //testKB.find(scopeQuery, {sort: {TID: 1}, projection: testKbFields}).then((tests) => {
+                // prettier-ignore
+                db.test.findAll({where: scopeQuery, order: [["TID", "ASC"]], attributes: testKbFields})
                     .then((tests) => {
-                        const testingPageData = {
-                            prj: prj,
-                            tests: tests,
-                            CweUriBase: config.CweUriBase,
-                            CveRptBase: config.CveRptBase,
-                            CveRptSuffix: config.CveRptSuffix,
-                            TestRefBase: config.TestRefBase,
-                            ScopeQuery: JSON.stringify(scopeQuery),
-                        };
+                        const testingPageData = {prj: prj, tests: tests, CweUriBase: config.CweUriBase, CveRptBase: config.CveRptBase, CveRptSuffix: config.CveRptSuffix, TestRefBase: config.TestRefBase, ScopeQuery: JSON.stringify(scopeQuery)};
                         logger.info(`Returning testing page data for project ${req.params.PrjName}`);
                         res.json(testingPageData);
                     })
                     .catch((err) => {
                         logger.warn(`Failed getting testing page data (in tests search): ${JSON.stringify(err)}`);
-                        res.status(404).json({error: JSON.stringify(err)});
+                        failure("findall-scoped-tests", res, err);
                     });
             })
             .catch((err) => {
                 logger.warn(`Failed getting testing page data (in project search): ${JSON.stringify(err)}`);
-                res.status(404).json({error: JSON.stringify(err)});
+                failure("findone-project", res, err);
             });
-    }
-);
+});
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
 // Check if authenticated/authorized to export data
@@ -655,21 +818,8 @@ app.get(
 );
 
 // ========================================== ERROR HANDLING ==========================================
-// create an error with .status. we
-// can then use the property in our
-// custom error handler (Connect repects this prop as well)
-/*
-function error(status, msg) {
-    var err = new Error(msg);
-    err.status = status;
-    return err;
-}
-*/
-
-// middleware with an arity of 4 are considered
-// error handling middleware. When you next(err)
-// it will be passed through the defined middleware
-// in order, but ONLY those with an arity of 4, ignoring
+// Middleware with an arity of 4 are considered error handling middleware. When you next(err), it will
+// be passed through the defined middleware in order, but ONLY those with an arity of 4, ignoring
 // regular middleware.
 app.use(function (err, req, res, next) {
     // whatever you want here, feel free to populate
@@ -678,9 +828,8 @@ app.use(function (err, req, res, next) {
     res.send({error: err.message});
 });
 
-// our custom JSON 404 middleware. Since it's placed last
-// it will be the last middleware called, if all others
-// invoke next() and do not respond.
+// Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
+// if all others invoke next() and do not respond.
 app.use(function (req, res) {
     res.status(404);
     res.send({Error: "This request is unsupported!"});
@@ -710,4 +859,35 @@ if (config.useHttp2) {
     /* eslint-disable */
     logger.info(`Listening on port ${port} serving HTTP/1.1`);
     /* eslint-enable */
+}
+
+function created(res, data) {
+    if (data) {
+        logger.info(`Creation succeeded - resulting data: ${JSON.stringify(data)}`);
+        res.status(201).send(data);
+    } else {
+        logger.warn(`Request succeeded. No data`);
+        res.send(204);
+    }
+}
+
+function ok(res, data) {
+    if (data) {
+        logger.info(`Request succeeded - resulting data: ${JSON.stringify(data)}`);
+        res.status(200).send(data);
+    } else {
+        logger.info(`Request succeeded. No data`);
+        res.send(204);
+    }
+}
+
+function failure(op, res, err) {
+    logger.error(`Request failed - details: ${JSON.stringify(err)}`);
+    res.status(400).send(JSON.stringify(err));
+}
+
+function notFound(op, res, err) {
+    logger.warn(`Could not find data for ${op} operation - details: ${JSON.stringify(err)}`);
+    //res.sendStatus(404);
+    res.status(404).send(JSON.stringify(err));
 }
