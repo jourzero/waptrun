@@ -22,6 +22,8 @@ const validationValues = require("./validationValues.js");
 const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
+const {exit} = require("process");
+const {logging, useHttp2} = require("./config.js");
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -132,8 +134,9 @@ function ensureAuthorized(req, res, next) {
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
-//let app = express();
-let app = http2Express(express);
+let app;
+if (useHttp2) app = http2Express(express);
+else app = express();
 app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
@@ -144,8 +147,6 @@ app.use(methodOverride());
 app.use(session(config.session));
 app.use(passport.initialize());
 if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
-// Disable caching during some testing
-app.disable("etag");
 
 // Patch from https://github.com/nanoexpress/nanoexpress/issues/251
 //  Fixes below issue:
@@ -170,31 +171,29 @@ if (config.useHttp2) {
 // IMPORTANT: place this before static or similar middleware directory is where markdown files are stored
 app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
-// Serve favicon and static content
+// Serve static content -- ref.: https://expressjs.com/en/4x/api.html#express.static
 let staticOptions = {
-    //dotfiles: 'ignore',
-    // etag: false,
-    extensions: ["htm", "html"],
+    // Allow /home instead of /home.html
+    extensions: ["html"],
+    // Disable directory indexing
     index: false,
-    maxAge: "1d",
+    // Don't redirect to trailing “/” when the pathname is a directory.
     redirect: false,
-    setHeaders: function (res, path, stat) {
-        res.set("x-timestamp", Date.now());
-    },
+    // Add an additional header to check if these options are used
+    //setHeaders: function (res, path, stat) { res.set("x-timestamp", Date.now()); },
 };
-//app.use(favicon(path.join(__dirname, "../client", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "../client"), staticOptions));
-app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/")));
+app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/"), staticOptions));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
-app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/")));
-app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/")));
-app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/")));
-app.use("/dist/handlebars", express.static(path.join(__dirname, "../node_modules/handlebars/dist/")));
-app.use("/dist/reactive-handlebars", express.static(path.join(__dirname, "../reactive-handlebars/src/")));
+app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/"), staticOptions));
+app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/"), staticOptions));
+app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/"), staticOptions));
+app.use("/dist/handlebars", express.static(path.join(__dirname, "../node_modules/handlebars/dist/"), staticOptions));
+app.use("/dist/reactive-handlebars", express.static(path.join(__dirname, "../reactive-handlebars/src/"), staticOptions));
 
 // Serve private static content
-app.use("/static", express.static(path.join(__dirname, "../waptrun-static/")));
+app.use("/static", express.static(path.join(__dirname, "../waptrun-static/"), staticOptions));
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -210,59 +209,6 @@ app.use(function (req, res, next) {
     if (msg) res.locals.notice = msg;
     if (success) res.locals.success = success;
 
-    next();
-});
-
-// ========================================== DATABASE ==========================================
-// Make our db accessible to our router
-//const monk = require("monk");
-const {exit} = require("process");
-const {logging} = require("./config.js");
-//const {issue} = require("./validationSchema.js");
-//const mongoURL = new URL(mongodbUrl);
-//logger.info(`Connecting to MongoDB server at ${mongoURL.host}`);
-//const mongodb = monk(mongodbUrl);
-
-// Check DB connection
-/*
-mongodb
-    .then(() => {
-        logger.info("Connected successfully to mongodb server");
-
-        // Initialize the database when empty
-        let prjColl = mongodb.get("project");
-        let testkbColl = mongodb.get("testkb");
-        let issuesColl = mongodb.get("issues");
-        let cweColl = mongodb.get("cwe");
-
-        prjColl.count().then((count1) => {
-            testkbColl.count().then((count2) => {
-                issuesColl.count().then((count3) => {
-                    cweColl.count().then((count4) => {
-                        let total = count1 + count2 + count3 + count4;
-                        if (total <= 0) {
-                            logger.info("Loading initial data set into our empty Mongodb (adding CWEs, Test KB...)");
-                            execFile("/usr/bin/mongorestore", ["--db=waptrunner", "--drop", "--host", mongoURL.host, dbinit_dir], (error, stdout, stderr) => {
-                                if (error) {
-                                    throw error;
-                                }
-                                logger.debug(`Mongorestore stdout: ${stdout}`);
-                                logger.debug(`Mongorestore stderr: ${stderr}`);
-                            });
-                        } else logger.info(`Mongodb contains ${total} records total`);
-                    });
-                });
-            });
-        });
-    })
-    .catch((err) => {
-        logger.error("Mongodb connection error:", err);
-        exit(1);
-    });
-*/
-
-app.use(function (req, res, next) {
-    req.db = db;
     next();
 });
 
@@ -337,14 +283,12 @@ app.get("/api/account", function (req, res) {
 });
 
 // Show all projects
-//app.get("/api/project", prjRes.findAll);
 app.get("/api/project", (req, res) => {
     // prettier-ignore
     db.project.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-projects", res, e);});
 });
 
 // Get project data, check for pattern YYYYMM[DD]-PrjName-EnvName
-//app.get("/api/project/:name", check("name").matches(validationValues.PrjName.matches), prjRes.findByName);
 app.get("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
     const op = "find-one-project";
     // Check for input validation errors in the request
@@ -359,7 +303,6 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
 });
 
 // Create project
-//app.post("/api/project", checkSchema(validationSchema.project), prjRes.create);
 app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -380,7 +323,6 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
 });
 
 // Update project
-//app.put("/api/project/:name", checkSchema(validationSchema.project), prjRes.update);
 app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -409,7 +351,6 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
 });
 
 // Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
-//app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), prjRes.removeByName);
 app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -424,7 +365,6 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
 });
 
 // Get data for all tests
-//app.get("/api/testkb", testkbRes.findAll);
 app.get("/api/testkb", (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -439,7 +379,6 @@ app.get("/api/testkb", (req, res) => {
 });
 
 // Get data for a specific Test ID. Check for allowable TID chars (letters, numbers, dash, dots).
-//app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), testkbRes.findByTID);
 app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -453,13 +392,13 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
 });
 
 // Create a new test
-//app.post( "/api/testkb", checkSchema(validationSchema.testKB), testkbRes.create );
 app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        failure("validate-req", res, {errors: errors.array()});
+        return;
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -474,13 +413,13 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
 });
 
 // Update an existing test
-//app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), testkbRes.update);
 app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        failure("validate-req", res, {errors: errors.array()});
+        return;
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -495,7 +434,6 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
 });
 
 // Get all issues for all projects
-//app.get("/api/issue", issueRes.findAll);
 app.get("/api/issue", (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -510,7 +448,6 @@ app.get("/api/issue", (req, res) => {
 });
 
 // Get all issues for a specific project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
-//app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), issueRes.findProjectIssues);
 app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -524,7 +461,6 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
 });
 
 // Delete all issues in a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
-//app.delete("/api/issue/:PrjName",check("PrjName").matches(validationValues.PrjName.matches),issueRes.removeAllForPrj);
 app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
@@ -539,13 +475,13 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
 });
 
 // Create/update an issue
-//app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), issueRes.upsert);
 app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, res) => {
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        failure("validate-req", res, {errors: errors.array()});
+        return;
     }
 
     // Use the filter API of express-validator to only include the fields included in the schema
@@ -585,7 +521,8 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                     const errors = validationResult(req);
                     if (!errors.isEmpty()) {
                         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-                        return res.status(422).json({errors: errors.array()});
+                        failure("validate-req", res, {errors: errors.array()});
+                        return;
                     }
 
                     logger.info(`Creating TODOs for ${req.params.PrjName}`);
@@ -627,7 +564,8 @@ app.delete(
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-            return res.status(422).json({errors: errors.array()});
+            failure("validate-req", res, {errors: errors.array()});
+            return;
         }
 
         // prettier-ignore
@@ -646,7 +584,8 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        return res.status(422).json({errors: errors.array()});
+        failure("validate-req", res, {errors: errors.array()});
+        return;
     }
 
     // Build search criteria
@@ -809,6 +748,8 @@ function created(res, data) {
 function ok(res, data) {
     if (data) {
         logger.info(`Request succeeded - resulting data: ${JSON.stringify(data)}`);
+        // TODO: Toggle comments on below two lines for security (eventually)
+        //res.sendStatus(200);
         res.status(200).send(data);
     } else {
         logger.info(`Request succeeded. No data`);
@@ -817,12 +758,15 @@ function ok(res, data) {
 }
 
 function failure(op, res, err) {
-    logger.error(`Request failed - details: ${JSON.stringify(err)}`);
-    res.status(400).send(JSON.stringify(err));
+    logger.error(`Request failed for ${op}: ${JSON.stringify(err)}`);
+    // TODO: Toggle comments on below two lines for security (eventually)
+    //res.sendStatus(400);
+    res.status(400).send(err);
 }
 
 function notFound(op, res, err) {
-    logger.warn(`Could not find data for ${op} operation - details: ${JSON.stringify(err)}`);
+    logger.warn(`Could not find data for ${op}: ${JSON.stringify(err)}`);
+    // TODO: Toggle comments on below two lines for security (eventually)
     //res.sendStatus(404);
-    res.status(404).send(JSON.stringify(err));
+    res.status(404).send(err);
 }
