@@ -457,7 +457,7 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
         return;
     }
     // prettier-ignore
-    db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "DESC"],["TID", "ASC"]]}).then((d)=>{ok(res,d);}).catch((e)=>{notFound("find-all-prj-issues", res,e);});
+    db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "DESC"],["TIssueName", "ASC"],["TID", "ASC"]]}).then((d)=>{ok(res,d);}).catch((e)=>{notFound("find-all-prj-issues", res,e);});
 });
 
 // Delete all issues in a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
@@ -699,7 +699,7 @@ app.use(function (err, req, res, next) {
     // whatever you want here, feel free to populate
     // properties on `err` to treat it differently in here.
     res.status(err.status || 500);
-    res.send({error: err.message});
+    res.send({error: err.message, additionalInfo: "Caught by global exception handler."});
 });
 
 // Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
