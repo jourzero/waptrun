@@ -24,6 +24,7 @@
         "express-session": "^1.0.0",
         "express-validator": "^6.0.0",
         "handlebars": "^4.0.0",
+        "helmet": "^4.6.0",
         "http2-express-bridge": "^1.0.0",
         "jquery": "^3.0.0",
         "marked": "^4.0.0",
@@ -37,6 +38,8 @@
         "sequelize": "^6.0.0",
         "serve-favicon": "^2.0.0",
         "sqlite3": "^5.0.2",
+        "swagger-jsdoc": "^6.1.0",
+        "swagger-ui-express": "^4.2.0",
         "winston": "^3.0.0"
     },
     "devDependencies": {

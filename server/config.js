@@ -5,6 +5,7 @@ const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
 const AUTH_MODE_OAUTH = 1;
+const USE_HTTP2 = true;
 //const AUTH_MODE_LOCAL = 2; // Not supported
 const LOCAL_USER = {
     id: 0,
@@ -49,16 +50,69 @@ module.exports = {
     // Set authentication Mode. Supported: AUTH_MODE_NONE, AUTH_MODE_OAUTH
     defaultAuthMode: AUTH_MODE_OAUTH,
 
+    // Helmet config
+    //   http://content-security-policy.com/
+    //   http://www.html5rocks.com/en/tutorials/security/content-security-policy/
+    //   http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
+    helmet: {
+        useDefaults: false,
+        setAllHeaders: false, // set to true if you want to set all headers
+        reportOnly: false, // set to true if you *only* want to report errors
+        directives: {
+            defaultSrc: ["'self'"],
+            imgSrc: ["'self'", "data:"],
+            scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            fontSrc: ["'self'"],
+            frameSrc: [],
+            objectSrc: ["'none'"], // Flash and other plugins
+            upgradeInsecureRequests: [],
+            mediaSrc: ["'self'"],
+            connectSrc: ["'self'"], // XHR, WebSockets, and EventSource
+            sandbox: ["allow-same-origin", "allow-forms", "allow-scripts"],
+        },
+    },
+
+    // OpenAPI spec header
+    openapi: {
+        definition: {
+            openapi: "3.0.0",
+            info: {
+                title: "WAPT Runner",
+                description: "Web App PenTesting Runner",
+                version: "1.0.0",
+            },
+            //license: { name: "Licensed Under MIT", url: "https://spdx.org/licenses/MIT.html", },
+            //contact: { name: "JourZero", url: "https://github.com/jourzero", },
+            servers: [
+                {url: "https://www.wapt.me:5000", description: "Development server"},
+                //{url: "https://www.waptrunner.com", description: "Prod server"},
+            ],
+        },
+        apis: ["./server/server.js"], // files containing annotations as above
+    },
+    staticOptions: {
+        // Allow /home instead of /home.html
+        extensions: ["html"],
+        // Disable directory indexing
+        index: false,
+        // Don't redirect to trailing “/” when the pathname is a directory.
+        redirect: false,
+        // Add an additional header to check if these options are used
+        setHeaders: function (res, path, stat) {
+            res.set("x-timestamp", Date.now());
+        },
+    },
+
     // Configure HTTP/2 support
-    useHttp2: true,
+    useHttp2: USE_HTTP2,
 
     // Session secret
     session: {
         resave: true,
         saveUninitialized: true,
         secret: "fawefjeaiaoeifj",
-        //cookie: {path: "/", httpOnly: true, secure: true, sameSite: "lax"}
-        cookie: {path: "/", httpOnly: true, secure: false, sameSite: "lax"},
+        cookie: {path: "/", httpOnly: true, secure: USE_HTTP2, sameSite: "lax"},
     },
 
     // Configure request logging

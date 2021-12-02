@@ -1,6 +1,7 @@
 // Load .env file
 require("dotenv").config();
 const express = require("express");
+const helmet = require("helmet");
 const session = require("express-session");
 const passport = require("passport");
 const path = require("path");
@@ -24,6 +25,8 @@ const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
 const {exit} = require("process");
 const {logging, useHttp2} = require("./config.js");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 // ========================================== CONSTANTS ==========================================
 const dbinit_dir = "/app/dbinit/waptrunner";
@@ -168,32 +171,39 @@ if (config.useHttp2) {
     });
 }
 
+// Activate and configure helmet for Content Security Policy
+app.use(helmet.contentSecurityPolicy(config.helmet));
+
+//app.use(express.text({defaultCharset: "utf-8"}));
+app.use(express.text({defaultCharset: "ISO-8859-1"}));
+
 // IMPORTANT: place this before static or similar middleware directory is where markdown files are stored
 app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve static content -- ref.: https://expressjs.com/en/4x/api.html#express.static
-let staticOptions = {
-    // Allow /home instead of /home.html
-    extensions: ["html"],
-    // Disable directory indexing
-    index: false,
-    // Don't redirect to trailing “/” when the pathname is a directory.
-    redirect: false,
-    // Add an additional header to check if these options are used
-    //setHeaders: function (res, path, stat) { res.set("x-timestamp", Date.now()); },
-};
-app.use(express.static(path.join(__dirname, "../client"), staticOptions));
-app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/"), staticOptions));
+app.use(express.static(path.join(__dirname, "../client"), config.staticOptions));
+app.use("/screenshots", express.static(path.join(__dirname, "../doc/screenshots/"), config.staticOptions));
 
 // Serve jquery npm module content to clients.  NOTE: make sure client source fiels use: <script src="/jquery/jquery.js"></script>
-app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/"), staticOptions));
-app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/"), staticOptions));
-app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/"), staticOptions));
-app.use("/dist/handlebars", express.static(path.join(__dirname, "../node_modules/handlebars/dist/"), staticOptions));
-app.use("/dist/reactive-handlebars", express.static(path.join(__dirname, "../reactive-handlebars/src/"), staticOptions));
+app.use("/dist/bootstrap", express.static(path.join(__dirname, "../node_modules/bootstrap/dist/"), config.staticOptions));
+app.use("/dist/jquery", express.static(path.join(__dirname, "../node_modules/jquery/dist/"), config.staticOptions));
+app.use("/dist/lodash", express.static(path.join(__dirname, "../node_modules/lodash/"), config.staticOptions));
+app.use("/dist/handlebars", express.static(path.join(__dirname, "../node_modules/handlebars/dist/"), config.staticOptions));
+app.use("/dist/validator", express.static(path.join(__dirname, "../node_modules/validator/"), config.staticOptions));
+app.use("/dist/reactive-handlebars", express.static(path.join(__dirname, "../reactive-handlebars/src/"), config.staticOptions));
 
 // Serve private static content
-app.use("/static", express.static(path.join(__dirname, "../waptrun-static/"), staticOptions));
+app.use(
+    express.static(path.join(__dirname, "../waptrun-static/"), {
+        setHeaders: function (res, path, stat) {
+            res.set("content-type", "windows-1252");
+        },
+    })
+);
+
+// Server API documentation
+const openapiSpecification = swaggerJsdoc(config.openapi);
+app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -239,6 +249,19 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 
 // ========================================== REST ROUTES ==========================================
 
+/**
+ * @openapi
+ * /api/ping:
+ *   get:
+ *     description: API test endpoint
+ *     responses:
+ *       200:
+ *         description: Returns a simple response message
+ */
+app.get("/api/ping", (req, res) => {
+    res.send("Ping response, it works!");
+});
+
 // Check if authenticated/authorized to use the REST API
 app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
@@ -260,6 +283,15 @@ app.post("/api/db/backup", (req, res, next) => {
 });
 
 // Show account info
+/**
+ * @openapi
+ * /api/account:
+ *   get:
+ *     description: Get user account information
+ *     responses:
+ *       200:
+ *         description: Returns account info
+ */
 app.get("/api/account", function (req, res) {
     let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
     if (authMode == config.AUTH_MODE_OAUTH) {
