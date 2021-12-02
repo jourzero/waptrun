@@ -9,6 +9,7 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data:ro"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
 # Make server writable while working on sequelize modeling
 #MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
