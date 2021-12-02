@@ -6,7 +6,6 @@ const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
 const AUTH_MODE_OAUTH = 1;
 const USE_HTTP2 = true;
-//const AUTH_MODE_LOCAL = 2; // Not supported
 const LOCAL_USER = {
     id: 0,
     provider: "none",
@@ -21,7 +20,6 @@ const myFormat = printf(({level, message, timestamp}) => {
 module.exports = {
     AUTH_MODE_NONE,
     AUTH_MODE_OAUTH,
-    //AUTH_MODE_LOCAL,
     LOCAL_USER,
     port: 5000,
     appname: "WAPT Runner",
@@ -60,7 +58,7 @@ module.exports = {
         reportOnly: false, // set to true if you *only* want to report errors
         directives: {
             defaultSrc: ["'self'"],
-            imgSrc: ["'self'", "data:"],
+            imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
             scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             fontSrc: ["'self'"],
@@ -87,6 +85,45 @@ module.exports = {
             servers: [
                 {url: "https://www.wapt.me:5000", description: "Development server"},
                 //{url: "https://www.waptrunner.com", description: "Prod server"},
+            ],
+            components: {
+                schemas: {
+                    Employee: {
+                        type: "object",
+                        properties: {
+                            id: {
+                                type: "string",
+                                nullable: true,
+                                readOnly: true,
+                            },
+                            name: {
+                                type: "string",
+                                nullable: true,
+                                readOnly: true,
+                            },
+                        },
+                        additionalProperties: false,
+                    },
+                },
+                securitySchemes: {
+                    bearerAuth: {
+                        type: "http",
+                        description: "JWT Authorization header using the Bearer scheme.",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                    },
+                    cookieAuth: {
+                        type: "apiKey",
+                        in: "cookie",
+                        name: "connect.sid",
+                    },
+                },
+            },
+            security: [
+                {
+                    bearerAuth: [],
+                },
+                {cookieAuth: []},
             ],
         },
         apis: ["./server/server.js"], // files containing annotations as above

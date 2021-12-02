@@ -530,5 +530,8 @@ $.ajaxSetup({
         401: function () {
             window.location.href = "/login";
         },
+        500: function () {
+            window.location.href = "/login";
+        },
     },
 });

@@ -1,9 +1,9 @@
 // Load .env file
 require("dotenv").config();
 const express = require("express");
+const passport = require("passport");
 const helmet = require("helmet");
 const session = require("express-session");
-const passport = require("passport");
 const path = require("path");
 const logger = require("./lib/appLogger.js");
 const reqLogger = require("./lib/reqLogger.js");
@@ -12,7 +12,7 @@ const db = require("./models");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
-const GoogleStrategy = require("passport-google-oauth2").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
@@ -27,17 +27,17 @@ const {exit} = require("process");
 const {logging, useHttp2} = require("./config.js");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
+//const router = express.Router();
 
-// ========================================== CONSTANTS ==========================================
-const dbinit_dir = "/app/dbinit/waptrunner";
-
-// ========================================== GET CONFIG ==========================================
-const port = process.env.PORT || config.port;
-const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
-let oauthConfig = {};
+// ========================================== CONFIG ==========================================
+// Auth/authz config
 let users = [];
+const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 if (authMode == config.AUTH_MODE_OAUTH) {
     logger.info("Configuring app with OAuth");
+    /*
+    let oauthConfig = {};
     oauthConfig.github = {};
     oauthConfig.google = {};
     oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
@@ -46,6 +46,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
     oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
     oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
     oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+    */
     let usersConfig = process.env.USERLIST;
     let userConfig = usersConfig.split(":");
     for (let i in userConfig) {
@@ -58,23 +59,16 @@ if (authMode == config.AUTH_MODE_OAUTH) {
         //user.projects = [".*"];
         users.push(user);
     }
-} else {
-    logger.info("App starting without authentication for dev/testing purposes");
-}
+    logger.debug(`Authorized users: ${JSON.stringify(users)}`);
 
-//logger.debug(`Validation Schema: ${JSON.stringify(validationSchema)}`);
-//logger.debug(`Validation Values: ${JSON.stringify(validationValues)}`);
-
-// ========================================== PASSPORT ==========================================
-// Passport session setup.
-if (authMode == config.AUTH_MODE_OAUTH) {
+    /*
     passport.serializeUser(function (user, done) {
         logger.debug(`Serializing user ${user.username}`);
         done(null, user);
     });
 
     passport.deserializeUser(function (obj, done) {
-        logger.silly(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
+        logger.debug(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
         done(null, obj);
     });
 
@@ -87,6 +81,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
                 passReqToCallback: true,
             },
             function (request, accessToken, refreshToken, profile, cb) {
+                //User.findOrCreate({ googleId: profile.id }, function (err, user) { return done(err, user); });
                 return cb(null, profile);
             }
         )
@@ -104,35 +99,9 @@ if (authMode == config.AUTH_MODE_OAUTH) {
             }
         )
     );
-}
-
-// Simple route middleware to ensure user is authenticated.
-function ensureAuthenticated(req, res, next) {
-    if (authMode == config.AUTH_MODE_NONE) return next();
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
-    res.status(401).send("Not Authenticated.");
-}
-
-// Test authorization
-function ensureAuthorized(req, res, next) {
-    if (authMode == config.AUTH_MODE_NONE) return next();
-    let id = req.user.id;
-    let provider = req.user.provider;
-    let url = req.originalUrl;
-    logger.silly(`Ensuring that user ${id} from provider ${provider} is authorized for ${url}. User data = ${JSON.stringify(req.user)}`);
-    let user = users.find((usr) => {
-        return usr.id === id && usr.provider === provider;
-    });
-    if (user === undefined) {
-        logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
-        res.status(401).send("Not Authorized.");
-    } else {
-        logger.info(`User ${id} is authorized`);
-        next();
-    }
+    */
+} else {
+    logger.info("App starting without authentication for dev/testing purposes");
 }
 
 // ========================================== EXPRESS ==========================================
@@ -147,9 +116,12 @@ app.use(bodyParser.json({limit: "5mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
 app.use(methodOverride());
+if (authMode == config.AUTH_MODE_OAUTH) require("./auth")();
 app.use(session(config.session));
-app.use(passport.initialize());
-if (authMode == config.AUTH_MODE_OAUTH) app.use(passport.session());
+if (authMode == config.AUTH_MODE_OAUTH) {
+    app.use(passport.initialize());
+    app.use(passport.session());
+}
 
 // Patch from https://github.com/nanoexpress/nanoexpress/issues/251
 //  Fixes below issue:
@@ -201,6 +173,36 @@ app.use(
     })
 );
 
+// Simple route middleware to ensure user is authenticated.
+function ensureAuthenticated(req, res, next) {
+    if (authMode == config.AUTH_MODE_NONE) return next();
+    //if (req.isAuthenticated()) { return next(); }
+    if (ensureLoggedIn()) {
+        return next();
+    }
+    logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
+    res.status(401).send("Not Authenticated.");
+}
+
+// Test authorization
+function ensureAuthorized(req, res, next) {
+    if (authMode == config.AUTH_MODE_NONE) return next();
+    let id = req.user.id;
+    let provider = req.user.provider;
+    let url = req.originalUrl;
+    logger.silly(`Ensuring that user ${id} from provider ${provider} is authorized for ${url}. User data = ${JSON.stringify(req.user)}`);
+    let user = users.find((usr) => {
+        return usr.id === id && usr.provider === provider;
+    });
+    if (user === undefined) {
+        logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
+        res.status(401).send("Not Authorized.");
+    } else {
+        logger.info(`User ${id} is authorized`);
+        next();
+    }
+}
+
 // Server API documentation
 const openapiSpecification = swaggerJsdoc(config.openapi);
 app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
@@ -224,16 +226,17 @@ app.use(function (req, res, next) {
 
 // ============================== GOOGLE AUTH ROUTES ==========================================
 if (authMode == config.AUTH_MODE_OAUTH) {
-    app.get(
-        "/auth/google",
-        passport.authenticate("google", {
-            scope: ["https://www.googleapis.com/auth/plus.login"],
-        })
-    );
+    app.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
 
     app.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "/login"}), function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/home");
+    });
+
+    app.get("/logout", function (req, res, next) {
+        logger.info("Logging out");
+        req.logout();
+        res.redirect("/login");
     });
 }
 
@@ -256,7 +259,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
  *     description: API test endpoint
  *     responses:
  *       200:
- *         description: Returns a simple response message
+ *         description: ping response message
  */
 app.get("/api/ping", (req, res) => {
     res.send("Ping response, it works!");
@@ -288,9 +291,11 @@ app.post("/api/db/backup", (req, res, next) => {
  * /api/account:
  *   get:
  *     description: Get user account information
+ *     security:
+ *       cookieAuth: []
  *     responses:
  *       200:
- *         description: Returns account info
+ *         description: Account information
  */
 app.get("/api/account", function (req, res) {
     let user = authMode == config.AUTH_MODE_NONE ? config.LOCAL_USER : req.user;
@@ -728,10 +733,10 @@ app.get(
 // be passed through the defined middleware in order, but ONLY those with an arity of 4, ignoring
 // regular middleware.
 app.use(function (err, req, res, next) {
-    // whatever you want here, feel free to populate
-    // properties on `err` to treat it differently in here.
-    res.status(err.status || 500);
-    res.send({error: err.message, additionalInfo: "Caught by global exception handler."});
+    logger.error(`Exception: ${JSON.stringify(err.message)}`);
+    // TODO: Toggle comments on below 3 lines for security (eventually)
+    //res.sendStatus(500);
+    res.status(500).send({error: err.message, additionalInfo: "Caught by global exception handler."});
 });
 
 // Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
@@ -742,6 +747,7 @@ app.use(function (req, res) {
 });
 
 // ========================================== START LISTENER ==========================================
+const port = process.env.PORT || config.port;
 
 if (config.useHttp2) {
     // Get key and cert to support HTTP/2
