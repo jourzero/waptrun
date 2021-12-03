@@ -399,7 +399,7 @@ function evtAddIssueTemplateText(event) {
     // Fill Evidence field with template text if empty
     if (event.target.id === "IEvidence") {
         let iEvidence = event.target.value;
-        if (iEvidence === undefined || iEvidence.length === 0) {
+        if (!iEvidence) {
             console.info("Adding template text to Evidence field");
             iEvidence = "=== REQUEST ===\nPLACEHOLDER\n\n=== RESPONSE ===\nPLACEHOLDER\n\n[KEYWORDS:XssTest,alert]";
             uiIssue.IEvidence = iEvidence;
@@ -410,7 +410,7 @@ function evtAddIssueTemplateText(event) {
     //var iNotes = $("#INotes").val();
     if (event.target.id === "INotes") {
         let iNotes = event.target.value;
-        if (iNotes === undefined || iNotes.length === 0) {
+        if (!iNotes) {
             console.info("Adding template text to Notes field");
             iNotes = `\
 #### Issue Details 
@@ -582,7 +582,7 @@ function evtPasteScreenshot(event) {
                 let imgTag = "<span class='ssCaption'>CAPTION:<br/>\n<img src='" + dataUrl + "' /></span>\n";
                 // Append the data URL to the Evidence field.
                 let iScreenshots = uiIssue.get("IScreenshots");
-                if (iScreenshots === undefined || iScreenshots.length === 0) {
+                if (!iScreenshots) {
                     iScreenshots = imgTag;
                 } else {
                     iScreenshots = imgTag + "<br/><br/>\n\n" + iScreenshots;
@@ -723,7 +723,7 @@ function uiParseBurpIssue() {
             urlSection = true;
         } else if (urlSection) {
             let url = lines[i];
-            if (url !== undefined && url.length > 0) {
+            if (url) {
                 url = url.replace(/^ - /, "");
                 data.IURIs += url + "\n";
             } else urlSection = false;
@@ -734,7 +734,7 @@ function uiParseBurpIssue() {
             issueBGSection = true;
         } else if (issueBGSection) {
             let ibg = lines[i];
-            if (ibg !== undefined && ibg !== "~") {
+            if (ibg && ibg !== "~") {
                 testui.TIssueBackground += ibg + "\n";
             } else issueBGSection = false;
         }
@@ -744,7 +744,7 @@ function uiParseBurpIssue() {
             remedBGSection = true;
         } else if (remedBGSection) {
             let rbg = lines[i];
-            if (rbg !== undefined && rbg !== "~") {
+            if (rbg && rbg !== "~") {
                 testui.TRemediationBackground += rbg + "\n";
             } else remedBGSection = false;
         }
@@ -772,18 +772,18 @@ function uiParseBurpIssue() {
     }
 
     // Make sure we have an issue name
-    if (data.TIssueName !== undefined && data.TIssueName.length > 0) {
+    if (data.TIssueName && data.TIssueName.length > 0) {
         data.TIssueName = $("#TIssueName").val();
     }
     // Strip HTML tags from issue and remediation background text
-    if (testkb.TIssueBackground !== undefined && testkb.TIssueBackground.length > 0) {
+    if (testkb.TIssueBackground) {
         testkb.TIssueBackground = stripHtmlTags(testkb.TIssueBackground).replace(/ +/g, " ").trim();
     }
-    if (testkb.TRemediationBackground !== undefined && testkb.TRemediationBackground.length > 0) {
+    if (testkb.TRemediationBackground) {
         testkb.TRemediationBackground = stripHtmlTags(testkb.TRemediationBackground).replace(/ +/g, " ").trim();
     }
     // Convert the Base-64 encoded evidence data
-    if (data.IEvidence !== undefined && data.IEvidence.length > 0) {
+    if (data.IEvidence) {
         // Decode the Base64 value
         data.IEvidence = decodeURIComponent(
             Array.prototype.map
@@ -809,7 +809,7 @@ function uiParseBurpIssue() {
 function uiUpdateScreenshots() {
     console.info("Updating screenshots area");
     let imgTags = $("#IScreenshots").val();
-    if (imgTags === null || imgTags === undefined || imgTags === "") {
+    if (!imgTags) {
         imgTags = gBlankPageImgTag;
     }
     $("#IScreenshotsArea").html(imgTags);
@@ -820,7 +820,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
     console.info("Updating UI with CWE data");
 
     let rec = {};
-    if (cweId !== undefined && cweId !== "") {
+    if (cweId) {
         console.info("Updating UI for CWE-" + cweId);
         restGetCwe(cweId, function (cwe) {
             if (cwe !== null) {
@@ -843,7 +843,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
                 // If the issue remediation is empty, use the CWE Potential Mitigations.
                 if (!uiData.TRemediationBackground || uiData.TRemediationBackground.length <= 0 || forceUpdate) {
                     let cweMitig = cwe.Potential_Mitigations;
-                    if (cweMitig !== undefined) {
+                    if (cweMitig) {
                         cweMitig = cweMitig.replace(/^::PHASE/g, "PHASE");
                         cweMitig = cweMitig.replace(/::PHASE/g, "\n\nPHASE");
                         cweMitig = cweMitig.replace(/:STRATEGY::/g, ":");
@@ -947,7 +947,7 @@ if (layout === "landscape" || layout === "portrait") {
     console.debug(`Using layout from URL parameter: ${layout}`);
 } else {
     let storedLayout = localStorage.getItem("layout");
-    if (storedLayout !== undefined && (storedLayout === "landscape" || storedLayout === "portrait")) {
+    if (storedLayout && (storedLayout === "landscape" || storedLayout === "portrait")) {
         layout = storedLayout;
         console.debug(`Using saved layout from localstorage: ${layout}`);
     } else {

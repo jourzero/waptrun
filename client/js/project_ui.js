@@ -59,7 +59,7 @@ function renderHandlebarTemplate(name) {
             // Use set() to update model and re-render
             ui.set(field, value);
 
-            // Make UI adjustments - TODO: templatize
+            // Make UI adjustments - TODO: templatize with helper
             uiUpdateCveLinks();
 
             // Update project data in backend
@@ -121,7 +121,8 @@ function renderHandlebarTemplate(name) {
         let swList = prjSoftware.split(",");
         let swLinksHtml = "";
         for (let i = 0; i < swList.length; i++) {
-            swLinksHtml += "<a class='smallLink' href='" + encodeURI(cveRptBase + swList[i].trim() + cveRptSuffix) + "'target='cveRptUI'>" + validator.escape(swList[i].trim()) + "</a>&nbsp;&nbsp;";
+            // prettier-ignore
+            swLinksHtml += `<a href='${encodeURI(cveRptBase + swList[i].trim() + cveRptSuffix)}' target='cveRptUI'>${validator.escape(swList[i].trim())}</a>&nbsp;&nbsp;`;
         }
         $("#CveRptLinks").html(swLinksHtml);
         console.debug(`CVE Lookup links updated for software ${prjSoftware}`);

@@ -54,8 +54,7 @@ module.exports = {
     //   http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
     helmet: {
         useDefaults: false,
-        setAllHeaders: false, // set to true if you want to set all headers
-        reportOnly: false, // set to true if you *only* want to report errors
+        reportOnly: false,
         directives: {
             defaultSrc: ["'self'"],
             imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
@@ -63,10 +62,10 @@ module.exports = {
             styleSrc: ["'self'", "'unsafe-inline'"],
             fontSrc: ["'self'"],
             frameSrc: [],
-            objectSrc: ["'none'"], // Flash and other plugins
+            objectSrc: ["'none'"],
             upgradeInsecureRequests: [],
             mediaSrc: ["'self'"],
-            connectSrc: ["'self'"], // XHR, WebSockets, and EventSource
+            connectSrc: ["'self'"],
             sandbox: ["allow-same-origin", "allow-forms", "allow-scripts"],
         },
     },

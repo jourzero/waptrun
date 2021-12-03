@@ -28,12 +28,16 @@ const {logging, useHttp2} = require("./config.js");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
+const {Op, Sequelize} = require("sequelize");
+const {project} = require("./validationSchema.js");
 //const router = express.Router();
 
 // ========================================== CONFIG ==========================================
 // Auth/authz config
 let users = [];
 const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
+if (process.env.CSP_REPORT_URI) config.helmet.directives.reportUri = process.env.CSP_REPORT_URI;
+
 if (authMode == config.AUTH_MODE_OAUTH) {
     logger.info("Configuring app with OAuth");
     /*
@@ -113,6 +117,8 @@ app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
 app.use(bodyParser.json({limit: "5mb"}));
+app.use(bodyParser.json({type: "application/csp-report"}));
+app.use(bodyParser.json({type: "application/json"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
 app.use(methodOverride());
@@ -203,10 +209,6 @@ function ensureAuthorized(req, res, next) {
     }
 }
 
-// Server API documentation
-const openapiSpecification = swaggerJsdoc(config.openapi);
-app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
-
 // Session-persisted message middleware
 app.use(function (req, res, next) {
     let err = req.session.error,
@@ -265,10 +267,20 @@ app.get("/api/ping", (req, res) => {
     res.send("Ping response, it works!");
 });
 
+// CSV violation logger
+app.post("/report-violation", (req, res) => {
+    const op = "report-violation";
+    ok(op, res, req.body);
+});
+
 // Check if authenticated/authorized to use the REST API
 app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
 });
+
+// Server API documentation
+const openapiSpecification = swaggerJsdoc(config.openapi);
+app.use("/api/doc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // Backup DB
 app.post("/api/db/backup", (req, res, next) => {
@@ -321,8 +333,9 @@ app.get("/api/account", function (req, res) {
 
 // Show all projects
 app.get("/api/project", (req, res) => {
+    const op = "get-all-projects";
     // prettier-ignore
-    db.project.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-projects", res, e);});
+    db.project.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get project data, check for pattern YYYYMM[DD]-PrjName-EnvName
@@ -336,11 +349,13 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
         return;
     }
     // prettier-ignore
-    db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound(op, res, e);});
+    db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Create project
 app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
+    const op = "create-project";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -356,7 +371,7 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
         locations: ["body"],
     });
     // prettier-ignore
-    db.project.create(bodyData).then((d) => {created(res, d);}).catch((e) => {notFound("create-project", res, e);});
+    db.project.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Update project
@@ -375,20 +390,15 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
         locations: ["body"],
     });
 
-    // pprettier-ignore
     logger.info(`Updating ${req.params.name}`);
-    db.project
-        .update(bodyData, {where: {name: req.params.name}})
-        .then((d) => {
-            ok(res, d);
-        })
-        .catch((e) => {
-            notFound("update-project", res, e);
-        });
+    const op = "update-project";
+    // prettier-ignore
+    db.project.update(bodyData, {where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
 app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "delete-project";
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -398,11 +408,12 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
     }
 
     // prettier-ignore
-    db.project.destroy({where: {name: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-project", res, e);});
+    db.project.destroy({where: {name: req.params.name}}).then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op,res,e);});
 });
 
 // Get data for all tests
 app.get("/api/testkb", (req, res) => {
+    const op = "get-all-tests";
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -412,11 +423,12 @@ app.get("/api/testkb", (req, res) => {
     }
 
     // prettier-ignore
-    db.test.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-tests", res, e);});
+    db.test.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get data for a specific Test ID. Check for allowable TID chars (letters, numbers, dash, dots).
 app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), (req, res) => {
+    const op = "get-test";
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -425,11 +437,13 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
         return;
     }
     // prettier-ignore
-    db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("find-one-test", res, e);});
+    db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Create a new test
 app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
+    const op = "create-test";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -446,11 +460,13 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     });
 
     // prettier-ignore
-    db.test.create(bodyData).then((d) => {created(res, d);}).catch((e) => {notFound("create-test", res, e);});
+    db.test.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Update an existing test
 app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => {
+    const op = "update-test";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -467,11 +483,13 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
     });
 
     // prettier-ignore
-    db.test.update(bodyData, {where: {name: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("update-test", res, e);});
+    db.test.update(bodyData, {where: {name: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get all issues for all projects
 app.get("/api/issue", (req, res) => {
+    const op = "get-all-issues";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -481,11 +499,13 @@ app.get("/api/issue", (req, res) => {
     }
 
     // prettier-ignore
-    db.issue.findAll().then((d)=>{ok(res, d);}).catch((e)=>{notFound("find-all-issues", res, e);});
+    db.issue.findAll().then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op, res, e);});
 });
 
 // Get all issues for a specific project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
 app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "get-all-project-issues";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -494,11 +514,13 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
         return;
     }
     // prettier-ignore
-    db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "DESC"],["TIssueName", "ASC"],["TID", "ASC"]]}).then((d)=>{ok(res,d);}).catch((e)=>{notFound("find-all-prj-issues", res,e);});
+    db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "DESC"],["TIssueName", "ASC"],["TID", "ASC"]]}).then((d)=>{ok(op,res,d);}).catch((e)=>{notFound(op, res,e);});
 });
 
 // Delete all issues in a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
 app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "delete-all-project-issues";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -508,11 +530,13 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
     }
 
     // prettier-ignore
-    db.issue.destroy({where: {PrjName: req.params.name}}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-prj-issue", res, e);});
+    db.issue.destroy({where: {PrjName: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Create/update an issue
 app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, res) => {
+    const op = "upsert-project-issue";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -529,11 +553,21 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
     });
 
     // prettier-ignore
-    db.issue.upsert(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}}).then((d) => {ok(res, d);}).catch((e) => {notFound("upsert-issue", res, e);});
+    logger.debug(`Upsert project issue data: ${JSON.stringify(bodyData)}`)
+    db.issue
+        .upsert(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}})
+        .then((d) => {
+            ok(op, res, d);
+        })
+        .catch((e) => {
+            notFound(op, res, e);
+        });
 });
 
 // Create issue TODOs for a given project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
 app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "create-todo-issues";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     // prettier-ignore
@@ -577,9 +611,9 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                         // Add issue
                         // prettier-ignore
                         db.issue.create(data).then((d) => {logger.debug(`TODO created: ${JSON.stringify(data)}`);})
-                                            .catch((e) => {failure("issue-create", res, e); return;});
+                                            .catch((e) => {failure(op, res, e); return;});
                     }
-                    created(res, {});
+                    created(op, res, {});
                 })
                 .catch((e) => {
                     notFound("find-all-prj-tests", res, e);
@@ -597,6 +631,8 @@ app.delete(
     // check for allowable TID chars (letters, numbers, dash, dots)
     check("TID").matches(validationValues.TID.matches),
     (req, res) => {
+        const op = "delete-project-issue";
+
         // Check for input validation errors in the request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -606,17 +642,21 @@ app.delete(
         }
 
         // prettier-ignore
-        let crit = {}, kvp1 = {}, kvp2 = {};
-        kvp1.TID = req.params.TID;
-        kvp2.PrjName = req.params.PrjName;
-        crit["[Op.and]"] = [kvp1, kvp2];
+        //let crit = {}, kvp1 = {}, kvp2 = {};
+        //kvp1.TID = req.params.TID;
+        //kvp2.PrjName = req.params.PrjName;
+        //crit["[Op.and]"] = [kvp1, kvp2];
+        let crit = {TID: req.params.TID, PrjName: req.params.PrjName};
+        logger.debug(`Deleting project issue data with criteria ${JSON.stringify(crit)}`);
         // prettier-ignore
-        db.issue.destroy({where: crit}).then((d) => {ok(res, d);}).catch((e) => {notFound("destroy-prj-issue", res, e);});
+        db.issue.destroy({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
     }
 );
 
 // Get data for an issue. Check for allowable TID chars (letters, numbers, dash, dots)
 app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches), (req, res) => {
+    const op = "get-project-issue";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -627,30 +667,33 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
 
     // Build search criteria
     // prettier-ignore
-    let crit = {}, kvp1 = {}, kvp2 = {};
-    kvp1.TID = req.params.TID;
-    kvp2.PrjName = req.params.PrjName;
-    crit["[Op.and]"] = [kvp1, kvp2];
-    let op = "findone-prj-issue";
+    let crit = {TID: req.params.TID, PrjName: req.params.PrjName};
+    logger.debug(`Searching for project issue data with criteria ${JSON.stringify(crit)}`);
     // prettier-ignore
-    db.issue.findOne({where: crit}).then((d) => {ok(res, d);}).catch((e) => {notFound(op, res, e);});
+    db.issue.findOne({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get list of CWEs
 app.get("/api/cwe", (req, res) => {
+    const op = "get-cwes";
+
     // prettier-ignore
-    db.cwe.findAll().then((d) => {ok(res, d);}).catch((e) => {notFound("find-all-cwes", res, e);});
+    db.cwe.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get data for a CWE. Check CWE ID.
 app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (req, res) => {
+    const op = "get-cwe";
+
     // prettier-ignore
-    db.cwe.findOne({where: {CweId: req.params.CweId}}).then((d) => {ok(res, d);})
-        .catch((e) => {notFound("find-one-cwe", res, e);});
+    db.cwe.findOne({where: {CweId: req.params.CweId}}).then((d) => {ok(op, res, d);})
+        .catch((e) => {notFound(op, res, e);});
 });
 
 // Get testing data for a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
 app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+    const op = "get-project-tests";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -733,10 +776,12 @@ app.get(
 // be passed through the defined middleware in order, but ONLY those with an arity of 4, ignoring
 // regular middleware.
 app.use(function (err, req, res, next) {
-    logger.error(`Exception: ${JSON.stringify(err.message)}`);
+    let msg = err.message;
+    if (msg.startsWith("Cannot read properties of undefined")) msg += ". Session was probably invalidated via logout or timeout.";
+    logger.error(`Exception: ${msg}`);
     // TODO: Toggle comments on below 3 lines for security (eventually)
     //res.sendStatus(500);
-    res.status(500).send({error: err.message, additionalInfo: "Caught by global exception handler."});
+    res.status(500).send({error: msg, additionalInfo: "Caught by global exception handler."});
 });
 
 // Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
@@ -773,24 +818,23 @@ if (config.useHttp2) {
     /* eslint-enable */
 }
 
-function created(res, data) {
+function created(op, res, data) {
     if (data) {
-        logger.info(`Creation succeeded - resulting data: ${JSON.stringify(data)}`);
-        res.status(201).send(data);
+        logger.info(`Creation succeeded for ${op} - resulting data: ${JSON.stringify(data)}`);
+        res.send(201);
     } else {
         logger.warn(`Request succeeded. No data`);
         res.send(204);
     }
 }
 
-function ok(res, data) {
+function ok(op, res, data) {
     if (data) {
-        logger.info(`Request succeeded - resulting data: ${JSON.stringify(data)}`);
-        // TODO: Toggle comments on below two lines for security (eventually)
-        //res.sendStatus(200);
+        logger.info(`Request succeeded for ${op}: ${JSON.stringify(data)}`);
+        if (typeof data === "number") data = `Value: ${data}`;
         res.status(200).send(data);
     } else {
-        logger.info(`Request succeeded. No data`);
+        logger.info(`Request succeeded for ${op}. No data`);
         res.send(204);
     }
 }
@@ -803,8 +847,8 @@ function failure(op, res, err) {
 }
 
 function notFound(op, res, err) {
-    logger.warn(`Could not find data for ${op}: ${JSON.stringify(err)}`);
+    logger.warn(`Could not find data for ${op}: ${JSON.stringify(err.message)}`);
     // TODO: Toggle comments on below two lines for security (eventually)
     //res.sendStatus(404);
-    res.status(404).send(err);
+    res.status(404).send(err.message);
 }
