@@ -14,26 +14,46 @@
     <script src="/dist/reactive-handlebars/reactive-handlebars.js"></script>
     <link rel="stylesheet" href="/stylesheets/main.css" />
     <link rel="stylesheet" href="/stylesheets/alert.css" />
-    <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="/stylesheets/pure-min.css" />
     <body>
         <div class="container">
-                <table width="100%">
-                    <tr>
-                        <th align="left">WAPT Runner</th>
-                        <td align="right"></td>
-                    </tr>
-                </table>
+            <table width="100%">
+                <tr>
+                    <th align="left">WAPT Runner</th>
+                    <td align="right"></td>
+                </tr>
+            </table>
 
             <div id="msg" role="alert"></div>
 
-
-<div class="jumbotron">
-    <p>
-        <!--
-        <a href="/auth/github" class="btn btn-info btn-lg" role="button"><span class="glyphicon glyphicon-user"></span> Sign in with Github</a>
-        -->
-        <a href="/auth/google" class="btn btn-danger btn-lg" role="button"><span class="glyphicon glyphicon-user"></span> Sign in with Google</a>
-    </p>
-</div>
-</body>
+            <div class="login">
+                <br />
+                <br />
+                <!-- Below uses PureCSS for style. Adjust with https://purecss.io/ -->
+                <div class="pure-menu custom-restricted-width">
+                    <table class="pure-table">
+                        <thead>
+                            <tr>
+                                <th>Login with</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="/auth/github" role="button"> <img src="images/github.png" /> </a>
+                                </td>
+                                <td>
+                                    <a href="/auth/google" role="button"> <img src="images/google.png" /> </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br />
+            <br />
+            <hr />
+        </div>
+    </body>
 </html>
