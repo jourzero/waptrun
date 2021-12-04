@@ -134,6 +134,10 @@ th {
     background: #f0f0f0;
 }
 
+.login {
+    margin-left: 100px;
+}
+
 .prioSelector,
 .sevSelector {
     width: 90px;
@@ -197,6 +201,7 @@ th {
     background-color: #ffff00;
 }
 
+.cweOpt,
 .testOption,
 .testOpt {
     color: black;
