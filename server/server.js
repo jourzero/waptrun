@@ -40,17 +40,6 @@ if (process.env.CSP_REPORT_URI) config.helmet.directives.reportUri = process.env
 
 if (authMode == config.AUTH_MODE_OAUTH) {
     logger.info("Configuring app with OAuth");
-    /*
-    let oauthConfig = {};
-    oauthConfig.github = {};
-    oauthConfig.google = {};
-    oauthConfig.github.client_id = process.env.GITHUB_CLIENT_ID;
-    oauthConfig.github.client_secret = process.env.GITHUB_CLIENT_SECRET;
-    oauthConfig.github.redirect_uri = process.env.GITHUB_REDIRECT_URI;
-    oauthConfig.google.client_id = process.env.GOOGLE_CLIENT_ID;
-    oauthConfig.google.client_secret = process.env.GOOGLE_CLIENT_SECRET;
-    oauthConfig.google.redirect_uri = process.env.GOOGLE_REDIRECT_URI;
-    */
     let usersConfig = process.env.USERLIST;
     let userConfig = usersConfig.split(":");
     for (let i in userConfig) {
@@ -60,50 +49,9 @@ if (authMode == config.AUTH_MODE_OAUTH) {
             let [at, val] = ava[j].split("=");
             user[at] = val;
         }
-        //user.projects = [".*"];
         users.push(user);
     }
     logger.debug(`Authorized users: ${JSON.stringify(users)}`);
-
-    /*
-    passport.serializeUser(function (user, done) {
-        logger.debug(`Serializing user ${user.username}`);
-        done(null, user);
-    });
-
-    passport.deserializeUser(function (obj, done) {
-        logger.debug(`Deserialized user ID ${obj.id} from provider ${obj.provider}`);
-        done(null, obj);
-    });
-
-    passport.use(
-        new GoogleStrategy(
-            {
-                clientID: oauthConfig.google.client_id,
-                clientSecret: oauthConfig.google.client_secret,
-                callbackURL: oauthConfig.google.redirect_uri,
-                passReqToCallback: true,
-            },
-            function (request, accessToken, refreshToken, profile, cb) {
-                //User.findOrCreate({ googleId: profile.id }, function (err, user) { return done(err, user); });
-                return cb(null, profile);
-            }
-        )
-    );
-
-    passport.use(
-        new GitHubStrategy(
-            {
-                clientID: oauthConfig.github.client_id,
-                clientSecret: oauthConfig.github.client_secret,
-                callbackURL: oauthConfig.github.redirect_uri,
-            },
-            function (accessToken, refreshToken, profile, cb) {
-                return cb(null, profile);
-            }
-        )
-    );
-    */
 } else {
     logger.info("App starting without authentication for dev/testing purposes");
 }
@@ -226,29 +174,26 @@ app.use(function (req, res, next) {
     next();
 });
 
-// ============================== GOOGLE AUTH ROUTES ==========================================
 if (authMode == config.AUTH_MODE_OAUTH) {
+    // ============================== GOOGLE AUTH ROUTES ==========================================
     app.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
-
     app.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "/login"}), function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/home");
     });
 
+    // ============================== GITHUB AUTH ROUTES ==========================================
+    app.get("/auth/github", passport.authenticate("github"));
+    app.get("/auth/github/callback", passport.authenticate("github", {failureRedirect: "/login"}), function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect("/home");
+    });
+
+    // ================================= OAUTH LOGOUT =============================================
     app.get("/logout", function (req, res, next) {
         logger.info("Logging out");
         req.logout();
         res.redirect("/login");
-    });
-}
-
-// ============================== GITHUB AUTH ROUTES ==========================================
-if (authMode == config.AUTH_MODE_OAUTH) {
-    app.get("/auth/github", passport.authenticate("github"));
-
-    app.get("/auth/github/callback", passport.authenticate("github", {failureRedirect: "/login"}), function (req, res) {
-        // Successful authentication, redirect home.
-        res.redirect("/home");
     });
 }
 
@@ -269,7 +214,7 @@ app.get("/api/ping", (req, res) => {
 
 // CSV violation logger
 app.post("/report-violation", (req, res) => {
-    const op = "report-violation";
+    const op = "csp-report-violation";
     ok(op, res, req.body);
 });
 
@@ -483,7 +428,7 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
     });
 
     // prettier-ignore
-    db.test.update(bodyData, {where: {name: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
+    db.test.update(bodyData, {where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Get all issues for all projects
@@ -552,16 +497,11 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
         locations: ["body"],
     });
 
+    logger.debug(`Upsert project issue data: ${JSON.stringify(bodyData)}`);
     // prettier-ignore
-    logger.debug(`Upsert project issue data: ${JSON.stringify(bodyData)}`)
-    db.issue
-        .upsert(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}})
-        .then((d) => {
-            ok(op, res, d);
-        })
-        .catch((e) => {
-            notFound(op, res, e);
-        });
+    //db.issue.upsert(bodyData, {validate: false})
+    db.issue.update(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}})
+        .then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 // Create issue TODOs for a given project. Check for pattern YYYYMM[DD]-PrjName-EnvName.

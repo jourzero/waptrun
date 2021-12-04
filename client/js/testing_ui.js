@@ -25,7 +25,6 @@ let uiProject = new ReactiveHbs({
     container: ".project_mount_point",
     template: "#project_template",
     data: {
-        //_id: "",
         name: gPrjName,
         notes: "",
         scope: "",
@@ -82,7 +81,7 @@ let uiCWE = new ReactiveHbs({
         cwes: [
             {
                 // _id: "",
-                CweId: 0,
+                CweID: 0,
                 Name: "",
                 Weakness_Abstraction: "",
                 Status: "",
@@ -92,9 +91,7 @@ let uiCWE = new ReactiveHbs({
     },
 });
 uiCWE.onRendered(function () {
-    console.debug("onRendered: Registering UI event handlers for CWE input");
-    // Update UI when the user changes the CWE input or double-clicks on the value
-    $("#cweIn").on("blur", evtCweInputChanged);
+    console.debug("onRendered: No UI event handler needed for CWE datalist.");
 });
 
 // Populate UI from DB
@@ -143,6 +140,9 @@ uiTest.onRendered(function () {
 
     // When the New Test button is pressed, clear the UI and create another test
     $("#kbBtnNew").on("click", evtNewTest);
+
+    // Update UI when the user changes the CWE input
+    $("#cweIn").on("blur", evtCweInputChanged);
 
     // Save Issue when KB data has changed
     $("#updateIssueFromTestBtn").on("click", evtUpdateIssueFromTest);
@@ -221,6 +221,15 @@ function uiTestPopulate(testId) {
     console.debug(`Getting data for Test ID ${testId}`);
     restGetTest(testId, function (data) {
         if (data !== null) {
+            data.TPCI = Boolean(data.TPCI);
+            data.TTop10 = Boolean(data.TTop10);
+            data.TTop25 = Boolean(data.TTop25);
+            data.TStdTest = Boolean(data.TStdTest);
+            if (data.TSeverity === null) {
+                data.TSeverityText = "Medium";
+                console.warn(`Test ${testId} has a severity value of null, forcing it to ${data.TSeverityText}`);
+                data.TSeverity = getSevVal(data.TSeverityText);
+            }
             // Update model
             uiTest.setData(data);
         }
@@ -329,7 +338,7 @@ uiIssue.events({
 function uiIssuePopulate(testId, prjName) {
     console.debug(`Getting issue data for Test ID ${testId} in project ${prjName}`);
     restGetIssue(testId, prjName, function (data) {
-        if (data !== null) {
+        if (data && typeof data === "object") {
             // Update model
             uiIssue.setData(Object.assign({}, emptyIssue));
             uiIssue.setData(data);
