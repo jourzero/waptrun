@@ -526,6 +526,7 @@ function restBackupDB() {
 }
 
 $.ajaxSetup({
+    cache: false,
     statusCode: {
         401: function () {
             window.location.href = "/login";
