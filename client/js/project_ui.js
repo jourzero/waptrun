@@ -14,10 +14,6 @@ const nameParm = thisURL.searchParams.get("name");
 //  Populate DOM by rending Handlebar template
 //----------------------------------------------
 function renderHandlebarTemplate(name) {
-    //const fieldList = [ "name", "TTestNameKeyword", "scope", "scopeQry",
-    //                  "PciTests", "Top10Tests", "Top25Tests", "StdTests",
-    //                  "notes", "software", "TCweIDSearch", ];
-
     ui = new ReactiveHbs({
         container: ".mount_point",
         template: "#page_template",
@@ -32,7 +28,7 @@ function renderHandlebarTemplate(name) {
             StdTests: false,
             notes: "",
             software: "",
-            TCweIDSearch: "",
+            TCweIDSearch: null,
         },
     });
     ui.onRendered(function () {
@@ -40,13 +36,21 @@ function renderHandlebarTemplate(name) {
         registerEventHandlers();
     });
     ui.events({
-        /*
-        'click [id="btnViewReadme"]'(e, elm, tpl) {
+        'dblclick [id="PrjSoftware"]'(e, elm, tpl) {
             //tpl.set("count", tpl.get("count") + 1);
-            const name = tpl.get("name");
-            console.debug(`You clicked Help in ${name} project, didn't you? :-)`);
+            //const software = $("#PrjSoftware").val();
+            const software = tpl.get("software");
+            const cpeTemplate = "cpe:2.3:a:VENDOR:PRODUCT:VERSION:*:*:*:*:*:*:*";
+            if (!software && software.length === 0) {
+                console.debug("Filling CPE template in software field");
+                // Update model, make UI adjustments and update backend
+                ui.set("software", cpeTemplate);
+                uiUpdateCveLinks();
+                restUpdateProject(ui.getData());
+            } else {
+                console.debug(`Software value is not empty: ${software}`);
+            }
         },
-        */
 
         // React to UI changes to text inputs
         "change textarea,input"(e, elm, tpl) {
@@ -56,13 +60,16 @@ function renderHandlebarTemplate(name) {
             if (elm.type === "checkbox") value = elm.checked;
             console.debug(`UI change event: ID=${elm.id} TYPE=${elm.type} FIELD=${field} VALUE=${value}`);
 
-            // Use set() to update model and re-render
+            // adjust types
+            switch (elm.id) {
+                case "TCweIDSearch":
+                    value = Number(value);
+                    break;
+            }
+
+            // Update model, make UI adjustments and update backend
             ui.set(field, value);
-
-            // Make UI adjustments - TODO: templatize with helper
             uiUpdateCveLinks();
-
-            // Update project data in backend
             restUpdateProject(ui.getData());
         },
 
@@ -139,22 +146,30 @@ function registerEventHandlers() {
     });
 
     $("#btnFindingsHtmlReport").click(function () {
-        let url = "/export/html/findings/" + $("#PrjName").val();
+        const prjName = $("#PrjName").val();
+        const url = `/export/html/findings/${prjName}`;
+        console.debug(`Generating findings report for project ${prjName} at ${url}`);
         window.open(url, "reportWin");
     });
 
     $("#btnFullHtmlReport").click(function () {
-        let url = "/export/html/full/" + $("#PrjName").val();
+        const prjName = $("#PrjName").val();
+        const url = `/export/html/full/${prjName}`;
+        console.debug(`Generating full report for project ${prjName}`);
         window.open(url, "reportWin");
     });
 
     $("#btnCsvReport").click(function () {
-        let url = "/export/csv/" + $("#PrjName").val();
+        const prjName = $("#PrjName").val();
+        const url = `/export/csv/${prjName}`;
+        console.debug(`Generating CSV report for project ${prjName}`);
         window.open(url, "reportWin");
     });
 
     $("#btnJsonExport").click(function () {
-        let url = "/export/json/" + $("#PrjName").val();
+        const prjName = $("#PrjName").val();
+        const url = `/export/json/${prjName}`;
+        console.debug(`Generating JSON export for project ${prjName}`);
         window.open(url, "reportWin");
     });
 
