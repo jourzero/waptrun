@@ -52,11 +52,11 @@ module.exports = {
     //   http://content-security-policy.com/
     //   http://www.html5rocks.com/en/tutorials/security/content-security-policy/
     //   http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
-    helmet: {
-        useDefaults: true,
+    csp: {
+        useDefaults: false,
         reportOnly: false,
         directives: {
-            defaultSrc: ["'self'"],
+            defaultSrc: ["'self'", "data:"],
             imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com", "https://avatars.githubusercontent.com"],
             scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
@@ -65,7 +65,7 @@ module.exports = {
             objectSrc: ["'none'"],
             mediaSrc: ["'self'"],
             connectSrc: ["'self'"],
-            sandbox: ["allow-same-origin", "allow-forms", "allow-scripts", "allow-popups"],
+            sandbox: ["allow-same-origin", "allow-forms", "allow-scripts", "allow-popups", "allow-popups-to-escape-sandbox"],
         },
     },
 
