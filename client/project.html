@@ -166,14 +166,14 @@
                     </tr>
 
                     <tr class="iTR">
-                        <th class="issueTH"><a href="https://nvd.nist.gov/products/cpe/search">CPE List</a></th>
+                        <th class="issueTH"><a href="https://nvd.nist.gov/products/cpe/search" target="cveRptUI">CPE List</a></th>
                         <td class="prjLeft">
                             <textarea
                                 id="PrjSoftware"
                                 field="software"
                                 class="testKbIn"
-                                title="Comma-separated list ot server components in Common Product Enumeration (CPE) format"
-                                placeholder="List of software components used by app (comma-separated). A full CPE yields a better search -- e.g. cpe:2.3:a:nodejs:node.js:12.20.1:*:*:*:lts:*:*:*" >{{software}}</textarea>
+                                title="Comma-separated list ot server components. Formats: '<product_name> <semver>' or CPE 'cpe:2.3:a:<vendor>:<product>:<version>:<update>:<edition>:<language>:<sw_edition>:<target_sw>:<target_hw>'"
+                                placeholder="List of software components used by app (comma-separated). A full CPE yields a better search (double-click for template)" >{{software}}</textarea>
                         </td>
                     </tr>
 
