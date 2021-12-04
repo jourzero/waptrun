@@ -53,20 +53,19 @@ module.exports = {
     //   http://www.html5rocks.com/en/tutorials/security/content-security-policy/
     //   http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
     helmet: {
-        useDefaults: false,
+        useDefaults: true,
         reportOnly: false,
         directives: {
             defaultSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
+            imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com", "https://avatars.githubusercontent.com"],
             scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             fontSrc: ["'self'"],
-            frameSrc: [],
+            frameSrc: ["'none'"],
             objectSrc: ["'none'"],
-            upgradeInsecureRequests: [],
             mediaSrc: ["'self'"],
             connectSrc: ["'self'"],
-            sandbox: ["allow-same-origin", "allow-forms", "allow-scripts"],
+            sandbox: ["allow-same-origin", "allow-forms", "allow-scripts", "allow-popups"],
         },
     },
 
