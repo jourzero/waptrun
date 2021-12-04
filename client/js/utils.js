@@ -33,6 +33,7 @@ function getSevVal(sevStr) {
             sev = 4;
             break;
         default:
+            console.warn(`Invalid severity string ${sevStr}`);
             sev = -1;
     }
     return sev;
@@ -58,6 +59,9 @@ function getSevText(val) {
         case 4:
             sev = "Critical";
             break;
+        default:
+            console.warn(`Invalid severity value ${val}`);
+            sev = "Unknown";
     }
     return sev;
 }
@@ -85,6 +89,7 @@ function getPriorityVal(prioStr) {
             prio = 1;
             break;
         default:
+            console.warn(`Invalid priority string ${prioStr}`);
             prio = -1;
     }
     return prio;
@@ -122,6 +127,9 @@ function getPriorityText(val) {
         case 9:
             prio = "Exclude";
             break;
+        default:
+            console.warn(`Invalid priority value ${prioVal}`);
+            prio = "Unknown";
     }
     return prio;
 }
