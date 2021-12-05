@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node server/server.js",
         "test": "echo \"NOTE: no test yet!\" && exit 0",
-        "dev": "node_modules/.bin/nodemon --watch server --watch package.json --inspect=0.0.0.0:9230  -- --trace-deprecation server/server.js"
+        "dev": "node_modules/.bin/nodemon --watch server --watch package.json --watch .env --inspect=0.0.0.0:9230  -- --trace-deprecation server/server.js"
     },
     "authors": [
         "Eric P."
