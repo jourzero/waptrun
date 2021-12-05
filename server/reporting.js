@@ -2,6 +2,7 @@ require("dotenv").config();
 const marked = require("marked");
 const config = require("./config.js");
 const logger = require("./lib/appLogger.js");
+const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const db = require("./models");
 
 // Width of Left Menu in HTML report
@@ -20,123 +21,57 @@ marked.setOptions({
     xhtml: false,
 });
 
-// Generate issue report for a specific project in CSV format
-exports.genPrjIssueReportCSV = function (req, res) {
+exports.sendProjectReport = function (req, res, reportType, showAllIssues = false) {
     let prjName = req.params.PrjName;
-    let filename = prjName + "-issues.csv";
-    let fileData = "";
+    let fileData;
+    let filename = prjName + "_issues";
+    if (showAllIssues) filename = prjName + "_allissues";
 
-    let ok = function (records) {
-        logger.debug("Got " + records.length + " issue records for project " + prjName);
-        fileData += toCsv(records);
-        res.set("Content-type", "text/csv");
-        res.set("Content-Disposition", "attachment; filename=" + filename);
-        res.set("Content-Length", fileData.length);
-        res.send(fileData);
-    };
-    let err = function (err) {
-        res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
-    };
-    issue.findProjectIssues(req.params.PrjName, ok, err);
-};
+    // prettier-ignore
+    db.project.findOne({where: {name: prjName}}).then((prj) => {
 
-// Generate issue report for a specific project in CSV format
-exports.genPrjIssueExportJSON = function (req, res) {
-    let prjName = req.params.PrjName;
-    let filename = prjName + "-issues.json";
-    let fileData = "";
-
-    let ok = function (records) {
-        logger.debug("Got " + records.length + " issue records for project " + prjName);
-        fileData += JSON.stringify(records, undefined, 2);
-        res.set("Content-type", "application/json");
-        res.set("Content-Disposition", "attachment; filename=" + filename);
-        res.set("Content-Length", fileData.length);
-        /* 
-        TODO: CWE-80   Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS) 
-        reporting.js: 56
-        Severity: Medium
-        Attack Vector: express.Response.send
-        Number of Modules Affected: 1
-        Description: This call to express.Response.send() contains a cross-site scripting (XSS) flaw. The application populates the HTTP response with untrusted input, allowing an attacker to embed malicious content, such as Javascript code, which will be executed in the context of the victim's browser. XSS vulnerabilities are commonly exploited to steal or manipulate cookies, modify presentation of content, and compromise confidential information, with new attack vectors being discovered on a regular basis.
-        Remediation: Use contextual escaping on all untrusted data before using it to construct any portion of an HTTP response. The escaping method should be chosen based on the specific use case of the untrusted data, otherwise it may not protect fully against the attack. For example, if the data is being written to the body of an HTML page, use HTML entity escaping; if the data is being written to an attribute, use attribute escaping; etc. Both the OWASP Java Encoder library and the Microsoft AntiXSS library provide contextual escaping methods. For more details on contextual escaping, see https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md. In addition, as a best practice, always validate untrusted input to ensure that it conforms to the expected format, using centralized data validation routines when possible.
-        */
-        res.send(fileData);
-    };
-    let err = function (err) {
-        res.status(404).send("Sorry, there was an error when exporting the data: " + err.message);
-    };
-    issue.findProjectIssues(req.params.PrjName, ok, err);
-};
-
-// Generate findings issue report for a specific project in HTML format
-exports.genPrjIssueFindingsReportHtml = function (req, res) {
-    let showAllIssues = false;
-    genFindingsReportHtml(req, res, showAllIssues);
-};
-
-// Generate full issue report for a specific project in HTML format
-exports.genPrjIssueFullReportHtml = function (req, res) {
-    let showAllIssues = true;
-    genFindingsReportHtml(req, res, showAllIssues);
-};
-
-// Export all Issue data to CSV format
-exports.exportIssuesCSV = function (req, res) {
-    let filename = "all-issues.csv";
-    let fileData = "";
-    let ok = function (records) {
-        logger.debug("Got " + records.length + " issue records");
-        fileData += toCsv(records);
-        res.set("Content-type", "text/csv");
-        res.set("Content-Disposition", "attachment; filename=" + filename);
-        res.set("Content-Length", fileData.length);
-        res.send(fileData);
-    };
-    let err = function (err) {
-        res.status(404).send("Sorry, there was an error when exporting: " + err.message);
-    };
-    issue.findAll(ok, err);
-};
-
-function genFindingsReportHtml(req, res, showAllIssues) {
-    let prjName = req.params.PrjName;
-    let filename = prjName + "-issues.html";
-    let fileData = "";
-
-    // Fetch project document from project collection
-    /*
-    let prjColl = db.get("project");
-    let issueColl = db.get("issues");
-    */
-
-    //prjColl.findOne({name: prjName})
-    db.project
-        .findOne({where: {name: prjName}})
-        .then((prj) => {
-            //issueColl.find({PrjName: prjName}, {sort: {IPriority: 1, TIssueName: 1}}).then((records) => {
-            db.issue
-                .findAll({
-                    where: {PrjName: prjName},
-                    order: [
-                        ["IPriority", "DESC"],
-                        ["TIssueName", "ASC"],
-                        ["TID", "ASC"],
-                    ],
-                })
-                .then((records) => {
-                    logger.debug("Got " + records.length + " issue records for project " + prjName);
-                    fileData += toHtml(records, prjName, prj, showAllIssues);
+        // prettier-ignore
+        db.issue.findAll({where: {PrjName: prjName}, order: [["IPriority", "ASC"], ["TIssueName", "ASC"], ["TID", "ASC"]]})
+        .then((issues) => {
+            var data = {'project': prj, 'issues': issues};
+            logger.debug(`Got ${issues.length} issue records for project ${prjName}: ${JSON.stringify(data)}`);
+            switch(reportType){
+                case(config.REPORT_TYPE_HTML):
+                    filename += ".html";
+                    fileData = toHtml(issues, prjName, prj, showAllIssues);
                     res.set("Content-type", "text/html");
                     res.set("Content-Disposition", "attachment; filename=" + filename);
                     res.set("Content-Length", fileData.length);
                     res.send(fileData);
-                });
+                    break;
+                case(config.REPORT_TYPE_CSV):
+                    filename += ".csv";
+                    //let fileData = toHtml(issues, prjName, prj, showAllIssues);
+                    fileData = toCsv(issues);
+                    res.set("Content-type", "text/csv");
+                    res.set("Content-Disposition", "attachment; filename=" + filename);
+                    res.set("Content-Length", fileData.length);
+                    res.send(fileData);
+                    break;
+                case(config.REPORT_TYPE_JSON):
+                    filename += ".json";
+                    fileData = toHtml(issues, prjName, prj, showAllIssues);
+                    res.set("Content-type", "application/json");
+                    res.set("Content-Disposition", "attachment; filename=" + filename);
+                    res.set("Content-Length", fileData.length);
+                    res.send(fileData);
+                    break;
+            }
         })
         .catch((err) => {
-            res.status(404).send("Sorry, there was an error when generating the report: " + err.message);
-        });
-}
+                logger.error(`Could not find project issues: ${err.message}`);
+                res.status(404).send("Error generating HTML report: " + err.message);
+            });
+    }).catch((err) => {
+        logger.error(`Could not find project data: ${err.message}`);
+        return null;
+    });
+};
 
 /**
  * Converts a value to a string appropriate for entry into a CSV table (surrounded by quotes).
@@ -172,7 +107,7 @@ function toCsvValue(theValue, sDelimiter) {
  * @param {string} cDelimiter The column delimiter.  Defaults to a comma (,) if omitted.
  * @return {string} The CSV equivalent of objArray.
  */
-function toCsv(objArray, sDelimiter, cDelimiter) {
+function toCsv(objArray, sDelimiter = '"', cDelimiter = ",") {
     let i,
         l,
         names = [],
@@ -249,6 +184,8 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
     const escapeSeqArrowRight = "\25B8";
     const escapeSeqArrowDown = "\25BE";
 
+    logger.debug(`Generating HTML inputs with showAllIssues=${showAllIssues}`);
+
     //.pure-menu-has-children .pure-menu-link:after{padding-left:.5em;content:"\25B8";font-size:small}
     //.pure-menu-horizontal .pure-menu-has-children>.pure-menu-link:after{content:"\25BE"}
     let output = `<!doctype html>
@@ -290,10 +227,6 @@ function toHtml(objArray, prjName, prj, showAllIssues, includeMenu = true) {
             if (showAllIssues && prio !== undefined && prio > 8) continue;
             // If only real issues (including informational) need to be printed, skip the tester notes (TODO, Tested, Fixed, Exclude)
             if (!showAllIssues && prio !== undefined && prio > 5) continue;
-
-            // Count the number of URIs
-            //let count = 0;
-            //if (obj.IURIs !== undefined) count = obj.IURIs.split("\n").length;
 
             // Print each issue with the issue as the header and the details as part of a table.
             if (priority !== undefined && priority !== "" && priority !== prevPrio) {
