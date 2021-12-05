@@ -46,14 +46,13 @@
                 {{/projects}}
             {{else}}
                 <div class="jumbotron">
-                    NO PROJECT! Make sure that your MongoDB has been prepared properly! Refer to the <a href='https://github.com/jourzero/waptrun/blob/master/README.md#at-first-run-initialize-the-database'>README</a> for details.
+                    NO PROJECT! Make sure that your database has been prepared properly! Refer to the <a href='https://github.com/jourzero/waptrun/blob/master/README.md#at-first-run-initialize-the-database'>README</a> for details.
                     If you're ready, click <strong>Create Project</strong> below</div>
             {{/if}}
             </table>
             <div>
                 <button id="btnNewPrj" class="button black" title="Create a new project." onclick="showCreateNewProjectBtn();">Create Project</button>
                 <button id="btnDelPrj" class="button black" title="Remove a project." onclick="showRemoveProjectBtn();">Remove Project</button>
-                <button id="btnCsvExport" class="button black" title="Export all issue data from all projects as CSV and download." onclick="window.open('/export/issues.csv', 'DownloadWin')">Export all</button>
                 <button id="btnBackupDB" class="button black" title="Backup DB to file" onclick="restBackupDB();">Backup DB</button>
                 <button id="btnViewDocs" class="button black" title="View this app's documentation." onclick="window.open('Help.md', 'HelpWin')">Help</button>
                 <button id="btnViewApiDoc" class="button black" title="View this app's OpenAPI spec." onclick="window.open('/api/doc', 'ApiDocWin')">API Doc</button>
