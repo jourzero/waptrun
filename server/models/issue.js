@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         {
             PrjName: {
                 type: DataTypes.STRING,
-                unique: "compositeIndex",
+                unique: "issue_unique",
                 allowNull: false,
             },
             TID: {
                 type: DataTypes.STRING,
-                unique: "compositeIndex",
+                unique: "issue_unique",
                 allowNull: false,
             },
             TIssueName: {
@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: "issue",
+            indexes: [{unique: true, name: "issue_unique", fields: ["PrjName", "TID"]}],
         }
     );
     return issue;
