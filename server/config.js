@@ -167,7 +167,7 @@ module.exports = {
     logging: {
         file: {
             format: combine(timestamp(), json()),
-            level: "info",
+            level: "debug",
             handleExceptions: true,
             json: true,
             colorize: false,
