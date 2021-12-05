@@ -520,8 +520,7 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
 
     logger.debug(`Upsert project issue data: ${JSON.stringify(bodyData)}`);
     // prettier-ignore
-    //db.issue.upsert(bodyData, {validate: false})
-    db.issue.update(bodyData, {where: {PrjName: req.params.PrjName, TID: req.params.TID}})
+    db.issue.upsert(bodyData)
         .then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
