@@ -6,6 +6,9 @@ const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
 const AUTH_MODE_OAUTH = 1;
 const USE_HTTP2 = true;
+const REPORT_TYPE_HTML = 1;
+const REPORT_TYPE_CSV = 2;
+const REPORT_TYPE_JSON = 3;
 const LOCAL_USER = {
     id: 0,
     provider: "none",
@@ -21,6 +24,9 @@ module.exports = {
     AUTH_MODE_NONE,
     AUTH_MODE_OAUTH,
     LOCAL_USER,
+    REPORT_TYPE_HTML,
+    REPORT_TYPE_CSV,
+    REPORT_TYPE_JSON,
     port: 5000,
     appname: "WAPT Runner",
 
