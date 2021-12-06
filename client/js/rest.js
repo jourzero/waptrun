@@ -132,7 +132,7 @@ function restGetAllTests(callback) {
 // Get testing data for a specific project
 function restGetProjectTestingData(prjName, callback) {
     // Send REST call for testing data
-    let url = "/api/testing/" + prjName;
+    let url = `/api/${prjName}/tests`;
     console.debug("Sending GET request to " + url);
     $.get(url, callback).fail(() => {
         let msg = "GET request for project testing data failed.";
