@@ -88,25 +88,91 @@ module.exports = {
             //contact: { name: "JourZero", url: "https://github.com/jourzero", },
             servers: [
                 {url: "https://www.wapt.me:5000", description: "Development server"},
-                //{url: "https://www.waptrunner.com", description: "Prod server"},
+                {url: "https://www.wapt.qa", description: "QA server"},
             ],
             components: {
                 schemas: {
-                    Employee: {
+                    account: {
                         type: "object",
                         properties: {
-                            id: {
-                                type: "string",
-                                nullable: true,
-                                readOnly: true,
-                            },
-                            name: {
-                                type: "string",
-                                nullable: true,
-                                readOnly: true,
-                            },
+                            displayName: {type: "string"},
+                            family_name: {type: "string"},
+                            given_name: {type: "string"},
+                            id: {type: "string"},
+                            language: {type: "string"},
+                            picture: {type: "string"},
+                            provider: {type: "string"},
+                            sub: {type: "string"},
                         },
-                        additionalProperties: false,
+                    },
+                    cwe: {
+                        type: "object",
+                        properties: {
+                            CweID: {type: "integer"},
+                            Name: {type: "string"},
+                            Weakness_Abstraction: {type: "string"},
+                            Status: {type: "string"},
+                            Description_Summary: {type: "string"},
+                        },
+                    },
+                    issue: {
+                        type: "object",
+                        properties: {
+                            PrjName: {type: "string"},
+                            TID: {type: "string"},
+                            TIssueName: {type: "string"},
+                            CweId: {type: "integer"},
+                            TIssueBackground: {type: "string"},
+                            TRemediationBackground: {type: "string"},
+                            TSeverity: {type: "integer"},
+                            TRef1: {type: "string"},
+                            TRef2: {type: "string"},
+                            TSeverityText: {type: "string"},
+                            IURIs: {type: "string"},
+                            IEvidence: {type: "string"},
+                            IScreenshots: {type: "string"},
+                            IPriority: {type: "integer"},
+                            IPriorityText: {type: "string"},
+                            INotes: {type: "string"},
+                        },
+                    },
+                    project: {
+                        type: "object",
+                        properties: {
+                            name: {type: "string"},
+                            notes: {type: "string"},
+                            software: {type: "string"},
+                            TTestNameKeyword: {type: "string"},
+                            TCweIDSearch: {type: "integer"},
+                            scope: {type: "string"},
+                            scopeQry: {type: "string"},
+                            PciTests: {type: "boolean"},
+                            Top10Tests: {type: "boolean"},
+                            Top25Tests: {type: "boolean"},
+                            StdTests: {type: "boolean"},
+                        },
+                    },
+                    testKB: {
+                        type: "object",
+                        properties: {
+                            TID: {type: "string"},
+                            TTestName: {type: "string"},
+                            TSource: {type: "string"},
+                            TTesterSupport: {type: "string"},
+                            TTRef: {type: "string"},
+                            TCweID: {type: "integer"},
+                            TIssueName: {type: "string"},
+                            TIssueBackground: {type: "string"},
+                            TRemediationBackground: {type: "string"},
+                            TSeverity: {type: "integer"},
+                            TIssueType: {type: "string"},
+                            TPCI: {type: "boolean"},
+                            TTop10: {type: "boolean"},
+                            TTop25: {type: "boolean"},
+                            TStdTest: {type: "boolean"},
+                            TRef1: {type: "string"},
+                            TRef2: {type: "string"},
+                        },
                     },
                 },
                 securitySchemes: {
@@ -132,6 +198,7 @@ module.exports = {
         },
         apis: ["./server/server.js"], // files containing annotations as above
     },
+    openapiFilename: "/app/data/waptrun-openapi.json",
     staticOptions: {
         // Allow /home instead of /home.html
         extensions: ["html"],
