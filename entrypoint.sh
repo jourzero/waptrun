@@ -11,4 +11,9 @@
 # Run app as lower privileged user
 echo -e "\n\n-- Starting app"
 #su node -c "npm run dev"
+
+# Reinstall packages (to have them on host for IDE code completion)
+#npm install
+
+# Start app in Dev mode
 npm run dev
