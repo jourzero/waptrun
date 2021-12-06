@@ -1,5 +1,6 @@
 // Load .env file
 require("dotenv").config();
+//const cors = require("cors");
 const express = require("express");
 const passport = require("passport");
 const helmet = require("helmet");
@@ -76,6 +77,9 @@ if (authMode == config.AUTH_MODE_OAUTH) {
     app.use(passport.initialize());
     app.use(passport.session());
 }
+
+// Enable CORS while using https://inspector.swagger.io/builder
+//app.use(cors());
 
 // Patch from https://github.com/nanoexpress/nanoexpress/issues/251
 //  Fixes below issue:
@@ -211,6 +215,9 @@ app.get("/logout", function (req, res, next) {
  *     responses:
  *       200:
  *         description: ping response message
+ *     summary: Check service
+ *     tags:
+ *       - Monitoring
  */
 app.get("/api/ping", (req, res) => {
     logger.info("Incoming ping request");
@@ -231,6 +238,7 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
 
 // Server API documentation
 const openapiSpecification = swaggerJsdoc(config.openapi);
+fs.writeFileSync(config.openapiFilename, JSON.stringify(openapiSpecification, null, 2));
 app.use("/api/doc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // Backup DB
@@ -254,11 +262,19 @@ app.post("/api/db/backup", (req, res, next) => {
  * /api/account:
  *   get:
  *     description: Get user account information
+ *     operationId: get-api-account
  *     security:
  *       cookieAuth: []
  *     responses:
  *       200:
- *         description: Account information
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/account'
+ *     summary: Get user account info
+ *     tags:
+ *       - Account
  */
 app.get("/api/account", function (req, res) {
     logger.info("Incoming account information request");
@@ -632,6 +648,32 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
     db.issue.findOne({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
+/**
+ * @openapi
+ * /api/cwe:
+ *   get:
+ *     description: ''
+ *     meta:
+ *       element: ''
+ *       originalPath: 'https://www.wapt.me:5000/api/cwe'
+ *     operationId: get-api-cwe
+ *     security:
+ *       cookieAuth: []
+ *     parameters: []
+ *     responses:
+ *       '200':
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref: '#/components/schemas/cwe'
+ *         description: Success
+ *     summary: Get CWE list
+ *     tags:
+ *       - CWE
+ *   parameters: []
+ */
 // Get list of CWEs
 app.get("/api/cwe", (req, res) => {
     logger.info("Incoming CWEs search request");
@@ -642,6 +684,48 @@ app.get("/api/cwe", (req, res) => {
 });
 
 // Get data for a CWE. Check CWE ID.
+/**
+ * @openapi
+ * /api/cwe/{CweId}:
+ *   get:
+ *     description: 'Get data for a CWE'
+ *     operationId: get-api-cwe-285
+ *     security:
+ *       cookieAuth: []
+ *     parameters:
+ *       - name: CweId
+ *         in: path
+ *         description: ID of CWE to return
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         content:
+ *           application/json:
+ *             examples:
+ *               example-0001:
+ *                 value:
+ *                   CweID: 285
+ *                   Description_Summary: >-
+ *                     The software does not perform or incorrectly performs an
+ *                     authorization check when an actor attempts to access a
+ *                     resource or perform an action.
+ *                   Name: Improper Authorization
+ *                   Status: Draft
+ *                   Weakness_Abstraction: Class
+ *                   createdAt: null
+ *                   id: 266
+ *                   updatedAt: null
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *         description: Success
+ *     summary: Show CWE
+ *     tags:
+ *       - CWE
+ */
+
 app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (req, res) => {
     logger.info("Incoming CWE search request");
     const op = "get-cwe";
