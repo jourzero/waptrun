@@ -375,6 +375,7 @@ app.get("/api/project", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -455,9 +456,22 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
 
 /**
  * @openapi
- * /api/project:
+ * /api/project/{name}:
  *   put:
- *     request: {}
+ *     parameters:
+ *       - name: name
+ *         in: path
+ *         description: Project name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "20211201-MyApp-QA"
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/project'
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -512,6 +526,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -543,12 +558,13 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
         return;
     }
 
+    // TODO: Maybe send notFound(404) instead of noData(204) when destroy op is OK but d says 0 record was deleted?
     // prettier-ignore
     db.project.destroy({where: {name: req.params.name}}).then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op,res,e);});
 });
 
 /**
- * @openapi
+ * REMOVED API
  * /api/testkb:
  *   get:
  *     request:
@@ -569,12 +585,14 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
  *     tags:
  *       - TestKB
  */
+/* REMOVED API: RETURNS TOO MUCH DATA
 app.get("/api/testkb", (req, res) => {
     logger.info("Incoming tests search request");
     const op = "get-all-tests";
     // prettier-ignore
     db.test.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
+*/
 
 /**
  * @openapi
@@ -587,6 +605,7 @@ app.get("/api/testkb", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
+ *         example: "API-T10-01"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -753,6 +772,7 @@ app.get("/api/issue", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -800,6 +820,7 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -847,12 +868,14 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *       - name: TID
  *         in: path
  *         description: Test ID
  *         required: true
  *         schema:
  *           type: string
+ *         example: "API-T10-01"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -908,6 +931,7 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -994,12 +1018,14 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *       - name: TID
  *         in: path
  *         description: Test ID
  *         required: true
  *         schema:
  *           type: string
+ *         example: "API-T10-01"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1113,6 +1139,7 @@ app.get("/api/cwe", (req, res) => {
  *         required: true
  *         schema:
  *           type: integer
+ *         example: 6
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1154,6 +1181,7 @@ app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1230,6 +1258,7 @@ app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, 
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1273,6 +1302,7 @@ app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjNam
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1318,6 +1348,7 @@ app.get("/export/json/:PrjName", check("PrjName").matches(validationValues.PrjNa
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
@@ -1361,6 +1392,7 @@ app.get("/export/html/findings/:PrjName",check("PrjName").matches(validationValu
  *         required: true
  *         schema:
  *           type: string
+ *         example: "20211201-MyApp-QA"
  *     security:
  *       cookieAuth: []
  *     responses:
