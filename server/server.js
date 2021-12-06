@@ -213,22 +213,38 @@ app.get("/logout", function (req, res, next) {
  *   get:
  *     description: API test endpoint
  *     responses:
- *       200:
+ *       '200':
  *         description: ping response message
  *     summary: Check service
  *     tags:
- *       - Monitoring
+ *       - Monitoring and Admin
  */
 app.get("/api/ping", (req, res) => {
     logger.info("Incoming ping request");
     res.send("Ping response, it works!");
 });
 
-// CSV violation logger
+/**
+ * @openapi
+ * /report-violation:
+ *   post:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/cspReport'
+ *     responses:
+ *       '200':
+ *         description: Success
+ *     summary: Endpoint for browsers to report Content Security Policy (CSP) violations
+ *     tags:
+ *       - Monitoring and Admin
+ */
 app.post("/report-violation", (req, res) => {
     logger.info("Incoming report-violation request");
     const op = "csp-report-violation";
-    ok(op, res, req.body);
+    ok(op, res, {});
 });
 
 // Check if authenticated/authorized to use the REST API
@@ -239,9 +255,24 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
 // Server API documentation
 const openapiSpecification = swaggerJsdoc(config.openapi);
 fs.writeFileSync(config.openapiFilename, JSON.stringify(openapiSpecification, null, 2));
-app.use("/api/doc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
-// Backup DB
+/**
+ * @openapi
+ * /api/db/backup:
+ *   post:
+ *     request:
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *       '500':
+ *         description: Server failure
+ *     summary: Backup DB
+ *     tags:
+ *       - Monitoring and Admin
+ */
 app.post("/api/db/backup", (req, res, next) => {
     logger.info("Incoming DB backup request");
     exec("/app/utils/backup.sh", (error, stdout, stderr) => {
@@ -256,7 +287,6 @@ app.post("/api/db/backup", (req, res, next) => {
     });
 });
 
-// Show account info
 /**
  * @openapi
  * /api/account:
@@ -266,12 +296,16 @@ app.post("/api/db/backup", (req, res, next) => {
  *     security:
  *       cookieAuth: []
  *     responses:
- *       200:
+ *       '200':
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/account'
+ *       '204':
+ *         description: Success (no data)
+ *       '404':
+ *         description: Not found
  *     summary: Get user account info
  *     tags:
  *       - Account
@@ -292,14 +326,35 @@ app.get("/api/account", function (req, res) {
             given_name: "",
             family_name: "",
             language: "en",
-            photos: [{value: "", type: ""}],
+            photos: [{value: "/images/anon.png", type: "image"}],
             picture: "",
         };
         res.json(data);
     }
 });
 
-// Show all projects
+/**
+ * @openapi
+ * /api/project:
+ *   get:
+ *     request:
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/project'
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get all projects
+ *     tags:
+ *       - Project
+ */
 app.get("/api/project", (req, res) => {
     logger.info("Incoming projects search request");
     const op = "get-all-projects";
@@ -307,7 +362,38 @@ app.get("/api/project", (req, res) => {
     db.project.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Get project data, check for pattern YYYYMM[DD]-PrjName-EnvName
+/**
+ * @openapi
+ * /api/project/{name}:
+ *   get:
+ *     description: 'Get data for a project'
+ *     operationId: get-project
+ *     parameters:
+ *       - name: name
+ *         in: path
+ *         description: Project name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/project'
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get project data
+ *     tags:
+ *       - Project
+ */
 app.get("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project search request");
     const op = "find-one-project";
@@ -322,7 +408,29 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
     db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Create project
+/**
+ * @openapi
+ * /api/project:
+ *   post:
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/project'
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '201':
+ *         description: Created
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Create project
+ *     tags:
+ *       - Project
+ */
 app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
     logger.info("Incoming project creation request");
     const op = "create-project";
@@ -345,7 +453,31 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
     db.project.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Update project
+/**
+ * @openapi
+ * /api/project:
+ *   put:
+ *     request: {}
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Update project
+ *     tags:
+ *       - Project
+ */
 app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) => {
     logger.info("Incoming project update request");
 
@@ -369,7 +501,37 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
     db.project.update(bodyData, {where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /api/project/{name}:
+ *   delete:
+ *     parameters:
+ *       - name: name
+ *         in: path
+ *         description: Project name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+ *     tags:
+ *       - Project
+ */
 app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project deletion request");
     const op = "delete-project";
@@ -385,23 +547,65 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
     db.project.destroy({where: {name: req.params.name}}).then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op,res,e);});
 });
 
-// Get data for all tests
+/**
+ * @openapi
+ * /api/testkb:
+ *   get:
+ *     request:
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref: '#/components/schemas/testKB'
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get data for all tests
+ *     tags:
+ *       - TestKB
+ */
 app.get("/api/testkb", (req, res) => {
     logger.info("Incoming tests search request");
     const op = "get-all-tests";
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, {errors: errors.array()});
-        return;
-    }
-
     // prettier-ignore
     db.test.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Get data for a specific Test ID. Check for allowable TID chars (letters, numbers, dash, dots).
+/**
+ * @openapi
+ * /api/testkb/{TID}:
+ *   get:
+ *     parameters:
+ *       - name: TID
+ *         in: path
+ *         description: Test ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/testKB'
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get data for a specific Test ID.
+ *     tags:
+ *       - TestKB
+ */
 app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), (req, res) => {
     logger.info("Incoming test search request");
     const op = "get-test";
@@ -416,7 +620,26 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
     db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Create a new test
+/**
+ * @openapi
+ * /api/testkb:
+ *   post:
+ *     request: {}
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '201':
+ *         description: Created
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Create a new test
+ *     tags:
+ *       - TestKB
+ */
 app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     logger.info("Incoming test creation request");
     const op = "create-test";
@@ -440,7 +663,31 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     db.test.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Update an existing test
+/**
+ * @openapi
+ * /api/testkb:
+ *   put:
+ *     request: {}
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Update an existing test
+ *     tags:
+ *       - TestKB
+ */
 app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => {
     logger.info("Incoming test update request");
     const op = "update-test";
@@ -464,24 +711,69 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
     db.test.update(bodyData, {where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Get all issues for all projects
+/**
+ * @openapi
+ * /api/issue:
+ *   get:
+ *     request:
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref: '#/components/schemas/issue'
+ *       '204':
+ *         description: Success (no data)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get all issues for all projects
+ *     tags:
+ *       - Issue
+ */
 app.get("/api/issue", (req, res) => {
     logger.info("Incoming issues search request");
     const op = "get-all-issues";
-
-    // Check for input validation errors in the request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, {errors: errors.array()});
-        return;
-    }
-
     // prettier-ignore
     db.issue.findAll().then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op, res, e);});
 });
 
-// Get all issues for a specific project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /api/issue/{PrjName}:
+ *   get:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref: '#/components/schemas/issue'
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get all issues for a specific project.
+ *     tags:
+ *       - Issue
+ */
 app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project issues search request");
     const op = "get-all-project-issues";
@@ -497,7 +789,37 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
     db.issue.findAll({where:{PrjName:req.params.PrjName}, order: [["IPriority", "ASC"],["TIssueName", "ASC"],["TID", "ASC"]]}).then((d)=>{ok(op,res,d);}).catch((e)=>{notFound(op, res,e);});
 });
 
-// Delete all issues in a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /api/issue/{PrjName}:
+ *   delete:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Delete all issues in a project.
+ *     tags:
+ *       - Issue
+ */
 app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project issues deletion request");
     const op = "delete-all-project-issues";
@@ -514,7 +836,42 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
     db.issue.destroy({where: {PrjName: req.params.PrjName}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Create/update an issue
+/**
+ * @openapi
+ * /api/issue/{PrjName}/{TID}:
+ *   put:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: TID
+ *         in: path
+ *         description: Test ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/issue'
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Create/update an issue
+ *     tags:
+ *       - Issue
+ */
 app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, res) => {
     logger.info("Incoming project issue update request");
     const op = "upsert-project-issue";
@@ -540,7 +897,32 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
         .then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Create issue TODOs for a given project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /api/issue/{PrjName}/todos:
+ *   post:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '201':
+ *         description: Created
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Create issue TODOs for a given project.
+ *     tags:
+ *       - Issue
+ */
 app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project todo creation request");
     const op = "create-todo-issues";
@@ -601,7 +983,43 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
         });
 });
 
-// Delete an issue. Check for pattern YYYYMM[DD]-PrjName-EnvName and valid TID.
+/**
+ * @openapi
+ * /api/issue/{PrjName}/{TID}:
+ *   delete:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: TID
+ *         in: path
+ *         description: Test ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Delete an issue.
+ *     tags:
+ *       - Issue
+ */
 // prettier-ignore
 app.delete("/api/issue/:PrjName/:TID",check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches), (req, res) => {
         logger.info("Incoming project issue deletion request");
@@ -652,29 +1070,28 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
  * @openapi
  * /api/cwe:
  *   get:
- *     description: ''
- *     meta:
- *       element: ''
- *       originalPath: 'https://www.wapt.me:5000/api/cwe'
+ *     description: 'Get all CWEs'
  *     operationId: get-api-cwe
+ *     parameters: []
  *     security:
  *       cookieAuth: []
- *     parameters: []
  *     responses:
  *       '200':
+ *         description: Success
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                  $ref: '#/components/schemas/cwe'
- *         description: Success
+ *       '204':
+ *         description: Success (no data)
+ *       '404':
+ *         description: Not found (DB error)
  *     summary: Get CWE list
  *     tags:
  *       - CWE
- *   parameters: []
  */
-// Get list of CWEs
 app.get("/api/cwe", (req, res) => {
     logger.info("Incoming CWEs search request");
     const op = "get-cwes";
@@ -683,15 +1100,12 @@ app.get("/api/cwe", (req, res) => {
     db.cwe.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
-// Get data for a CWE. Check CWE ID.
 /**
  * @openapi
  * /api/cwe/{CweId}:
  *   get:
  *     description: 'Get data for a CWE'
  *     operationId: get-api-cwe-285
- *     security:
- *       cookieAuth: []
  *     parameters:
  *       - name: CweId
  *         in: path
@@ -699,33 +1113,25 @@ app.get("/api/cwe", (req, res) => {
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       cookieAuth: []
  *     responses:
  *       '200':
+ *         description: Success
  *         content:
  *           application/json:
- *             examples:
- *               example-0001:
- *                 value:
- *                   CweID: 285
- *                   Description_Summary: >-
- *                     The software does not perform or incorrectly performs an
- *                     authorization check when an actor attempts to access a
- *                     resource or perform an action.
- *                   Name: Improper Authorization
- *                   Status: Draft
- *                   Weakness_Abstraction: Class
- *                   createdAt: null
- *                   id: 266
- *                   updatedAt: null
  *             schema:
- *               properties: {}
- *               type: object
- *         description: Success
- *     summary: Show CWE
+ *               $ref: '#/components/schemas/cwe'
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get data for a CWE.
  *     tags:
  *       - CWE
  */
-
 app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (req, res) => {
     logger.info("Incoming CWE search request");
     const op = "get-cwe";
@@ -735,8 +1141,37 @@ app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (
         .catch((e) => {notFound(op, res, e);});
 });
 
-// Get testing data for a project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
-app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
+/**
+ * @openapi
+ * /api/{PrjName}/tests:
+ *   get:
+ *     description: 'Get applicable tests for a project'
+ *     operationId: get-project-tests
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Get applicable tests for a project.
+ *     tags:
+ *       - Project
+ */
+app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project tests request");
     const op = "get-project-tests";
 
@@ -777,7 +1212,6 @@ app.get("/api/testing/:PrjName", check("PrjName").matches(validationValues.PrjNa
 });
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
-// Check if authenticated/authorized to export data
 app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, next) {
     next();
 });
@@ -785,7 +1219,34 @@ app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, 
 // Export all issues for all projects in CSV
 //app.get("/export/issues.csv", reporting.exportIssuesCSV);
 
-// Export all issues for a specific project in CSV. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /export/csv/{PrjName}:
+ *   get:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           text/csv:
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Export all issues for a specific project in CSV.
+ *     tags:
+ *       - Reporting
+ */
 // prettier-ignore
 app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project issues CSV export request");
@@ -801,7 +1262,37 @@ app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjNam
     reporting.sendProjectReport(req, res, config.REPORT_TYPE_CSV, showAllIssues=true);
 });
 
-// Export all issues for a specific project in JSON. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /export/json/{PrjName}:
+ *   get:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties: {}
+ *               type: object
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Export all issues for a specific project in JSON.
+ *     tags:
+ *       - Reporting
+ */
 // prettier-ignore
 app.get("/export/json/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project issues JSON export request");
@@ -816,7 +1307,34 @@ app.get("/export/json/:PrjName", check("PrjName").matches(validationValues.PrjNa
     reporting.sendProjectReport(req, res, config.REPORT_TYPE_JSON, showAllIssues=true);
 });
 
-// Generate a Findings Report for a project in HTML, Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /export/html/findings/{PrjName}:
+ *   get:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           text/html:
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Generate a Findings Report for a project in HTML.
+ *     tags:
+ *       - Reporting
+ */
 // prettier-ignore
 app.get("/export/html/findings/:PrjName",check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project findings HTML report request");
@@ -832,7 +1350,34 @@ app.get("/export/html/findings/:PrjName",check("PrjName").matches(validationValu
     reporting.sendProjectReport(req, res, config.REPORT_TYPE_HTML, showAllIssues=false);
 });
 
-// Generate a Full Report for a project in HTML. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+/**
+ * @openapi
+ * /export/html/full/{PrjName}:
+ *   get:
+ *     parameters:
+ *       - name: PrjName
+ *         in: path
+ *         description: Project Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           text/html:
+ *       '204':
+ *         description: Success (no data)
+ *       '400':
+ *         description: Request failure (check inputs)
+ *       '404':
+ *         description: Not found (DB error)
+ *     summary: Generate a Full Report for a project in HTML.
+ *     tags:
+ *       - Reporting
+ */
 // prettier-ignore
 app.get("/export/html/full/:PrjName", check("PrjName").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project full HTML report request");
@@ -898,10 +1443,10 @@ if (config.useHttp2) {
 function created(op, res, data) {
     if (data) {
         logger.info(`Creation succeeded for ${op} - resulting data: ${JSON.stringify(data)}`);
-        res.send(201);
+        res.sendStatus(201);
     } else {
         logger.warn(`Request succeeded. No data`);
-        res.send(204);
+        res.sendStatus(204);
     }
 }
 
@@ -912,7 +1457,7 @@ function ok(op, res, data) {
         res.status(200).send(data);
     } else {
         logger.info(`Request succeeded for ${op}. No data`);
-        res.send(204);
+        res.sendStatus(204);
     }
 }
 
