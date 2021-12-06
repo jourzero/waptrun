@@ -170,18 +170,6 @@ module.exports = {
             errorMessage: vals.Singleline.errorMessage,
             trim: true,
         },
-        TPhase: {
-            optional: true,
-            matches: {options: vals.Singleline.matches},
-            errorMessage: vals.Singleline.errorMessage,
-            trim: true,
-        },
-        TSection: {
-            optional: true,
-            matches: {options: vals.Singleline.matches},
-            errorMessage: vals.Singleline.errorMessage,
-            trim: true,
-        },
         TSource: {
             optional: true,
             matches: {options: vals.Singleline.matches},
@@ -228,12 +216,6 @@ module.exports = {
             optional: true,
             isInt: {options: {min: 0, max: 3}},
             errorMessage: "Expected: integer in the range [0-3]",
-        },
-        TIssueType: {
-            optional: true,
-            matches: {options: vals.Singleline.matches},
-            errorMessage: vals.Singleline.errorMessage,
-            trim: true,
         },
         TPCI: {
             optional: true,
