@@ -6,8 +6,7 @@
     -   [Usage Help](#usage-help)
     -   [Running this code within Docker](#running-this-code-within-docker)
         -   [Get the code](#get-the-code)
-        -   [Start App and DB servers in separate containers](#start-app-and-db-servers-in-separate-containers)
-        -   [At first run, initialize the database](#at-first-run-initialize-the-database)
+        -   [Start App](#start-app)
         -   [When needed backup your database](#when-needed-backup-your-database)
         -   [When needed add TestKB data (e.g. using Excel)](#when-needed-add-testkb-data-eg-using-excel)
         -   [When needed, download new CWE data from Mitre and import it](#when-needed-download-new-cwe-data-from-mitre-and-import-it)
@@ -28,21 +27,13 @@ Refer to [Help](server/doc/Help.md) for end-user documentation and to [methodolo
 ```bash
 $ git clone git@github.com:jourzero/waptrun.git
 $ cd waptrun
+$ git submodule update --init --recursive
 ```
 
-### Start App and DB servers in separate containers
+### Start App
 
 ```bash
-# Build and run from Docker host
-$ docker-compose up -d
-```
-
-### At first run, initialize the database
-
-```bash
-host$ docker exec -it waptrun /bin/bash
-
-ode@98a77e57e94e:/app$ cp dbinit/waptrun.sqlited data/
+$ ./rebuild-restart.sh
 ```
 
 ### When needed backup your database
