@@ -85,3 +85,4 @@ VeracodeIgnored.json
 SequelizeSetup.md
 server/testSequelize.js
 /config
+.vscode/settings.json
