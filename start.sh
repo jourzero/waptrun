@@ -12,10 +12,10 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
 #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
 # Read-only
 MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
 
 # Publish specific ports
 PUB=""
