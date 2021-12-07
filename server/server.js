@@ -24,7 +24,6 @@ const validationValues = require("./validationValues.js");
 const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
 const {exec, execFile} = require("child_process");
-const {exit} = require("process");
 const {logging, useHttp2} = require("./config.js");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -139,6 +138,7 @@ function ensureAuthenticated(req, res, next) {
         return next();
     }
     logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
+    // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
     res.status(401).send("Not Authenticated.");
 }
 
@@ -154,6 +154,7 @@ function ensureAuthorized(req, res, next) {
     });
     if (user === undefined) {
         logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
+        // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
         res.status(401).send("Not Authorized.");
     } else {
         logger.info(`User ${id} is authorized`);
@@ -221,7 +222,8 @@ app.get("/logout", function (req, res, next) {
  */
 app.get("/api/ping", (req, res) => {
     logger.info("Incoming ping request");
-    res.send("Ping response, it works!");
+    // HTTP STATUS: 200 OK - Indicates that the request has succeeded.
+    res.status(200).send("Ping response, it works!");
 });
 
 /**
@@ -277,8 +279,9 @@ app.post("/api/db/backup", (req, res, next) => {
     logger.info("Incoming DB backup request");
     exec("/app/utils/backup.sh", (error, stdout, stderr) => {
         if (error) {
-            msg = `Error when backing-up DB: ${error}`;
+            let msg = `Error when backing-up DB: ${error}`;
             console.error(msg);
+            // HTTP STATUS: 500 Internal Server Error - The server encountered an unexpected condition which prevented it from fulfilling the request.
             return res.status(500).json({error: JSON.stringify(msg)});
         }
         let msg = {stdout: stdout, stderr: stderr};
@@ -558,7 +561,6 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
         return;
     }
 
-    // TODO: Maybe send notFound(404) instead of noData(204) when destroy op is OK but d says 0 record was deleted?
     // prettier-ignore
     db.project.destroy({where: {name: req.params.name}}).then((d)=>{ok(op, res, d);}).catch((e)=>{notFound(op,res,e);});
 });
@@ -635,6 +637,7 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
         failure("validate-req", res, {errors: errors.array()});
         return;
     }
+    // TODO: Maybe send notFound(404) instead of noData(204) when op is OK but d says 0 record are applicable?
     // prettier-ignore
     db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
@@ -1230,11 +1233,13 @@ app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName
                     })
                     .catch((err) => {
                         logger.warn(`Failed getting testing page data (in tests search): ${JSON.stringify(err)}`);
+                        // TODO: determine if this is the right response?
                         failure("findall-scoped-tests", res, err);
                     });
             })
             .catch((err) => {
                 logger.warn(`Failed getting testing page data (in project search): ${JSON.stringify(err)}`);
+                // TODO: determine if this is the right response?
                 failure("findone-project", res, err);
             });
 });
@@ -1433,6 +1438,7 @@ app.use(function (err, req, res, next) {
     let msg = err.message;
     if (msg.startsWith("Cannot read properties of undefined")) msg += ". Session was probably invalidated via logout or timeout.";
     logger.error(`Exception: ${msg}`);
+    // HTTP STATUS: 500 Internal Server Error - The server encountered an unexpected condition which prevented it from fulfilling the request.
     // TODO: Toggle comments on below 3 lines for security (eventually)
     //res.sendStatus(500);
     res.status(500).send({error: msg, additionalInfo: "Caught by global exception handler."});
@@ -1441,8 +1447,8 @@ app.use(function (err, req, res, next) {
 // Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
 // if all others invoke next() and do not respond.
 app.use(function (req, res) {
-    res.status(404);
-    res.send({Error: "This request is unsupported!"});
+    // HTTP STATUS: 404 Not Found - The server can not find the requested resource.
+    res.status(404).send({Error: "This request is unsupported!"});
 });
 
 // ========================================== START LISTENER ==========================================
@@ -1472,36 +1478,53 @@ if (config.useHttp2) {
     /* eslint-enable */
 }
 
+// ======================================= HTTP RESPONSE FUNCTIONS ========================================
+// Using definitions from: https://restfulapi.net/http-status-codes/ (HTTP STATUS comments)
+
+// created(): used when post/creation requests succeed
 function created(op, res, data) {
     if (data) {
         logger.info(`Creation succeeded for ${op} - resulting data: ${JSON.stringify(data)}`);
-        res.sendStatus(201);
+        // HTTP STATUS: 201 Created - Indicates that the request has succeeded and a new resource has been created as a result.
+        //res.sendStatus(201);
+        res.status(201).send(data);
     } else {
         logger.warn(`Request succeeded. No data`);
-        res.sendStatus(204);
+        // HTTP STATUS: 204 No Content - The server has fulfilled the request but does not need to return a response body. The server may return the updated meta information.
+        //res.sendStatus(204);
+        res.status(204).send("TODO: check if this 204 happens in normal situations or if a 4XX should be returned instead");
     }
 }
 
+// ok(): used when any DB request succeeds, even if the client expects a different result
 function ok(op, res, data) {
     if (data) {
         logger.info(`Request succeeded for ${op}: ${JSON.stringify(data)}`);
         if (typeof data === "number") data = `Value: ${data}`;
+        // HTTP STATUS: 200 OK - Indicates that the request has succeeded.
+        //res.sendStatus(200);
         res.status(200).send(data);
     } else {
         logger.info(`Request succeeded for ${op}. No data`);
-        res.sendStatus(204);
+        // HTTP STATUS: 204 No Content - The server has fulfilled the request but does not need to return a response body. The server may return the updated meta information.
+        //res.sendStatus(204);
+        res.status(204).send("TODO: check if 4XX should be sent instead (e.g. 404 not found). Does returned data say 0 record applicable? If not a GET should we using another response code?");
     }
 }
 
+// failure(): used on input validation issues
 function failure(op, res, err) {
     logger.error(`Request failed for ${op}: ${JSON.stringify(err)}`);
-    // TODO: Toggle comments on below two lines for security (eventually)
+    // HTTP STATUS: 400 Bad Request - The request could not be understood by the server due to incorrect syntax. The client SHOULD NOT repeat the request without modifications.
     //res.sendStatus(400);
     res.status(400).send(err);
 }
 
+// notFound(): used when DB requests fail
+// TODO: check traffic if 404 appears adequate in all situations observed
 function notFound(op, res, err) {
     logger.warn(`Could not find data for ${op}: ${JSON.stringify(err.message)}`);
+    // HTTP STATUS: 404 Not Found - The server can not find the requested resource.
     // TODO: Toggle comments on below two lines for security (eventually)
     //res.sendStatus(404);
     res.status(404).send(err.message);
