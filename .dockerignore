@@ -12,6 +12,7 @@ data
 doc
 docker-compose.yml
 logs
+node_modules
 rebuild-restart.sh
 restart.sh
 start.sh

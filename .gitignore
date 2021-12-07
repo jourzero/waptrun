@@ -84,3 +84,4 @@ wapt-configs
 VeracodeIgnored.json
 SequelizeSetup.md
 server/testSequelize.js
+/config
