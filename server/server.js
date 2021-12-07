@@ -18,6 +18,7 @@ const GitHubStrategy = require("passport-github").Strategy;
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
 const config = require("./config.js");
+const openapiConfig = require("./openapiConfig.js");
 const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
@@ -31,6 +32,11 @@ const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
 const {Op, Sequelize} = require("sequelize");
 const {project} = require("./validationSchema.js");
 //const router = express.Router();
+
+// Swagger UI Options - ref: https://www.npmjs.com/package/swagger-ui-express
+const openapiVirtualPath = "/apidoc/openapi.json";
+const swaggerUiOptions = { swaggerOptions: { url: openapiVirtualPath } };
+const openapiJsonData = swaggerJsdoc(openapiConfig.openapiDef);
 
 // ========================================== CONFIG ==========================================
 // Auth/authz config
@@ -254,10 +260,13 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
     next();
 });
 
-// Server API documentation
-const openapiSpecification = swaggerJsdoc(config.openapi);
-fs.writeFileSync(config.openapiFilename, JSON.stringify(openapiSpecification, null, 2));
-app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+
+// Serve API documentation
+fs.writeFileSync(openapiConfig.openapiFilename, JSON.stringify(openapiJsonData, null, 2));
+//app.use("/apidoc", swaggerUi.serve, swaggerUi.setup(openapiJsonData, swaggerUiOptions));
+
+app.get(openapiVirtualPath, (req, res) => res.json(openapiJsonData));
+app.use('/apidoc', swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup(null, swaggerUiOptions));
 
 /**
  * @openapi
@@ -546,13 +555,14 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
  *         description: Request failure (check inputs)
  *       '404':
  *         description: Not found (DB error)
- *     summary: Delete project. Check for pattern YYYYMM[DD]-PrjName-EnvName.
+ *     summary: Delete project. 
  *     tags:
  *       - Project
  */
 app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.matches), (req, res) => {
     logger.info("Incoming project deletion request");
     const op = "delete-project";
+
     // Check for input validation errors in the request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -1051,16 +1061,16 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
  */
 // prettier-ignore
 app.delete("/api/issue/:PrjName/:TID",check("PrjName").matches(validationValues.PrjName.matches), check("TID").matches(validationValues.TID.matches), (req, res) => {
-        logger.info("Incoming project issue deletion request");
-        const op = "delete-project-issue";
+    logger.info("Incoming project issue deletion request");
+    const op = "delete-project-issue";
 
-        // Check for input validation errors in the request
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
+    // Check for input validation errors in the request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
             failure("validate-req", res, {errors: errors.array()});
-            return;
-        }
+        return;
+    }
 
         // prettier-ignore
         //let crit = {}, kvp1 = {}, kvp2 = {};
@@ -1068,10 +1078,10 @@ app.delete("/api/issue/:PrjName/:TID",check("PrjName").matches(validationValues.
         //kvp2.PrjName = req.params.PrjName;
         //crit["[Op.and]"] = [kvp1, kvp2];
         let crit = {TID: req.params.TID, PrjName: req.params.PrjName};
-        logger.debug(`Deleting project issue data with criteria ${JSON.stringify(crit)}`);
-        // prettier-ignore
+    logger.debug(`Deleting project issue data with criteria ${JSON.stringify(crit)}`);
+    // prettier-ignore
         db.issue.destroy({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
-    }
+}
 );
 
 // Get data for an issue. Check for allowable TID chars (letters, numbers, dash, dots)
@@ -1218,30 +1228,30 @@ app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName
     logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
     // prettier-ignore
     db.project.findOne({where: {name: req.params.PrjName}})
-            .then((prj) => {
-                // Get scope query
-                let scopeQuery = utils.getSequelizeScopeQuery(prj);
+        .then((prj) => {
+            // Get scope query
+            let scopeQuery = utils.getSequelizeScopeQuery(prj);
 
-                // Search the Test KB for matching tests
-                logger.debug("Searching TestKB with scope query ", scopeQuery);
-                let testKbFields = ["TID", "TSource", "TTestName"];
+            // Search the Test KB for matching tests
+            logger.debug("Searching TestKB with scope query ", scopeQuery);
+            let testKbFields = ["TID", "TSource", "TTestName"];
                 db.test.findAll({where: scopeQuery, order: [["TID", "ASC"]], attributes: testKbFields})
-                    .then((tests) => {
+                .then((tests) => {
                         const testingPageData = {prj: prj, tests: tests, CweUriBase: config.CweUriBase, CveRptBase: config.CveRptBase, CveRptSuffix: config.CveRptSuffix, TestRefBase: config.TestRefBase, ScopeQuery: JSON.stringify(scopeQuery)};
-                        logger.info(`Returning testing page data for project ${req.params.PrjName}`);
-                        res.json(testingPageData);
-                    })
-                    .catch((err) => {
-                        logger.warn(`Failed getting testing page data (in tests search): ${JSON.stringify(err)}`);
-                        // TODO: determine if this is the right response?
-                        failure("findall-scoped-tests", res, err);
-                    });
-            })
-            .catch((err) => {
-                logger.warn(`Failed getting testing page data (in project search): ${JSON.stringify(err)}`);
-                // TODO: determine if this is the right response?
-                failure("findone-project", res, err);
-            });
+                    logger.info(`Returning testing page data for project ${req.params.PrjName}`);
+                    res.json(testingPageData);
+                })
+                .catch((err) => {
+                    logger.warn(`Failed getting testing page data (in tests search): ${JSON.stringify(err)}`);
+                    // TODO: determine if this is the right response?
+                    failure("findall-scoped-tests", res, err);
+                });
+        })
+        .catch((err) => {
+            logger.warn(`Failed getting testing page data (in project search): ${JSON.stringify(err)}`);
+            // TODO: determine if this is the right response?
+            failure("findone-project", res, err);
+        });
 });
 
 // ======================================= EXPORT/REPORT ROUTES =======================================
@@ -1292,8 +1302,7 @@ app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjNam
         failure("validate-req", res, {errors: errors.array()});
         return;
     }
-    //reporting.genPrjIssueReportCSV(req, res);
-    reporting.sendProjectReport(req, res, config.REPORT_TYPE_CSV, showAllIssues=true);
+    reporting.sendProjectReport(req, res, config.REPORT_TYPE_CSV, showAllIssues = true);
 });
 
 /**
@@ -1457,8 +1466,8 @@ const port = process.env.PORT || config.port;
 if (config.useHttp2) {
     // Get key and cert to support HTTP/2
     const options = {
-        key: fs.readFileSync(path.join(__dirname, "../data/privkey3.pem")),
-        cert: fs.readFileSync(path.join(__dirname, "../data/cert3.pem")),
+        key: fs.readFileSync(config.tlsPrivateKey),
+        cert: fs.readFileSync(config.tlsCertificate),
         allowHTTP1: true,
     };
 
