@@ -8,7 +8,6 @@
 .gitmodules
 .vscode
 backup
-data
 doc
 docker-compose.yml
 logs
