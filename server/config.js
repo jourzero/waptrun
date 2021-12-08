@@ -97,7 +97,7 @@ module.exports = {
         resave: true,
         saveUninitialized: true,
         secret: "fawefjeaiaoeifj",
-        cookie: { path: "/", httpOnly: true, secure: USE_HTTP2, sameSite: "lax" },
+        cookie: { path: "/", httpOnly: true, secure: false, sameSite: "lax" },
     },
 
     // TLS config
