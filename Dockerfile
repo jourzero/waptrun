@@ -14,7 +14,7 @@ RUN npm install -g npm@8.2.0
 # Copy project files to /app
 WORKDIR /app
 COPY --chown=node:node . .
-RUN chmod node:node /app
+RUN chown node:node /app
 
 # Set active user
 USER node
