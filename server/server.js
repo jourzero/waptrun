@@ -45,7 +45,7 @@ let users = [];
 const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
 if (process.env.CSP_REPORT_URI) config.csp.directives.reportUri = process.env.CSP_REPORT_URI;
 
-if (authMode === config.AUTH_MODE_OAUTH) {
+if (Number(authMode) === config.AUTH_MODE_OAUTH) {
     logger.info("Configuring app with OAuth");
     let usersConfig = process.env.USERLIST;
     let userConfig = usersConfig.split(":");
