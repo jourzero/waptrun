@@ -60,16 +60,6 @@ exports.getSequelizeScopeQuery = function (prj) {
     if (TCweIDSearch) useTCweIDSearch = true;
 
     if (PciTests || Top10Tests || Top25Tests || StdTests || useTestNameKeyword || useTCweIDSearch) {
-        /*
-        let filter = {};
-        if (PciTests) filter = JSON.stringify(filter).length <= 2 ? { TPCI: PciTests } : { [Op.or]: [filter, { TPCI: PciTests }] };
-        if (Top10Tests) filter = JSON.stringify(filter).length <= 2 ? { TTop10: Top10Tests } : { [Op.or]: [filter, { TTop10: Top10Tests }] };
-        if (Top25Tests) filter = JSON.stringify(filter).length <= 2 ? { TTop25: Top25Tests } : { [Op.or]: [filter, { TTop25: Top25Tests }] };
-        if (StdTests) filter = JSON.stringify(filter).length <= 2 ? { TStdTest: StdTests } : { [Op.or]: [filter, { TStdTest: StdTests }] };
-        if (useTestNameKeyword) filter = JSON.stringify(filter).length <= 2 ? { TTestName: { [Op.like]: "%" + TTestNameKeyword + "%" } } : { $and: [filter, { TTestName: { [Op.like]: "%" + TTestNameKeyword + "%" } }] };
-        if (useTCweIDSearch) filter = JSON.stringify(filter).length <= 2 ? { TCweID: TCweIDSearch } : { [Op.or]: [filter, { TCweID: TCweIDSearch }] };
-        scopeQuery = { [Op.and]: [scopeQuery, filter] };
-        */
         let filter = []
         filter.push(scopeQuery);
 
