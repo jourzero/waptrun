@@ -60,14 +60,12 @@ if (authMode === config.AUTH_MODE_OAUTH) {
 } else {
     logger.info("App starting without authentication for dev/testing purposes");
 }
-let useHttp2 = config.useHttp2;
-if (!process.env.USE_HTTP2)
-    useHttp2 = process.env.USE_HTTP2;
+const useHttp2 = process.env.USE_HTTP2 !== undefined ? process.env.USE_HTTP2 !== "0" : config.useHttp2;
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
 let app;
-if (useHttp2 === "1") app = http2Express(express);
+if (useHttp2) app = http2Express(express);
 else app = express();
 app.disable("x-powered-by");
 app.use(reqLogger);
@@ -94,7 +92,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 //       TypeError: res._implicitHeader is not a function
 //         at writetop (/app/node_modules/express-session/index.js:276:15)
 //         at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16) [...]
-if (useHttp2 === "1") {
+if (useHttp2) {
     logger.info("Using HTTP/2, applying patch in express-session to avoid TypeError exception when calling res._implicitHeader()");
     app.use(function async(req, res, next) {
         if (!res._implicitHeader) {
