@@ -9,7 +9,7 @@ module.exports = function () {
     // behalf, along with the user's profile.  The function must invoke `cb`
     // with a user object, which will be set at `req.user` in route handlers after
     // authentication.
-    logger.debug("Adding Passport's Google strategy");
+    logger.debug(`Adding Passport's Google strategy for client ID ${process.env["GOOGLE_CLIENT_ID"]}`);
     passport.use(
         new GoogleStrategy(
             {
@@ -29,6 +29,7 @@ module.exports = function () {
             }
         )
     );
+    logger.debug(`Adding Passport's Github strategy for client ID ${process.env["GITHUB_CLIENT_ID"]}`);
     passport.use(
         new GitHubStrategy(
             {
