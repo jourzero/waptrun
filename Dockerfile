@@ -9,11 +9,12 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 RUN apt-get -y install wget gnupg lsof curl procps iproute2 zip xsltproc git
 
 # Upgrade NPM
-RUN npm install -g npm@8.1.4
+RUN npm install -g npm@8.2.0
 
 # Copy project files to /app
 WORKDIR /app
 COPY --chown=node:node . .
+RUN chmod node:node /app
 
 # Set active user
 USER node
