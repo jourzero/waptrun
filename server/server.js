@@ -296,6 +296,36 @@ app.post("/api/db/backup", (req, res, next) => {
     });
 });
 
+
+/**
+ * @openapi
+ * /api/app/update:
+ *   post:
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Success
+ *       '500':
+ *         description: Server failure
+ *     summary: Update this app from GIT repo
+ *     tags:
+ *       - Monitoring and Admin
+ */
+app.post("/api/app/update", (req, res, next) => {
+    logger.info("Incoming app update request");
+    exec("git pull", (error, stdout, stderr) => {
+        if (error) {
+            let msg = `Error when running 'git pull': ${error}`;
+            console.error(msg);
+            return res.status(500).json({ error: JSON.stringify(msg) });
+        }
+        let msg = { stdout: stdout, stderr: stderr };
+        logger.info(`Result from 'git pull': ${JSON.stringify(msg)}`);
+        res.json(msg);
+    });
+});
+
 /**
  * @openapi
  * /api/account:

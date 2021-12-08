@@ -525,6 +525,37 @@ function restBackupDB() {
     });
 }
 
+
+/**
+ * restUpdateApp
+ */
+function restUpdateApp() {
+    // Send post request
+    let url = "/api/app/update";
+    let data = {};
+    console.debug("Sending POST request to url " + url);
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        dataType: "json",
+        statusCode: {
+            201: function () {
+                successMessage(`App updated successfully.`);
+            },
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
+                msg = "Could not process the request to update the app.";
+                console.warn(msg);
+                warningMessage(msg);
+            },
+        },
+    });
+}
+
 $.ajaxSetup({
     statusCode: {
         401: function () {

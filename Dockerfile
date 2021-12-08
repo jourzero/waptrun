@@ -6,7 +6,7 @@ RUN apt-get -y install build-essential python3 sqlite3
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 
 # Add some tools
-RUN apt-get -y install wget gnupg lsof curl procps iproute2 zip xsltproc 
+RUN apt-get -y install wget gnupg lsof curl procps iproute2 zip xsltproc git
 
 # Upgrade NPM
 RUN npm install -g npm@8.1.4
