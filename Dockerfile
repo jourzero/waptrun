@@ -13,10 +13,7 @@ RUN npm install -g npm@8.1.4
 
 # Copy project files to /app
 WORKDIR /app
-COPY . .
-
-# Set perms to allow npm install from lower-privileged user
-RUN chown -R node /app
+COPY --chown=node:node . .
 
 # Set active user
 USER node
