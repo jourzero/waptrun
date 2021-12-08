@@ -262,7 +262,7 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
 
 
 // Serve API documentation
-fs.writeFileSync(path.join(__dirname, openapiConfig.openapiFilename), JSON.stringify(openapiJsonData, null, 2));
+//fs.writeFileSync(path.join(__dirname, openapiConfig.openapiFilename), JSON.stringify(openapiJsonData, null, 2));
 app.get(openapiVirtualPath, (req, res) => res.json(openapiJsonData));
 app.use('/apidoc', swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup(null, swaggerUiOptions));
 
