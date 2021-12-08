@@ -25,7 +25,6 @@ const validationValues = require("./validationValues.js");
 const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
 const { exec, execFile } = require("child_process");
-const { logging, useHttp2 } = require("./config.js");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
@@ -61,6 +60,7 @@ if (authMode === config.AUTH_MODE_OAUTH) {
 } else {
     logger.info("App starting without authentication for dev/testing purposes");
 }
+const useHttp2 = process.env.USE_HTTP2 || config.useHttp2;
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
@@ -1474,7 +1474,7 @@ app.use(function (req, res) {
 // ========================================== START LISTENER ==========================================
 const port = process.env.PORT || config.port;
 
-if (config.useHttp2) {
+if (useHttp2) {
     // Get key and cert to support HTTP/2
     const options = {
         key: fs.readFileSync(config.tlsPrivateKey),
