@@ -60,12 +60,14 @@ if (authMode === config.AUTH_MODE_OAUTH) {
 } else {
     logger.info("App starting without authentication for dev/testing purposes");
 }
-const useHttp2 = process.env.USE_HTTP2 || config.useHttp2;
+let useHttp2 = config.useHttp2;
+if (!process.env.USE_HTTP2)
+    useHttp2 = process.env.USE_HTTP2;
 
 // ========================================== EXPRESS ==========================================
 // Configure Express
 let app;
-if (useHttp2) app = http2Express(express);
+if (useHttp2 === "1") app = http2Express(express);
 else app = express();
 app.disable("x-powered-by");
 app.use(reqLogger);
@@ -92,7 +94,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
 //       TypeError: res._implicitHeader is not a function
 //         at writetop (/app/node_modules/express-session/index.js:276:15)
 //         at Http2ServerResponse.end (/app/node_modules/express-session/index.js:343:16) [...]
-if (config.useHttp2) {
+if (useHttp2 === "1") {
     logger.info("Using HTTP/2, applying patch in express-session to avoid TypeError exception when calling res._implicitHeader()");
     app.use(function async(req, res, next) {
         if (!res._implicitHeader) {
@@ -262,7 +264,7 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
 
 
 // Serve API documentation
-//fs.writeFileSync(openapiConfig.openapiFilename, JSON.stringify(openapiJsonData, null, 2));
+fs.writeFileSync(path.join(__dirname, openapiConfig.openapiFilename), JSON.stringify(openapiJsonData, null, 2));
 app.get(openapiVirtualPath, (req, res) => res.json(openapiJsonData));
 app.use('/apidoc', swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup(null, swaggerUiOptions));
 
@@ -1477,8 +1479,8 @@ const port = process.env.PORT || config.port;
 if (useHttp2) {
     // Get key and cert to support HTTP/2
     const options = {
-        key: fs.readFileSync(config.tlsPrivateKey),
-        cert: fs.readFileSync(config.tlsCertificate),
+        key: fs.readFileSync(path.join(__dirname, config.tlsPrivateKey)),
+        cert: fs.readFileSync(path.join(__dirname, config.tlsCertificate)),
         allowHTTP1: true,
     };
 

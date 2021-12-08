@@ -140,5 +140,5 @@ module.exports = {
         },
         apis: ["./server/server.js"], // files containing annotations as above
     },
-    openapiFilename: "/app/data/waptrun-openapi.json",
+    openapiFilename: "../data/waptrun-openapi.json",
 }

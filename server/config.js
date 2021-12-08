@@ -5,7 +5,7 @@ const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
 const AUTH_MODE_OAUTH = 1;
-const USE_HTTP2 = true;
+const USE_HTTP2 = 1;
 const REPORT_TYPE_HTML = 1;
 const REPORT_TYPE_CSV = 2;
 const REPORT_TYPE_JSON = 3;
@@ -101,8 +101,8 @@ module.exports = {
     },
 
     // TLS config
-    tlsPrivateKey: "/app/data/privkey3.pem",
-    tlsCertificate: "/app/data/cert3.pem",
+    tlsPrivateKey: "../data/privkey3.pem",
+    tlsCertificate: "../data/cert3.pem",
 
     // Configure request logging
     reqLogging: {

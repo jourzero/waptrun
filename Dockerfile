@@ -46,8 +46,8 @@ USER node
 RUN npm install
 
 # Expose Node app, Node remote debugging and Mongodb
-EXPOSE 5000
 EXPOSE 9230
 EXPOSE 27017
+EXPOSE 5000
 #CMD npm start
 CMD ./entrypoint.sh
