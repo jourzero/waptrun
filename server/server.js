@@ -314,7 +314,7 @@ app.post("/api/db/backup", (req, res, next) => {
  */
 app.post("/api/app/update", (req, res, next) => {
     logger.info("Incoming app update request");
-    exec("git pull", (error, stdout, stderr) => {
+    exec("/app/utils/updateFromGithub.sh", (error, stdout, stderr) => {
         if (error) {
             let msg = `Error when running 'git pull': ${error}`;
             console.error(msg);
