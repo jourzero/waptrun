@@ -60,7 +60,6 @@ screenshots/.DS_Store
 test/validationTests.js
 static/
 backup/
-data/
 server/logs/app.log
 server/logs/access.log
 doc/hacking/sqlite/sqlite3
@@ -86,3 +85,11 @@ SequelizeSetup.md
 server/testSequelize.js
 /config
 .vscode/settings.json
+data/*.pem
+data/*.old
+data/*.csv.*
+data/*.csv
+data/backup*
+data/old
+logs/test.json
+doc/AzureTest.md

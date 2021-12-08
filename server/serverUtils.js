@@ -1,5 +1,5 @@
 const logger = require("./lib/appLogger.js");
-const {Op, Sequelize} = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 
 // Build filter for scope query
 exports.getSequelizeScopeQuery = function (prj) {
@@ -20,21 +20,21 @@ exports.getSequelizeScopeQuery = function (prj) {
         case "API":
             scopeQuery = {
                 [Op.or]: [
-                    {TTestName: {[Op.like]: "API%"}},
-                    {TTestName: {[Op.like]: "% API%"}},
-                    {TTestName: {[Op.like]: "%REST%"}},
-                    {TTestName: {[Op.like]: "%SOAP%"}},
-                    {TTestName: {[Op.like]: "%AJAX%"}},
-                    {TTestName: {[Op.like]: "%RPC%"}},
-                    {TIssueName: {[Op.like]: "API%"}},
-                    {TIssueName: {[Op.like]: "% API%"}},
-                    {TSource: {[Op.like]: "%API%"}},
+                    { TTestName: { [Op.like]: "API%" } },
+                    { TTestName: { [Op.like]: "% API%" } },
+                    { TTestName: { [Op.like]: "%REST%" } },
+                    { TTestName: { [Op.like]: "%SOAP%" } },
+                    { TTestName: { [Op.like]: "%AJAX%" } },
+                    { TTestName: { [Op.like]: "%RPC%" } },
+                    { TIssueName: { [Op.like]: "API%" } },
+                    { TIssueName: { [Op.like]: "% API%" } },
+                    { TSource: { [Op.like]: "%API%" } },
                 ],
             };
             break;
         case "Default":
             scopeQuery = {
-                [Op.or]: [{TSource: "OWASP-WSTG"}, {TSource: "WAHH2"}, {TSource: "TBHM2015"}, {TSource: "Extras"}],
+                [Op.or]: [{ TSource: "OWASP-WSTG" }, { TSource: "WAHH2" }, { TSource: "TBHM2015" }, { TSource: "Extras" }],
             };
             break;
         case "BCVRT":
@@ -49,7 +49,7 @@ exports.getSequelizeScopeQuery = function (prj) {
         case "WAHH2":
         case "WebSvc":
         case "CWE-Top-25":
-            scopeQuery = {TSource: prj.scopeQry};
+            scopeQuery = { TSource: prj.scopeQry };
         //scopeQuery = { $or: [ { TSource: prj.scopeQry }, { TSource: "Extras" }, ], };
     }
 
@@ -60,15 +60,26 @@ exports.getSequelizeScopeQuery = function (prj) {
     if (TCweIDSearch) useTCweIDSearch = true;
 
     if (PciTests || Top10Tests || Top25Tests || StdTests || useTestNameKeyword || useTCweIDSearch) {
+        /*
         let filter = {};
-        if (PciTests) filter = JSON.stringify(filter).length <= 2 ? {TPCI: PciTests} : {[Op.or]: [filter, {TPCI: PciTests}]};
-        if (Top10Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop10: Top10Tests} : {[Op.or]: [filter, {TTop10: Top10Tests}]};
-        if (Top25Tests) filter = JSON.stringify(filter).length <= 2 ? {TTop25: Top25Tests} : {[Op.or]: [filter, {TTop25: Top25Tests}]};
-        if (StdTests) filter = JSON.stringify(filter).length <= 2 ? {TStdTest: StdTests} : {[Op.or]: [filter, {TStdTest: StdTests}]};
-        if (useTestNameKeyword) filter = JSON.stringify(filter).length <= 2 ? {TTestName: {[Op.like]: "%" + TTestNameKeyword + "%"}} : {$and: [filter, {TTestName: {[Op.like]: "%" + TTestNameKeyword + "%"}}]};
-        if (useTCweIDSearch) filter = JSON.stringify(filter).length <= 2 ? {TCweID: TCweIDSearch} : {[Op.or]: [filter, {TCweID: TCweIDSearch}]};
+        if (PciTests) filter = JSON.stringify(filter).length <= 2 ? { TPCI: PciTests } : { [Op.or]: [filter, { TPCI: PciTests }] };
+        if (Top10Tests) filter = JSON.stringify(filter).length <= 2 ? { TTop10: Top10Tests } : { [Op.or]: [filter, { TTop10: Top10Tests }] };
+        if (Top25Tests) filter = JSON.stringify(filter).length <= 2 ? { TTop25: Top25Tests } : { [Op.or]: [filter, { TTop25: Top25Tests }] };
+        if (StdTests) filter = JSON.stringify(filter).length <= 2 ? { TStdTest: StdTests } : { [Op.or]: [filter, { TStdTest: StdTests }] };
+        if (useTestNameKeyword) filter = JSON.stringify(filter).length <= 2 ? { TTestName: { [Op.like]: "%" + TTestNameKeyword + "%" } } : { $and: [filter, { TTestName: { [Op.like]: "%" + TTestNameKeyword + "%" } }] };
+        if (useTCweIDSearch) filter = JSON.stringify(filter).length <= 2 ? { TCweID: TCweIDSearch } : { [Op.or]: [filter, { TCweID: TCweIDSearch }] };
+        scopeQuery = { [Op.and]: [scopeQuery, filter] };
+        */
+        let filter = []
+        filter.push(scopeQuery);
 
-        scopeQuery = {[Op.and]: [scopeQuery, filter]};
+        if (PciTests) filter.push({ TPCI: true });
+        if (Top10Tests) filter.push({ TTop10: true });
+        if (Top25Tests) filter.push({ TTop25: true });
+        if (StdTests) filter.push({ TStdTest: true });
+        if (useTestNameKeyword) filter.push({ TTestName: { [Op.like]: "%" + TTestNameKeyword + "%" } });
+        if (useTCweIDSearch) filter.push({ TCweID: TCweIDSearch });
+        scopeQuery = { [Op.and]: filter };
     }
     return scopeQuery;
 };

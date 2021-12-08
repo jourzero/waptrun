@@ -13,11 +13,9 @@ module.exports = {
                 description: "Web App PenTesting Runner",
                 version: "1.0.0",
             },
-            license: { name: "Licensed Under MIT", url: "https://spdx.org/licenses/MIT.html", },
-            contact: { name: "JourZero", url: "https://github.com/jourzero", },
             servers: [
-                { url: "https://www.wapt.me:5000", description: "Development server" },
-                { url: "https://www.wapt.qa", description: "QA server" },
+                { url: "http://localhost:5000", description: "Dev server" },
+                { url: "https://waptrun.azurewebsites.net", description: "Staging server" },
             ],
             components: {
                 schemas: {
@@ -133,23 +131,6 @@ module.exports = {
                         scheme: "bearer",
                         bearerFormat: "JWT",
                     },
-                    oauthAuthExample: {
-                        type: "oauth2",
-                        flows: {
-                            implicit: {
-                                authorizationUrl: "https://petstore.swagger.io/oauth/authorize",
-                                scopes: {
-                                    'write:pets': "modify pets in your account",
-                                    'read:pets': "read your pets"
-                                }
-                            }
-                        }
-                    },
-                    api_key: {
-                        type: "apiKey",
-                        name: "api_key",
-                        in: "header"
-                    }
                 },
             },
             security: [
