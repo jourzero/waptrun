@@ -14,8 +14,12 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
 # Read-only shares: static reference content
 MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
 
-# Writable shares for dev only -- i.e. Prod only gets updated via in-container git pull ("App Update" button)
-if [ "$WAPTRUN_ENV" != PROD ];then 
+# Writable shares for Prod only -- i.e. Prod gets updated via in-container 'git pull' so we share GIT data with the container
+if [ "$WAPTRUN_ENV" = PROD ];then 
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/.git:${CTR_BASE}/.git"
+
+# Writable shares for Dev/QA
+else
     # Simplify bidirectional data file updates between Dev host and Dev Container
     MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
     # Bring dependency updates back to Dev for Github pushes
@@ -28,6 +32,7 @@ if [ "$WAPTRUN_ENV" != PROD ];then
     # Only uncomment below line sporadically to help with IDE code completion (after new modules are added)
     #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
 fi
+
 
 
 # Publish specific ports
