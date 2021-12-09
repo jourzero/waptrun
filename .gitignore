@@ -93,3 +93,4 @@ data/backup*
 data/old
 logs/test.json
 doc/AzureTest.md
+data/waptrun.sqlite3
