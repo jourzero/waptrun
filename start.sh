@@ -42,7 +42,7 @@ PUB="${PUB} -p 127.0.0.1:9230:9230"
 PUB="${PUB} -p 127.0.0.1:27017:27017"
 
 ### Configure run options 
-RUN_OPTS="-d -u $(id -u):$(id -g)"
+RUN_OPTS="-d -u node:node"
 
 # Run container, mount local dir to /app, name it with the directory name
 set -x
