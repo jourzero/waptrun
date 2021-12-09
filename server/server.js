@@ -36,7 +36,6 @@ const {project} = require("./validationSchema.js");
 const openapiVirtualPath = "/apidoc/openapi.json";
 const swaggerUiOptions = {swaggerOptions: {url: openapiVirtualPath}};
 const openapiJsonData = swaggerJsdoc(openapiConfig.openapiDef);
-
 //logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
 
 // ========================================== CONFIG ==========================================
