@@ -38,7 +38,7 @@ const swaggerUiOptions = {swaggerOptions: {url: openapiVirtualPath}};
 const openapiJsonData = swaggerJsdoc(openapiConfig.openapiDef);
 
 // Print env on startup
-logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
+//logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
 
 // ========================================== CONFIG ==========================================
 // Auth/authz config
