@@ -13,7 +13,6 @@ RUN npm install -g npm@8.2.0
 
 # Copy project files to /app
 WORKDIR /app
-RUN mkdir /app/backup
 COPY --chown=node:node . .
 RUN chown node:node /app
 
