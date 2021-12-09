@@ -7,13 +7,17 @@ MOUNTS=""
 
 # Writable shares -- looks excessive but it's because of live app update feature, multi-env. and simplified single-user continuous deployment
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
+
+if [ "$WAPTRUN_ENV" != PROD ];then 
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
+fi
+
 # Only include below temporarily to help with IDE code completion (after new modules are added)
 #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
 
