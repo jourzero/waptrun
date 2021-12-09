@@ -4,18 +4,21 @@
 HOST_BASE="$PWD"
 CTR_BASE="/app"
 MOUNTS=""
-# Writable
+
+# Writable shares -- looks excessive but it's because of live app update feature, multi-env. and perpetual DevOps mode
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
+# Only include below temporarily to help with IDE code completion (after new modules are added)
 #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
+
 # Read-only
-MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
-MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
 
 # Publish specific ports
 PUB=""
