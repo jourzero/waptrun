@@ -5,24 +5,30 @@ HOST_BASE="$PWD"
 CTR_BASE="/app"
 MOUNTS=""
 
-# Writable shares -- looks excessive but it's because of live app update feature, multi-env. and simplified single-user continuous deployment
+# Writable shares (applicable in Dev & Prod)
+# Share for DB backups
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
+# Share for live environment changes
 MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
 
+# Read-only shares: static reference content
+MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
+
+# Writable shares for dev only -- i.e. Prod only gets updated via in-container git pull ("App Update" button)
 if [ "$WAPTRUN_ENV" != PROD ];then 
+    # Simplify bidirectional data file updates between Dev host and Dev Container
     MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
+    # Bring dependency updates back to Dev for Github pushes
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
+    # Allow edits from IDE and immediate effects in Dev container
     MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
+    # Only uncomment below line sporadically to help with IDE code completion (after new modules are added)
+    #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
 fi
 
-# Only include below temporarily to help with IDE code completion (after new modules are added)
-#MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
-
-# Read-only
-MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
 
 # Publish specific ports
 PUB=""
@@ -31,7 +37,6 @@ PUB="${PUB} -p 127.0.0.1:9230:9230"
 PUB="${PUB} -p 127.0.0.1:27017:27017"
 
 ### Configure run options 
-#RUN_OPTS="-it"
 RUN_OPTS="-d -u $(id -u):$(id -g)"
 
 # Run container, mount local dir to /app, name it with the directory name
