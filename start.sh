@@ -5,7 +5,7 @@ HOST_BASE="$PWD"
 CTR_BASE="/app"
 MOUNTS=""
 
-# Writable shares -- looks excessive but it's because of live app update feature, multi-env. and perpetual DevOps mode
+# Writable shares -- looks excessive but it's because of live app update feature, multi-env. and simplified single-user continuous deployment
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
