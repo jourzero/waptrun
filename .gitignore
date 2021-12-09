@@ -94,3 +94,6 @@ data/old
 logs/test.json
 doc/AzureTest.md
 data/waptrun.sqlite3
+data/*.xml
+data/*.zip
+data/*har
