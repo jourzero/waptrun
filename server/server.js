@@ -19,25 +19,25 @@ const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
 const config = require("./config.js");
 const openapiConfig = require("./openapiConfig.js");
-const { check, checkSchema, validationResult, matchedData } = require("express-validator");
+const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
 const validationValues = require("./validationValues.js");
 const utils = require("./serverUtils.js");
 const reporting = require("./reporting.js");
-const { exec, execFile } = require("child_process");
+const {exec, execFile} = require("child_process");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
-const { Op, Sequelize } = require("sequelize");
-const { project } = require("./validationSchema.js");
+const {Op, Sequelize} = require("sequelize");
+const {project} = require("./validationSchema.js");
 //const router = express.Router();
 
 // Swagger UI Options - ref: https://www.npmjs.com/package/swagger-ui-express
 const openapiVirtualPath = "/apidoc/openapi.json";
-const swaggerUiOptions = { swaggerOptions: { url: openapiVirtualPath } };
+const swaggerUiOptions = {swaggerOptions: {url: openapiVirtualPath}};
 const openapiJsonData = swaggerJsdoc(openapiConfig.openapiDef);
 
-logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
+//logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
 
 // ========================================== CONFIG ==========================================
 // Auth/authz config
@@ -72,10 +72,10 @@ else app = express();
 app.disable("x-powered-by");
 app.use(reqLogger);
 app.use(cookieParser());
-app.use(bodyParser.json({ limit: "5mb" }));
-app.use(bodyParser.json({ type: "application/csp-report" }));
-app.use(bodyParser.json({ type: "application/json" }));
-app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
+app.use(bodyParser.json({limit: "5mb"}));
+app.use(bodyParser.json({type: "application/csp-report"}));
+app.use(bodyParser.json({type: "application/json"}));
+app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
 app.use(methodOverride());
 if (authMode == config.AUTH_MODE_OAUTH) require("./auth")();
@@ -112,10 +112,10 @@ if (useHttp2) {
 app.use(helmet.contentSecurityPolicy(config.csp));
 
 //app.use(express.text({defaultCharset: "utf-8"}));
-app.use(express.text({ defaultCharset: "ISO-8859-1" }));
+app.use(express.text({defaultCharset: "ISO-8859-1"}));
 
 // IMPORTANT: place this before static or similar middleware directory is where markdown files are stored
-app.use(require("./lib/express-markdown")({ directory: path.join(__dirname, "../doc") }));
+app.use(require("./lib/express-markdown")({directory: path.join(__dirname, "../doc")}));
 
 // Serve static content -- ref.: https://expressjs.com/en/4x/api.html#express.static
 app.use(express.static(path.join(__dirname, "../client"), config.staticOptions));
@@ -189,15 +189,15 @@ app.use(function (req, res, next) {
 
 if (authMode == config.AUTH_MODE_OAUTH) {
     // ============================== GOOGLE AUTH ROUTES ==========================================
-    app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] }));
-    app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), function (req, res) {
+    app.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
+    app.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "/login"}), function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/home");
     });
 
     // ============================== GITHUB AUTH ROUTES ==========================================
     app.get("/auth/github", passport.authenticate("github"));
-    app.get("/auth/github/callback", passport.authenticate("github", { failureRedirect: "/login" }), function (req, res) {
+    app.get("/auth/github/callback", passport.authenticate("github", {failureRedirect: "/login"}), function (req, res) {
         // Successful authentication, redirect home.
         res.redirect("/home");
     });
@@ -262,11 +262,10 @@ app.all("/api/*", ensureAuthenticated, ensureAuthorized, function (req, res, nex
     next();
 });
 
-
 // Serve API documentation
 //fs.writeFileSync(path.join(__dirname, openapiConfig.openapiFilename), JSON.stringify(openapiJsonData, null, 2));
 app.get(openapiVirtualPath, (req, res) => res.json(openapiJsonData));
-app.use('/apidoc', swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup(null, swaggerUiOptions));
+app.use("/apidoc", swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup(null, swaggerUiOptions));
 
 /**
  * @openapi
@@ -290,14 +289,13 @@ app.post("/api/db/backup", (req, res, next) => {
             let msg = `Error when backing-up DB: ${error}`;
             console.error(msg);
             // HTTP STATUS: 500 Internal Server Error - The server encountered an unexpected condition which prevented it from fulfilling the request.
-            return res.status(500).json({ error: JSON.stringify(msg) });
+            return res.status(500).json({error: JSON.stringify(msg)});
         }
-        let msg = { stdout: stdout, stderr: stderr };
+        let msg = {stdout: stdout, stderr: stderr};
         logger.info(`Backup result: ${JSON.stringify(msg)}`);
         res.json(msg);
     });
 });
-
 
 /**
  * @openapi
@@ -320,9 +318,9 @@ app.post("/api/app/update", (req, res, next) => {
         if (error) {
             let msg = `Error when running 'git pull': ${error}`;
             console.error(msg);
-            return res.status(500).json({ error: JSON.stringify(msg) });
+            return res.status(500).json({error: JSON.stringify(msg)});
         }
-        let msg = { stdout: stdout, stderr: stderr };
+        let msg = {stdout: stdout, stderr: stderr};
         logger.info(`Result from 'git pull': ${JSON.stringify(msg)}`);
         res.json(msg);
     });
@@ -363,11 +361,11 @@ app.get("/api/account", function (req, res) {
             sub: "None",
             id: "anon",
             displayName: "Anonymous",
-            name: { givenName: "", familyName: "" },
+            name: {givenName: "", familyName: ""},
             given_name: "",
             family_name: "",
             language: "en",
-            photos: [{ value: "/images/anon.png", type: "image" }],
+            photos: [{value: "/images/anon.png", type: "image"}],
             picture: "",
         };
         res.json(data);
@@ -442,7 +440,7 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     // prettier-ignore
@@ -480,7 +478,7 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -539,7 +537,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -583,7 +581,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
  *         description: Request failure (check inputs)
  *       '404':
  *         description: Not found (DB error)
- *     summary: Delete project. 
+ *     summary: Delete project.
  *     tags:
  *       - Project
  */
@@ -595,7 +593,7 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -671,7 +669,7 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     // TODO: Maybe send notFound(404) instead of noData(204) when op is OK but d says 0 record are applicable?
@@ -712,7 +710,7 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -737,7 +735,7 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/testKB'
-  *     parameters:
+ *     parameters:
  *       - name: TID
  *         in: path
  *         description: Test ID
@@ -773,7 +771,7 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -859,7 +857,7 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     // prettier-ignore
@@ -906,7 +904,7 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -966,7 +964,7 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -1022,7 +1020,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
     // Get project
     logger.debug(`Creating TODO tests for project ${req.params.PrjName}`);
     db.project
-        .findOne({ where: { name: req.params.PrjName } })
+        .findOne({where: {name: req.params.PrjName}})
         .then((prj) => {
             // Get scope query
             let scopeQuery = utils.getSequelizeScopeQuery(prj);
@@ -1030,7 +1028,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
             // Search the Test KB for matching tests
             logger.info("Searching TestKB with scope");
             db.test
-                .findAll({ where: scopeQuery })
+                .findAll({where: scopeQuery})
                 .then((tests) => {
                     logger.info(`Applicable tests: ${JSON.stringify(tests)}`);
 
@@ -1038,7 +1036,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                     const errors = validationResult(req);
                     if (!errors.isEmpty()) {
                         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-                        failure("validate-req", res, { errors: errors.array() });
+                        failure("validate-req", res, {errors: errors.array()});
                         return;
                     }
 
@@ -1143,7 +1141,7 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -1268,7 +1266,7 @@ app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn("Input validation failed for project name");
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -1493,14 +1491,14 @@ app.use(function (err, req, res, next) {
     // HTTP STATUS: 500 Internal Server Error - The server encountered an unexpected condition which prevented it from fulfilling the request.
     // TODO: Toggle comments on below 3 lines for security (eventually)
     //res.sendStatus(500);
-    res.status(500).send({ error: msg, additionalInfo: "Caught by global exception handler." });
+    res.status(500).send({error: msg, additionalInfo: "Caught by global exception handler."});
 });
 
 // Our custom JSON 404 middleware. Since it's placed last it will be the last middleware called,
 // if all others invoke next() and do not respond.
 app.use(function (req, res) {
     // HTTP STATUS: 404 Not Found - The server can not find the requested resource.
-    res.status(404).send({ Error: "This request is unsupported!" });
+    res.status(404).send({Error: "This request is unsupported!"});
 });
 
 // ========================================== START LISTENER ==========================================
