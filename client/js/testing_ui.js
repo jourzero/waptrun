@@ -59,7 +59,7 @@ uiProject.onRendered(function () {
 function uiProjectPopulate(name) {
     console.debug(`Getting data for project ${name}`);
     restGetProjectTestingData(name, function (data) {
-        if (data !== null) {
+        if (data) {
             // Update model (combine config data with flattened project data)
             let prjData = _.assign(data, data.prj);
             uiProject.setData(prjData);
@@ -98,7 +98,7 @@ uiCWE.onRendered(function () {
 function uiCwePopulate() {
     console.debug(`Getting all CWE data`);
     restGetAllCWEs(function (data) {
-        if (data !== null) {
+        if (data) {
             const cwes = {cwes: data};
             // Update model
             uiCWE.setData(cwes);
@@ -220,7 +220,7 @@ uiTest.helpers({
 function uiTestPopulate(testId) {
     console.debug(`Getting data for Test ID ${testId}`);
     restGetTest(testId, function (data) {
-        if (data !== null) {
+        if (data) {
             data.TPCI = Boolean(data.TPCI);
             data.TTop10 = Boolean(data.TTop10);
             data.TTop25 = Boolean(data.TTop25);
@@ -832,7 +832,7 @@ function uiUpdateCwe(cweId, forceUpdate) {
     if (cweId) {
         console.info("Updating UI for CWE-" + cweId);
         restGetCwe(cweId, function (cwe) {
-            if (cwe !== null) {
+            if (cwe) {
                 let uiData = uiTest.getData();
                 uiUpdateStatus("Received REST response for CWE ID " + cweId);
 
