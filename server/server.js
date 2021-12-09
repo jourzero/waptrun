@@ -1044,6 +1044,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                     logger.info(`Creating TODOs for ${req.params.PrjName}`);
                     for (let test of tests) {
                         let data = {};
+                        let createFailed = false;
                         logger.info(`Creating TODO for TID ${test.TID}`);
                         data.TID = test.TID;
                         data.PrjName = req.params.PrjName;
@@ -1056,7 +1057,8 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
                         // Add issue
                         // prettier-ignore
                         db.issue.create(data).then((d) => { logger.debug(`TODO created: ${JSON.stringify(data)}`); })
-                            .catch((e) => { failure(op, res, e); return; });
+                            .catch((e) => { failure(op, res, e); createFailed=true; });
+                        if (createFailed) return;
                     }
                     created(op, res, {});
                 })
