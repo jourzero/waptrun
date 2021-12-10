@@ -317,8 +317,8 @@ app.post("/api/app/update", (req, res, next) => {
     logger.info("Incoming app update request");
     exec("/app/utils/updateFromGithub.sh", (error, stdout, stderr) => {
         if (error) {
-            let msg = `Error when running 'git pull': ${error}`;
-            console.error(msg);
+            let msg = `Error when running 'git pull': ${JSON.stringify(error)}`;
+            logger.error(msg);
             return res.status(500).json({error: JSON.stringify(msg)});
         }
         let msg = {stdout: stdout, stderr: stderr};
@@ -398,7 +398,7 @@ app.get("/api/project", (req, res) => {
     logger.info("Incoming projects search request");
     const op = "get-all-projects";
     // prettier-ignore
-    db.project.findAll().then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.project.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -445,7 +445,7 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
         return;
     }
     // prettier-ignore
-    db.project.findOne({ where: { name: req.params.name } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -490,7 +490,7 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
         locations: ["body"],
     });
     // prettier-ignore
-    db.project.create(bodyData).then((d) => { created(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.project.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -551,7 +551,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
     logger.info(`Updating ${req.params.name}`);
     const op = "update-project";
     // prettier-ignore
-    db.project.update(bodyData, { where: { name: req.params.name } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.project.update(bodyData, {where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -599,7 +599,7 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
     }
 
     // prettier-ignore
-    db.project.destroy({ where: { name: req.params.name } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.project.destroy({where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -675,7 +675,7 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
     }
     // TODO: Maybe send notFound(404) instead of noData(204) when op is OK but d says 0 record are applicable?
     // prettier-ignore
-    db.test.findOne({ where: { TID: req.params.TID } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.test.findOne({where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -723,7 +723,7 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
     });
 
     // prettier-ignore
-    db.test.create(bodyData).then((d) => { created(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.test.create(bodyData).then((d) => {created(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -784,7 +784,7 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
     });
 
     // prettier-ignore
-    db.test.update(bodyData, { where: { TID: req.params.TID } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.test.update(bodyData, {where: {TID: req.params.TID}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -814,7 +814,7 @@ app.get("/api/issue", (req, res) => {
     logger.info("Incoming issues search request");
     const op = "get-all-issues";
     // prettier-ignore
-    db.issue.findAll().then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.issue.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -862,7 +862,7 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
         return;
     }
     // prettier-ignore
-    db.issue.findAll({ where: { PrjName: req.params.PrjName }, order: [["IPriority", "ASC"], ["TIssueName", "ASC"], ["TID", "ASC"]] }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.issue.findAll({where: {PrjName: req.params.PrjName}, order: [["IPriority", "ASC"], ["TIssueName", "ASC"], ["TID", "ASC"]]}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -910,7 +910,7 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
     }
 
     // prettier-ignore
-    db.issue.destroy({ where: { PrjName: req.params.PrjName } }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.issue.destroy({where: {PrjName: req.params.PrjName}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -979,7 +979,7 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
     logger.debug(`Upsert project issue data: ${JSON.stringify(bodyData)}`);
     // prettier-ignore
     db.issue.upsert(bodyData)
-        .then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+        .then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -1016,7 +1016,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
     // Check for input validation errors in the request
     const errors = validationResult(req);
     // prettier-ignore
-    if (!errors.isEmpty()) { logger.warn("Input validation failed for project name"); failure("validate-req", res, { errors: errors.array() }); return; }
+    if (!errors.isEmpty()) {logger.warn("Input validation failed for project name"); failure("validate-req", res, {errors: errors.array()}); return;}
 
     // Get project
     logger.debug(`Creating TODO tests for project ${req.params.PrjName}`);
@@ -1056,8 +1056,8 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
 
                         // Add issue
                         // prettier-ignore
-                        db.issue.create(data).then((d) => { logger.debug(`TODO created: ${JSON.stringify(data)}`); })
-                            .catch((e) => { failure(op, res, e); createFailed=true; });
+                        db.issue.create(data).then((d) => {logger.debug(`TODO created: ${JSON.stringify(data)}`);})
+                            .catch((e) => {failure(op, res, e); createFailed = true;});
                         if (createFailed) return;
                     }
                     created(op, res, {});
@@ -1119,7 +1119,7 @@ app.delete("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn(`Input validation failed: ${JSON.stringify(errors)}`);
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
 
@@ -1128,10 +1128,10 @@ app.delete("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues
     //kvp1.TID = req.params.TID;
     //kvp2.PrjName = req.params.PrjName;
     //crit["[Op.and]"] = [kvp1, kvp2];
-    let crit = { TID: req.params.TID, PrjName: req.params.PrjName };
+    let crit = {TID: req.params.TID, PrjName: req.params.PrjName};
     logger.debug(`Deleting project issue data with criteria ${JSON.stringify(crit)}`);
     // prettier-ignore
-    db.issue.destroy({ where: crit }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.issue.destroy({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 }
 );
 
@@ -1150,10 +1150,10 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
 
     // Build search criteria
     // prettier-ignore
-    let crit = { TID: req.params.TID, PrjName: req.params.PrjName };
+    let crit = {TID: req.params.TID, PrjName: req.params.PrjName};
     logger.debug(`Searching for project issue data with criteria ${JSON.stringify(crit)}`);
     // prettier-ignore
-    db.issue.findOne({ where: crit }).then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.issue.findOne({where: crit}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -1187,7 +1187,7 @@ app.get("/api/cwe", (req, res) => {
     const op = "get-cwes";
 
     // prettier-ignore
-    db.cwe.findAll().then((d) => { ok(op, res, d); }).catch((e) => { notFound(op, res, e); });
+    db.cwe.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -1228,8 +1228,8 @@ app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (
     const op = "get-cwe";
 
     // prettier-ignore
-    db.cwe.findOne({ where: { CweId: req.params.CweId } }).then((d) => { ok(op, res, d); })
-        .catch((e) => { notFound(op, res, e); });
+    db.cwe.findOne({where: {CweId: req.params.CweId}}).then((d) => {ok(op, res, d);})
+        .catch((e) => {notFound(op, res, e);});
 });
 
 /**
@@ -1276,10 +1276,10 @@ app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName
     // Get project
     logger.debug(`Checking if entry exists for project ${req.params.PrjName}`);
     // prettier-ignore
-    db.project.findOne({ where: { name: req.params.PrjName } })
+    db.project.findOne({where: {name: req.params.PrjName}})
         .then((prj) => {
             if (!prj) {
-                notFound("findall-scoped-project", res, { message: "Could not find testing data (null)" });
+                notFound("findall-scoped-project", res, {message: "Could not find testing data (null)"});
                 return;
             }
 
@@ -1289,9 +1289,9 @@ app.get("/api/:PrjName/tests", check("PrjName").matches(validationValues.PrjName
             // Search the Test KB for matching tests
             logger.debug("Searching TestKB with scope query ", scopeQuery);
             let testKbFields = ["TID", "TSource", "TTestName"];
-            db.test.findAll({ where: scopeQuery, order: [["TID", "ASC"]], attributes: testKbFields })
+            db.test.findAll({where: scopeQuery, order: [["TID", "ASC"]], attributes: testKbFields})
                 .then((tests) => {
-                    const testingPageData = { prj: prj, tests: tests, CweUriBase: config.CweUriBase, CveRptBase: config.CveRptBase, CveRptSuffix: config.CveRptSuffix, TestRefBase: config.TestRefBase, ScopeQuery: JSON.stringify(scopeQuery) };
+                    const testingPageData = {prj: prj, tests: tests, CweUriBase: config.CweUriBase, CveRptBase: config.CveRptBase, CveRptSuffix: config.CveRptSuffix, TestRefBase: config.TestRefBase, ScopeQuery: JSON.stringify(scopeQuery)};
                     logger.info(`Returning testing page data for project ${req.params.PrjName}`);
                     res.json(testingPageData);
                 })
@@ -1347,7 +1347,7 @@ app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjNam
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn("Input validation failed for project name");
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     reporting.sendProjectReport(req, res, config.REPORT_TYPE_CSV, showAllIssues = true);
@@ -1393,7 +1393,7 @@ app.get("/export/json/:PrjName", check("PrjName").matches(validationValues.PrjNa
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn("Input validation failed for project name");
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     reporting.sendProjectReport(req, res, config.REPORT_TYPE_JSON, showAllIssues = true);
@@ -1434,7 +1434,7 @@ app.get("/export/html/findings/:PrjName", check("PrjName").matches(validationVal
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn("Input validation failed for project name");
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     //reporting.genPrjIssueFindingsReportHtml(req, res);
@@ -1476,7 +1476,7 @@ app.get("/export/html/full/:PrjName", check("PrjName").matches(validationValues.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         logger.warn("Input validation failed for project name");
-        failure("validate-req", res, { errors: errors.array() });
+        failure("validate-req", res, {errors: errors.array()});
         return;
     }
     //reporting.genPrjIssueFullReportHtml(req, res);
