@@ -25,7 +25,7 @@ if [ "${WAPTRUN_ENV}" = "PROD" ];then
 fi
 
 # Install node modules
-RUN npm install
+npm install
 
 # Initialize DB if needed
 if [ ! -f "${DATA_DIR}/${DB_FILE}" ];then
