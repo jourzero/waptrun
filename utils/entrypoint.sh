@@ -31,8 +31,6 @@ if [ "${WAPTRUN_ENV}" = "PROD" ];then
         mv waptrun/* .
         echo -e "\n\n-- Listing cloned data"
         ls -a
-        echo -e "\n\n-- Getting submodules"
-        git submodule update --init --recursive
     fi
 fi
 
