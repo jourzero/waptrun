@@ -9,7 +9,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 RUN apt-get -y install wget gnupg lsof curl procps iproute2 zip xsltproc git
 
 # Upgrade NPM
-RUN npm install -g npm@8.2.0
+#RUN npm install -g npm@8.2.0
 
 # Copy project files to /app
 WORKDIR /app
@@ -22,9 +22,8 @@ USER node
 # Get node modules
 RUN npm install
 
-# Expose Node app, Node remote debugging and Mongodb
+# Expose Node app and Node remote debugging
 EXPOSE 9230
-EXPOSE 27017
 EXPOSE 5000
 #CMD npm start
 CMD ./entrypoint.sh
