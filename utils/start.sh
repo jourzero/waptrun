@@ -22,7 +22,7 @@ if [ "$WAPTRUN_ENV" != PROD ];then
     # Bring dependency updates back to Dev for Github pushes or IDE completion (node_modules)
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
+    #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
     # Allow edits in IDE to have immediate effects in Dev container
     MOUNTS="$MOUNTS -v ${HOST_BASE}/dbinit:${CTR_BASE}/dbinit"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
