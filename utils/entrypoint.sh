@@ -3,6 +3,9 @@
 # entrypoint.sh: Container entry point for waptrun app
 #======================================================
 cd /app 2>/dev/null
+DATA_DIR="/app/data"
+INIT_DIR="/app/dbinit"
+DB_FILE="waptrun.sqlite3"
 
 # Make sure we're in the container
 if [ "${PWD}" != "/app" ];then  
@@ -16,14 +19,19 @@ if [ "${WAPTRUN_ENV}" != "DEV" -a "${WAPTRUN_ENV}" != "PROD" ];then
     exit 1
 fi
 
-# If in Prod mode, pull the code from Github and initialize DB if needed
+# If in Prod mode, pull the code from Github 
 if [ "${WAPTRUN_ENV}" = "PROD" ];then
     /app/utils/updateFromGithub.sh
-    if [ -]
 fi
 
 # Install node modules
 RUN npm install
+
+# Initialize DB if needed
+if [ ! -f "${DATA_DIR}/${DB_FILE}" ];then
+    echo "WARNING: DB file ${DATA_DIR}/${DB_FILE} not present, using a fresh DB file with no project."
+    cp "${INIT_DIR}/${DB_FILE}" "${DATA_DIR}/${DB_FILE}"
+fi 
 
 # Start the app using nodemon for automatic restarts on code changes
 echo -e "\n\n-- Starting app"
