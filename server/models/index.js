@@ -11,7 +11,8 @@ const db = {};
 
 // EP: Configure logging
 //config.logging = (msg) => logger.debug(msg);
-config.logging = false;
+//config.logging = false;
+config.logging = (msg) => logger.log('silly', msg);
 
 let sequelize;
 if (config.use_env_variable) {
