@@ -10,7 +10,8 @@ const logger = require("../lib/appLogger.js");
 const db = {};
 
 // EP: Configure logging
-config.logging = (msg) => logger.debug(msg);
+//config.logging = (msg) => logger.debug(msg);
+config.logging = false;
 
 let sequelize;
 if (config.use_env_variable) {
