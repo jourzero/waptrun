@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check that we're at the root of waptrun project
-if [ "$(basename ${PWD})" != "waptrun" ];then
+if [ "${PWD##*/}" != "waptrun" ];then
     echo "ERROR: $0 was not executed from waptrun directory, exiting immediately."
     exit 1
 fi
