@@ -7,6 +7,8 @@ DATA_DIR="/app/data"
 INIT_DIR="/app/dbinit"
 DB_FILE="waptrun.sqlite3"
 
+echo -e "\n\n=== Starting $0 in ${WAPTRUN_ENV} mode ==="
+
 # Make sure we're in the container
 if [ "${PWD}" != "/app" ];then  
     echo "ERROR: $0 is not running in container, exiting immediately."
@@ -21,10 +23,18 @@ fi
 
 # If in Prod mode, pull the code from Github 
 if [ "${WAPTRUN_ENV}" = "PROD" ];then
-    /app/utils/updateFromGithub.sh
+    if [ -d /app/server ];then
+        /app/utils/updateFromGithub.sh
+    else
+        echo -e "\n\n-- Cloning waptrun project"
+        git clone https://github.com/jourzero/waptrun.git
+        echo -e "\n\n-- Getting submodules"
+        git submodule update --init --recursive
+    fi
 fi
 
 # Install node modules
+echo -e "\n\n-- Installing node modules"
 npm install
 
 # Initialize DB if needed
@@ -32,6 +42,7 @@ if [ ! -f "${DATA_DIR}/${DB_FILE}" ];then
     echo "WARNING: DB file ${DATA_DIR}/${DB_FILE} not present, using a fresh DB file with no project."
     cp "${INIT_DIR}/${DB_FILE}" "${DATA_DIR}/${DB_FILE}"
 fi 
+
 
 # Start the app using nodemon for automatic restarts on code changes
 echo -e "\n\n-- Starting app"
