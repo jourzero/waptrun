@@ -6,7 +6,6 @@
 .git
 .github
 .gitignore
-.gitmodules
 .vscode
 Dockerfile
 LICENSE
