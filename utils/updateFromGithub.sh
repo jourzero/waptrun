@@ -17,6 +17,7 @@ if [ "${WAPTRUN_ENV}" != "PROD" ];then
 fi
 
  # Setup for pull only
+set +x
 git config pull.ff only 
 
 # Pull latest code
