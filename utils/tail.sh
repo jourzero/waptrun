@@ -2,4 +2,4 @@
 set -x
 
 # Tail logs on running container
-docker logs -f ${PWD##*/} 
+docker logs -f waptrun

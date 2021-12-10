@@ -1,19 +1,15 @@
 #!/bin/bash
+#======================================================
+# entrypoint.sh: Container entry point for waptrun app
+#======================================================
+cd /app 2>/dev/null
 
-# Start Mongo DB
-#echo -e "\n\n-- Starting Mongo DB..."
-#service mongod start
-
-# Get app dependencies
-#echo -e "\n\n-- Installing node modules"
-#su node -c "npm install"
-
-# Run app as lower privileged user
-echo -e "\n\n-- Starting app"
-#su node -c "npm run dev"
-
-# Reinstall packages (to have them on host for IDE code completion)
-#npm install
+# Make sure we're in the container
+if [ "${PWD}" != "/app" ];then  
+    echo "ERROR: $0 is not running in container, exiting immediately."
+    exit 1
+fi
 
 # Start app in Dev mode
+echo -e "\n\n-- Starting app"
 npm run dev

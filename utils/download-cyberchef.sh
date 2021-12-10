@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "WARNING: Script $0 is disabled."
+exit 0
 set -x
 VERSION="CyberChef_v9.21.0"
 ZIP_FILE="${VERSION}.zip"

@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "WARNING: Script $0 is disabled."
+exit 0
 OUTPUT_DIR="/app/data"
 INPUT_FILE="1344.xml"
 OUTPUT_FILE="cwe-top10s.csv"

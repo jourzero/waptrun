@@ -1,12 +1,18 @@
 #!/bin/bash
-set -x
+
+# Check that we're at the root of waptrun project
+if [ "$(basename $PWD)" != "waptrun" ];then
+    echo "ERROR: $0 was not executed from waptrun directory, exiting immediately."
+    exit 1
+fi
 
 # Stop and remove container
-docker stop ${PWD##*/} 
-docker rm ${PWD##*/} 
+set -x
+docker stop waptrun
+docker rm waptrun
 
 # Rebuild
-docker-build.sh
+docker build -t waptrun
 
 # Start container
 ./start.sh

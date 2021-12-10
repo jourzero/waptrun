@@ -26,4 +26,4 @@ RUN npm install
 EXPOSE 9230
 EXPOSE 5000
 #CMD npm start
-CMD ./entrypoint.sh
+CMD ./utils/entrypoint.sh
