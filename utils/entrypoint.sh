@@ -29,8 +29,8 @@ if [ "${WAPTRUN_ENV}" = "PROD" ];then
         echo -e "\n\n-- Cloning waptrun project"
         git clone https://github.com/jourzero/waptrun.git
         mv waptrun/* . 2>/dev/null
-        echo -e "\n\n-- Listing cloned data"
-        ls -a
+        #echo -e "\n\n-- Listing cloned data"
+        #ls -a
     fi
 fi
 
