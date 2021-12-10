@@ -4,6 +4,8 @@
 #==================================================
 cd /app 2>/dev/null
 
+echo -e "\n\n-- Running $0..."
+
 # Make sure we're in the container
 if [ "${PWD}" != "/app" ];then  
     echo "ERROR: $0 is not running in container, exiting immediately."
