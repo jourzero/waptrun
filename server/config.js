@@ -1,6 +1,6 @@
 const os = require("os");
-const { createLogger, format, transports } = require("winston");
-const { combine, timestamp, printf, json } = format;
+const {createLogger, format, transports} = require("winston");
+const {combine, timestamp, printf, json} = format;
 const appRoot = require("app-root-path");
 const appName = "express-tests";
 const AUTH_MODE_NONE = 0;
@@ -16,7 +16,7 @@ const LOCAL_USER = {
     displayName: "Anonymous User",
     local: true,
 };
-const myFormat = printf(({ level, message, timestamp }) => {
+const myFormat = printf(({level, message, timestamp}) => {
     return `${timestamp} ${level}: ${message}`;
 });
 
@@ -97,7 +97,7 @@ module.exports = {
         resave: true,
         saveUninitialized: true,
         secret: "fawefjeaiaoeifj",
-        cookie: { path: "/", httpOnly: true, secure: false, sameSite: "lax" },
+        cookie: {path: "/", httpOnly: true, secure: false, sameSite: "lax"},
     },
 
     // TLS config
@@ -125,7 +125,8 @@ module.exports = {
         },
         console: {
             format: combine(format.colorize(), timestamp(), myFormat),
-            level: "debug",
+            //level: "silly", // Show Sequelize queries and maybe other stuff 
+            level: "debug", // Usual logging level
             handleExceptions: true,
             json: false,
             colorize: true,
