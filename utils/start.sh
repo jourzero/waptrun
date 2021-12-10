@@ -6,8 +6,9 @@ CTR_BASE="/app"
 MOUNTS=""
 
 # Writable shares (applicable for all deployments)
-# Share for DB backups
+# Share for DB backups and data files
 MOUNTS="$MOUNTS -v ${HOST_BASE}/backup:${CTR_BASE}/backup"
+MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
 # Share for live environment changes
 MOUNTS="$MOUNTS -v ${HOST_BASE}/.env:${CTR_BASE}/.env"
 
@@ -16,8 +17,6 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
 
 # Writable shares for Dev
 if [ "$WAPTRUN_ENV" != PROD ];then 
-    # Simplify bidirectional data file updates between Dev host and Dev Container
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/data:${CTR_BASE}/data"
     # Bring dependency updates back to Dev for Github pushes
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
