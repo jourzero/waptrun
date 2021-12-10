@@ -12,7 +12,7 @@ docker stop waptrun
 docker rm waptrun
 
 # Rebuild
-docker build -t waptrun waptrun
+docker build -t waptrun .
 
 # Start container
 utils/start.sh
