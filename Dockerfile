@@ -17,7 +17,7 @@ WORKDIR /app
 # Commented-out below: In Dev, use mounted volumes. In Prod, use 'git pull'.
 ## Copy project files to /app
 #COPY --chown=node:node . .
-#RUN chown node:node /app
+RUN chown node:node /app
 
 # Set active user
 USER node
