@@ -28,6 +28,8 @@ if [ "${WAPTRUN_ENV}" = "PROD" ];then
     else
         echo -e "\n\n-- Cloning waptrun project"
         git clone https://github.com/jourzero/waptrun.git
+        echo -e "\n\n-- Listing cloned data"
+        ls -a
         echo -e "\n\n-- Getting submodules"
         git submodule update --init --recursive
     fi
