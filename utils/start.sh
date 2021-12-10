@@ -18,16 +18,15 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/reactive-handlebars:${CTR_BASE}/reactive-handleb
 
 # Writable shares for Dev
 if [ "$WAPTRUN_ENV" != PROD ];then 
-    # Bring dependency updates back to Dev for Github pushes
+    # Bring dependency updates back to Dev for Github pushes or IDE completion (node_modules)
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
-    # Allow edits from IDE and immediate effects in Dev container
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
+    # Allow edits in IDE to have immediate effects in Dev container
     MOUNTS="$MOUNTS -v ${HOST_BASE}/dbinit:${CTR_BASE}/dbinit"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
-    # Accelerate npm install and use node_modules on host for IDE code completion
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
 fi
 
 # Publish specific ports
