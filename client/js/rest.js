@@ -78,12 +78,36 @@ function restGetProject(prjName, callback) {
 
 // Get all projects
 function restGetProjects(callback) {
+    // Get token and send it in the Authorization header
+    let headers = {};
+    if (id_token !== undefined) {
+        headers.Authorization = `Bearer ${id_token}`;
+        id_token = undefined;
+    }
+
     // Send REST call for project data
     let url = "/api/project";
     console.debug("Sending GET request to " + url);
-    $.get(url, callback).fail(() => {
-        console.warn("GET request for project data failed");
-        warningMessage("GET request for project data failed");
+    $.ajax({
+        url: url,
+        type: "GET",
+        contentType: "application/json",
+        headers: headers,
+        success: callback,
+        error: function (error) {
+            console.warn("GET request for project data failed");
+            warningMessage("GET request for project data failed");
+        },
+        statusCode: {
+            400: function (data) {
+                formatValidationError(data);
+            },
+            404: function () {
+                let msg = `Could not process the request for project data.`;
+                console.warn(msg);
+                warningMessage(msg);
+            },
+        },
     });
 }
 
@@ -524,7 +548,6 @@ function restBackupDB() {
         },
     });
 }
-
 
 /**
  * restUpdateApp

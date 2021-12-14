@@ -5,6 +5,13 @@ body {
 .container {
     background-color: #fff;
 }
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 100;
+    text-align: left;
+}
 h4 {
     margin: 5px;
 }

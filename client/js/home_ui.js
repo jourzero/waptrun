@@ -37,7 +37,7 @@ ui.onRendered(function () {
 // Populate UI from DB data
 function uiPopulate() {
     console.debug(`Getting project list`);
-    restGetProjects(function (data) {
+    restGetProjects(function (data, id_token) {
         if (data !== null) {
             //successMessage("Project data extraction succeeded");
             // Update model (combine config data with flattened project data)

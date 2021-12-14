@@ -1,5 +1,4 @@
-// Load .env file
-require("dotenv").config();
+const config = require("./config.js");
 //const cors = require("cors");
 const express = require("express");
 const passport = require("passport");
@@ -17,7 +16,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
-const config = require("./config.js");
+const jwt = require("jsonwebtoken");
 const openapiConfig = require("./openapiConfig.js");
 const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
@@ -32,15 +31,16 @@ const {Op, Sequelize} = require("sequelize");
 const {project} = require("./validationSchema.js");
 //const router = express.Router();
 
+// ========================================== CONFIG ==========================================
+// Load .env file
+require("dotenv").config();
+//logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
+
 // Swagger UI Options - ref: https://www.npmjs.com/package/swagger-ui-express
 const openapiVirtualPath = "/apidoc/openapi.json";
 const swaggerUiOptions = {swaggerOptions: {url: openapiVirtualPath}};
 const openapiJsonData = swaggerJsdoc(openapiConfig.openapiDef);
 
-// Print env on startup
-//logger.debug(`Environment: ${JSON.stringify(process.env, null, 4)}`);
-
-// ========================================== CONFIG ==========================================
 // Auth/authz config
 let users = [];
 const authMode = process.env.AUTH_MODE || config.defaultAuthMode;
@@ -170,6 +170,22 @@ function ensureAuthorized(req, res, next) {
         next();
     }
 }
+
+/* TODO: plug that in
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+        console.log(err);
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+}
+*/
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -378,6 +394,7 @@ app.get("/api/account", function (req, res) {
  * /api/project:
  *   get:
  *     security:
+ *       - bearerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -397,6 +414,25 @@ app.get("/api/account", function (req, res) {
 app.get("/api/project", (req, res) => {
     logger.info("Incoming projects search request");
     const op = "get-all-projects";
+
+    // Extract ID token when available in Authorization header
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    //if (token == null) return res.sendStatus(401)
+    if (token) {
+        // Check JWT - ref.: https://www.npmjs.com/package/jsonwebtoken
+        // https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
+        let options = {};
+        //options = { aud: config.client_id, iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee" };
+        jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
+            if (err) {
+                logger.error(`Could not verify token: ${err.message}`);
+                logger.debug(JSON.stringify(err));
+            }
+            logger.debug(`Token payload: ${JSON.stringify(decoded)}`);
+        });
+    }
+
     // prettier-ignore
     db.project.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
@@ -444,6 +480,7 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
         failure("validate-req", res, {errors: errors.array()});
         return;
     }
+
     // prettier-ignore
     db.project.findOne({where: {name: req.params.name}}).then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
