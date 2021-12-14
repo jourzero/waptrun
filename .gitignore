@@ -97,3 +97,18 @@ data/waptrun.sqlite3
 data/*.xml
 data/*.zip
 data/*har
+client/auth/callback.html
+client/auth/callback.js
+client/auth/config.js
+client/auth/login.js
+client/auth/pkce.js
+client/auth/README.md
+client/auth/waptrunner_oauth2_browser_client.json
+client/auth/waptrunner_oauth2_nodejs_client.json
+client/auth/login_selector.html
+doc/google-certs.json
+doc/My Auth.txt
+doc/oauth_implicit.md
+doc/oauth_oidc.md
+doc/oauth_oidc.txt
+server/jwt.js

@@ -24,9 +24,10 @@ if [ "$WAPTRUN_ENV" != PROD ];then
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
     #MOUNTS="$MOUNTS -v ${HOST_BASE}/node_modules:${CTR_BASE}/node_modules"
     # Allow edits in IDE to have immediate effects in Dev container
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/dbinit:${CTR_BASE}/dbinit"
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client"
-    MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/dbinit:${CTR_BASE}/dbinit:ro"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/client:${CTR_BASE}/client:ro"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/server:${CTR_BASE}/server:ro"
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/doc:${CTR_BASE}/doc:ro"
 fi
 
 # Publish specific ports

@@ -8,13 +8,13 @@ echo -e "\n\n-- Running $0 (mode=${WAPTRUN_ENV})..."
 
 # Make sure we're in the container
 if [ "${PWD}" != "/app" ];then  
-    echo "ERROR: $0 is not running in container, exiting immediately." >&2
+    echo "WARNING: $0 is not running in container, exiting immediately." >&2
     exit 
 fi
 
 # Make sure we're not in Dev
 if [ "${WAPTRUN_ENV}" != "PROD" ];then
-    echo "ERROR: $0 is not running in Prod, exiting immediately." >&2
+    echo "WARNING: $0 is not running in Prod, exiting immediately." >&2
     exit 
 fi
 
