@@ -139,6 +139,7 @@ app.use(
     })
 );
 
+/*
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
     if (authMode == config.AUTH_MODE_NONE) return next();
@@ -149,6 +150,48 @@ function ensureAuthenticated(req, res, next) {
     logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
     // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
     res.status(401).send("Not Authenticated.");
+}
+*/
+
+function ensureAuthenticated(req, res, next) {
+    // Get the JWT
+    let token = req.cookies.bearer;
+    if (token)
+        // Use token from cookie
+        logger.debug("Using the bearer token from the cookie");
+    else {
+        // Use token from Authorization header
+        const authHeader = req.headers["authorization"];
+        if (authHeader) {
+            token = authHeader.split(" ")[1];
+            if (token && String(authHeader).toLowerCase().startsWith("bearer")) logger.debug("Using the bearer token from the Authorization header");
+            else {
+                token = undefined;
+                return res.status(401).send("Not Authenticated.");
+            }
+        }
+    }
+
+    // Check JWT - ref.: https://www.npmjs.com/package/jsonwebtoken
+    // https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
+    let options = {};
+    //options = { aud: config.client_id, iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee" };
+    jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
+        if (err) {
+            logger.error(`Could not verify token: ${err.message}`);
+            logger.debug(JSON.stringify(err));
+            return res.status(401).send("Not Authenticated.");
+        }
+        if (!req.cookies.bearer) {
+            res.cookie("bearer", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "Strict",
+            });
+        }
+        logger.debug(`Token payload: ${JSON.stringify(decoded)}`);
+        next();
+    });
 }
 
 // Test authorization
@@ -170,22 +213,6 @@ function ensureAuthorized(req, res, next) {
         next();
     }
 }
-
-/* TODO: plug that in
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-
-    if (token == null) return res.sendStatus(401);
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-        console.log(err);
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
-}
-*/
 
 // Session-persisted message middleware
 app.use(function (req, res, next) {
@@ -268,6 +295,7 @@ app.get("/api/ping", (req, res) => {
  *     tags:
  *       - Monitoring and Admin
  */
+// TODO: Validate body
 app.post("/report-violation", (req, res) => {
     logger.info("Incoming report-violation request");
     const op = "csp-report-violation";
@@ -415,24 +443,6 @@ app.get("/api/project", (req, res) => {
     logger.info("Incoming projects search request");
     const op = "get-all-projects";
 
-    // Extract ID token when available in Authorization header
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    //if (token == null) return res.sendStatus(401)
-    if (token) {
-        // Check JWT - ref.: https://www.npmjs.com/package/jsonwebtoken
-        // https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
-        let options = {};
-        //options = { aud: config.client_id, iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee" };
-        jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
-            if (err) {
-                logger.error(`Could not verify token: ${err.message}`);
-                logger.debug(JSON.stringify(err));
-            }
-            logger.debug(`Token payload: ${JSON.stringify(decoded)}`);
-        });
-    }
-
     // prettier-ignore
     db.project.findAll().then((d) => {ok(op, res, d);}).catch((e) => {notFound(op, res, e);});
 });
@@ -568,6 +578,7 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
  *     tags:
  *       - Project
  */
+// TODO: Validate name in path
 app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) => {
     logger.info("Incoming project update request");
 
@@ -801,6 +812,7 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
  *     tags:
  *       - TestKB
  */
+// TODO: Validate TID in path
 app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => {
     logger.info("Incoming test update request");
     const op = "update-test";
@@ -994,6 +1006,7 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
  *     tags:
  *       - Issue
  */
+// TODO: Validate TID in path
 app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, res) => {
     logger.info("Incoming project issue update request");
     const op = "upsert-project-issue";
@@ -1619,3 +1632,27 @@ function notFound(op, res, err) {
     //res.sendStatus(404);
     res.status(404).send(err.message);
 }
+
+/*
+app.get("/login", (req, res) => {
+  const token = jwt.sign({ id: 7, role: "captain" }, "YOUR_SECRET_KEY");
+  return res
+    .cookie("access_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    })
+    .status(200)
+    .json({ message: "Logged in successfully 😊 👌" });
+});
+
+app.get("/protected", authorization, (req, res) => {
+  return res.json({ user: { id: req.userId, role: req.userRole } });
+});
+
+app.get("/logout", authorization, (req, res) => {
+  return res
+    .clearCookie("access_token")
+    .status(200)
+    .json({ message: "Successfully logged out 😏 🍀" });
+});
+*/
