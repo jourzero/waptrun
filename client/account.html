@@ -39,10 +39,12 @@
                     <th>ID </th>
                     <td> {{user.id}}</td>
                 </tr>
-                <tr>
-                    <th>Name </th>
-                    <td> {{user.displayName}}</td>
-                </tr>
+                {{#if user.displayName}}
+                    <tr>
+                        <th>Name </th>
+                        <td> {{user.displayName}}</td>
+                    </tr>
+                {{/if}}
                 <tr>
                     <th>Provider </th>
                     <td> {{user.provider}}</td>
@@ -75,11 +77,11 @@
                         sub: "",
                         id: "",
                         displayName: "",
-                        name: {givenName: "", familyName: ""},
+                        name: { givenName: "", familyName: "" },
                         given_name: "",
                         family_name: "",
                         language: "",
-                        photos: [{value: "", type: ""}],
+                        photos: [{ value: "", type: "" }],
                         picture: "",
                     },
                     //user: { id: "__id__", displayName: "__display_name__", provider: "__provider__", email: "__email__", photos: [{value: "__photo__"}], },
@@ -97,7 +99,7 @@
                 restGetAccount(function (data) {
                     if (data !== null) {
                         successMessage("Account data extraction succeeded");
-                        ui.setData({user: data});
+                        ui.setData({ user: data });
                     } else {
                         console.warn("No account data");
                     }
