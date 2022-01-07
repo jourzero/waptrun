@@ -158,17 +158,23 @@ function ensureAuthenticated(req, res, next) {
     let token = req.cookies.bearer;
     if (token)
         // Use token from cookie
-        logger.debug("Using the bearer token from the cookie");
+        logger.debug("Using JWT from bearer cookie");
     else {
         // Use token from Authorization header
         const authHeader = req.headers["authorization"];
         if (authHeader) {
             token = authHeader.split(" ")[1];
-            if (token && String(authHeader).toLowerCase().startsWith("bearer")) logger.debug("Using the bearer token from the Authorization header");
+            if (token && String(authHeader).toLowerCase().startsWith("bearer")) logger.debug("Using JWT from the Authorization header");
             else {
+                logger.warn("Authorization header is not a bearer token")
                 token = undefined;
                 return res.status(401).send("Not Authenticated.");
             }
+        }
+        else {
+            logger.warn("No JWT provided in cookie or Authorization header")
+            token = undefined;
+            return res.status(401).send("Not Authenticated.");
         }
     }
 
