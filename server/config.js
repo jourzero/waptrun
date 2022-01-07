@@ -42,10 +42,6 @@ module.exports = {
     // Base URI for gettign CVE details
     CveUriBase: "http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=",
 
-    // Google OAuth public key
-    googleRsaPublicKey:
-        "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxWDJBwwxLU8KU0w2bqii\nXPPrOA7ffmF7g78O/D6LOv80bzeRyyX3zjzIcOI0tLZfFEfFO8CvpzTzB1h5bNin\nDA4MX9PFMyNBjc7Q4h7QStYZoORY6Kac314IQkwfVM3u4hbIpVvVgmapYESGpPfK\nh/SPr8tRvarDoEnXG6a501Ni8PfZg44aCbe0kJygl4YZjvLABEkH19HxPiXojxJE\nWee1lToyDJfM8tZqNTal5u3F8Mk37RhkMWMM1gypvl22t6MDUEOmqp5StwWWgo7K\nDJ17nDXsM6TQ10rxofkQm5I2swvfosr4Qr3GoUCrE1zXnPwNZJ/P+sQziOFRd36e\nZwIDAQAB\n-----END PUBLIC KEY-----\n",
-
     // Path to add to URI to show test reference details
     TestRefBase: "/static",
 

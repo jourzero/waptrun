@@ -1,9 +1,9 @@
 const config = require("./config.js");
 //const cors = require("cors");
 const express = require("express");
-const passport = require("passport");
+//const passport = require("passport");
 const helmet = require("helmet");
-const session = require("express-session");
+//const session = require("express-session");
 const path = require("path");
 const logger = require("./lib/appLogger.js");
 const reqLogger = require("./lib/reqLogger.js");
@@ -12,8 +12,10 @@ const db = require("./models");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
+/*
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
+*/
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
 const jwt = require("jsonwebtoken");
@@ -30,10 +32,8 @@ const swaggerUi = require("swagger-ui-express");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
 const {Op, Sequelize} = require("sequelize");
 const {project} = require("./validationSchema.js");
+const {decode} = require("punycode");
 //const router = express.Router();
-
-const googleCertUrl = "https://www.googleapis.com/oauth2/v3/certs";
-const googleOpenidConfigUrl = "https://accounts.google.com/.well-known/openid-configuration";
 
 // ========================================== CONFIG ==========================================
 // Load .env file
@@ -83,12 +83,14 @@ app.use(bodyParser.json({type: "application/json"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "5mb"}));
 app.use(bodyParser.text());
 app.use(methodOverride());
+/*
 if (authMode == config.AUTH_MODE_OAUTH) require("./auth")();
 app.use(session(config.session));
 if (authMode == config.AUTH_MODE_OAUTH) {
     app.use(passport.initialize());
     app.use(passport.session());
 }
+*/
 
 // Enable CORS while using https://inspector.swagger.io/builder
 //app.use(cors());
@@ -151,34 +153,43 @@ function ensureAuthenticated(req, res, next) {
     if (ensureLoggedIn()) {
         return next();
     }
-    logger.warn(`Client is not authenticated (authMode=${authMode}), sending 401`);
+    logger.warn(`User is not authenticated (authMode=${authMode}), sending 401`);
     // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
     res.status(401).send("Not Authenticated.");
 }
 */
 
-// Verify using getKey callback
-// Example uses https://github.com/auth0/node-jwks-rsa as a way to fetch the keys.
-var client = jwksClient({
+// Retrieve signing keys from the Google JWKS (JSON Web Key Set) endpoint.
+// Refs: https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
+//       https://www.npmjs.com/package/jwks-rsa
+//const googleOpenidConfigUrl = "https://accounts.google.com/.well-known/openid-configuration";
+const googleCertUrl = "https://www.googleapis.com/oauth2/v3/certs";
+const jwks_client = jwksClient({
+    //jwksUri: googleOpenidConfigUrl,
     jwksUri: googleCertUrl,
+    timeout: 10000
 });
+let publicKey = undefined;
 function getKey(header, callback) {
-    console.debug(`header = ${JSON.stringify(header)}`);
-    client.getSigningKey(header.kid, function (err, key) {
-        console.debug(`key = ${JSON.stringify(key)}`);
-        //var signingKey = key.publicKey || key.rsaPublicKey;
-        var signingKey = key.rsaPublicKey;
-        console.debug(`signingKey = ${signingKey}`);
-        callback(null, signingKey);
-    });
+    if (publicKey)
+        callback(null, publicKey);
+    else {
+        logger.debug(`Getting Google's OAuth public key associated with received key ID. JWT Header: ${JSON.stringify(header)}`);
+        jwks_client.getSigningKey(header.kid, function (err, key) {
+            //publicKey = key.publicKey || key.rsaPublicKey;
+            publicKey = key.getPublicKey();
+            logger.debug(`Saving extracted Google OAuth public key to memory: ${publicKey}`);
+            callback(null, publicKey);
+        });
+    }
 }
 
 function ensureAuthenticated(req, res, next) {
     // Get the JWT
-    let token = req.cookies.bearer;
+    let token = req.cookies.token;
     if (token)
         // Use token from cookie
-        logger.debug("Using JWT from bearer cookie");
+        logger.silly("Using JWT from token cookie");
     else {
         // Use token from Authorization header
         const authHeader = req.headers["authorization"];
@@ -198,24 +209,38 @@ function ensureAuthenticated(req, res, next) {
     }
 
     // Check JWT - ref.: https://www.npmjs.com/package/jsonwebtoken
-    // https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
     let options = {};
-    //options = { aud: config.client_id, iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee" };
+    options = {aud: process.env["GOOGLE_CLIENT_ID"], iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee"};
     //jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
+    // Verify using getKey callback
     jwt.verify(token, getKey, options, function (err, decoded) {
         if (err) {
             logger.error(`Could not verify token: ${err.message}`);
+
+            // Clear cached Google public key in case it changed and it's causing the issue
+            publicKey = undefined;
+
+            // If the bearer token is expired, expire the cookie to clear it
+            if (err.name === "TokenExpiredError") {
+                logger.info(`JWT expired, clearing token cookie`);
+                res.clearCookie('token');
+            }
+
             logger.debug(JSON.stringify(err));
             return res.status(401).send("Not Authenticated.");
         }
-        if (!req.cookies.bearer) {
-            res.cookie("bearer", token, {
+        if (!req.cookies.token) {
+            logger.info(`Creating token cookie`);
+            res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "Strict",
             });
         }
-        logger.debug(`Token payload: ${JSON.stringify(decoded)}`);
+        logger.silly(`Token payload: ${JSON.stringify(decoded)}`);
+
+        // Add user details to req.user (to mimic PassportJS)
+        req.user = {id: decoded.sub, provider: "google", email: decoded.email}
         next();
     });
 }
@@ -223,6 +248,7 @@ function ensureAuthenticated(req, res, next) {
 // Test authorization
 function ensureAuthorized(req, res, next) {
     if (authMode == config.AUTH_MODE_NONE) return next();
+    logger.silly(`User details: ${JSON.stringify(req.user)}`);
     let id = req.user.id;
     let provider = req.user.provider;
     let url = req.originalUrl;
@@ -231,15 +257,16 @@ function ensureAuthorized(req, res, next) {
         return usr.id === id && usr.provider === provider;
     });
     if (user === undefined) {
-        logger.warn(`Client is not authorized (authMode=${authMode}), sending 401`);
+        logger.warn(`User is not authorized (authMode=${authMode}), sending 401. User data: ${JSON.stringify(req.user)}`);
         // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
         res.status(401).send("Not Authorized.");
     } else {
-        logger.info(`User ${id} is authorized`);
+        logger.silly(`User ${id} is authorized`);
         next();
     }
 }
 
+/*
 // Session-persisted message middleware
 app.use(function (req, res, next) {
     let err = req.session.error,
@@ -256,7 +283,9 @@ app.use(function (req, res, next) {
 
     next();
 });
+*/
 
+/*
 if (authMode == config.AUTH_MODE_OAUTH) {
     // ============================== GOOGLE AUTH ROUTES ==========================================
     app.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
@@ -272,6 +301,7 @@ if (authMode == config.AUTH_MODE_OAUTH) {
         res.redirect("/home");
     });
 }
+*/
 
 // ==================================== LOGOUT ================================================
 app.get("/logout", function (req, res, next) {
@@ -279,8 +309,10 @@ app.get("/logout", function (req, res, next) {
         logger.info("Logging out is not needed!");
         res.redirect(req.get("Referer"));
     } else {
-        logger.info("Logging out");
-        req.logout();
+        logger.info("Logging out by clearing token cookie and redirecting to login page");
+        res.clearCookie('token');
+        res.redirect("/login");
+        //req.logout();
     }
 });
 
@@ -343,6 +375,7 @@ app.use("/apidoc", swaggerUi.serveFiles(null, swaggerUiOptions), swaggerUi.setup
  * /api/db/backup:
  *   post:
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -358,7 +391,7 @@ app.post("/api/db/backup", (req, res, next) => {
     exec("/app/utils/backup.sh", (error, stdout, stderr) => {
         if (error) {
             let msg = `Error when backing-up DB: ${error}`;
-            console.error(msg);
+            logger.error(msg);
             // HTTP STATUS: 500 Internal Server Error - The server encountered an unexpected condition which prevented it from fulfilling the request.
             return res.status(500).json({error: JSON.stringify(msg)});
         }
@@ -373,6 +406,7 @@ app.post("/api/db/backup", (req, res, next) => {
  * /api/app/update:
  *   post:
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -404,6 +438,7 @@ app.post("/api/app/update", (req, res, next) => {
  *     description: Get user account information
  *     operationId: get-api-account
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -448,7 +483,7 @@ app.get("/api/account", function (req, res) {
  * /api/project:
  *   get:
  *     security:
- *       - bearerAuth: []
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -488,6 +523,7 @@ app.get("/api/project", (req, res) => {
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -532,6 +568,7 @@ app.get("/api/project/:name", check("name").matches(validationValues.PrjName.mat
  *            schema:
  *              $ref: '#/components/schemas/project'
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '201':
@@ -585,6 +622,7 @@ app.post("/api/project", checkSchema(validationSchema.project), (req, res) => {
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -641,6 +679,7 @@ app.put("/api/project/:name", checkSchema(validationSchema.project), (req, res) 
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -681,6 +720,7 @@ app.delete("/api/project/:name", check("name").matches(validationValues.PrjName.
  * /api/testkb:
  *   get:
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -719,6 +759,7 @@ app.get("/api/testkb", (req, res) => {
  *           type: string
  *         example: "API-T10-01"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -763,6 +804,7 @@ app.get("/api/testkb/:TID", check("TID").matches(validationValues.TID.matches), 
  *            schema:
  *              $ref: '#/components/schemas/testKB'
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '201':
@@ -819,6 +861,7 @@ app.post("/api/testkb", checkSchema(validationSchema.testKB), (req, res) => {
  *           type: string
  *         example: "API-T10-01"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -867,6 +910,7 @@ app.put("/api/testkb/:TID", checkSchema(validationSchema.testKB), (req, res) => 
  * /api/issue:
  *   get:
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -905,6 +949,7 @@ app.get("/api/issue", (req, res) => {
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -953,6 +998,7 @@ app.get("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjName
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1014,6 +1060,7 @@ app.delete("/api/issue/:PrjName", check("PrjName").matches(validationValues.PrjN
  *           type: string
  *         example: "API-T10-01"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1071,6 +1118,7 @@ app.put("/api/issue/:PrjName/:TID", checkSchema(validationSchema.issue), (req, r
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '201':
@@ -1167,6 +1215,7 @@ app.post("/api/issue/:PrjName/todos", check("PrjName").matches(validationValues.
  *           type: string
  *         example: "API-T10-01"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1240,6 +1289,7 @@ app.get("/api/issue/:PrjName/:TID", check("PrjName").matches(validationValues.Pr
  *     operationId: get-api-cwe
  *     parameters: []
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1281,6 +1331,7 @@ app.get("/api/cwe", (req, res) => {
  *           type: integer
  *         example: 6
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1323,6 +1374,7 @@ app.get("/api/cwe/:CweId", check("CweId").isInt(validationValues.CweId.isInt), (
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1401,6 +1453,7 @@ app.all("/export/*", ensureAuthenticated, ensureAuthorized, function (req, res, 
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1442,6 +1495,7 @@ app.get("/export/csv/:PrjName", check("PrjName").matches(validationValues.PrjNam
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1488,6 +1542,7 @@ app.get("/export/json/:PrjName", check("PrjName").matches(validationValues.PrjNa
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':
@@ -1530,6 +1585,7 @@ app.get("/export/html/findings/:PrjName", check("PrjName").matches(validationVal
  *           type: string
  *         example: "20211201-MyApp-QA"
  *     security:
+ *       - headerAuth: []
  *       - cookieAuth: []
  *     responses:
  *       '200':

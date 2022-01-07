@@ -1,5 +1,9 @@
 {
     "unofficialVeracodeExtension.pipelineScanFilepath": "target/waptrun.zip",
     "appService.deploySubpath": ".",
-    "appService.defaultWebAppToDeploy": "/subscriptions/e78d7b5d-4f51-4952-b194-5a99f6359192/resourceGroups/entrd_appsec_resgrp/providers/Microsoft.Web/sites/waptrun"
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false
 }
