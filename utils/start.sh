@@ -17,8 +17,11 @@ MOUNTS="$MOUNTS -v ${HOST_BASE}/waptrun-static:${CTR_BASE}/waptrun-static:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/reactive-handlebars:${CTR_BASE}/reactive-handlebars:ro"
 MOUNTS="$MOUNTS -v ${HOST_BASE}/utils:${CTR_BASE}/utils:ro"
 
-# Writable shares for Dev
-if [ "$WAPTRUN_ENV" != PROD ];then 
+# Writable shares for Prod only
+if [ "$WAPTRUN_ENV" = PROD ];then 
+    MOUNTS="$MOUNTS -v ${HOST_BASE}/.git:${CTR_BASE}/.git"
+else
+    # Writable shares for Dev only
     # Bring dependency updates back to Dev for Github pushes or IDE completion (node_modules)
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package.json:${CTR_BASE}/package.json"
     MOUNTS="$MOUNTS -v ${HOST_BASE}/package-lock.json:${CTR_BASE}/package-lock.json"
