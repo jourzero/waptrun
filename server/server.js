@@ -17,6 +17,7 @@ const GitHubStrategy = require("passport-github").Strategy;
 const http2Express = require("http2-express-bridge");
 const http2 = require("http2");
 const jwt = require("jsonwebtoken");
+const jwksClient = require("jwks-rsa");
 const openapiConfig = require("./openapiConfig.js");
 const {check, checkSchema, validationResult, matchedData} = require("express-validator");
 const validationSchema = require("./validationSchema.js");
@@ -30,6 +31,9 @@ const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
 const {Op, Sequelize} = require("sequelize");
 const {project} = require("./validationSchema.js");
 //const router = express.Router();
+
+const googleCertUrl = "https://www.googleapis.com/oauth2/v3/certs";
+const googleOpenidConfigUrl = "https://accounts.google.com/.well-known/openid-configuration";
 
 // ========================================== CONFIG ==========================================
 // Load .env file
@@ -153,6 +157,22 @@ function ensureAuthenticated(req, res, next) {
 }
 */
 
+// Verify using getKey callback
+// Example uses https://github.com/auth0/node-jwks-rsa as a way to fetch the keys.
+var client = jwksClient({
+    jwksUri: googleCertUrl,
+});
+function getKey(header, callback) {
+    console.debug(`header = ${JSON.stringify(header)}`);
+    client.getSigningKey(header.kid, function (err, key) {
+        console.debug(`key = ${JSON.stringify(key)}`);
+        //var signingKey = key.publicKey || key.rsaPublicKey;
+        var signingKey = key.rsaPublicKey;
+        console.debug(`signingKey = ${signingKey}`);
+        callback(null, signingKey);
+    });
+}
+
 function ensureAuthenticated(req, res, next) {
     // Get the JWT
     let token = req.cookies.bearer;
@@ -166,13 +186,12 @@ function ensureAuthenticated(req, res, next) {
             token = authHeader.split(" ")[1];
             if (token && String(authHeader).toLowerCase().startsWith("bearer")) logger.debug("Using JWT from the Authorization header");
             else {
-                logger.warn("Authorization header is not a bearer token")
+                logger.warn("Authorization header is not a bearer token");
                 token = undefined;
                 return res.status(401).send("Not Authenticated.");
             }
-        }
-        else {
-            logger.warn("No JWT provided in cookie or Authorization header")
+        } else {
+            logger.warn("No JWT provided in cookie or Authorization header");
             token = undefined;
             return res.status(401).send("Not Authenticated.");
         }
@@ -182,7 +201,8 @@ function ensureAuthenticated(req, res, next) {
     // https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
     let options = {};
     //options = { aud: config.client_id, iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee" };
-    jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
+    //jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
+    jwt.verify(token, getKey, options, function (err, decoded) {
         if (err) {
             logger.error(`Could not verify token: ${err.message}`);
             logger.debug(JSON.stringify(err));
