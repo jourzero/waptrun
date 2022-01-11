@@ -32,7 +32,7 @@ const swaggerUi = require("swagger-ui-express");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn;
 const {Op, Sequelize} = require("sequelize");
 const {project} = require("./validationSchema.js");
-const {decode} = require("punycode");
+//const {decode} = require("punycode");
 //const router = express.Router();
 
 // ========================================== CONFIG ==========================================
@@ -195,7 +195,17 @@ function ensureAuthenticated(req, res, next) {
         const authHeader = req.headers["authorization"];
         if (authHeader) {
             token = authHeader.split(" ")[1];
-            if (token && String(authHeader).toLowerCase().startsWith("bearer")) logger.debug("Using JWT from the Authorization header");
+            if (token && String(authHeader).toLowerCase().startsWith("bearer")) {
+                logger.debug("Using JWT from the Authorization header");
+
+                // If the token matches the scanner token, skip JWT verification
+                if (token === process.env["SCANNER_TOKEN"]) {
+                    logger.debug("JWT is the scanner token, skipping JWT verification");
+                    // Add user details to req.user (to mimic PassportJS)
+                    req.user = {id: "scanner1", provider: "None", email: "scanner@waptrunner.local"}
+                    next();
+                }
+            }
             else {
                 logger.warn("Authorization header is not a bearer token");
                 token = undefined;
