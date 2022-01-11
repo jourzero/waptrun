@@ -176,10 +176,23 @@ function getKey(header, callback) {
     else {
         logger.debug(`Getting Google's OAuth public key associated with received key ID. JWT Header: ${JSON.stringify(header)}`);
         jwks_client.getSigningKey(header.kid, function (err, key) {
+            if (err) {
+                logger.error(`Error getting signing key: ${err.message}`);
+                publicKey = undefined;
+                callback(null, publicKey);
+                return;
+            }
+            if (key === undefined) {
+                logger.error(`Could not find key id ${header.kid}`);
+                publicKey = undefined;
+                callback(null, publicKey);
+                return;
+            }
             //publicKey = key.publicKey || key.rsaPublicKey;
             publicKey = key.getPublicKey();
             logger.debug(`Saving extracted Google OAuth public key to memory: ${publicKey}`);
             callback(null, publicKey);
+            return;
         });
     }
 }
@@ -202,8 +215,9 @@ function ensureAuthenticated(req, res, next) {
                 if (token === process.env["SCANNER_TOKEN"]) {
                     logger.debug("JWT is the scanner token, skipping JWT verification");
                     // Add user details to req.user (to mimic PassportJS)
-                    req.user = {id: "scanner1", provider: "None", email: "scanner@waptrunner.local"}
+                    req.user = {id: "scanner1", provider: "none", email: "scanner@waptrunner.local"};
                     next();
+                    return;
                 }
             }
             else {
@@ -236,7 +250,6 @@ function ensureAuthenticated(req, res, next) {
                 res.clearCookie('token');
             }
 
-            logger.debug(JSON.stringify(err));
             return res.status(401).send("Not Authenticated.");
         }
         if (!req.cookies.token) {
@@ -269,7 +282,7 @@ function ensureAuthorized(req, res, next) {
     if (user === undefined) {
         logger.warn(`User is not authorized (authMode=${authMode}), sending 401. User data: ${JSON.stringify(req.user)}`);
         // HTTP STATUS: 401 Unauthorized - Indicates that the request requires user authentication information. The client MAY repeat the request with a suitable Authorization header field
-        res.status(401).send("Not Authorized.");
+        return res.status(401).send("Not Authorized.");
     } else {
         logger.silly(`User ${id} is authorized`);
         next();

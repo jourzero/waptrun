@@ -20,7 +20,13 @@ USER node
 
 # Get Dev vs Prod environment value
 ARG WAPTRUN_ENV
-ENV WAPTRUN_ENV=${WAPTRUN_ENV}
+ENV WAPTRUN_ENV=$WAPTRUN_ENV
+
+# Get URLs for different deployments used in the published openapi spec
+ARG WAPTRUN_DEV_URL=https://waptrunner.local:5000
+ENV WAPTRUN_DEV_URL=$WAPTRUN_DEV_URL
+ARG WAPTRUN_PRD_URL=https://waptrunner.com
+ENV WAPTRUN_PRD_URL=$WAPTRUN_PRD_URL
 
 # Expose Node app and Node remote debugging
 EXPOSE 9230

@@ -21,7 +21,7 @@ if [ "${WAPTRUN_ENV}" != "DEV" -a "${WAPTRUN_ENV}" != "PROD" ];then
     exit 1
 fi
 
-# If in Prod mode, pull the code from Github 
+# If in Prod/remote mode, pull the code from Github 
 if [ "${WAPTRUN_ENV}" = "PROD" ];then
     if [ -d /app/server ];then
         /app/utils/updateFromGithub.sh
@@ -43,7 +43,6 @@ if [ ! -f "${DATA_DIR}/${DB_FILE}" ];then
     echo "WARNING: DB file ${DATA_DIR}/${DB_FILE} not present, using a fresh DB file with no project."
     cp "${INIT_DIR}/${DB_FILE}" "${DATA_DIR}/${DB_FILE}"
 fi 
-
 
 # Start the app using nodemon for automatic restarts on code changes
 echo -e "\n\n-- Starting app"

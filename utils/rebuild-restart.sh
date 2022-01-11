@@ -12,7 +12,7 @@ docker stop waptrun
 docker rm waptrun
 
 # Rebuild
-docker build --build-arg WAPTRUN_ENV=${WAPTRUN_ENV} -t waptrun .
+docker build --build-arg WAPTRUN_ENV=${WAPTRUN_ENV} --build-arg WAPTRUN_DEV_URL=${WAPTRUN_DEV_URL} --build-arg WAPTRUN_PRD_URL=${WAPTRUN_PRD_URL} -t waptrun .
 
 # Start container
 utils/start.sh

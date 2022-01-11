@@ -14,8 +14,8 @@ module.exports = {
                 version: "1.0.0",
             },
             servers: [
-                {url: "http://localhost:5000", description: "Dev server"},
-                {url: "https://waptrun.azurewebsites.net", description: "Staging server"},
+                {url: process.env["WAPTRUN_DEV_URL"] || "https://waptrun.local:5000", description: "Dev server"},
+                {url: process.env["WAPTRUN_PRD_URL"] || "https://waptrun.com", description: "Prod server"},
             ],
             components: {
                 schemas: {
