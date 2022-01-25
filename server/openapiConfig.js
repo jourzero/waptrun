@@ -119,15 +119,23 @@ module.exports = {
                         },
                     },
                 },
+                // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md#securitySchemeObject
                 securitySchemes: {
+                    apiKey: {
+                        type: "apiKey",
+                        description: "Preprod API key authentication to simplify API scanning.",
+                        in: "header",
+                        name: "api_key",
+                    },
                     cookieAuth: {
                         type: "apiKey",
+                        description: "JWT in Http-Only cookie. Used after login to avoid leaking JWT (from client-side memory or javascript access to HTTP headers).",
                         in: "cookie",
                         name: "token",
                     },
                     headerAuth: {
                         type: "http",
-                        description: "JWT Authorization header using the Bearer scheme.",
+                        description: "JWT Authorization header using the Bearer scheme. JWT comes from Google OAuth2/OIDC with Implicit flow (out of scope for this openapi spec).",
                         scheme: "bearer",
                         bearerFormat: "JWT",
                     },
