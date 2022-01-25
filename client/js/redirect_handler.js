@@ -15,16 +15,18 @@ if (window.location.hash.length > 0) {
         id_token = q.id_token;
         let jwt_payload = JSON.parse(atob(q.id_token.split(".")[1]));
 
-        // Remove session storage content we don't need
+        // Check state value as CSRF attack prevention
         let savedState = sessionStorage.getItem("oauth_state");
         if (savedState !== q.state) {
             console.error("Invalid state, clearing id_token");
             id_token = undefined;
             // TODO logout
         } else console.debug(`State value received (${q.state}) matches saved value`);
+
+        // Remove session storage content we don't need
         sessionStorage.removeItem("oauth_state");
 
-        // Replace the history entry to remove the auth code from the browser address bar
+        // Replace the history entry to remove the auth code or token from the browser address bar
         window.history.replaceState({}, null, "/home");
     }
 }

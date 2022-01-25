@@ -31,7 +31,6 @@ document.getElementById("start").addEventListener("click", async function (e) {
     */
 
     // Build the authorization URL
-    // prettier-ignore
     let url = config.authorization_endpoint;
     /*
     if (config.response_type === "code") {
@@ -45,7 +44,7 @@ document.getElementById("start").addEventListener("click", async function (e) {
     }
     */
 
-    // If using Implicit flow, change the URI accordingly
+    // If using OIDC with OAuth2 Implicit Flow, adjust the URI accordingly
     if (config.response_type === "id_token") {
         url +=
             `?response_type=${config.response_type}` +

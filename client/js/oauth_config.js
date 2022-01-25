@@ -4,7 +4,7 @@ var config = {
     client_id: "162295130053-af6mmqpj3dnua8rl5vdo7dg0gfn10cgi.apps.googleusercontent.com",
     authorization_endpoint: "https://accounts.google.com/o/oauth2/auth",
     token_endpoint: "https://oauth2.googleapis.com/token",
-    requested_scopes: "openid email profile",
+    requested_scopes: "openid email",
     //response_type: "code",
     response_type: "id_token",
     redirect_path: "/home",
