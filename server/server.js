@@ -63,7 +63,7 @@ if (Number(authMode) === config.AUTH_MODE_OAUTH) {
         }
         users.push(user);
     }
-    logger.debug(`Authorized users: ${JSON.stringify(users)}`);
+    logger.debug(`Authorized users: ${JSON.stringify(users, null, 4)}`);
 } else {
     logger.info("App starting without authentication for dev/testing purposes");
 }
@@ -160,9 +160,10 @@ function ensureAuthenticated(req, res, next) {
 */
 
 // Retrieve signing keys from the Google JWKS (JSON Web Key Set) endpoint.
+// NOTE: From below Google ref.: The implicit flow is used when a client-side app (typically a JavaScript app running in the browser) needs to access APIs directly instead of via its back-end server.
 // Refs: https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery
 //       https://www.npmjs.com/package/jwks-rsa
-//const googleOpenidConfigUrl = "https://accounts.google.com/.well-known/openid-configuration";
+const googleOpenidConfigUrl = "https://accounts.google.com/.well-known/openid-configuration";
 const googleCertUrl = "https://www.googleapis.com/oauth2/v3/certs";
 const jwks_client = jwksClient({
     //jwksUri: googleOpenidConfigUrl,
@@ -233,8 +234,15 @@ function ensureAuthenticated(req, res, next) {
     }
 
     // Check JWT - ref.: https://www.npmjs.com/package/jsonwebtoken
+    // From https://developers.google.com/identity/protocols/oauth2/openid-connect#validatinganidtoken:
+    // Validation of an ID token requires several steps:
+    // - Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
+    // - Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
+    // - Verify that the value of the aud claim in the ID token is equal to your app's client ID.
+    // - Verify that the expiry time (exp claim) of the ID token has not passed.
+    // - If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
     let options = {};
-    options = {aud: process.env["GOOGLE_CLIENT_ID"], iss: "accounts.google.com", jti: "74c2961775c784990b4ff414f6f1c34b9fb32aee"};
+    options = {aud: process.env["GOOGLE_CLIENT_ID"], iss: "accounts.google.com"};
     //jwt.verify(token, config.googleRsaPublicKey, options, function (err, decoded) {
     // Verify using getKey callback
     jwt.verify(token, getKey, options, function (err, decoded) {
