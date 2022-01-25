@@ -112,3 +112,4 @@ doc/oauth_implicit.md
 doc/oauth_oidc.md
 doc/oauth_oidc.txt
 server/jwt.js
+data/google-oauth-config-info.json
