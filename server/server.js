@@ -339,6 +339,13 @@ app.get("/logout", function (req, res, next) {
     }
 });
 
+
+app.get("/", function (req, res, next) {
+    logger.info("Redirecting from / to /home");
+    res.redirect("/home");
+});
+
+
 // ========================================== REST ROUTES ==========================================
 
 /**
