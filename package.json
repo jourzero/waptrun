@@ -41,7 +41,7 @@
         "q": "^1.0.0",
         "sequelize": "^6.0.0",
         "serve-favicon": "^2.0.0",
-        "sqlite3": "^5.0.2",
+        "sqlite3": "^5.0.3",
         "swagger-jsdoc": "^6.1.0",
         "swagger-ui-express": "^4.2.0",
         "winston": "^3.0.0"
