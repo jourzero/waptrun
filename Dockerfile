@@ -1,5 +1,5 @@
 # Pin to stable/slim/LTS version of node.js 
-FROM node:16.13.0-bullseye-slim
+FROM node:16.19.0-bullseye-slim
 RUN apt-get -y update && apt-get -y upgrade
 
 # Add dependencies for sqlite3
