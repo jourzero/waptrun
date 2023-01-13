@@ -1,0 +1,101 @@
+<html>
+    <title>Base64 Encoding Tools</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+        .content {
+            width: 550px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <body>
+        <div class="flex-center full-height">
+            <div class="content">
+                <h2>Base64 Decode</h2>
+
+                <hr />
+
+                <p><textarea id="from" rows="6"></textarea></p>
+
+                <p>
+                    <button id="decode">Decode ⬇</button>
+                    <button id="encode">Encode ⬆</button>
+                </p>
+
+                <p><textarea id="to" rows="18"></textarea></p>
+
+                <hr />
+                <p>You can learn more about OAuth 2.0 by reading<br /><a href="https://oauth2simplified.com/">OAuth 2.0 Simplified</a></p>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("decode").addEventListener("click", function () {
+                document.getElementById("to").value = base64decode_formatted(document.getElementById("from").value);
+            });
+
+            document.getElementById("encode").addEventListener("click", function () {
+                document.getElementById("from").value = base64encode_unformatted(document.getElementById("to").value);
+                console.log(base64encode_unformatted(document.getElementById("to").value));
+            });
+
+            function base64decode_formatted(str) {
+                if ((match = str.match(/(eyJ[^\.]+)\.([^\.]+)\.([^\.]+)/))) {
+                    var encoded1 = match[1];
+                    var encoded2 = match[2];
+                    var encoded3 = match[3];
+                    var decoded1 = base64decode_formatted(encoded1);
+                    var decoded2 = base64decode_formatted(encoded2);
+                    var decoded3 = base64decode_formatted(encoded3);
+                    var decoded = decoded1 + "\n\n" + decoded2 + "\n\n" + decoded3;
+                    return decoded;
+                } else {
+                    var decoded = base64decode(str);
+                    if (decoded && decoded.substr(0, 1) == "{") {
+                        decoded = JSON.stringify(JSON.parse(decoded), null, 2);
+                    }
+                    return decoded;
+                }
+            }
+
+            function base64encode_unformatted(str) {
+                // compact the json first, then base64 encode
+                try {
+                    var normalized = JSON.stringify(JSON.parse(str.replace(/\s+/g, "")));
+                } catch (error) {
+                    return "JSON error";
+                }
+                return btoa(normalized);
+            }
+
+            /*
+document.getElementById('encode').addEventListener('click', function(){
+  console.log(base64encode(document.getElementById('from').value))
+  document.getElementById('to').value = base64encode(document.getElementById('from').value);
+});
+*/
+
+            function dec2hex(dec) {
+                return ("0" + dec.toString(16)).substr(-2);
+            }
+
+            function base64decode(str) {
+                try {
+                    return atob(str);
+                } catch (e) {
+                    return "";
+                }
+            }
+
+            function base64encode(a) {
+                // Convert the ArrayBuffer to string using Uint8 array.
+                // btoa takes chars from 0-255 and base64 encodes.
+                // Then convert the base64 encoded to base64url encoded.
+                // (replace + with -, replace / with _, trim trailing =)
+                return btoa(String.fromCharCode.apply(null, new Uint8Array(a)));
+            }
+        </script>
+        <!--
+<script src="https://emu.pin13.net/script.js" data-site="QELNMOEB" defer></script>
+-->
+    </body>
+</html>

@@ -1,0 +1,116 @@
+<html>
+    <title>Example OAuth Client</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+        form .field {
+            margin-bottom: 10px;
+        }
+        form .field:last-child {
+            margin-bottom: 0;
+        }
+        label {
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 4px;
+        }
+        pre.wrap {
+            width: 100%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .content {
+            max-width: 550px;
+        }
+        .group {
+            border: 1px #ccc solid;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        img[aria-hidden="true"] {
+            display: none;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <body>
+        <div class="flex-center full-height">
+            <div class="content">
+                <form action="client" method="post">
+                    <div class="group">
+                        <div class="field">
+                            <label>Issuer URL:</label>
+                            <input type="url" name="issuer" id="issuer" placeholder="https://dev-xxxxxxx.okta.com/oauth2/default" value="" />
+                        </div>
+
+                        <div class="field">
+                            <label>Authorization Endpoint:</label>
+                            <input type="url" name="authorization_endpoint" id="authorization_endpoint" value="" />
+                        </div>
+
+                        <div class="field">
+                            <label>Token Endpoint:</label>
+                            <input type="url" name="token_endpoint" id="token_endpoint" value="" />
+                        </div>
+                    </div>
+
+                    <div class="group">
+                        <div class="field">
+                            <label>Client ID:</label>
+                            <input type="text" name="client_id" value="" />
+                        </div>
+
+                        <div class="field">
+                            <label>Client Secret (optional):</label>
+                            <input type="text" name="client_secret" value="" />
+                        </div>
+                    </div>
+
+                    <div class="group">
+                        <div class="field">
+                            <label>Scope to request:</label>
+                            <input type="text" name="scope" value="" />
+                        </div>
+                    </div>
+
+                    <input type="submit" name="action" value="Start the Flow" />
+                    <input type="submit" name="action" value="Skip Interstitial" />
+                    <input type="hidden" name="start" value="go" />
+                </form>
+
+                <p>Register <code>https://example-app.com/client</code> as a redirect URI for your OAuth client</p>
+            </div>
+        </div>
+
+        <!--
+        <script src="assets/jquery.js"></script>
+        -->
+        <script src="/dist/jquery/jquery.js"></script>
+        <script>
+            $("#issuer").on("change", function () {
+                $.post(
+                    "/client",
+                    {
+                        discover: 1,
+                        issuer: $("#issuer").val(),
+                    },
+                    function (data) {
+                        console.log(data);
+                        if (data.authorization_endpoint) {
+                            $("#authorization_endpoint").val(data.authorization_endpoint);
+                        }
+                        if (data.token_endpoint) {
+                            $("#token_endpoint").val(data.token_endpoint);
+                        }
+                    }
+                );
+            });
+        </script>
+
+        <!--
+        <script src="https://emu.pin13.net/script.js" data-site="QELNMOEB" defer></script>
+-->
+    </body>
+</html>

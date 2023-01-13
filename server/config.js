@@ -101,8 +101,8 @@ module.exports = {
     },
 
     // TLS config
-    tlsPrivateKey: "../data/privkey3.pem",
-    tlsCertificate: "../data/cert3.pem",
+    tlsPrivateKey: "../data/privkey.pem",
+    tlsCertificate: "../data/cert.pem",
 
     // Configure request logging
     reqLogging: {

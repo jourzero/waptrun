@@ -1,0 +1,86 @@
+<html>
+    <title>PKCE Tools</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <body>
+        <div class="flex-center full-height">
+            <div class="content">
+                <h2>PKCE Tools</h2>
+
+                <p>This page has some quick tools you can use while testing out the OAuth PKCE flow.</p>
+
+                <hr />
+                <h3>Random String Generator (Code Verifier)</h3>
+
+                <p>Click the button below to generate a random string of an appropriate length to use in PKCE.</p>
+
+                <p><button id="generate-random-string">Generate Random String</button></p>
+
+                <p><input class="code" id="random-string" /></p>
+
+                <hr />
+                <h3>URL-Safe SHA256 (Code Challenge)</h3>
+
+                <p>Code Verifier</p>
+                <p><input class="code" id="pkce-plaintext" placeholder="Paste plaintext here" /></p>
+                <p><button id="calculate-hash">Calculate Hash</button></p>
+                <p>Code Challenge</p>
+                <p><code>base64urlencode(sha256(input))</code></p>
+                <p><input class="code" id="pkce-sha" placeholder="URL-safe SHA256 hash" /></p>
+
+                <hr />
+                <p>You can learn more about OAuth 2.0 by reading<br /><a href="https://oauth2simplified.com/">OAuth 2.0 Simplified</a></p>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("generate-random-string").addEventListener("click", function () {
+                document.getElementById("random-string").value = generateRandomString();
+                document.getElementById("pkce-plaintext").value = document.getElementById("random-string").value;
+                //window.fathom.trackGoal('YZUEADT4', 0);
+            });
+
+            document.getElementById("calculate-hash").addEventListener("click", function () {
+                pkce_challenge_from_verifier(document.getElementById("pkce-plaintext").value).then((base64urlencoded) => (document.getElementById("pkce-sha").value = base64urlencoded));
+                //window.fathom.trackGoal('58KCUVNX', 0);
+            });
+
+            function generateRandomString() {
+                var array = new Uint32Array(56 / 2);
+                window.crypto.getRandomValues(array);
+                return Array.from(array, dec2hex).join("");
+            }
+
+            function dec2hex(dec) {
+                return ("0" + dec.toString(16)).substr(-2);
+            }
+
+            function sha256(plain) {
+                // returns promise ArrayBuffer
+                const encoder = new TextEncoder();
+                const data = encoder.encode(plain);
+                return window.crypto.subtle.digest("SHA-256", data);
+            }
+
+            function base64urlencode(a) {
+                // Convert the ArrayBuffer to string using Uint8 array.
+                // btoa takes chars from 0-255 and base64 encodes.
+                // Then convert the base64 encoded to base64url encoded.
+                // (replace + with -, replace / with _, trim trailing =)
+                return btoa(String.fromCharCode.apply(null, new Uint8Array(a)))
+                    .replace(/\+/g, "-")
+                    .replace(/\//g, "_")
+                    .replace(/=+$/, "");
+            }
+
+            async function pkce_challenge_from_verifier(v) {
+                hashed = await sha256(v);
+                base64encoded = base64urlencode(hashed);
+                return base64encoded;
+            }
+        </script>
+        <!--
+<script src="https://emu.pin13.net/script.js" data-site="QELNMOEB" defer></script>
+-->
+    </body>
+</html>

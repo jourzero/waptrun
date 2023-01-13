@@ -10,7 +10,8 @@ We use a checklist approach to ensure we have reviewed most documented security 
 
 -   [x] Security issue has been addressed
 -   [ ] Security issue remains to be reviewed or addressed
--   [-] Security issue will not be addressed due it's non-applicability or its perceived low risk
+-   [ ] (N/A) Security issue will not be addressed due it's non-applicability or its perceived low risk
+-   [ ] (TODO) Countermeasure to be implemented
 
 ## Table of Content
 
@@ -52,6 +53,7 @@ We use a checklist approach to ensure we have reviewed most documented security 
             -   [16.19. Symmetric Key Entropy](#1619-symmetric-key-entropy)
             -   [16.20. Need for Signed Requests](#1620-need-for-signed-requests)
             -   [16.21. Need for Encrypted Requests](#1621-need-for-encrypted-requests)
+    -   [TODO](#todo)
     -   [Appendix](#appendix)
         -   [Google OAuth2 Config](#google-oauth2-config)
 
@@ -65,7 +67,7 @@ We use a checklist approach to ensure we have reviewed most documented security 
 
 ### OAuth 2.0 Threat Model (rfc6819)
 
-Ref.: [RFC6819 - Section 4.4.2: Implicit Grant Threat Model](https://www.rfc-editor.org/rfc/rfc6819.html#section-4.4.2)
+Ref.: [RFC6819 - Section 4.4.2: Implicit Grant Threat Model](https://datatracker.ietf.org/doc/html/rfc6819#section-4.4.2)
 
 #### 4.4.2 Implicit Grant
 
@@ -89,24 +91,24 @@ Ref.: [RFC6819 - Section 4.4.2: Implicit Grant Threat Model](https://www.rfc-edi
 
 > An attacker could obtain the token from the browser's history.
 
--   [x] Short expiry time for tokens - Google uses 1 hour which is OK for this app: exp - iat = 3600. We also overwrite the history via JS.
+-   [x] Short expiry time for tokens - Google uses 1 hour which is OK for this app: exp - iat = 3600. We also overwrite the history via JS using
+        [replaceState](https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState) to remove traces of the token in hashed links.
 
 -   [x] Reduced scope of the token to reduce the impact of an attack (openid email) - returned data:
         `{"iss":"accounts.google.com","azp":"<SAME_AS_AUD>","aud":"<GOOGLE_OAUTH_CLIENT_ID>","sub":"<SUBSCRIBER_ID>", "email":"<USER_EMAIL_ADDRESS>","email_verified":true,"iat":1642532533,"exp":1642536133,"jti":"<TOKEN_ID>"}`
 
--   [x] Make responses non-cacheable
+-   [x] Make responses non-cacheable (Google does that).
 
 #### 4.4.2.3. Threat: Malicious Client Obtains Authorization
 
--   [-] Authorization server should authenticate the client, if possible. Authentication takes place after end user has authorized access.
+> A malicious client could attempt to obtain a token by fraud. The same countermeasures as for Section 4.4.1.4 are applicable (see below
+> countermeasures from 4.4.1.4), except client authentication.
+
+-   [ ] (N/A) Authorization server should authenticate the client, if possible. Authentication takes place after end user has authorized access.
 
 -   [x] The authorization server should validate the client's redirect URI against the pre-registered redirect URI, if one exists (see
         Section 5.2.3.5). Note: An invalid redirect URI indicates an invalid client, whereas a valid redirect URI does not necessarily
-        indicate a valid client. The level of confidence depends on the client type. For web applications, the level of confidence is
-        high, since the redirect URI refers to the globally unique network endpoint of this application, whose fully qualified domain name
-        (FQDN) is also validated using HTTPS server authentication by the user agent. In contrast, for native clients, the redirect URI
-        typically refers to device local resources, e.g., a custom scheme. So, a malicious client on a particular device can use the valid
-        redirect URI the legitimate client uses on all other devices.
+        indicate a valid client...
 
 -   [x] After authenticating the end user, the authorization server should ask him/her for consent. In this context, the authorization
         server should explain to the end user the purpose, scope, and duration of the authorization the client asked for. Moreover, the
@@ -116,19 +118,23 @@ Ref.: [RFC6819 - Section 4.4.2: Implicit Grant Threat Model](https://www.rfc-edi
 -   [x] The authorization server should not perform automatic re-authorizations for clients it is unable to reliably
         authenticate or validate (see Section 5.2.4.1).
 
--   [-] If the authorization server automatically authenticates the end user, it may nevertheless require some user input in order to
-    prevent screen scraping. Examples are CAPTCHAs (Completely Automated Public Turing tests to tell Computers and Humans Apart)
-    or other multi-factor authentication techniques such as random questions, token code generators, etc.
+-   [ ] (N/A) If the authorization server automatically authenticates the end user, it may nevertheless require some user input in order to
+        prevent screen scraping. Examples are CAPTCHAs (Completely Automated Public Turing tests to tell Computers and Humans Apart)
+        or other multi-factor authentication techniques such as random questions, token code generators, etc.
 
--   [-] The authorization server may also limit the scope of tokens it issues to clients it cannot reliably authenticate (see Section 5.1.5.1).
+-   [ ] (N/A) The authorization server may also limit the scope of tokens it issues to clients it cannot reliably authenticate (see Section 5.1.5.1).
 
 #### 4.4.2.4. Threat: Manipulation of Scripts (JS from web server)
 
--   [ ] N/A: The authorization server should authenticate the server from which scripts are obtained (see Section 5.1.2).
+> A hostile party could act as the client web server and replace or modify the actual implementation of the client (script). This could be achieved using
+> DNS or ARP spoofing. This applies to clients implemented within the web browser in a scripting language. Impact: The attacker could obtain user credential
+> information and assume the full identity of the user.
+
+-   [ ] (N/A) The authorization server should authenticate the server from which scripts are obtained (see Section 5.1.2).
 
 -   [x] The client should ensure that scripts obtained have not been altered in transport (see Section 5.1.1).
 
--   [ ] N/A: Introduce one-time, per-use secrets (e.g., "client_secret") values that can only be used by scripts in a small time window once
+-   [ ] (N/A) Introduce one-time, per-use secrets (e.g., "client_secret") values that can only be used by scripts in a small time window once
         loaded from a server. The intention would be to reduce the effectiveness of copying client-side scripts for re-use in an
         attacker's modified code.
 
@@ -153,6 +159,8 @@ Ref.: https://openid.net/specs/openid-connect-core-1_0.html#Security
 #### 16.1. Request Disclosure
 
 -   [ ] Content of the request is an encrypted JWT with the appropriate key and cipher. This protects even against a compromised User Agent in the case of indirect request.
+    > Not implemented. However, as shown in the DFD, we don't store the JWT in memory and we use an http-only/secure session cookie which should help avoid most leakage scenarios, even in
+    > compromised user agents (except maybe for a malicious browser extension?).
 
 #### 16.2. Server Masquerading
 
@@ -169,8 +177,8 @@ Ref.: https://openid.net/specs/openid-connect-core-1_0.html#Security
 
 #### 16.5. Server Response Disclosure
 
--   [-] Using the code Response Type. The response is sent over a TLS protected channel, where the Client is authenticated by the client_id and client_secret.
--   [-] For other Response Types, the signed response can be encrypted with the Client's public key or a shared secret as an encrypted JWT with an appropriate key and cipher.
+-   [ ] (N/A) Using the code Response Type. The response is sent over a TLS protected channel, where the Client is authenticated by the client_id and client_secret.
+-   [ ] (N/A) For other Response Types, the signed response can be encrypted with the Client's public key or a shared secret as an encrypted JWT with an appropriate key and cipher.
 
 #### 16.6. Server Response Repudiation
 
@@ -240,6 +248,17 @@ An Attacker uses the Access Token generated for one resource to obtain access to
 #### 16.21. Need for Encrypted Requests
 
 -   [ ]
+
+## TODO
+
+-   Check concerns/attacks/threats in:
+    -   RFC6749 section 10
+    -   RFC8252 section 8
+    -   RFC6819
+    -   OAuth 2.0 Security Best Current Practice draft-ietf-oauth-security-topics[-14]
+-   Get around issue with stolen API keys with OAuth1 (Twitter app impersonation) -- see https://developer.okta.com/blog/2019/01/22/oauth-api-keys-arent-safe-in-mobile-apps
+-   Use PKCE RFC7636 (for apps that can't use a secret), see AppAuth.io code for iOS/Android/JS
+-   JWT validation allowing "none" or a symmetric algorithm (like "HS256"). An attacker could inject a tampered token if asymmetric isn't used. With symmetric algo, the attacker would use the public key to sign the token.
 
 ## Appendix
 
