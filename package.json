@@ -34,7 +34,7 @@
         "marked": "^4.0.0",
         "method-override": "^3.0.0",
         "morgan": "^1.0.0",
-        "nodemon": "^2.0.0",
+        "nodemon": "^3.0.0",
         "passport": "^0.6.0",
         "passport-github": "^1.0.0",
         "passport-google-oauth20": "^2.0.0",
